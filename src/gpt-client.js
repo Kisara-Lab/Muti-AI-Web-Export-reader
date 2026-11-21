@@ -2,7 +2,7 @@ function gptLabel(zh,en){return currentLang==='en'?en:zh;}
 document.getElementById('source-platform').addEventListener('change',()=>renderConvList(getSortedConvs()));
 const gptComponentStates=new Map();let gptComponentGeneration=-1;
 function gptComponentState(key){
-  if(gptComponentGeneration!==dataWorkerGeneration){gptComponentStates.clear();gptComponentGeneration=dataWorkerGeneration;}
+  if(gptComponentGeneration!==dataWorkerGeneration){gptComponentStates.clear();gptDilPrograms.clear();gptComponentGeneration=dataWorkerGeneration;}
   const state=gptComponentStates.get(key)||{index:0};gptComponentStates.delete(key);gptComponentStates.set(key,state);while(gptComponentStates.size>32)gptComponentStates.delete(gptComponentStates.keys().next().value);return state;
 }
 function renderGptViews(block,location=''){
@@ -12,6 +12,7 @@ function renderGptViews(block,location=''){
   for(const [position,view]of block.gptViews.slice(0,256).entries()){
     const card=add(host,'section');card.className='attachment-block';card.style.display='block';add(card,'strong',view.title||gptLabel('组件','Component'));
     if(view.description)add(card,'p',view.description);
+    if(view.kind==='images'&&gptRemoteResources&&!block._redactedMedia&&!document.querySelector('meta[http-equiv="Content-Security-Policy"]')?.content.includes("img-src blob: data:;")){for(const item of (view.images||[]).slice(0,100)){const url=gptExportCore().safeUrl(item.url);if(url){const img=add(card,'img');img.src=url;img.alt=item.title||'';img.loading='lazy';img.referrerPolicy='no-referrer';img.style.maxWidth='100%';}}}
     if(view.url){const url=gptExportCore().safeUrl(view.url);if(url){const anchor=add(card,'a',gptLabel('外部链接','External link'));anchor.href=url;anchor.target='_blank';anchor.rel='noopener noreferrer';anchor.referrerPolicy='no-referrer';}}
     if(view.kind==='images'){const gallery=add(card,'div'),key=JSON.stringify([dataWorkerGeneration,currentConv?.uuid,location,position]),state=gptComponentState(key);gallery.dataset.gptGallery=key;for(const [index,image]of (view.images||[]).entries()){const row=add(gallery,'p',gptLabel('远程图片未加载：','Remote image not loaded: ')+image.title);row.hidden=index!==state.index;const url=gptExportCore().safeUrl(image.url);if(url){const anchor=add(row,'a',gptLabel('打开链接','Open link'));anchor.href=url;anchor.target='_blank';anchor.rel='noopener noreferrer';anchor.referrerPolicy='no-referrer';}}if((view.images||[]).length>1){for(const [direction,label]of [[-1,gptLabel('上一张','Previous')],[1,gptLabel('下一张','Next')]]){const button=add(gallery,'button',label);button.type='button';button.dataset.gptGalleryStep=String(direction);}}}
     if(view.kind==='map'){

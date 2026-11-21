@@ -4,6 +4,8 @@
 
 **ChatGPT web exports are now supported**: import ZIPs, extracted folders or individual conversation JSON alongside Claude archives for reading, search, statistics and redacted exports. Exported web/file citations, image groups, entities, offline place plots and disabled historical upload controls are supported, with lazy `.dat` images and Markdown attachments. Packaged web pages and component actions never execute. [Support matrix and validation](docs/gpt-export.md)
 
+**GPT inline component repair**: DIL layouts, entities, ratings, bar charts, routes and historical reservation times now render in their original positions. Radio choices, inputs, checklists and progress update locally; confirmation generates a copyable message. The standard viewer loads available remote images and OpenStreetMap tiles by default, with an off switch; the complete offline bundle uses local views. [Coverage and validation](docs/gpt-components.md)
+
 **A local Claude Export History Viewer**
 
 **Updated for Claude's new partitioned exports**: manifest checklist → official package downloads → batch ZIP import. Read both memory export formats and Artifact versions, with continued support for legacy ZIPs and folders. [Import guide](docs/new-export-import.md)

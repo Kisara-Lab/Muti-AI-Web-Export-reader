@@ -48,6 +48,7 @@ function renderExportManifest(){
   const legacy=make('div','export-toolbar','',compatibility);for(const [action,label]of [['pick-folder','📂 选择导出文件夹'],['pick-zip','🗜️ 直接选择 ZIP 压缩包（免解压）']]){const button=make('button','export-button',t(label),legacy);button.dataset.uiClick=action;}
 }
 async function newExportArchive(){
+  gptComponentStates.clear();gptDilPrograms.clear();
   exportViewVersion++;exportSession={manifest:null,packages:[],topics:[],artifacts:[],users:[],logins:[],revision:0,errors:[],associations:{}};
   const session=exportSession,generation=++dataLoadGeneration;useDataWorkerGeneration(generation);await dataWorkerRequest('reset',null,[],generation);if(session!==exportSession)return;clearLocalMedia();
   allConvs=[];allDesigns=[];allProjects=[];memoryData=null;currentConv=null;loadedSummary={totalMsgs:0,minDate:'',maxDate:''};
@@ -59,6 +60,7 @@ async function openExportManifest(file){
 }
 function invalidateExportViews(){
   gptComponentStates.clear();
+  gptDilPrograms.clear();
   exportViewVersion++;exportSession.revision++;openConversationGeneration++;fullTextSearchGeneration++;projectMapGeneration++;resetReaderSearch();destroyFeature('reader');destroyFeature('task');resetAnalytics();
   for(const [id,pending]of dataWorkerPending)if(['search','projectIndex'].includes(pending.type)){dataWorkerPending.delete(id);pending.reject(abortFeature());}
   currentConv=null;behaviorResult=null;behaviorPromise=null;qualityCache.clear();corpusCache.clear();convProjectMap={};convProjectEvidence={};projectIndexStats={};convProjectMapReady=!allProjects.length;convProjectMapPromise=null;projectConvSearchCache.clear();

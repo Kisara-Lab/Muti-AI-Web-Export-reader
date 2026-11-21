@@ -22,10 +22,11 @@ function gptExportCore(){
   function referenceIndex(references){
     const index=new Map();for(const reference of references)for(const item of [...list(reference.items),...list(reference.sources)])for(const ref of list(item.refs))index.set('turn'+ref.turn_index+ref.ref_type+ref.ref_index,item);for(const reference of references)if(reference.type==='file'){for(const id of [reference.id,reference.input_pointer])if(typeof id==='string')index.set(id,reference);const pointer=reference.input_pointer;if(pointer&&typeof pointer==='object')index.set('turn'+pointer.message_index+'file'+pointer.file_index,reference);}return index;
   }
-  function parseText(text,metadata={}){
+  function parseText(text,metadata={},context={}){
     const references=list(metadata.content_references),index=referenceIndex(references),views=[],used=new Set();let output='',cursor=0,fence=null,inline=0;
-    const numbered=new Map(),sources=[];let citationGroup=0;
-    function marker(kind,payload,raw){
+    const numbered=new Map(),sources=[],positions=[];let citationGroup=0;
+    function marker(kind,payload,raw){const start=views.length,text=markerValue(kind,payload,raw);if(typeof gptDilCore!=='function'||views.length===start)return text;positions.push({kind:'legacy',text,views:views.slice(start)});return '\u001eGPTVIEW'+(positions.length-1)+'\u001f';}
+    function markerValue(kind,payload,raw){
       if(kind==='cite'||kind==='filecite'){
         const ids=payload.split('\ue202'),group=kind==='cite'?references.filter(reference=>reference.type==='grouped_webpages')[citationGroup]:null;
         const suffix=id=>/^turn\d+([a-z]+\d+)$/.exec(id)?.[1];
@@ -64,24 +65,44 @@ function gptExportCore(){
       output+=text[cursor++];
     }
     for(const {number,source}of sources){const title=bounded(source.title||source.name||'来源 / Source'),url=safeUrl(source.url||source.cloud_doc_url);output+='\n\n['+number+'] '+link(title,url)+(source.page_range_start!=null?' · p. '+source.page_range_start+(source.page_range_end!=null?'–'+source.page_range_end:''):'');}
+    if(typeof gptDilCore==='function'&&(positions.length||/(?:<[A-Za-z][\w-]*(?:\s|\/>|>)|\{@body|\{#each)/.test(output))){
+      const dil=gptDilCore(),program=dil.parse(output,context),insert=nodes=>nodes.flatMap(node=>{if(node.kind==='markdown'){const parts=node.text.split(/\u001eGPTVIEW(\d+)\u001f/g);return parts.flatMap((text,index)=>index%2?[positions[Number(text)]]:text?[{kind:'markdown',text}]:[]);}return [{...node,...(node.children?{children:insert(node.children)}:{})}];});program.nodes=insert(program.nodes);const materialized=dil.materialize(program);
+      if(positions.length||Object.keys(program.counts||{}).length||program.declarations.length||program.diagnostics.length)return {text:dil.summary(materialized.nodes,context),views:[],program};
+    }
     return {text:output,views};
   }
-  function convert(value){
+  function componentContext(mapping,key){
+    const entities=Object.create(null),images=[],state=mapping[key]?.message?.metadata?.view_state?.root||{},seen=new Set();let current=key;
+    const clean=(value,depth=0)=>{if(depth>8)return null;if(typeof value==='string')return value.slice(0,8192);if(value==null||typeof value==='number'||typeof value==='boolean')return value;if(Array.isArray(value))return value.slice(0,200).map(item=>clean(item,depth+1));if(typeof value==='object'){const output=Object.create(null);for(const [name,item]of Object.entries(value).slice(0,100))if(!['__proto__','constructor','prototype','entity_key'].includes(name))output[name]=clean(item,depth+1);return output;}return null;};
+    while(current&&mapping[current]&&!seen.has(current)){
+      seen.add(current);const metadata=mapping[current].message?.metadata||{},references=list(metadata.content_references),indexed=referenceIndex(references);
+      for(const [id,item]of indexed)if(!Object.hasOwn(entities,id))entities[id]=clean(item);
+      const points=references.filter(ref=>ref.type==='map').flatMap(ref=>list(ref.entities)).concat(Object.values(metadata.view_state?.widgets||{}).flatMap(widget=>list(widget?.points)));
+      for(const point of points){const value=clean({...point.entity,...point});for(const ref of list(point.refs)){const id='turn'+ref.turn_index+ref.ref_type+ref.ref_index;if(!Object.hasOwn(entities,id))entities[id]=value;}for(const id of [point.input_key,point.id])if(typeof id==='string'&&/^turn\d+/.test(id)&&!Object.hasOwn(entities,id))entities[id]=value;}
+      for(const reference of references)if(reference.type==='image_group')for(const item of list(reference.images)){const image=item.image_result||item,url=safeUrl(image.content_url||image.image_url||image.url||image.original);if(url)images.push({url,title:bounded(image.title||image.alt),query:bounded(item.image_search_query)});}
+      current=mapping[current].parent;
+    }
+    return {entities,images:images.slice(0,100),state:clean(state)};
+  }
+  function* convertSteps(value){
     if(!isConversation(value))return value;
     const originalId=string(value.id||value.conversation_id);if(!originalId)throw new Error('GPT conversation ID missing');
     const mapping=value.mapping,keys=Object.keys(mapping),prefix='gpt:'+originalId+':',warnings=[],messages=[],parents=new Map();
     for(const key of keys){const node=mapping[key];if(node?.message){let parent=node.parent,seen=new Set([key]);while(parent&&mapping[parent]&&!mapping[parent].message){if(seen.has(parent)){parent=null;warnings.push('消息树存在循环 / Message tree cycle');break;}seen.add(parent);parent=mapping[parent].parent;}parents.set(key,parent&&mapping[parent]?.message?prefix+parent:root);}}
     for(const key of keys){const node=mapping[key],message=node?.message;if(!message)continue;const metadata=message.metadata||{},content=message.content||{},blocks=[];
-      if(content.content_type==='text'||content.content_type==='multimodal_text')for(const part of list(content.parts)){if(typeof part==='string'){const parsed=parseText(part,metadata);blocks.push({type:'text',text:parsed.text,gptViews:parsed.views});}else blocks.push({type:'text',text:'[非文本内容 / Non-text content]',gptViews:[{kind:'unknown',title:string(part?.content_type),details:boundedDetails(part).text}]});}
+      if(content.content_type==='text'||content.content_type==='multimodal_text')for(const part of list(content.parts)){if(typeof part==='string'){const context=/(?:<[A-Za-z]|\{@body|\{#each|\ue200)/.test(part)?componentContext(mapping,key):{},parsed=parseText(part,metadata,context);blocks.push({type:'text',text:parsed.text,gptViews:parsed.views,...(parsed.program?{gptProgram:parsed.program}:{})});}else blocks.push({type:'text',text:'[非文本内容 / Non-text content]',gptViews:[{kind:'unknown',title:string(part?.content_type),details:boundedDetails(part).text}]});}
       else if(content.content_type==='reasoning_recap')blocks.push({type:'thinking',thinking:string(content.content),summaries:true});
       else if(content.content_type==='thoughts')blocks.push({type:'thinking',thinking:list(content.thoughts).map(thought=>[string(thought.summary),string(thought.content)].filter(Boolean).join('\n')).join('\n\n'),summaries:true});
       else blocks.push({type:'text',text:'[未知内容 / Unknown content]',gptViews:[{kind:'unknown',title:bounded(content.content_type),details:boundedDetails(content).text}]});
-      if(list(metadata.content_references).some(reference=>reference.type==='client_defined_widget')&&!blocks.some(block=>block.gptViews?.some(view=>view.kind==='disabled')))blocks.push({type:'text',text:'[组件数据缺失 / Component data missing]',gptViews:[{kind:'unknown',title:'历史组件 / Historical component',details:'client_defined_widget: exported data unavailable'}]});
+      if(list(metadata.content_references).some(reference=>reference.type==='client_defined_widget')&&!blocks.some(block=>block.gptProgram||block.gptViews?.some(view=>view.kind==='disabled')))blocks.push({type:'text',text:'[组件数据缺失 / Component data missing]',gptViews:[{kind:'unknown',title:'历史组件 / Historical component',details:'client_defined_widget: exported data unavailable'}]});
       messages.push({uuid:prefix+key,originalId:string(message.id),originalNodeId:key,sourcePlatform:'gpt',sender:message.author?.role==='user'?'human':string(message.author?.role)||'unknown',created_at:timestamp(message.create_time),updated_at:timestamp(message.update_time),parent_message_uuid:parents.get(key),model:string(metadata.model_slug||metadata.resolved_model_slug),contentType:string(content.content_type),content:blocks,attachments:list(metadata.attachments).map(att=>({file_name:string(att.name),file_type:string(att.mime_type),file_id:string(att.id),library_file_id:string(att.library_file_id),file_path:string(att.id)+'.dat',file_size:att.size}))});
+      yield;
     }
     const path=[],seen=new Set();let current=value.current_node,valid=!!mapping[current];while(current&&mapping[current]){if(seen.has(current)){valid=false;break;}seen.add(current);if(mapping[current].message)path.unshift(prefix+current);const parent=mapping[current].parent;if(parent&&!mapping[parent])valid=false;current=parent;}
     if(!valid||!path.length)warnings.push('当前节点缺失或无效，显示最长有效路径 / Invalid current node; showing longest valid path');
     return {uuid:'gpt:'+originalId,originalId,sourcePlatform:'gpt',name:string(value.title),summary:'',created_at:timestamp(value.create_time),updated_at:timestamp(value.update_time),defaultModel:string(value.default_model_slug),currentNode:string(value.current_node),defaultPath:valid?path:[],importWarnings:[...new Set(warnings)],chat_messages:messages};
   }
-  return {isConversation,convert,manifest,parseText,safeUrl,boundedDetails};
+  function convert(value){const iterator=convertSteps(value);let step;do{step=iterator.next();}while(!step.done);return step.value;}
+  async function convertAsync(value,checkpoint){const iterator=convertSteps(value);let step;do{step=iterator.next();if(!step.done)await checkpoint();}while(!step.done);return step.value;}
+  return {isConversation,convert,convertAsync,manifest,parseText,safeUrl,boundedDetails};
 }
