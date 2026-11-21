@@ -58,6 +58,7 @@ async function openExportManifest(file){
   const intent=++exportManifestIntent,descriptor=exportFormat.manifest(JSON.parse(await file.text()));if(intent!==exportManifestIntent)return;const session=await newExportArchive();if(intent!==exportManifestIntent||session!==exportSession)return;exportSession.manifest=descriptor;openDownloadPage();
 }
 function invalidateExportViews(){
+  gptComponentStates.clear();
   exportViewVersion++;exportSession.revision++;openConversationGeneration++;fullTextSearchGeneration++;projectMapGeneration++;resetReaderSearch();destroyFeature('reader');destroyFeature('task');resetAnalytics();
   for(const [id,pending]of dataWorkerPending)if(['search','projectIndex'].includes(pending.type)){dataWorkerPending.delete(id);pending.reject(abortFeature());}
   currentConv=null;behaviorResult=null;behaviorPromise=null;qualityCache.clear();corpusCache.clear();convProjectMap={};convProjectEvidence={};projectIndexStats={};convProjectMapReady=!allProjects.length;convProjectMapPromise=null;projectConvSearchCache.clear();
@@ -75,6 +76,7 @@ async function appendExportPackage(file,button,files){
   if(session!==exportSession||generation!==dataWorkerGeneration)return;
   if(result.duplicate||result.parsed?.duplicate){button.textContent=t('重复包，已跳过');return;}
   const parsed=result.parsed;session.packages.push({id:result.id,filename:result.filename});
+  (session.resources??=[]).push(...(result.resources||[]));
   for(const p of result.projects){const old=allProjects.find(x=>x.uuid===p.uuid);if(!old)allProjects.push(p);else if(JSON.stringify(old)!==JSON.stringify(p))session.errors.push(t('同一标识存在不同内容，已保留来源版本')+': '+p.name),old._sourceVariants=[...(old._sourceVariants||[]),{source:result.filename,value:p}];}
   if(result.legacyMemory){(session.legacyMemories??=[]).push({source:result.filename,value:result.legacyMemory});memoryData=memoryData?{...memoryData,conversations_memory:[memoryData.conversations_memory,result.legacyMemory.conversations_memory].filter(Boolean).join('\n\n'),project_memories:{...memoryData.project_memories,...result.legacyMemory.project_memories}}:result.legacyMemory;}
   session.topics.push(...result.memories);session.artifacts.push(...result.artifacts.map(a=>({...a,packageId:result.id,source:result.filename})));session.users.push(...result.users);session.logins.push(...result.logins);
