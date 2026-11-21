@@ -17,7 +17,7 @@ function taskWorkerMain(){
       return result;
     }
     if(type==='quality'){
-      const conversation=await materialize(payload,token),result=await core.quality({messages:conversation.chat_messages,title:payload.title||conversation.name},token.checkpoint);
+      const conversation=await materialize(payload,token),result=await core.quality({messages:conversation.chat_messages,title:payload.title||conversation.name,sourcePlatform:conversation.sourcePlatform},token.checkpoint);
       result.sensitive=(await core.redactAsync(conversation,'standard',false,token.checkpoint,true)).stats;return result;
     }
     if(type==='projectExport'){

@@ -139,7 +139,8 @@ function redactConversation(conv,style='standard',strict=false,options={}){const
     const fallback=/\b(as an ai|language model|try again later|model limitation|not available in this mode)\b|(?:当前|暂时|目前|受限于当前模型|这个模型)?(?:无法访问|功能受限|服务受限|能力有限|降级模式|不具备(?:执行|访问|处理|完成)[^。！？\n]{0,24}能力)|(?:我只能|我目前只能|只能提供)[^。！？\n]{0,18}(?:概括|一般性信息|高层次建议)/iu,truncated=/(\.\.\.|…|回答未完|to be continued|继续$)/i;
     for(const m of msgs){if(processed++%128===0)await checkpoint();const text=plain(m),time=Date.parse(m.created_at||m.updated_at||'')||0;if(time&&prevTime&&time<prevTime){counts.reverse++;issues.push({kind:'reverse',uuid:m.uuid,label:'时间倒序'});}prevTime=time;
       if(!text&&!hasType(m,/tool|thinking|result/i)){counts.empty++;issues.push({kind:'empty',uuid:m.uuid,label:'空消息'});}
-      if(m.parent_message_uuid&&!ids.has(m.parent_message_uuid)&&m.parent_message_uuid!=='00000000-0000-0000-0000-000000000000'){counts.orphan++;issues.push({kind:'orphan',uuid:m.uuid,label:'孤立消息'});}
+      if(m.parent_message_uuid&&!ids.has(m.parent_message_uuid)&&m.parent_message_uuid!==ROOT_ID&&m.parent_message_uuid!=='00000000-0000-0000-0000-000000000000'){counts.orphan++;issues.push({kind:'orphan',uuid:m.uuid,label:'孤立消息'});}
+      if(m.sourcePlatform==='gpt'&&['thoughts','reasoning_recap'].includes(m.contentType))continue;
       if(m.sender==='assistant'){if(text&&text===prevAssistant){counts.repeated++;issues.push({kind:'repeated',uuid:m.uuid,label:'重复回答'});}const directRefusal=/\b(?:can't|cannot|won't)\s+do that\b/i.test(text);const refusalHit=refusal.test(text)&&(directRefusal||securityTitle.test(title)||/(请求|任务|帮|提供|协助|生成|绕过|提取|锁屏|加密数据)/u.test(text));if(refusalHit){counts.refusal++;const alternative=/(合法|安全替代|可以尝试|建议|改为|官方|防御|恢复出厂|维修店)/u.test(text);if(alternative){counts.refusalAlternative++;issues.push({kind:'refusalAlternative',uuid:m.uuid,label:'拒答并给出替代方案'});}else issues.push({kind:'refusal',uuid:m.uuid,label:'疑似拒答'});}if(fallback.test(text)){counts.fallback++;issues.push({kind:'fallback',uuid:m.uuid,label:'疑似降级回答'});}if(truncated.test(text)){counts.truncated++;issues.push({kind:'truncated',uuid:m.uuid,label:'被截断回答'});}if(!text&&hasType(m,/tool|server_tool/)){counts.toolOnly++;issues.push({kind:'toolOnly',uuid:m.uuid,label:'仅工具无正文'});}prevAssistant=text;}
       for(const a of(m.attachments||m.files||[])){if(!a||!(a.file_name||a.name||a.file_id||a.data||a.content)){counts.incompleteAttachment++;issues.push({kind:'attachment',uuid:m.uuid,label:'不完整附件'});}}
       if((m.content||[]).some(b=>!b||typeof b!=='object'||!b.type)){counts.unparseable++;issues.push({kind:'unparseable',uuid:m.uuid,label:'不可解析内容块'});}
@@ -172,7 +173,7 @@ async function markdown(conv,mode,choices,checkpoint){  // Build linear thread (
     if(!msg||typeof msg!=='object')continue;
     if(msg._divider==='linear'){md+='## ⚠️ '+t('对话分支结构异常，已按时间顺序展示全部消息')+'\n\n';continue;}
     if(msg._divider==='orphan'){md+='## 🧩 '+t('以下消息无法归入对话分支（可能是已删除分支的残留）')+' ('+msg.count+')\n\n';continue;}
-    const role=msg.sender==='human'?'**'+t('你')+'**':'**Claude**';
+    const role='**'+(msg.sender==='human'?t('你'):msg.sender==='assistant'?(conv.sourcePlatform==='gpt'?'ChatGPT':'Claude'):msg.sender)+'**';
     md+=role+' · '+fmtTime(msg.created_at)+'\n\n';
     // Attachments
     for(const att of[...(msg.attachments||[]),...(msg.files||[])]){
@@ -260,6 +261,7 @@ function configureMarked(){
 const trees=new WeakMap();
 function tree(conv,mode='longest',choices={}){
   const messages=conv.chat_messages||[];
+  if(mode!=='full'&&conv.sourcePlatform==='gpt'&&conv.defaultPath?.length&&!Object.keys(choices).length){choices={};const groups=new Map();for(const message of messages){const parent=message.parent_message_uuid||ROOT_ID;if(!groups.has(parent))groups.set(parent,[]);groups.get(parent).push(message);}for(const siblings of groups.values())siblings.sort((a,b)=>(Date.parse(a.created_at)||0)-(Date.parse(b.created_at)||0));const preferred=new Set(conv.defaultPath);for(const [parent,siblings]of groups){const selected=siblings.findIndex(message=>preferred.has(message.uuid));if(selected>=0)choices[parent]=selected;}}
   let index=trees.get(messages);
   if(!index){
     const byId=new Map(),children=new Map(),roots=[],times=messages.map(m=>Date.parse(m?.created_at||'')||0);

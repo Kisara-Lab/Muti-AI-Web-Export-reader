@@ -22,7 +22,7 @@ async function ensureFeature(kind){
   const libraries=kind==='import'?['zip']:kind==='reader'?['markdown','highlight']:['markdown','highlight'];
   const sources=libraries.map(name=>Uint8Array.from(atob(WORKER_LIBRARIES[name].base64),char=>char.charCodeAt(0)));
   const main=kind==='import'?importWorkerMain:kind==='reader'?readerWorkerMain:taskWorkerMain;
-  const url=URL.createObjectURL(new Blob([...sources,'\n',exportFormatCore.toString(),'\n',redactionRules.toString(),'\n',workerDomainCore.toString(),'\n',featureWorkerRuntime.toString(),'\n('+main.toString()+')()'],{type:'text/javascript'}));
+  const url=URL.createObjectURL(new Blob([...sources,'\n',exportFormatCore.toString(),'\n',gptExportCore.toString(),'\n',redactionRules.toString(),'\n',workerDomainCore.toString(),'\n',featureWorkerRuntime.toString(),'\n('+main.toString()+')()'],{type:'text/javascript'}));
   let worker;try{worker=new Worker(url);}catch(error){URL.revokeObjectURL(url);throw error;}
   state={worker,url,id:kind+':'+(++featureSequence),generation:dataWorkerGeneration,pending:new Map(),port:null};
   state.ready=new Promise((resolve,reject)=>{state.resolveReady=resolve;state.rejectReady=reject;});state.ready.catch(()=>{});featureWorkers.set(kind,state);
@@ -90,7 +90,7 @@ async function renderReaderWindow(options={}){
     }
     if(result.start>0){const button=document.createElement('button');button.className='load-earlier-btn';button.textContent='↑ '+t('加载更早消息')+' ('+result.start+')';button.onclick=()=>void renderReaderWindow({startIndex:Math.max(0,result.start-40)});nav.appendChild(button);container.prepend(nav);}
     if(result.end<result.total){const button=document.createElement('button');button.className='load-earlier-btn';button.textContent='↓ '+t('加载更新消息');button.onclick=()=>void renderReaderWindow({startIndex:result.end});container.appendChild(button);}
-    initZipMedia(container);return result;
+    initZipMedia(container);for(const warning of currentConv.importWarnings||[]){const notice=document.createElement('p');notice.setAttribute('role','status');notice.textContent=warning;container.prepend(notice);}return result;
   }catch(error){if(error.name==='AbortError')return;const container=document.getElementById('messages');container.textContent=error.message;const retry=document.createElement('button');retry.textContent=t('重试');retry.onclick=()=>void openConv(uuid);container.appendChild(retry);}
 }
 async function readerSearch(query){

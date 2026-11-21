@@ -59,7 +59,7 @@ function analyticsWorkerMain(){
         rows.push({day,timestamp:Number.isFinite(timestamp)?timestamp:null,model,role,characters});models.add(model);roles.add(role);
         if(day!==null){min=min===null?day:Math.min(min,day);max=max===null?day:Math.max(max,day);}
       }
-      conversations.push({uuid:record.meta.uuid,title:record.meta.name,project:'',rows});
+      conversations.push({uuid:record.meta.uuid,title:record.meta.name,platform:record.meta.sourcePlatform||'claude',project:'',rows});
       yield{meta:record.meta,conversation};
     }
     }
@@ -87,7 +87,7 @@ function analyticsWorkerMain(){
   const nextBucket=(day,grain)=>{if(grain==='week')return day+7;if(grain==='month'){const date=new Date(day*dayMs);return Date.UTC(date.getUTCFullYear(),date.getUTCMonth()+1,1)/dayMs;}return day+1;};
   const matchKey=(message,range)=>{
     const filters=message.filters||{},overrides=message.overrides||{};
-    return JSON.stringify([generation,range,...['projects','models','roles'].map(field=>[...new Set(filters[field]||[])].sort()),message.projectVersion||0,message.stopwordVersion||0,Object.keys(overrides).sort().map(uuid=>[uuid,overrides[uuid]])]);
+    return JSON.stringify([generation,range,...['projects','models','roles','platforms'].map(field=>[...new Set(filters[field]||[])].sort()),message.projectVersion||0,message.stopwordVersion||0,Object.keys(overrides).sort().map(uuid=>[uuid,overrides[uuid]])]);
   };
   function rememberMatches(key,matches){
     matches.sort((first,second)=>(second.latest??-Infinity)-(first.latest??-Infinity)||first.uuid.localeCompare(second.uuid));
@@ -107,6 +107,7 @@ function analyticsWorkerMain(){
     for(const conversation of index.conversations){
       if(processed++%8===0){await checkpoint(token);emit('progress',token.requestId,{loaded:processed,total:index.conversations.length,phase:'query'});}
       if(filters.projects?.length&&!filters.projects.includes(effectiveProject(conversation,overrides)))continue;
+      if(filters.platforms?.length&&!filters.platforms.includes(conversation.platform))continue;
       let currentHit=false,previousHit=false,hitMessages=0,hitCharacters=0,latest=null;
       for(let rowIndex=0;rowIndex<conversation.rows.length;rowIndex++){
         if(rowIndex%512===0)await checkpoint(token);
@@ -151,6 +152,7 @@ function analyticsWorkerMain(){
       for(const conversation of index.conversations){
         if(count++%8===0){await checkpoint(token);emit('progress',token.requestId,{loaded:count,total:index.conversations.length,phase:'drilldown'});}
         if(filters.projects?.length&&!filters.projects.includes(effectiveProject(conversation,message.overrides)))continue;
+        if(filters.platforms?.length&&!filters.platforms.includes(conversation.platform))continue;
         let messages=0,characters=0,latest=null;
         for(let rowIndex=0;rowIndex<conversation.rows.length;rowIndex++){
           if(rowIndex%512===0)await checkpoint(token);

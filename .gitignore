@@ -1,5 +1,6 @@
 # 私人数据文件 — 绝对不能上传
 keys/
+vid-history/
 *.env
 *.key
 *.pem
