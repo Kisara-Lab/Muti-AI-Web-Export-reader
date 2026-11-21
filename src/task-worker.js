@@ -1,16 +1,19 @@
 function taskWorkerMain(){
   const core=workerDomainCore(),cache=new Map();let pdf=null;
   const materialize=async(payload,token)=>{
-    if(payload.conversation)return structuredClone(payload.conversation);
-    for await(const record of token.records([payload.uuid]))return JSON.parse(record.raw);
-    throw new Error('Conversation not found');
+    let conversation=payload.conversation?structuredClone(payload.conversation):null;
+    if(!conversation)for await(const record of token.records([payload.uuid])){conversation=JSON.parse(record.raw);break;}
+    if(!conversation)throw new Error('Conversation not found');
+    const dil=typeof gptDilCore==='function'?gptDilCore():null;
+    if(dil)for(const [sourceIndex,message]of (conversation.chat_messages||[]).entries())for(const [blockIndex,block]of (message.content||[]).entries())if(block.gptProgram){const program=block.gptProgram,state=payload.gptStates?.[sourceIndex+':'+blockIndex]||program.initial,result=dil.materialize(program,state);const strip=nodes=>nodes.map(node=>{const {events,locals,...visible}=node;return {...visible,...(node.children?{children:strip(node.children)}:{})};});block.text=dil.summary(result.nodes,program.context);block.gptProgram={version:1,snapshot:true,nodes:strip(result.nodes),declarations:[],initial:{},context:program.context,diagnostics:result.diagnostics};await token.checkpoint();}
+    return conversation;
   };
   featureWorkerRuntime(core,async(type,payload,token)=>{
     if(type==='memoryView'){await token.checkpoint();return{html:core.renderMarkdown(payload.text)};}
     if(type==='highlight'){await token.checkpoint();return{html:hljs.getLanguage(payload.language)?hljs.highlight(payload.code,{language:payload.language}).value:core.esc(payload.code)};}
     if(type==='behavior')return core.behavior(token.records(),()=>token.checkpoint({loaded:token.loadedRecords||0,total:token.totalRecords||0}));
     if(type==='preview'){
-      const options=core.redactionOptions(payload),key=JSON.stringify([token.generation,payload.uuid,core.language,payload.style,payload.strict,core.redactionRuleVersion,options.customTerms,options.includeContextCandidates,options.customSimilarity]);
+      const options=core.redactionOptions(payload),key=JSON.stringify([token.generation,payload.uuid,core.language,payload.style,payload.strict,core.redactionRuleVersion,options.customTerms,options.includeContextCandidates,options.customSimilarity,payload.gptStates]);
       if(!payload.conversation&&cache.has(key)){const hit=cache.get(key);cache.delete(key);cache.set(key,hit);return hit;}
       const result=await core.redactAsync(await materialize(payload,token),payload.style||'standard',!!payload.strict,token.checkpoint,true,options);
       if(!payload.conversation){cache.set(key,result);while(cache.size>4)cache.delete(cache.keys().next().value);}

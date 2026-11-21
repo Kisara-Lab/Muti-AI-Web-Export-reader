@@ -1,6 +1,6 @@
 function dataWorkerMain(){
   let generation=0,records=[],byUuid=new Map(),decoder=null,textChunks=[],searchIndex=null;
-  const CACHE_DB='claude-rescue-reader-data-v1',CACHE_STORE='conversation-cache',CACHE_SCHEMA=2;
+  const CACHE_DB='claude-rescue-reader-data-v1',CACHE_STORE='conversation-cache',CACHE_SCHEMA=3;
   const parsedCache=new Map(),PARSED_CACHE_LIMIT=3;
   const list=value=>Array.isArray(value)?value:[];
   const shared=archiveAnalysisCore();
@@ -73,13 +73,13 @@ function dataWorkerMain(){
     }
     return meta;
   }
-  function scanTopLevelArray(text){
+  async function scanTopLevelArray(text,checkpoint){
     let index=skipWs(text,0);if(text[index]==='{')text='['+text+']';index=skipWs(text,0);if(text[index]!=='[')throw new Error('conversations.json 格式不正确');index=skipWs(text,index+1);
     const result=[];
     if(text[index]===']')return result;
     while(index<text.length){
       const end=valueEnd(text,index);let raw=text.slice(index,end);
-      if(typeof gptExportCore==='function'&&/"mapping"\s*:/.test(raw)){const value=JSON.parse(raw);if(gptExportCore().isConversation(value))raw=JSON.stringify(gptExportCore().convert(value));}
+      if(typeof gptExportCore==='function'&&/"mapping"\s*:/.test(raw)){const value=JSON.parse(raw);if(gptExportCore().isConversation(value))raw=JSON.stringify(await gptExportCore().convertAsync(value,checkpoint));}
       const meta=inspectConversation(raw);meta.sourcePlatform=meta.sourcePlatform||'claude';
       if(!meta.uuid)throw new Error('Conversation UUID is missing');
       result.push({raw,meta});index=skipWs(text,end);
@@ -120,9 +120,12 @@ function dataWorkerMain(){
   let packageStage=null,contentRevision=0,archiveAccounts=new Set(),packageIds=new Set();
   const accountPlatform=id=>String(id).startsWith('gpt:')?'gpt':'claude';
   const accountMismatch=incoming=>{for(const platform of new Set(incoming.map(accountPlatform))){const local=[...archiveAccounts].filter(id=>accountPlatform(id)===platform),next=incoming.filter(id=>accountPlatform(id)===platform);if(new Set(next).size>1||local.length&&next.some(id=>!archiveAccounts.has(id)))return true;}return false;};
-  function finishIngest(request,text){
-    if(packageStage){packageStage.records.push(...scanTopLevelArray(text));reply(request,{staged:true});return;}
-    records=scanTopLevelArray(text);byUuid=new Map(records.map(record=>[record.meta.uuid,record]));searchIndex=null;parsedCache.clear();
+  async function finishIngest(request,text){
+    const expected=generation,stage=packageStage;let deadline=Date.now()+8;
+    const checkpoint=async()=>{if(Date.now()>=deadline){await new Promise(resolve=>setTimeout(resolve,0));deadline=Date.now()+8;}if(generation!==expected||packageStage!==stage)throw new Error('stale data generation');};
+    const incoming=await scanTopLevelArray(text,checkpoint);await checkpoint();
+    if(stage){stage.records.push(...incoming);reply(request,{staged:true});return;}
+    records=incoming;byUuid=new Map(records.map(record=>[record.meta.uuid,record]));searchIndex=null;parsedCache.clear();
     reply(request,ingestSummary(false));
   }
   self.onmessage=event=>{
@@ -169,9 +172,9 @@ importPort?.close();importPort=null;reset(request.generation);reply(request,{ok:
       }
       if(request.type==='ingestEnd'){
         if(Number(request.generation)!==generation||!decoder)throw new Error('stale data generation');
-        textChunks.push(decoder.decode());const text=textChunks.join('');decoder=null;textChunks=[];finishIngest(request,text);return;
+        textChunks.push(decoder.decode());const text=textChunks.join('');decoder=null;textChunks=[];await finishIngest(request,text);return;
       }
-      if(request.type==='ingest'){reset(request.generation);finishIngest(request,typeof request.payload==='string'?request.payload:new TextDecoder().decode(request.payload));return;}
+      if(request.type==='ingest'){reset(request.generation);await finishIngest(request,typeof request.payload==='string'?request.payload:new TextDecoder().decode(request.payload));return;}
       if(request.type==='cacheClear'){reply(request,{cleared:await cacheDeleteAll()});return;}
       if(Number(request.generation)!==generation)throw new Error('stale data generation');
       if(request.type==='cacheLoad'){

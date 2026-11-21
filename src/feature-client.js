@@ -22,7 +22,7 @@ async function ensureFeature(kind){
   const libraries=kind==='import'?['zip']:kind==='reader'?['markdown','highlight']:['markdown','highlight'];
   const sources=libraries.map(name=>Uint8Array.from(atob(WORKER_LIBRARIES[name].base64),char=>char.charCodeAt(0)));
   const main=kind==='import'?importWorkerMain:kind==='reader'?readerWorkerMain:taskWorkerMain;
-  const url=URL.createObjectURL(new Blob([...sources,'\n',exportFormatCore.toString(),'\n',gptExportCore.toString(),'\n',redactionRules.toString(),'\n',workerDomainCore.toString(),'\n',featureWorkerRuntime.toString(),'\n('+main.toString()+')()'],{type:'text/javascript'}));
+  const url=URL.createObjectURL(new Blob([...sources,'\n',exportFormatCore.toString(),'\n',gptDilCore.toString(),'\n',gptExportCore.toString(),'\n',redactionRules.toString(),'\n',workerDomainCore.toString(),'\n',featureWorkerRuntime.toString(),'\n('+main.toString()+')()'],{type:'text/javascript'}));
   let worker;try{worker=new Worker(url);}catch(error){URL.revokeObjectURL(url);throw error;}
   state={worker,url,id:kind+':'+(++featureSequence),generation:dataWorkerGeneration,pending:new Map(),port:null};
   state.ready=new Promise((resolve,reject)=>{state.resolveReady=resolve;state.rejectReady=reject;});state.ready.catch(()=>{});featureWorkers.set(kind,state);
@@ -43,7 +43,7 @@ async function featureRequest(kind,type,payload={},progress){
   if(kind==='task'&&type==='behavior'&&state.pending.size)throw new Error(t('任务进行中，请稍后重试'));
   return new Promise((resolve,reject)=>{state.pending.set(requestId,{resolve,reject,progress});state.worker.postMessage({type,generation:state.generation,requestId,payload:{...payload,lang:currentLang},context:{lang:currentLang,labels:EN}});});
 }
-function conversationTaskPayload(conv=currentConv){return{uuid:conv?.uuid,...(!conv?{}:conv._readerBacked||conv._workerBacked?{}:{conversation:conv}),mode:conversationTreeMode,choices:{...branchChoices}};}
+function conversationTaskPayload(conv=currentConv){return{uuid:conv?.uuid,...(!conv?{}:conv._readerBacked||conv._workerBacked?{}:{conversation:conv}),mode:conversationTreeMode,choices:{...branchChoices},gptStates:typeof gptExportStates==='function'?gptExportStates(conv?.uuid):{}};}
 async function startZipImport(file,button){
   const generation=++dataLoadGeneration;useDataWorkerGeneration(generation);await dataWorkerRequest('reset',null,[],generation);clearLocalMedia();
   const result=await featureRequest('import','open',{file},progress=>{if(generation===dataWorkerGeneration)button.textContent=t('解压中，请稍候…')+' '+Math.round(progress.percent||0)+'%';});

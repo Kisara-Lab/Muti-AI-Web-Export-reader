@@ -2,7 +2,7 @@
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-/UUK6BoiNsZMYmijDOx55HDhtd7eEKMnWfaP+jDpCOw=' 'sha256-tMIvewdj4Er6it91vRKx68b9zhu5Sxm35MV7o9YOuqs=' https://cdn.jsdelivr.net https://unpkg.com https://cdnjs.cloudflare.com blob:; script-src-attr 'none'; style-src 'unsafe-inline' https://cdn.jsdelivr.net https://unpkg.com https://cdnjs.cloudflare.com; img-src blob: data:; font-src data:; connect-src blob:; worker-src blob:; frame-src blob:; object-src 'none'; base-uri 'none'; form-action 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-2Ls5WIHIv9dVS4WsMdDl+BsoKsJHpovnBsNdHDw8TtY=' 'sha256-tMIvewdj4Er6it91vRKx68b9zhu5Sxm35MV7o9YOuqs=' https://cdn.jsdelivr.net https://unpkg.com https://cdnjs.cloudflare.com blob:; script-src-attr 'none'; style-src 'unsafe-inline' https://cdn.jsdelivr.net https://unpkg.com https://cdnjs.cloudflare.com; img-src blob: data: https: http:; font-src data:; connect-src blob:; worker-src blob:; frame-src blob:; object-src 'none'; base-uri 'none'; form-action 'none'">
 <meta name="referrer" content="no-referrer">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Claude Rescue Reader — Local Claude Export Viewer</title>
@@ -1087,6 +1087,137 @@ function exportFormatCore(){
   return{sha256,downloadUrl,manifest,logicalPath,frontmatter,memory,memoryFiles};
 }
 
+function gptDilCore(){
+  const tags=new Set('mark text box row badge divider grid grid-item title caption MapWidgetV2 Entity Link Rating ReservationTimePillsRefWidget list list-item label radio-group radio button input AsyncImage AsyncImageGroup icon Chart checkbox Cite'.split(' '));
+  const forbidden=new Set(['__proto__','prototype','constructor','caller','callee']);
+  const own=(value,key)=>value!=null&&!forbidden.has(String(key))&&Object.hasOwn(Object(value),key)?value[key]:undefined;
+  const diagnostic=(code,detail)=>({code,detail:String(detail).slice(0,256)});
+  function expression(source){
+    let position=0,tokens=0;
+    const space=()=>{while(/\s/.test(source[position]||'')&&position<source.length)position++;};
+    const take=value=>{space();if(source.startsWith(value,position)){position+=value.length;return true;}return false;};
+    function stringLiteral(){const quote=source[position++];let value='';while(position<source.length){const char=source[position++];if(char===quote)return {kind:'literal',value};if(char==='\\'){const escaped=source[position++];if(escaped==='u'){const hex=source.slice(position,position+4);if(!/^[\da-f]{4}$/i.test(hex))throw Error('Invalid Unicode escape');value+=String.fromCharCode(parseInt(hex,16));position+=4;}else value+=({n:'\n',r:'\r',t:'\t',b:'\b',f:'\f'})[escaped]??escaped;}else value+=char;}throw Error('Unclosed string');}
+    function primary(depth){
+      if(++tokens>10000||depth>64)throw Error('Expression limit');space();let result;
+      if(source[position]==='"'||source[position]==="'")result=stringLiteral();
+      else if(take('`')){const parts=[];let text='';while(position<source.length&&source[position]!=='`'){if(source[position]==='\\'){position++;text+=source[position++]||'';}else if(source.startsWith('${',position)){position+=2;parts.push({kind:'literal',value:text});text='';parts.push(parse(0,depth+1));if(!take('}'))throw Error('Template closing brace');}else text+=source[position++];}if(!take('`'))throw Error('Unclosed template');parts.push({kind:'literal',value:text});result={kind:'template',parts};}
+      else if(take('(')){if(take(')')){if(!take('=>'))throw Error('Empty expression');result={kind:'lambda',params:[],body:parse(0,depth+1)};}else{const saved=position;const names=[];let match;while((match=/^[A-Za-z_$][\w$]*/.exec(source.slice(position)))){names.push(match[0]);position+=match[0].length;if(!take(','))break;space();}if(names.length&&take(')')&&take('=>'))result={kind:'lambda',params:names,body:parse(0,depth+1)};else{position=saved;result=parse(0,depth+1);if(!take(')'))throw Error('Closing parenthesis');}}}
+      else if(take('[')){const items=[];if(!take(']')){do{items.push(take('...')?{kind:'spread',value:parse(0,depth+1)}:parse(0,depth+1));}while(take(',')&&!source.slice(position).trimStart().startsWith(']'));if(!take(']'))throw Error('Closing array');}result={kind:'array',items};}
+      else if(take('{')){const entries=[];if(!take('}')){do{space();let key;if(source[position]==='"'||source[position]==="'")key=stringLiteral().value;else{const match=/^[A-Za-z_$][\w$]*/.exec(source.slice(position));if(!match)throw Error('Object key');key=match[0];position+=key.length;}if(forbidden.has(key)||!take(':'))throw Error('Object property');entries.push([key,parse(0,depth+1)]);}while(take(',')&&!source.slice(position).trimStart().startsWith('}'));if(!take('}'))throw Error('Closing object');}result={kind:'object',entries};}
+      else if(take('!'))result={kind:'unary',operator:'!',value:primary(depth+1)};
+      else if(take('-'))result={kind:'unary',operator:'-',value:primary(depth+1)};
+      else{space();const number=/^(?:\d+(?:\.\d*)?|\.\d+)/.exec(source.slice(position));if(number){position+=number[0].length;result={kind:'literal',value:Number(number[0])};}else{const name=/^[A-Za-z_$][\w$]*/.exec(source.slice(position));if(!name)throw Error('Unsupported expression at '+position);position+=name[0].length;result=['true','false','null'].includes(name[0])?{kind:'literal',value:JSON.parse(name[0])}:{kind:'identifier',name:name[0]};if(take('=>'))result={kind:'lambda',params:[name[0]],body:parse(0,depth+1)};}}
+      while(true){if(take('.')){const name=/^[A-Za-z_$][\w$]*/.exec(source.slice(position));if(!name||forbidden.has(name[0]))throw Error('Forbidden property');position+=name[0].length;result={kind:'member',object:result,key:{kind:'literal',value:name[0]}};}else if(take('[')){const key=parse(0,depth+1);if(!take(']'))throw Error('Closing access');result={kind:'member',object:result,key};}else if(take('(')){const args=[];if(!take(')')){do{args.push(parse(0,depth+1));}while(take(','));if(!take(')'))throw Error('Closing call');}result={kind:'call',callee:result,args};}else break;}
+      return result;
+    }
+    const precedence={'||':1,'&&':2,'===':3,'!==':3,'==':3,'!=':3,'<=':4,'>=':4,'<':4,'>':4,'+':5,'-':5,'*':6,'/':6,'%':6};
+    function parse(minimum=0,depth=0){let left=primary(depth);while(true){space();const operator=['===','!==','<=','>=','==','!=','&&','||','+','-','*','/','%','<','>'].find(value=>source.startsWith(value,position));if(!operator||precedence[operator]<minimum)break;position+=operator.length;left={kind:'binary',operator,left,right:parse(precedence[operator]+1,depth+1)};}if(minimum===0&&take('?')){const yes=parse(0,depth+1);if(!take(':'))throw Error('Conditional colon');left={kind:'conditional',test:left,yes,no:parse(0,depth+1)};}return left;}
+    const result=parse();space();if(position!==source.length)throw Error('Unsupported expression at '+position);return result;
+  }
+  function evaluate(ast,environment,budget={remaining:100000},depth=0){
+    if(!ast)return undefined;if(--budget.remaining<0||depth>64)throw Error('Evaluation limit');
+    const run=value=>evaluate(value,environment,budget,depth+1);
+    if(ast.kind==='literal')return ast.value;
+    if(ast.kind==='identifier')return own(environment,ast.name);
+    if(ast.kind==='template')return ast.parts.map(part=>String(run(part)??'')).join('').slice(0,1048576);
+    if(ast.kind==='array'){const result=[];for(const item of ast.items){if(item.kind==='spread'){const value=run(item.value);if(!Array.isArray(value))throw Error('Array spread only');result.push(...value.slice(0,10000));}else result.push(run(item));if(result.length>10000)throw Error('Array limit');}return result;}
+    if(ast.kind==='object'){const result=Object.create(null);for(const [key,value]of ast.entries)result[key]=run(value);return result;}
+    if(ast.kind==='member'){const object=run(ast.object),key=run(ast.key);if(key==='length'&&(Array.isArray(object)||typeof object==='string'))return object.length;return own(object,key);}
+    if(ast.kind==='lambda')return {dilLambda:ast,environment};
+    if(ast.kind==='unary')return ast.operator==='!'?!run(ast.value):-Number(run(ast.value));
+    if(ast.kind==='conditional')return run(ast.test)?run(ast.yes):run(ast.no);
+    if(ast.kind==='binary'){const left=run(ast.left);if(ast.operator==='&&')return left&&run(ast.right);if(ast.operator==='||')return left||run(ast.right);const right=run(ast.right);switch(ast.operator){case '+':return typeof left==='string'||typeof right==='string'?(String(left??'')+String(right??'')).slice(0,1048576):Number(left)+Number(right);case '-':return Number(left)-Number(right);case '*':return Number(left)*Number(right);case '/':return Number(right)?Number(left)/Number(right):0;case '%':return Number(left)%Number(right);case '===':case '==':return left===right;case '!==':case '!=':return left!==right;case '<':return left<right;case '>':return left>right;case '<=':return left<=right;case '>=':return left>=right;}}
+    if(ast.kind==='call'){
+      if(ast.callee.kind==='member'){const object=run(ast.callee.object),method=run(ast.callee.key),args=ast.args.map(run);if(method==='includes'&&(Array.isArray(object)||typeof object==='string'))return object.includes(args[0]);if(method==='filter'&&Array.isArray(object)&&args[0]?.dilLambda)return object.filter((item,index)=>invoke(args[0],[item,index],budget,depth+1));if(method==='join'&&Array.isArray(object))return object.join(String(args[0]??',')).slice(0,1048576);throw Error('Unsupported call');}
+      throw Error('Unsupported call');
+    }
+    throw Error('Unsupported expression');
+  }
+  function invoke(lambda,args,budget={remaining:100000},depth=0){if(!lambda?.dilLambda)throw Error('Expected local lambda');const environment=Object.assign(Object.create(null),lambda.environment);lambda.dilLambda.params.forEach((name,index)=>{if(!forbidden.has(name))environment[name]=args[index];});return evaluate(lambda.dilLambda.body,environment,budget,depth+1);}
+  function balanced(source,start){
+    const stack=['}'];let quote='',escaped=false;
+    for(let position=start+1;position<source.length;position++){const char=source[position];if(quote){if(escaped)escaped=false;else if(char==='\\')escaped=true;else if(char===quote)quote='';continue;}if('"\'`'.includes(char)){quote=char;continue;}if(char==='{')stack.push('}');else if(char==='[')stack.push(']');else if(char==='(')stack.push(')');else if('}])'.includes(char)){if(stack.pop()!==char)throw Error('Mismatched expression');if(!stack.length)return position+1;}}
+    throw Error('Unclosed expression');
+  }
+  function parse(source,context={}){
+    const diagnostics=[],declarations=[],counts=Object.create(null);let position=0,nodes=0,recovered=[];
+    if(new TextEncoder().encode(source).length>1048576)return {version:1,nodes:[{kind:'error',detail:'Component source exceeds 1 MiB'}],declarations:[],initial:{},context:{},diagnostics:[diagnostic('source-limit','1 MiB')]};
+    const readExpression=text=>{try{return expression(text);}catch(error){diagnostics.push(diagnostic('expression',error.message+': '+text));return {kind:'literal',value:undefined};}};
+    const readBrace=()=>{const end=balanced(source,position),text=source.slice(position+1,end-1);position=end;return text;};
+    function children(closing='',depth=0){
+      if(depth>64)throw Error('Component nesting exceeds 64');const result=[];if(depth===0)recovered=result;let text='',fence=null,inline=0;
+      const flush=()=>{if(text){if(closing){const lines=text.split('\n'),indents=lines.filter(line=>line.trim()).map(line=>/^ */.exec(line)[0].length),indent=indents.length?Math.min(...indents):0;if(indent)text=lines.map(line=>line.slice(Math.min(indent,/^ */.exec(line)[0].length))).join('\n');}result.push({kind:'markdown',text});text='';}};
+      while(position<source.length){
+        if(result.length+declarations.length>10000||nodes>10000)throw Error('Component node limit');
+      if(!fence&&!inline&&closing&&source.startsWith(closing,position)){flush();position+=closing.length;return result;}
+        if((position===0||source[position-1]==='\n')){const match=/^ {0,3}(`{3,}|~{3,})[^\n]*(?:\n|$)/.exec(source.slice(position));if(match){if(!fence)fence={char:match[1][0],length:match[1].length};else if(fence.char===match[1][0]&&match[1].length>=fence.length)fence=null;text+=match[0];position+=match[0].length;continue;}}
+        if(!fence&&source[position]==='`'){const ticks=/^`+/.exec(source.slice(position))[0];if(!inline)inline=ticks.length;else if(inline===ticks.length)inline=0;text+=ticks;position+=ticks.length;continue;}
+        if(fence||inline||source[position]==='\\'){text+=source[position++];if(text.endsWith('\\')&&position<source.length)text+=source[position++];continue;}
+        if(source.startsWith('{@body',position)){flush();const declaration=readBrace().slice(5).trim(),match=/^const\s+(\[[^\]]+\]|[A-Za-z_$][\w$]*)\s*=\s*([\s\S]*?);?$/.exec(declaration);if(!match){diagnostics.push(diagnostic('declaration',declaration));continue;}const state=/^\[\s*([\w$]+)\s*,\s*([\w$]+)\s*\]$/.exec(match[1]),initial=state?/^DIL\.useState\(([\s\S]*)\)$/.exec(match[2]):null;if(state&&!initial){diagnostics.push(diagnostic('state',declaration));continue;}declarations.push({name:state?state[1]:match[1],setter:state?state[2]:'',value:readExpression(initial?initial[1]:match[2])});continue;}
+        if(source.startsWith('{#each',position)){flush();const header=readBrace(),match=/^#each\s+([\s\S]+)\s+as\s+([\w$]+)(?:\s*,\s*([\w$]+))?$/.exec(header);if(!match)throw Error('Invalid each header');result.push({kind:'each',value:readExpression(match[1]),item:match[2],index:match[3]||'',children:children('{/each}',depth+1)});continue;}
+        const start=/^<([A-Za-z][\w-]*)(?=[\s/>])/.exec(source.slice(position));
+        if(start){nodes++;flush();const name=start[1],begin=position;position+=start[0].length;const attrs=Object.create(null);let selfClosing=false;
+          while(position<source.length){while(/\s/.test(source[position]||'')&&position<source.length)position++;if(source.startsWith('/>',position)){position+=2;selfClosing=true;break;}if(source[position]==='>'){position++;break;}const attr=/^[\w$-]+/.exec(source.slice(position));if(!attr)throw Error('Invalid '+name+' attribute');position+=attr[0].length;while(/\s/.test(source[position]||'')&&position<source.length)position++;let value={kind:'literal',value:true};if(source[position]==='='){position++;while(/\s/.test(source[position]||'')&&position<source.length)position++;if(source[position]==='{')value=readExpression(readBrace());else if(source[position]==='"'||source[position]==="'"){const quote=source[position++],end=source.indexOf(quote,position);if(end<0)throw Error('Unclosed attribute');value={kind:'literal',value:source.slice(position,end)};position=end+1;}else{const literal=/^[A-Za-z0-9_.:%-]+/.exec(source.slice(position));if(!literal)throw Error('Expected literal attribute');value={kind:'literal',value:literal[0]};position+=literal[0].length;}}if(!forbidden.has(attr[0]))attrs[attr[0]]=value;}
+          counts[name]=(counts[name]||0)+1;const nested=selfClosing?[]:children('</'+name+'>',depth+1);result.push(tags.has(name)?{kind:'element',name,attrs,children:nested}:{kind:'error',detail:'Unknown component: '+name,source:source.slice(begin,position).slice(0,8192)});if(!tags.has(name))diagnostics.push(diagnostic('tag',name));continue;
+        }
+        if(source[position]==='{'&&!source.startsWith('{/',position)){const saved=position;try{const raw=readBrace();const ast=expression(raw);flush();result.push({kind:'expression',value:ast});continue;}catch{position=saved;}}
+        text+=source[position++];
+      }
+      flush();if(closing)throw Error('Missing '+closing);return result;
+    }
+    let parsed;try{parsed=children();}catch(error){diagnostics.push(diagnostic('parse',error.message+' at '+position+': '+source.slice(position,position+80)));parsed=[...recovered,{kind:'error',detail:error.message,source:source.slice(Math.max(0,position-80),position+8112)}];if(position<source.length)parsed.push({kind:'markdown',text:source.slice(position)});}
+    const compact=nodes=>{const output=[];for(const node of nodes){if(node.children)node.children=compact(node.children);const previous=output.at(-1);if(node.kind==='markdown'&&previous?.kind==='markdown'){previous.text+=node.text;delete previous._html;delete previous._inlineHtml;}else output.push(node);}return output;};parsed=compact(parsed);
+    const initial=Object.create(null),environment=Object.assign(Object.create(null),context.entities||{}),budget={remaining:100000};
+    for(const declaration of declarations){try{const value=evaluate(declaration.value,environment,budget);environment[declaration.name]=value;if(declaration.setter){const exported=own(context.state,declaration.name);initial[declaration.name]=typeof exported===typeof value&&Array.isArray(exported)===Array.isArray(value)?exported:value;environment[declaration.name]=initial[declaration.name];}}catch(error){diagnostics.push(diagnostic('initial',error.message));}}
+    return {version:1,nodes:parsed,declarations,initial,context,diagnostics,counts};
+  }
+  function materialize(program,state=program.initial){
+    if(program.snapshot)return {nodes:program.nodes,diagnostics:program.diagnostics||[]};
+    const budget={remaining:100000},environment=Object.assign(Object.create(null),program.context.entities||{}),diagnostics=[...program.diagnostics];let iterations=0;
+    for(const declaration of program.declarations){try{environment[declaration.name]=declaration.setter?own(state,declaration.name):evaluate(declaration.value,environment,budget);}catch(error){diagnostics.push(diagnostic('evaluation',error.message));}}
+    const visit=(nodes,scope,depth=0)=>{if(depth>64)throw Error('Materialization depth');const result=[];for(const node of nodes){if(--budget.remaining<0)throw Error('Evaluation limit');if(node.kind==='each'){const values=evaluate(node.value,scope,budget);if(!Array.isArray(values))throw Error('Each value must be an array');for(const [index,value]of values.entries()){if(++iterations>10000)throw Error('Loop limit');const local=Object.assign(Object.create(null),scope,{[node.item]:value});if(node.index)local[node.index]=index;result.push(...visit(node.children,local,depth+1));}}else if(node.kind==='expression'){result.push({kind:'markdown',text:String(evaluate(node.value,scope,budget)??'')});}else if(node.kind==='element'){const attrs=Object.create(null),events=Object.create(null);for(const [key,value]of Object.entries(node.attrs)){if(key==='onChange'||key==='onClick'){events[key]=value;continue;}if(key.startsWith('on')||key.startsWith('$'))continue;try{attrs[key]=evaluate(value,scope,budget);}catch(error){diagnostics.push(diagnostic('attribute',node.name+'.'+key+': '+error.message));}}const locals=Object.fromEntries(Object.entries(scope).filter(([key])=>!Object.hasOwn(program.context.entities||{},key)));result.push({...node,attrs,events,locals,children:visit(node.children,scope,depth+1)});}else result.push(node);}return result;};
+    let nodes;try{nodes=visit(program.nodes,environment);}catch(error){diagnostics.push(diagnostic('evaluation',error.message));nodes=[{kind:'error',detail:error.message}];}if(typeof state?._generatedMessage==='string')nodes.push({kind:'markdown',text:'Local message (not sent):\n\n'+state._generatedMessage.slice(0,1048576)});return {nodes,diagnostics};
+  }
+  function action(program,event,locals,value,state){
+    const environment=Object.assign(Object.create(null),program.context.entities||{},locals,state),setters=new Map(program.declarations.filter(item=>item.setter).map(item=>[item.setter,item.name]));
+    if(event?.kind==='identifier'&&setters.has(event.name))return {state:{...state,[setters.get(event.name)]:value}};
+    let body=event;if(body?.kind==='lambda'){environment[body.params[0]||'event']=value;body=body.body;}
+    if(body?.kind!=='call')throw Error('Unsupported local action');
+    if(body.callee.kind==='member'&&body.callee.object.kind==='identifier'&&body.callee.object.name==='GenUI'&&body.callee.key.value==='issueNewTurn')return {message:String(evaluate(body.args[0],environment)??'')};
+    if(body.callee.kind==='identifier'&&setters.has(body.callee.name)){const key=setters.get(body.callee.name);let next=evaluate(body.args[0],environment);if(next?.dilLambda)next=invoke(next,[state[key]]);return {state:{...state,[key]:next}};}
+    throw Error('Historical action unavailable');
+  }
+  function summary(nodes,context={}){
+    const resolve=id=>context.entities?.[id]||{};
+    nodes=nodes.map(node=>node.kind==='legacy'?{kind:'markdown',text:node.text}:node);
+    const plain=value=>typeof value==='string'?value:'';
+    const lines=nodes.map(node=>{
+      if(node.kind==='markdown')return node.text;
+      if(node.kind==='error')return '[组件未还原 / Component unavailable: '+node.detail+']';
+      if(node.kind!=='element')return '';
+      const attrs=node.attrs||{},children=summary(node.children||[],context),reference=resolve(attrs.ref),entity=reference.entity||reference;
+      const url=value=>{try{const parsed=new URL(value);return /^https?:$/.test(parsed.protocol)&&!parsed.username&&!parsed.password?parsed.href:'';}catch{return '';}};
+      const linked=(title,value)=>{const href=url(value);return href?'['+String(title).replace(/[\[\]\\]/g,'\\$&')+'](<'+href.replace(/[<>]/g,encodeURIComponent)+'>)':String(title);};
+      switch(node.name){
+        case 'Entity':return plain(attrs.value)||plain(entity.name||entity.title)||plain(attrs.ref);
+        case 'Cite':return (attrs.refs||[]).map(id=>{const item=resolve(id);return linked(item.title||item.name||id,item.url||item.website_url||item.entity?.website_url);}).join(' ');
+        case 'Link':return linked(attrs.title||entity.title||entity.name||attrs.url||attrs.ref||children,attrs.url||entity.url||entity.website_url);
+        case 'Rating':return 'Rating: '+String(attrs.data?.value??attrs.data?.rating??attrs.data??entity.rating??'')+(entity.rating_scale?' / '+entity.rating_scale:'');
+        case 'AsyncImage':case 'AsyncImageGroup':return (Array.isArray(attrs.query)?attrs.query:[attrs.query]).filter(value=>typeof value==='string').join('\n');
+        case 'MapWidgetV2':return plain(attrs.title)+'\n'+(attrs.points||[]).map(point=>{const resolved={...resolve(point.ref),...point};return plain(resolved.name||resolved.ref)+' '+plain(resolved.address);}).join('\n')+'\n'+(attrs.groups||[]).map(group=>plain(group.title)+'\n'+(group.locations||[]).map(location=>plain(location.notes||location.point_id)).join('\n')).join('\n');
+        case 'ReservationTimePillsRefWidget':return (entity.name||attrs.ref)+' · Historical reservation snapshot\n'+(entity.reservations||entity.reservation_providers||[]).map(item=>[item.date,item.time,item.party_size,...(item.availability_data?.times||[]),item.availability_data?.party_size,linked(item.provider_name||item.provider||'Reservation',item.provider_reservation_url||item.url||item.booking_url)].filter(value=>value!=null).join(' · ')).join('\n');
+        case 'Chart':{const content=attrs.content||{};return plain(content.meta?.title)+'\n'+plain(content.meta?.description)+'\n'+[content.xKey,...(content.series||[]).map(item=>item.label||item.dataKey)].join(' | ')+'\n'+(content.data||[]).map(row=>Object.values(row).join(' | ')).join('\n');}
+        case 'input':return String(attrs.value??'');
+        case 'radio-group':return children+'\nSelected: '+String(attrs.value??'');
+        case 'checkbox':return (attrs.checked?'[x] ':'[ ] ')+children;
+        default:return children;
+      }
+    });
+    return lines.join('\n');
+  }
+  return {parse,expression,evaluate,materialize,action,summary,tags:[...tags]};
+}
+
 function gptExportCore(){
   const root='00000000-0000-4000-8000-000000000000';
   const list=value=>Array.isArray(value)?value:[];
@@ -1111,10 +1242,11 @@ function gptExportCore(){
   function referenceIndex(references){
     const index=new Map();for(const reference of references)for(const item of [...list(reference.items),...list(reference.sources)])for(const ref of list(item.refs))index.set('turn'+ref.turn_index+ref.ref_type+ref.ref_index,item);for(const reference of references)if(reference.type==='file'){for(const id of [reference.id,reference.input_pointer])if(typeof id==='string')index.set(id,reference);const pointer=reference.input_pointer;if(pointer&&typeof pointer==='object')index.set('turn'+pointer.message_index+'file'+pointer.file_index,reference);}return index;
   }
-  function parseText(text,metadata={}){
+  function parseText(text,metadata={},context={}){
     const references=list(metadata.content_references),index=referenceIndex(references),views=[],used=new Set();let output='',cursor=0,fence=null,inline=0;
-    const numbered=new Map(),sources=[];let citationGroup=0;
-    function marker(kind,payload,raw){
+    const numbered=new Map(),sources=[],positions=[];let citationGroup=0;
+    function marker(kind,payload,raw){const start=views.length,text=markerValue(kind,payload,raw);if(typeof gptDilCore!=='function'||views.length===start)return text;positions.push({kind:'legacy',text,views:views.slice(start)});return '\u001eGPTVIEW'+(positions.length-1)+'\u001f';}
+    function markerValue(kind,payload,raw){
       if(kind==='cite'||kind==='filecite'){
         const ids=payload.split('\ue202'),group=kind==='cite'?references.filter(reference=>reference.type==='grouped_webpages')[citationGroup]:null;
         const suffix=id=>/^turn\d+([a-z]+\d+)$/.exec(id)?.[1];
@@ -1153,26 +1285,46 @@ function gptExportCore(){
       output+=text[cursor++];
     }
     for(const {number,source}of sources){const title=bounded(source.title||source.name||'来源 / Source'),url=safeUrl(source.url||source.cloud_doc_url);output+='\n\n['+number+'] '+link(title,url)+(source.page_range_start!=null?' · p. '+source.page_range_start+(source.page_range_end!=null?'–'+source.page_range_end:''):'');}
+    if(typeof gptDilCore==='function'&&(positions.length||/(?:<[A-Za-z][\w-]*(?:\s|\/>|>)|\{@body|\{#each)/.test(output))){
+      const dil=gptDilCore(),program=dil.parse(output,context),insert=nodes=>nodes.flatMap(node=>{if(node.kind==='markdown'){const parts=node.text.split(/\u001eGPTVIEW(\d+)\u001f/g);return parts.flatMap((text,index)=>index%2?[positions[Number(text)]]:text?[{kind:'markdown',text}]:[]);}return [{...node,...(node.children?{children:insert(node.children)}:{})}];});program.nodes=insert(program.nodes);const materialized=dil.materialize(program);
+      if(positions.length||Object.keys(program.counts||{}).length||program.declarations.length||program.diagnostics.length)return {text:dil.summary(materialized.nodes,context),views:[],program};
+    }
     return {text:output,views};
   }
-  function convert(value){
+  function componentContext(mapping,key){
+    const entities=Object.create(null),images=[],state=mapping[key]?.message?.metadata?.view_state?.root||{},seen=new Set();let current=key;
+    const clean=(value,depth=0)=>{if(depth>8)return null;if(typeof value==='string')return value.slice(0,8192);if(value==null||typeof value==='number'||typeof value==='boolean')return value;if(Array.isArray(value))return value.slice(0,200).map(item=>clean(item,depth+1));if(typeof value==='object'){const output=Object.create(null);for(const [name,item]of Object.entries(value).slice(0,100))if(!['__proto__','constructor','prototype','entity_key'].includes(name))output[name]=clean(item,depth+1);return output;}return null;};
+    while(current&&mapping[current]&&!seen.has(current)){
+      seen.add(current);const metadata=mapping[current].message?.metadata||{},references=list(metadata.content_references),indexed=referenceIndex(references);
+      for(const [id,item]of indexed)if(!Object.hasOwn(entities,id))entities[id]=clean(item);
+      const points=references.filter(ref=>ref.type==='map').flatMap(ref=>list(ref.entities)).concat(Object.values(metadata.view_state?.widgets||{}).flatMap(widget=>list(widget?.points)));
+      for(const point of points){const value=clean({...point.entity,...point});for(const ref of list(point.refs)){const id='turn'+ref.turn_index+ref.ref_type+ref.ref_index;if(!Object.hasOwn(entities,id))entities[id]=value;}for(const id of [point.input_key,point.id])if(typeof id==='string'&&/^turn\d+/.test(id)&&!Object.hasOwn(entities,id))entities[id]=value;}
+      for(const reference of references)if(reference.type==='image_group')for(const item of list(reference.images)){const image=item.image_result||item,url=safeUrl(image.content_url||image.image_url||image.url||image.original);if(url)images.push({url,title:bounded(image.title||image.alt),query:bounded(item.image_search_query)});}
+      current=mapping[current].parent;
+    }
+    return {entities,images:images.slice(0,100),state:clean(state)};
+  }
+  function* convertSteps(value){
     if(!isConversation(value))return value;
     const originalId=string(value.id||value.conversation_id);if(!originalId)throw new Error('GPT conversation ID missing');
     const mapping=value.mapping,keys=Object.keys(mapping),prefix='gpt:'+originalId+':',warnings=[],messages=[],parents=new Map();
     for(const key of keys){const node=mapping[key];if(node?.message){let parent=node.parent,seen=new Set([key]);while(parent&&mapping[parent]&&!mapping[parent].message){if(seen.has(parent)){parent=null;warnings.push('消息树存在循环 / Message tree cycle');break;}seen.add(parent);parent=mapping[parent].parent;}parents.set(key,parent&&mapping[parent]?.message?prefix+parent:root);}}
     for(const key of keys){const node=mapping[key],message=node?.message;if(!message)continue;const metadata=message.metadata||{},content=message.content||{},blocks=[];
-      if(content.content_type==='text'||content.content_type==='multimodal_text')for(const part of list(content.parts)){if(typeof part==='string'){const parsed=parseText(part,metadata);blocks.push({type:'text',text:parsed.text,gptViews:parsed.views});}else blocks.push({type:'text',text:'[非文本内容 / Non-text content]',gptViews:[{kind:'unknown',title:string(part?.content_type),details:boundedDetails(part).text}]});}
+      if(content.content_type==='text'||content.content_type==='multimodal_text')for(const part of list(content.parts)){if(typeof part==='string'){const context=/(?:<[A-Za-z]|\{@body|\{#each|\ue200)/.test(part)?componentContext(mapping,key):{},parsed=parseText(part,metadata,context);blocks.push({type:'text',text:parsed.text,gptViews:parsed.views,...(parsed.program?{gptProgram:parsed.program}:{})});}else blocks.push({type:'text',text:'[非文本内容 / Non-text content]',gptViews:[{kind:'unknown',title:string(part?.content_type),details:boundedDetails(part).text}]});}
       else if(content.content_type==='reasoning_recap')blocks.push({type:'thinking',thinking:string(content.content),summaries:true});
       else if(content.content_type==='thoughts')blocks.push({type:'thinking',thinking:list(content.thoughts).map(thought=>[string(thought.summary),string(thought.content)].filter(Boolean).join('\n')).join('\n\n'),summaries:true});
       else blocks.push({type:'text',text:'[未知内容 / Unknown content]',gptViews:[{kind:'unknown',title:bounded(content.content_type),details:boundedDetails(content).text}]});
-      if(list(metadata.content_references).some(reference=>reference.type==='client_defined_widget')&&!blocks.some(block=>block.gptViews?.some(view=>view.kind==='disabled')))blocks.push({type:'text',text:'[组件数据缺失 / Component data missing]',gptViews:[{kind:'unknown',title:'历史组件 / Historical component',details:'client_defined_widget: exported data unavailable'}]});
+      if(list(metadata.content_references).some(reference=>reference.type==='client_defined_widget')&&!blocks.some(block=>block.gptProgram||block.gptViews?.some(view=>view.kind==='disabled')))blocks.push({type:'text',text:'[组件数据缺失 / Component data missing]',gptViews:[{kind:'unknown',title:'历史组件 / Historical component',details:'client_defined_widget: exported data unavailable'}]});
       messages.push({uuid:prefix+key,originalId:string(message.id),originalNodeId:key,sourcePlatform:'gpt',sender:message.author?.role==='user'?'human':string(message.author?.role)||'unknown',created_at:timestamp(message.create_time),updated_at:timestamp(message.update_time),parent_message_uuid:parents.get(key),model:string(metadata.model_slug||metadata.resolved_model_slug),contentType:string(content.content_type),content:blocks,attachments:list(metadata.attachments).map(att=>({file_name:string(att.name),file_type:string(att.mime_type),file_id:string(att.id),library_file_id:string(att.library_file_id),file_path:string(att.id)+'.dat',file_size:att.size}))});
+      yield;
     }
     const path=[],seen=new Set();let current=value.current_node,valid=!!mapping[current];while(current&&mapping[current]){if(seen.has(current)){valid=false;break;}seen.add(current);if(mapping[current].message)path.unshift(prefix+current);const parent=mapping[current].parent;if(parent&&!mapping[parent])valid=false;current=parent;}
     if(!valid||!path.length)warnings.push('当前节点缺失或无效，显示最长有效路径 / Invalid current node; showing longest valid path');
     return {uuid:'gpt:'+originalId,originalId,sourcePlatform:'gpt',name:string(value.title),summary:'',created_at:timestamp(value.create_time),updated_at:timestamp(value.update_time),defaultModel:string(value.default_model_slug),currentNode:string(value.current_node),defaultPath:valid?path:[],importWarnings:[...new Set(warnings)],chat_messages:messages};
   }
-  return {isConversation,convert,manifest,parseText,safeUrl,boundedDetails};
+  function convert(value){const iterator=convertSteps(value);let step;do{step=iterator.next();}while(!step.done);return step.value;}
+  async function convertAsync(value,checkpoint){const iterator=convertSteps(value);let step;do{step=iterator.next();if(!step.done)await checkpoint();}while(!step.done);return step.value;}
+  return {isConversation,convert,convertAsync,manifest,parseText,safeUrl,boundedDetails};
 }
 
 // Pure, local rules. Offsets always refer to original UTF-16 source text.
@@ -1377,6 +1529,7 @@ function* redactionSteps(conv,state,style,strict){
     const {parent,key,path}=stack.pop(),value=parent[key];
     if(typeof value==='string')parent[key]=yield* redactText(value,state,path,style,strict);
     else if(value&&typeof value==='object'){
+      if(value.gptProgram)value.gptProgram._redactedMedia=true;
       // Matches attachments/files arrays at any depth, including content blocks.
       // _redactedMedia is consumed by the PDF renderer to block cached original pixels.
       if(/\.(?:attachments|files)\[\d+\]$/.test(path)){
@@ -1678,6 +1831,7 @@ copy._prepared={visuals,files,searchQueries,searchResults};
   if(copy.text){if(!full&&copy.text.length>65536){copy._partial=partial(copy.text,'text');copy.text=copy._partial.text;copy._html=copy._partial.html;}else copy._html=marked.parse(copy.text);}
   for(let i=0;i<(copy.content||[]).length;i++){
     const block=copy.content[i];if(!block||typeof block!=='object')continue;const key='content.'+i+'.'+(block.type==='thinking'?'thinking':'text');block._field=key;
+    if(block.gptProgram){const stack=[...block.gptProgram.nodes];while(stack.length){const node=stack.pop();if(node.kind==='markdown'){node._html=marked.parse(String(node.text||''));node._inlineHtml=marked.parseInline(String(node.text||''));}if(node.children)stack.push(...node.children);}}
     if(block.type==='text'){if(!full&&String(block.text||'').length>65536){block._partial=partial(block.text,key);block.text=block._partial.text;block._html=block._partial.html;}else block._html=marked.parse(String(block.text||''));}
     else if(!full&&block.type==='thinking'&&String(block.thinking||'').length>65536){block._partial=partial(block.thinking,key,false);block.thinking=block._partial.text;}
   }
@@ -1733,16 +1887,19 @@ function featureWorkerRuntime(core,handler){
 function taskWorkerMain(){
   const core=workerDomainCore(),cache=new Map();let pdf=null;
   const materialize=async(payload,token)=>{
-    if(payload.conversation)return structuredClone(payload.conversation);
-    for await(const record of token.records([payload.uuid]))return JSON.parse(record.raw);
-    throw new Error('Conversation not found');
+    let conversation=payload.conversation?structuredClone(payload.conversation):null;
+    if(!conversation)for await(const record of token.records([payload.uuid])){conversation=JSON.parse(record.raw);break;}
+    if(!conversation)throw new Error('Conversation not found');
+    const dil=typeof gptDilCore==='function'?gptDilCore():null;
+    if(dil)for(const [sourceIndex,message]of (conversation.chat_messages||[]).entries())for(const [blockIndex,block]of (message.content||[]).entries())if(block.gptProgram){const program=block.gptProgram,state=payload.gptStates?.[sourceIndex+':'+blockIndex]||program.initial,result=dil.materialize(program,state);const strip=nodes=>nodes.map(node=>{const {events,locals,...visible}=node;return {...visible,...(node.children?{children:strip(node.children)}:{})};});block.text=dil.summary(result.nodes,program.context);block.gptProgram={version:1,snapshot:true,nodes:strip(result.nodes),declarations:[],initial:{},context:program.context,diagnostics:result.diagnostics};await token.checkpoint();}
+    return conversation;
   };
   featureWorkerRuntime(core,async(type,payload,token)=>{
     if(type==='memoryView'){await token.checkpoint();return{html:core.renderMarkdown(payload.text)};}
     if(type==='highlight'){await token.checkpoint();return{html:hljs.getLanguage(payload.language)?hljs.highlight(payload.code,{language:payload.language}).value:core.esc(payload.code)};}
     if(type==='behavior')return core.behavior(token.records(),()=>token.checkpoint({loaded:token.loadedRecords||0,total:token.totalRecords||0}));
     if(type==='preview'){
-      const options=core.redactionOptions(payload),key=JSON.stringify([token.generation,payload.uuid,core.language,payload.style,payload.strict,core.redactionRuleVersion,options.customTerms,options.includeContextCandidates,options.customSimilarity]);
+      const options=core.redactionOptions(payload),key=JSON.stringify([token.generation,payload.uuid,core.language,payload.style,payload.strict,core.redactionRuleVersion,options.customTerms,options.includeContextCandidates,options.customSimilarity,payload.gptStates]);
       if(!payload.conversation&&cache.has(key)){const hit=cache.get(key);cache.delete(key);cache.set(key,hit);return hit;}
       const result=await core.redactAsync(await materialize(payload,token),payload.style||'standard',!!payload.strict,token.checkpoint,true,options);
       if(!payload.conversation){cache.set(key,result);while(cache.size>4)cache.delete(cache.keys().next().value);}
@@ -2002,7 +2159,7 @@ async function ensureFeature(kind){
   const libraries=kind==='import'?['zip']:kind==='reader'?['markdown','highlight']:['markdown','highlight'];
   const sources=libraries.map(name=>Uint8Array.from(atob(WORKER_LIBRARIES[name].base64),char=>char.charCodeAt(0)));
   const main=kind==='import'?importWorkerMain:kind==='reader'?readerWorkerMain:taskWorkerMain;
-  const url=URL.createObjectURL(new Blob([...sources,'\n',exportFormatCore.toString(),'\n',gptExportCore.toString(),'\n',redactionRules.toString(),'\n',workerDomainCore.toString(),'\n',featureWorkerRuntime.toString(),'\n('+main.toString()+')()'],{type:'text/javascript'}));
+  const url=URL.createObjectURL(new Blob([...sources,'\n',exportFormatCore.toString(),'\n',gptDilCore.toString(),'\n',gptExportCore.toString(),'\n',redactionRules.toString(),'\n',workerDomainCore.toString(),'\n',featureWorkerRuntime.toString(),'\n('+main.toString()+')()'],{type:'text/javascript'}));
   let worker;try{worker=new Worker(url);}catch(error){URL.revokeObjectURL(url);throw error;}
   state={worker,url,id:kind+':'+(++featureSequence),generation:dataWorkerGeneration,pending:new Map(),port:null};
   state.ready=new Promise((resolve,reject)=>{state.resolveReady=resolve;state.rejectReady=reject;});state.ready.catch(()=>{});featureWorkers.set(kind,state);
@@ -2023,7 +2180,7 @@ async function featureRequest(kind,type,payload={},progress){
   if(kind==='task'&&type==='behavior'&&state.pending.size)throw new Error(t('任务进行中，请稍后重试'));
   return new Promise((resolve,reject)=>{state.pending.set(requestId,{resolve,reject,progress});state.worker.postMessage({type,generation:state.generation,requestId,payload:{...payload,lang:currentLang},context:{lang:currentLang,labels:EN}});});
 }
-function conversationTaskPayload(conv=currentConv){return{uuid:conv?.uuid,...(!conv?{}:conv._readerBacked||conv._workerBacked?{}:{conversation:conv}),mode:conversationTreeMode,choices:{...branchChoices}};}
+function conversationTaskPayload(conv=currentConv){return{uuid:conv?.uuid,...(!conv?{}:conv._readerBacked||conv._workerBacked?{}:{conversation:conv}),mode:conversationTreeMode,choices:{...branchChoices},gptStates:typeof gptExportStates==='function'?gptExportStates(conv?.uuid):{}};}
 async function startZipImport(file,button){
   const generation=++dataLoadGeneration;useDataWorkerGeneration(generation);await dataWorkerRequest('reset',null,[],generation);clearLocalMedia();
   const result=await featureRequest('import','open',{file},progress=>{if(generation===dataWorkerGeneration)button.textContent=t('解压中，请稍候…')+' '+Math.round(progress.percent||0)+'%';});
@@ -2147,6 +2304,7 @@ function renderExportManifest(){
   const legacy=make('div','export-toolbar','',compatibility);for(const [action,label]of [['pick-folder','📂 选择导出文件夹'],['pick-zip','🗜️ 直接选择 ZIP 压缩包（免解压）']]){const button=make('button','export-button',t(label),legacy);button.dataset.uiClick=action;}
 }
 async function newExportArchive(){
+  gptComponentStates.clear();gptDilPrograms.clear();
   exportViewVersion++;exportSession={manifest:null,packages:[],topics:[],artifacts:[],users:[],logins:[],revision:0,errors:[],associations:{}};
   const session=exportSession,generation=++dataLoadGeneration;useDataWorkerGeneration(generation);await dataWorkerRequest('reset',null,[],generation);if(session!==exportSession)return;clearLocalMedia();
   allConvs=[];allDesigns=[];allProjects=[];memoryData=null;currentConv=null;loadedSummary={totalMsgs:0,minDate:'',maxDate:''};
@@ -2158,6 +2316,7 @@ async function openExportManifest(file){
 }
 function invalidateExportViews(){
   gptComponentStates.clear();
+  gptDilPrograms.clear();
   exportViewVersion++;exportSession.revision++;openConversationGeneration++;fullTextSearchGeneration++;projectMapGeneration++;resetReaderSearch();destroyFeature('reader');destroyFeature('task');resetAnalytics();
   for(const [id,pending]of dataWorkerPending)if(['search','projectIndex'].includes(pending.type)){dataWorkerPending.delete(id);pending.reject(abortFeature());}
   currentConv=null;behaviorResult=null;behaviorPromise=null;qualityCache.clear();corpusCache.clear();convProjectMap={};convProjectEvidence={};projectIndexStats={};convProjectMapReady=!allProjects.length;convProjectMapPromise=null;projectConvSearchCache.clear();
@@ -2419,11 +2578,123 @@ document.addEventListener('click',event=>{
   root.querySelector('.quiz-focus')?.focus({preventScroll:true});
 });
 
+const gptDilPrograms=new Map();
+let gptRemoteResources=true;
+const gptTileObserver=typeof IntersectionObserver==='function'?new IntersectionObserver(entries=>{for(const entry of entries)if(entry.isIntersecting){const tile=entry.target,url=gptExportCore().safeUrl(tile.dataset.gptTile);if(url&&gptRemoteResources)tile.setAttribute('href',url);gptTileObserver.unobserve(tile);}}):null;
+const gptTileMutations=new MutationObserver(records=>{for(const record of records)for(const [nodes,added]of [[record.addedNodes,true],[record.removedNodes,false]])for(const node of nodes){if(node.nodeType!==1)continue;for(const tile of [...(node.matches('[data-gpt-tile]')?[node]:[]),...node.querySelectorAll('[data-gpt-tile]')]){if(added){if(gptTileObserver)gptTileObserver.observe(tile);else if(gptRemoteResources)tile.setAttribute('href',gptExportCore().safeUrl(tile.dataset.gptTile)||'');}else gptTileObserver?.unobserve(tile);}}});gptTileMutations.observe(document.documentElement,{childList:true,subtree:true});
+function gptExportStates(uuid){const values=Object.create(null);for(const [key,entry]of gptDilPrograms){const [generation,conversation,location]=JSON.parse(key);if(generation===dataWorkerGeneration&&conversation===uuid)values[location]=entry.state;}return values;}
+function renderGptProgram(block,location=''){
+  const key=JSON.stringify([dataWorkerGeneration,currentConv?.uuid,location]),cached=gptComponentState(key);
+  if(!cached.values)cached.values=structuredClone(block.gptProgram.initial);
+  const program=block.gptProgram;
+  if(program.snapshot)return buildGptProgram(key,program,{}).outerHTML;
+  gptDilPrograms.delete(key);gptDilPrograms.set(key,{program,state:cached.values});while(gptDilPrograms.size>32)gptDilPrograms.delete(gptDilPrograms.keys().next().value);
+  return buildGptProgram(key,program,cached.values).outerHTML;
+}
+function buildGptProgram(key,program,state){
+  const core=gptDilCore(),materialized=core.materialize(program,state),host=document.createElement('div');host.className='gpt-dil';host.dataset.gptProgram=key;const mediaAllowed=gptRemoteResources&&!program._redactedMedia&&!document.querySelector('meta[http-equiv="Content-Security-Policy"]')?.content.includes("img-src blob: data:;");
+  const add=(parent,tag,text)=>{const node=document.createElement(tag);if(text!==undefined)node.textContent=String(text);parent.append(node);return node;};
+  const label=(zh,en)=>gptLabel(zh,en),safe=value=>gptExportCore().safeUrl(value),entities=program.context.entities||{};
+  const link=(parent,title,url)=>{const href=safe(url);if(!href)return add(parent,'span',title);const anchor=add(parent,'a',title);anchor.href=href;anchor.target='_blank';anchor.rel='noopener noreferrer';anchor.referrerPolicy='no-referrer';return anchor;};
+  const missing=(parent,name,field)=>{const details=add(parent,'details');details.className='gpt-dil-missing';add(details,'summary',name+' · '+label('导出数据缺失','Exported data missing'));add(details,'p',field);};
+  const svgNode=(tag,attrs={},text)=>{const node=document.createElementNS('http://www.w3.org/2000/svg',tag);for(const [name,value]of Object.entries(attrs))node.setAttribute(name,String(value));if(text!==undefined)node.textContent=String(text);return node;};
+  const image=(parent,url,title,attrs={})=>{if(!safe(url)||!mediaAllowed)return false;const img=add(parent,'img');img.src=safe(url);img.alt=title||'';img.loading='lazy';img.referrerPolicy='no-referrer';img.style.maxWidth='100%';if(/^[\d.]+:[\d.]+$/.test(attrs.aspectRatio||''))img.style.aspectRatio=attrs.aspectRatio.replace(':',' / ');img.style.objectFit='cover';return true;};
+  const resolve=id=>typeof id==='string'&&Object.hasOwn(entities,id)?entities[id]:null;
+  const colors={secondary:'var(--text2)',subtle:'var(--border)',warning:'#b7791f',danger:'#c53030',success:'#25834a','surface-tertiary':'var(--bg3)','surface-inverted':'var(--text)'};
+  const dimension=value=>typeof value==='number'?Math.max(0,Math.min(1200,value))*4+'px':typeof value==='string'&&/^(?:\d+(?:\.\d+)?)(?:px|%|rem|em)$/.test(value)?value:'';
+  function styles(node,attrs,name){
+    if(name==='box')node.style.alignItems=attrs.align||'stretch';if(name==='row')node.style.alignItems=attrs.align||'start';if(name==='badge')node.style.alignSelf='flex-start';if(attrs.direction==='row')node.style.flexDirection='row';if(attrs.direction==='col')node.style.flexDirection='column';
+    node.classList.add('gpt-dil-'+name);if(attrs.border)node.style.border='1px solid var(--border)';if(attrs.radius)node.style.borderRadius=({lg:'12px',full:'999px',md:'8px',sm:'4px'})[attrs.radius]||'4px';if(attrs.padding!=null)node.style.padding=dimension(attrs.padding);if(attrs.gap!=null)node.style.gap=dimension(attrs.gap);for(const property of ['width','height','maxWidth'])if(dimension(attrs[property]))node.style[property]=dimension(attrs[property]);if(attrs.flex==='1'||attrs.flex===1)node.style.flex='1';if(attrs.clip)node.style.overflow='hidden';if(attrs.block)node.style.width='100%';if(colors[attrs.color])node.style.color=colors[attrs.color];if(colors[attrs.background])node.style.background=colors[attrs.background];if(['center','start','end','stretch'].includes(attrs.align))node.style.alignItems=attrs.align;if(['between','center','start','end'].includes(attrs.justify))node.style.justifyContent=attrs.justify==='between'?'space-between':attrs.justify;if(attrs.size)node.style.fontSize=({xs:'.75rem',sm:'.875rem',md:'1rem',lg:'1.25rem',xl:'1.5rem'})[attrs.size]||'';if(attrs.weight)node.style.fontWeight=({medium:'500',semibold:'600',bold:'700'})[attrs.weight]||'';if(attrs.tabularNums)node.style.fontVariantNumeric='tabular-nums';if(name==='grid')node.style.gridTemplateColumns='repeat('+Math.max(1,Math.min(6,Number(attrs.columns)||2))+', minmax(0,1fr))';
+  }
+  let eventIndex=0,groupIndex=0;const events=[];
+  const bind=(node,event,component,kind)=>{const index=eventIndex++;node.dataset.gptDilEvent=String(index);node.dataset.gptDilKind=kind;events[index]={event,locals:component.locals};};
+  function render(nodes,parent,radioGroup=null){
+    for(let nodeIndex=0;nodeIndex<nodes.length;nodeIndex++){
+      const component=nodes[nodeIndex];
+      if(component.kind==='markdown'&&/\*\*$/.test(component.text)&&nodes[nodeIndex+1]?.name==='Entity'&&nodes[nodeIndex+2]?.kind==='markdown'&&nodes[nodeIndex+2].text.startsWith('**')){const before=component.text.slice(0,-2);if(before.trim())render([{kind:'markdown',text:before}],parent,radioGroup);const strong=add(parent,'strong');render([nodes[nodeIndex+1]],strong,radioGroup);const after=nodes[nodeIndex+2].text.slice(2);if(after.trim())render([{kind:'markdown',text:after}],parent,radioGroup);nodeIndex+=2;continue;}
+      if(component.kind==='legacy'){const node=add(parent,'div');node.innerHTML=renderGptViews({gptViews:component.views,_redactedMedia:program._redactedMedia},key+':'+eventIndex++);continue;}
+      if(component.kind==='markdown'){if(!component.text.trim())continue;const inline=['SPAN','LABEL','BUTTON','H4','SMALL','MARK'].includes(parent.tagName),node=add(parent,inline?'span':'div');node.className='gpt-dil-markdown';if(inline&&component._inlineHtml)node.innerHTML=component._inlineHtml;else if(inline)node.textContent=component.text;else node.innerHTML=component._html||renderMd(component.text);continue;}
+      if(component.kind==='error'){missing(parent,label('组件未还原','Component unavailable'),component.detail);if(component.source)add(parent,'pre',component.source);continue;}
+      if(component.kind!=='element')continue;
+      const name=component.name,attrs=component.attrs||{},plain=core.summary(component.children||[]),reference=resolve(attrs.ref),entity=reference?.entity||reference;
+      if(name==='Entity'){add(parent,'span',typeof attrs.value==='string'?attrs.value:entity?.name||entity?.title||attrs.ref||label('实体数据缺失','Entity data missing'));continue;}
+      if(name==='Cite'){const span=add(parent,'span');for(const id of attrs.refs||[]){const source=resolve(id);if(source)link(span,'['+(source.title||source.name||id)+']',source.url||source.website_url||source.entity?.website_url);else missing(span,'Cite',id);}continue;}
+      if(name==='Link'){link(parent,attrs.title||entity?.title||entity?.name||attrs.url||attrs.ref||plain,attrs.url||entity?.url||entity?.website_url);continue;}
+      if(name==='Rating'){const value=attrs.data??entity?.rating,span=add(parent,'span');span.className='gpt-dil-rating';if(value!=null)add(span,'span','★ '+(typeof value==='object'?value.value??value.rating??'':value)+(entity?.rating_scale?' / '+entity.rating_scale:'')+(entity?.review_count?' ('+entity.review_count+')':''));else missing(span,'Rating',attrs.ref||'rating');continue;}
+      if(name==='AsyncImage'||name==='AsyncImageGroup'){
+        const figure=add(parent,'figure');styles(figure,attrs,name);const queries=Array.isArray(attrs.query)?attrs.query:[attrs.query||''],matching=(program.context.images||[]).filter(item=>queries.includes(item.query)),urls=attrs.url?[{url:attrs.url,title:queries.join(' · ')}]:matching;
+        if(urls.length){for(const item of urls.slice(0,20))if(!image(figure,item.url,item.title||queries.join(' · '),attrs))link(figure,item.title||queries.join(' · '),item.url);}else for(const query of queries.slice(0,20)){const caption=add(figure,'figcaption',label('导出仅包含图片搜索词：','Export contains image query only: ')+query);link(caption,label('搜索图片','Search images'),'https://www.google.com/search?tbm=isch&q='+encodeURIComponent(query));}continue;
+      }
+      if(name==='Chart'){
+        const chart=attrs.content||{},data=Array.isArray(chart.data)?chart.data.slice(0,500):[],series=Array.isArray(chart.series)?chart.series.slice(0,12):[],card=add(parent,'figure');card.className='gpt-dil-chart';add(card,'figcaption',chart.meta?.title||label('图表','Chart'));if(chart.meta?.description)add(card,'p',chart.meta.description);
+        if(chart.chartType!=='bar'){missing(card,'Chart','chartType: '+chart.chartType);continue;}
+        const minimum=Number.isFinite(chart.yAxisMin)?chart.yAxisMin:0,values=data.flatMap(row=>series.map(item=>Number(row[item.dataKey]))).filter(Number.isFinite),maximum=Math.max(minimum+1,Number(chart.yAxisMax)||Math.max(...values,1)),height=Math.max(140,data.length*44+35),svg=svgNode('svg',{viewBox:'0 0 640 '+height,role:'img','aria-label':chart.meta?.title||'Bar chart'});card.append(svg);
+        data.forEach((row,index)=>{const top=index*44+12;svg.append(svgNode('text',{x:4,y:top+14,fill:'currentColor','font-size':12},row[chart.xKey]));series.forEach((item,seriesIndex)=>{const value=Number(row[item.dataKey]);if(!Number.isFinite(value))return;const y=top+seriesIndex*16;svg.append(svgNode('rect',{x:165,y,width:Math.max(0,420*(value-minimum)/(maximum-minimum)),height:12,fill:['#467bb5','#b16c45','#609765'][seriesIndex%3]}));svg.append(svgNode('text',{x:590,y:y+11,fill:'currentColor','font-size':11},value));});});
+        add(card,'p',minimum+' — '+maximum+' · '+series.map(item=>item.label||item.dataKey).join(' / '));const table=add(card,'table'),head=add(table,'tr');add(head,'th',chart.xKey);for(const item of series)add(head,'th',item.label||item.dataKey);for(const row of data){const tr=add(table,'tr');add(tr,'td',row[chart.xKey]);for(const item of series)add(tr,'td',row[item.dataKey]);}continue;
+      }
+      if(name==='MapWidgetV2'){
+        const card=add(parent,'section');card.className='gpt-dil-map';add(card,'h4',attrs.title||label('地图','Map'));
+        const points=(attrs.points||[]).slice(0,200).map(point=>({...resolve(point.ref),...point})),valid=points.filter(point=>Number.isFinite(point.latitude)&&Number.isFinite(point.longitude)&&Math.abs(point.latitude)<=85.0511&&Math.abs(point.longitude)<=180),byId=new Map(points.map(point=>[point.ref||point.id,point]));
+        if(valid.length){const project=point=>[(point.longitude+180)/360,(1-Math.asinh(Math.tan(point.latitude*Math.PI/180))/Math.PI)/2],coords=valid.map(project);let zoom=8;const minX=Math.min(...coords.map(p=>p[0])),maxX=Math.max(...coords.map(p=>p[0])),minY=Math.min(...coords.map(p=>p[1])),maxY=Math.max(...coords.map(p=>p[1]));while(zoom>2&&((maxX-minX)*256*2**zoom>480||(maxY-minY)*256*2**zoom>220))zoom--;const scale=256*2**zoom,centerX=(minX+maxX)/2*scale,centerY=(minY+maxY)/2*scale,offsetX=centerX-300,offsetY=centerY-150,svg=svgNode('svg',{viewBox:'0 0 600 300',role:'img','aria-label':label('地点与路线顺序','Places and route order')});card.append(svg);
+          if(mediaAllowed&&navigator.onLine){for(let tileX=Math.floor(offsetX/256);tileX<=Math.floor((offsetX+600)/256);tileX++)for(let tileY=Math.floor(offsetY/256);tileY<=Math.floor((offsetY+300)/256);tileY++){if(tileX<0||tileY<0||tileX>=2**zoom||tileY>=2**zoom)continue;const tile=svgNode('image',{x:tileX*256-offsetX,y:tileY*256-offsetY,width:256,height:256,'data-gpt-tile':'https://tile.openstreetmap.org/'+zoom+'/'+tileX+'/'+tileY+'.png',referrerpolicy:'no-referrer'});svg.append(tile);}link(card,'© OpenStreetMap contributors','https://www.openstreetmap.org/copyright');}
+          const path=coords.map(point=>(point[0]*scale-offsetX)+','+(point[1]*scale-offsetY)).join(' ');if(attrs.show_route)svg.append(svgNode('polyline',{points:path,fill:'none',stroke:'#b16c45','stroke-width':2,'stroke-dasharray':'5 4'}));coords.forEach((point,index)=>{svg.append(svgNode('circle',{cx:point[0]*scale-offsetX,cy:point[1]*scale-offsetY,r:9,fill:'#335f9d'}));svg.append(svgNode('text',{x:point[0]*scale-offsetX,y:point[1]*scale-offsetY+4,'text-anchor':'middle',fill:'white','font-size':11},index+1));});add(card,'p',label('顺序连线，不代表道路导航路径','Order connections, not road navigation'));
+        }
+        const list=add(card,'ol');for(const point of points){const row=add(list,'li');add(row,'strong',(point.icon||'')+' '+(point.name||point.title||point.ref||point.id));if(point.address)add(row,'p',point.address);if(point.description)add(row,'p',point.description);if(!point.name&&!point.title)missing(row,'MapWidgetV2',point.ref||point.id);link(row,label('查看地点','View place'),'https://www.openstreetmap.org/search?query='+encodeURIComponent(point.address||point.name||''));}
+        for(const group of attrs.groups||[]){add(card,'h5',group.title);const groupList=add(card,'ol');for(const item of group.locations||[]){const point=byId.get(item.point_id);add(groupList,'li',item.notes||point?.name||item.point_id);}}
+        const destination=points.at(-1);if(destination)link(card,label('外部路线','External directions'),'https://www.google.com/maps/dir/?api=1&origin='+encodeURIComponent(attrs.origin||points[0]?.address||'')+'&destination='+encodeURIComponent(destination.address||destination.name||'')+'&travelmode=driving');continue;
+      }
+      if(name==='ReservationTimePillsRefWidget'){
+        const card=add(parent,'section');card.className='gpt-dil-reservations';add(card,'strong',entity?.name||attrs.ref);add(card,'p',label('历史订位快照，不代表实时可订','Historical reservation snapshot, not live availability'));const reservations=reference?.reservations||entity?.reservations||entity?.reservation_providers||[];let hasTimes=false;if(Array.isArray(reservations))for(const item of reservations.slice(0,50)){const availability=item.availability_data||{},times=Array.isArray(availability.times)?availability.times:[];for(const time of times.slice(0,200)){hasTimes=true;add(card,'span',[time,availability.party_size,...(availability.table_types_by_time?.[time]||[])].filter(value=>value!=null).join(' · '));}if(item.date||item.time){hasTimes=true;add(card,'span',[item.date,item.time,item.party_size].filter(value=>value!=null).join(' · '));}link(card,item.provider_name||item.provider||label('订位入口','Reservation link'),item.provider_reservation_url||item.url||item.booking_url);}if(!hasTimes)missing(card,name,'date / time / party size');link(card,label('餐厅网站','Restaurant website'),entity?.website_url||entity?.url);continue;
+      }
+      if(name==='icon'){const icon=add(parent,'span',({check:'✓',calendar:'▦',clock:'◷',info:'ⓘ',star:'★','map-pin':'●','arrow-down':'↓'})[attrs.name]||'●');styles(icon,attrs,name);continue;}
+      if(name==='radio-group'){
+        const fieldset=add(parent,'fieldset');styles(fieldset,attrs,name);const group={value:attrs.value,event:component.events?.onChange,component,id:key+':group:'+groupIndex++};render(component.children,fieldset,group);continue;
+      }
+      if(name==='radio'){
+        const wrapper=add(parent,'label'),input=add(wrapper,'input');wrapper.className='gpt-dil-choice';input.type='radio';input.name=radioGroup?.id||key;input.setAttribute('value',String(attrs.value??''));if(radioGroup?.value===attrs.value)input.setAttribute('checked','');if(radioGroup?.event)bind(input,radioGroup.event,radioGroup.component,'radio');else input.disabled=true;render(component.children,wrapper);continue;
+      }
+      if(name==='checkbox'||name==='input'){
+        const wrapper=add(parent,'label'),input=add(wrapper,'input');wrapper.className='gpt-dil-choice';input.type=name==='checkbox'?'checkbox':'text';if(name==='checkbox'){if(attrs.checked)input.setAttribute('checked','');}else input.setAttribute('value',String(attrs.value??''));if(attrs.placeholder)input.placeholder=attrs.placeholder;if(component.events?.onChange)bind(input,component.events.onChange,component,name);else input.disabled=true;render(component.children,wrapper);continue;
+      }
+      if(name==='button'){
+        const button=add(parent,'button');button.type='button';styles(button,attrs,name);render(component.children,button);if(component.events?.onClick)bind(button,component.events.onClick,component,'button');else{button.disabled=true;button.title=label('历史记录中不可执行','Unavailable in history');}continue;
+      }
+      const element=add(parent,name==='list'&&attrs.marker==='number'?'ol':({mark:'mark',title:'h4',caption:'small',divider:'hr',list:'ul','list-item':'li',text:'span',label:'span',badge:'span',row:'div',box:'section',grid:'div','grid-item':'div'})[name]||'div');styles(element,attrs,name);if(name==='list'&&attrs.connector==='solid')element.style.borderLeft='1px solid var(--border)';render(component.children,element,radioGroup);
+    }
+  }
+  const toolbar=add(host,'div');toolbar.className='gpt-dil-toolbar';const remote=add(toolbar,'button',label('远程图片和地图：','Remote images and maps: ')+(gptRemoteResources?label('开','On'):label('关','Off')));remote.type='button';remote.dataset.gptDilRemote='';remote.title=label('开启时，资源服务会收到图片或地图请求','When enabled, resource providers receive image or map requests');const reset=add(toolbar,'button',label('重置为导出状态','Reset to exported state'));reset.type='button';reset.dataset.gptDilReset='';
+  render(materialized.nodes,host);
+  if(materialized.diagnostics.length){const details=add(host,'details');add(details,'summary',label('组件解析提示','Component diagnostics')+' ('+materialized.diagnostics.length+')');for(const item of materialized.diagnostics.slice(0,50))add(details,'p',item.code+': '+item.detail);}
+  const entry=gptDilPrograms.get(key);if(entry)entry.events=events;
+  return host;
+}
+function gptDilRefresh(host,entry){const key=host.dataset.gptProgram;gptComponentState(key).values=entry.state;host.replaceWith(buildGptProgram(key,entry.program,entry.state));}
+function handleGptDilEvent(event){
+  const target=event.target.closest('[data-gpt-dil-event]');if(!target)return;const host=target.closest('[data-gpt-program]'),entry=gptDilPrograms.get(host?.dataset.gptProgram);if(!entry)return;
+  const kind=target.dataset.gptDilKind;if((kind==='button')!==(event.type==='click'))return;if(kind==='radio'&&!target.checked)return;
+  const descriptor=entry.events?.[Number(target.dataset.gptDilEvent)];if(!descriptor)return;
+  try{
+    const result=gptDilCore().action(entry.program,descriptor.event,descriptor.locals,kind==='checkbox'?target.checked:target.value,entry.state);
+    if(result.state){entry.state=result.state;delete entry.state._generatedMessage;gptDilRefresh(host,entry);}
+    if(result.message!==undefined){
+      entry.state._generatedMessage=result.message;gptComponentState(host.dataset.gptProgram).values=entry.state;
+      host.querySelector('.gpt-dil-output')?.remove();const output=document.createElement('section');output.className='gpt-dil-output';const title=document.createElement('p');title.textContent=gptLabel('本地生成的消息，未发送','Locally generated message, not sent');const text=document.createElement('textarea');text.readOnly=true;text.value=result.message;text.style.width='100%';text.rows=6;const copy=document.createElement('button');copy.type='button';copy.textContent=gptLabel('复制消息','Copy message');copy.addEventListener('click',async()=>{text.select();try{await navigator.clipboard.writeText(text.value);}catch{text.focus();text.select();}});output.append(title,text,copy);host.append(output);
+    }
+  }catch(error){target.title=gptLabel('该动作无法在历史记录中执行：','Action unavailable in history: ')+error.message;}
+}
+document.addEventListener('change',handleGptDilEvent);
+document.addEventListener('click',event=>{
+  const remote=event.target.closest('[data-gpt-dil-remote]');if(remote){gptRemoteResources=!gptRemoteResources;for(const host of document.querySelectorAll('[data-gpt-program]')){const entry=gptDilPrograms.get(host.dataset.gptProgram);if(entry)gptDilRefresh(host,entry);}return;}
+  const reset=event.target.closest('[data-gpt-dil-reset]');if(reset){const host=reset.closest('[data-gpt-program]'),entry=gptDilPrograms.get(host.dataset.gptProgram);if(entry){entry.state=structuredClone(entry.program.initial);gptDilRefresh(host,entry);}return;}
+  handleGptDilEvent(event);
+});
+const gptDilStyle=document.createElement('style');gptDilStyle.textContent='.gpt-dil{overflow-wrap:anywhere;min-width:0}.gpt-dil-toolbar{display:flex;gap:8px;font-size:.75rem;margin:8px 0}.gpt-dil-box,.gpt-dil-grid-item{display:flex;flex-direction:column;min-width:0}.gpt-dil-row{display:flex;flex-wrap:wrap;min-width:0}.gpt-dil-grid{display:grid}.gpt-dil-badge{display:inline-block;border:1px solid currentColor;border-radius:999px;padding:2px 8px}.gpt-dil-markdown>p{margin:.3em 0}.gpt-dil-choice{display:flex;align-items:center;gap:8px;margin:6px 0}.gpt-dil-choice input[type=text]{width:100%;padding:8px}.gpt-dil-radio-group{border:0;display:flex;flex-direction:column;padding:0}.gpt-dil-missing{font-size:.8rem;opacity:.8}.gpt-dil figure{margin:8px 0}.gpt-dil svg{width:100%;max-height:600px}.gpt-dil-reservations span{display:inline-block;border:1px solid var(--border);border-radius:12px;padding:4px 8px;margin:4px}.gpt-dil button{cursor:pointer;padding:6px 10px}.gpt-dil-output{padding:12px;border:1px solid var(--border)}@media(max-width:600px){.gpt-dil-grid{grid-template-columns:1fr!important}}@media print{.gpt-dil-toolbar{display:none}.gpt-dil{break-inside:auto}}';document.head.append(gptDilStyle);
+
 function gptLabel(zh,en){return currentLang==='en'?en:zh;}
 document.getElementById('source-platform').addEventListener('change',()=>renderConvList(getSortedConvs()));
 const gptComponentStates=new Map();let gptComponentGeneration=-1;
 function gptComponentState(key){
-  if(gptComponentGeneration!==dataWorkerGeneration){gptComponentStates.clear();gptComponentGeneration=dataWorkerGeneration;}
+  if(gptComponentGeneration!==dataWorkerGeneration){gptComponentStates.clear();gptDilPrograms.clear();gptComponentGeneration=dataWorkerGeneration;}
   const state=gptComponentStates.get(key)||{index:0};gptComponentStates.delete(key);gptComponentStates.set(key,state);while(gptComponentStates.size>32)gptComponentStates.delete(gptComponentStates.keys().next().value);return state;
 }
 function renderGptViews(block,location=''){
@@ -2433,6 +2704,7 @@ function renderGptViews(block,location=''){
   for(const [position,view]of block.gptViews.slice(0,256).entries()){
     const card=add(host,'section');card.className='attachment-block';card.style.display='block';add(card,'strong',view.title||gptLabel('组件','Component'));
     if(view.description)add(card,'p',view.description);
+    if(view.kind==='images'&&gptRemoteResources&&!block._redactedMedia&&!document.querySelector('meta[http-equiv="Content-Security-Policy"]')?.content.includes("img-src blob: data:;")){for(const item of (view.images||[]).slice(0,100)){const url=gptExportCore().safeUrl(item.url);if(url){const img=add(card,'img');img.src=url;img.alt=item.title||'';img.loading='lazy';img.referrerPolicy='no-referrer';img.style.maxWidth='100%';}}}
     if(view.url){const url=gptExportCore().safeUrl(view.url);if(url){const anchor=add(card,'a',gptLabel('外部链接','External link'));anchor.href=url;anchor.target='_blank';anchor.rel='noopener noreferrer';anchor.referrerPolicy='no-referrer';}}
     if(view.kind==='images'){const gallery=add(card,'div'),key=JSON.stringify([dataWorkerGeneration,currentConv?.uuid,location,position]),state=gptComponentState(key);gallery.dataset.gptGallery=key;for(const [index,image]of (view.images||[]).entries()){const row=add(gallery,'p',gptLabel('远程图片未加载：','Remote image not loaded: ')+image.title);row.hidden=index!==state.index;const url=gptExportCore().safeUrl(image.url);if(url){const anchor=add(row,'a',gptLabel('打开链接','Open link'));anchor.href=url;anchor.target='_blank';anchor.rel='noopener noreferrer';anchor.referrerPolicy='no-referrer';}}if((view.images||[]).length>1){for(const [direction,label]of [[-1,gptLabel('上一张','Previous')],[1,gptLabel('下一张','Next')]]){const button=add(gallery,'button',label);button.type='button';button.dataset.gptGalleryStep=String(direction);}}}
     if(view.kind==='map'){
@@ -2564,7 +2836,7 @@ function archiveAnalysisCore(){
 // BEGIN GENERATED DATA WORKER — source: src/data-worker.js
 function dataWorkerMain(){
   let generation=0,records=[],byUuid=new Map(),decoder=null,textChunks=[],searchIndex=null;
-  const CACHE_DB='claude-rescue-reader-data-v1',CACHE_STORE='conversation-cache',CACHE_SCHEMA=2;
+  const CACHE_DB='claude-rescue-reader-data-v1',CACHE_STORE='conversation-cache',CACHE_SCHEMA=3;
   const parsedCache=new Map(),PARSED_CACHE_LIMIT=3;
   const list=value=>Array.isArray(value)?value:[];
   const shared=archiveAnalysisCore();
@@ -2637,13 +2909,13 @@ function dataWorkerMain(){
     }
     return meta;
   }
-  function scanTopLevelArray(text){
+  async function scanTopLevelArray(text,checkpoint){
     let index=skipWs(text,0);if(text[index]==='{')text='['+text+']';index=skipWs(text,0);if(text[index]!=='[')throw new Error('conversations.json 格式不正确');index=skipWs(text,index+1);
     const result=[];
     if(text[index]===']')return result;
     while(index<text.length){
       const end=valueEnd(text,index);let raw=text.slice(index,end);
-      if(typeof gptExportCore==='function'&&/"mapping"\s*:/.test(raw)){const value=JSON.parse(raw);if(gptExportCore().isConversation(value))raw=JSON.stringify(gptExportCore().convert(value));}
+      if(typeof gptExportCore==='function'&&/"mapping"\s*:/.test(raw)){const value=JSON.parse(raw);if(gptExportCore().isConversation(value))raw=JSON.stringify(await gptExportCore().convertAsync(value,checkpoint));}
       const meta=inspectConversation(raw);meta.sourcePlatform=meta.sourcePlatform||'claude';
       if(!meta.uuid)throw new Error('Conversation UUID is missing');
       result.push({raw,meta});index=skipWs(text,end);
@@ -2684,9 +2956,12 @@ function dataWorkerMain(){
   let packageStage=null,contentRevision=0,archiveAccounts=new Set(),packageIds=new Set();
   const accountPlatform=id=>String(id).startsWith('gpt:')?'gpt':'claude';
   const accountMismatch=incoming=>{for(const platform of new Set(incoming.map(accountPlatform))){const local=[...archiveAccounts].filter(id=>accountPlatform(id)===platform),next=incoming.filter(id=>accountPlatform(id)===platform);if(new Set(next).size>1||local.length&&next.some(id=>!archiveAccounts.has(id)))return true;}return false;};
-  function finishIngest(request,text){
-    if(packageStage){packageStage.records.push(...scanTopLevelArray(text));reply(request,{staged:true});return;}
-    records=scanTopLevelArray(text);byUuid=new Map(records.map(record=>[record.meta.uuid,record]));searchIndex=null;parsedCache.clear();
+  async function finishIngest(request,text){
+    const expected=generation,stage=packageStage;let deadline=Date.now()+8;
+    const checkpoint=async()=>{if(Date.now()>=deadline){await new Promise(resolve=>setTimeout(resolve,0));deadline=Date.now()+8;}if(generation!==expected||packageStage!==stage)throw new Error('stale data generation');};
+    const incoming=await scanTopLevelArray(text,checkpoint);await checkpoint();
+    if(stage){stage.records.push(...incoming);reply(request,{staged:true});return;}
+    records=incoming;byUuid=new Map(records.map(record=>[record.meta.uuid,record]));searchIndex=null;parsedCache.clear();
     reply(request,ingestSummary(false));
   }
   self.onmessage=event=>{
@@ -2733,9 +3008,9 @@ importPort?.close();importPort=null;reset(request.generation);reply(request,{ok:
       }
       if(request.type==='ingestEnd'){
         if(Number(request.generation)!==generation||!decoder)throw new Error('stale data generation');
-        textChunks.push(decoder.decode());const text=textChunks.join('');decoder=null;textChunks=[];finishIngest(request,text);return;
+        textChunks.push(decoder.decode());const text=textChunks.join('');decoder=null;textChunks=[];await finishIngest(request,text);return;
       }
-      if(request.type==='ingest'){reset(request.generation);finishIngest(request,typeof request.payload==='string'?request.payload:new TextDecoder().decode(request.payload));return;}
+      if(request.type==='ingest'){reset(request.generation);await finishIngest(request,typeof request.payload==='string'?request.payload:new TextDecoder().decode(request.payload));return;}
       if(request.type==='cacheClear'){reply(request,{cleared:await cacheDeleteAll()});return;}
       if(Number(request.generation)!==generation)throw new Error('stale data generation');
       if(request.type==='cacheLoad'){
@@ -2783,7 +3058,7 @@ function cleanupDataWorker(reason){
 }
 function ensureDataWorker(){
   if(dataWorker)return dataWorker;
-  dataWorkerUrl=URL.createObjectURL(new Blob([archiveAnalysisCore.toString(),'\n',gptExportCore.toString(),'\n',redactionRules.toString(),'\n',workerDomainCore.toString(),'\n('+dataWorkerMain.toString()+')()'],{type:'text/javascript'}));
+  dataWorkerUrl=URL.createObjectURL(new Blob([archiveAnalysisCore.toString(),'\n',gptDilCore.toString(),'\n',gptExportCore.toString(),'\n',redactionRules.toString(),'\n',workerDomainCore.toString(),'\n('+dataWorkerMain.toString()+')()'],{type:'text/javascript'}));
   dataWorker=new Worker(dataWorkerUrl);
   dataWorker.onmessage=event=>{
     const message=event.data||{},pending=dataWorkerPending.get(message.requestId);
@@ -4335,7 +4610,7 @@ function renderBlock(block,location=''){
   if(!block||typeof block!=='object')return '';
   const quiz=renderQuiz(block,location);if(quiz)return quiz;
   const blockType=block.type||'unknown';
-  if(blockType==='text')return '<div'+(block._field?' data-reader-field="'+escAttr(block._field)+'"':'')+'>'+(block._html||renderMd(block.text||''))+'</div>'+renderGptViews(block,location);
+  if(blockType==='text')return (block.gptProgram?renderGptProgram(block,location):'<div'+(block._field?' data-reader-field="'+escAttr(block._field)+'"':'')+'>'+(block._html||renderMd(block.text||''))+'</div>')+renderGptViews(block,location);
   if(blockType==='thinking'){
     const statuses=[block.hidden||block.thinking_hidden?t('导出包含隐藏状态标记'):'',block.truncated?t('截断'):'',block.cut_off?'cut_off':''].filter(Boolean).join(' · ');
     return '<div class="think-block"><div class="collapsible-header think-header">'+ICON+' <span>💭 '+t(block.summaries===true?'摘要':'思考过程')+' '+esc(statuses)+'</span></div><div class="think-body"'+(block._field?' data-reader-field="'+escAttr(block._field)+'"':'')+' style="display:none">'+esc(block.thinking||t('无导出的思考正文'))+(block.summaries&&block.summaries!==true?'<pre>'+esc(JSON.stringify(block.summaries,null,2))+'</pre>':'')+'</div></div>';

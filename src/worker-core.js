@@ -111,6 +111,7 @@ function* redactionSteps(conv,state,style,strict){
     const {parent,key,path}=stack.pop(),value=parent[key];
     if(typeof value==='string')parent[key]=yield* redactText(value,state,path,style,strict);
     else if(value&&typeof value==='object'){
+      if(value.gptProgram)value.gptProgram._redactedMedia=true;
       // Matches attachments/files arrays at any depth, including content blocks.
       // _redactedMedia is consumed by the PDF renderer to block cached original pixels.
       if(/\.(?:attachments|files)\[\d+\]$/.test(path)){
@@ -412,6 +413,7 @@ copy._prepared={visuals,files,searchQueries,searchResults};
   if(copy.text){if(!full&&copy.text.length>65536){copy._partial=partial(copy.text,'text');copy.text=copy._partial.text;copy._html=copy._partial.html;}else copy._html=marked.parse(copy.text);}
   for(let i=0;i<(copy.content||[]).length;i++){
     const block=copy.content[i];if(!block||typeof block!=='object')continue;const key='content.'+i+'.'+(block.type==='thinking'?'thinking':'text');block._field=key;
+    if(block.gptProgram){const stack=[...block.gptProgram.nodes];while(stack.length){const node=stack.pop();if(node.kind==='markdown'){node._html=marked.parse(String(node.text||''));node._inlineHtml=marked.parseInline(String(node.text||''));}if(node.children)stack.push(...node.children);}}
     if(block.type==='text'){if(!full&&String(block.text||'').length>65536){block._partial=partial(block.text,key);block.text=block._partial.text;block._html=block._partial.html;}else block._html=marked.parse(String(block.text||''));}
     else if(!full&&block.type==='thinking'&&String(block.thinking||'').length>65536){block._partial=partial(block.thinking,key,false);block.thinking=block._partial.text;}
   }

@@ -18,6 +18,8 @@ projects/
 !docs/images/conversation-summary.png
 !docs/images/project-associations.png
 !docs/images/memory-view.png
+!docs/images/gpt-components-desktop.png
+!docs/images/gpt-components-mobile.png
 *.jpg
 *.jpeg
 *.gif

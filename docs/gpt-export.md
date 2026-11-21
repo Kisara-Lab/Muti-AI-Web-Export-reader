@@ -11,8 +11,9 @@ Import the official ZIP or its extracted folder. Individual conversation JSON is
 | Thoughts、reasoning recap | 仅摘要／实际导出正文 / Exported summaries and text only | 默认折叠；不生成缺失推理 / Collapsed; missing reasoning is never generated |
 | 网页与文件引用 / Web and file citations | 可还原或数据缺失 / Reconstructed or unavailable | 编号链接、附件入口和已导出行号；缺失数据有显式占位和有界原始信息。代码内标记不解释 / Numbered links, file entry points and exported line ranges; explicit bounded missing-data fallback; code markers remain literal |
 | `.dat` 图片、Markdown 附件 / Images and Markdown attachments | 可还原 / Reconstructed | 文件库 ID 精确关联；检查文件头，图片按需读取；文本预览转义，提供下载 / Exact library IDs; header checking and lazy images; escaped text preview and download |
-| 远程图片组、实体 / Remote image groups, entities | 仅导出信息 / Exported metadata only | 图片切换和外部链接；不自动请求远程图 / Image navigation and external links, no automatic remote image requests |
-| 地图 / Maps | 仅地点和坐标 / Places and coordinates only | 本地坐标分布图，不加载地图瓦片或定位服务 / Local coordinate plot, no tiles or location services |
+| 远程图片组、实体 / Remote image groups, entities | 已导出信息 / Exported metadata | 普通版默认加载明确图片 URL，可关闭；离线版仅本地资源 / Standard viewer loads explicit image URLs with an off switch; offline bundle uses local resources |
+| 地图 / Maps | 地点、坐标和顺序 / Places, coordinates and order | 普通版可加载 OpenStreetMap 底图；离线坐标图，不自动地理编码 / OpenStreetMap tiles in standard viewer; offline coordinate plot, no automatic geocoding |
+| 正文 DIL / Inline DIL | 已验证结构可还原 / Verified structures reconstructed | 布局、图表、实体、历史订位与本地表单，按原位置展示；[覆盖说明](gpt-components.md) / Layout, charts, entities, reservation snapshots and local forms in original positions |
 | 声明式上传组件 / Declarative upload controls | 仅摘要 / Summary only | 已知标签与禁用按钮，不运行表达式、事件动作或 `dil_url` / Known labels and disabled buttons; expressions, actions and `dil_url` never run |
 | 未知组件 / Unknown components | 有界原文 / Bounded original data | 转义查看，不推断可执行行为 / Escaped inspection; no inferred actions |
 | GPT 测验 / GPT quizzes | 导出样本未包含 / Absent from verified sample | 不从普通 JSON 猜题；现有明确 Claude 测验适配保持兼容 / No quiz inference from ordinary JSON; existing explicit Claude quiz support remains |
@@ -32,4 +33,4 @@ Markdown contains readable citation/component summaries; PDF uses local cards. N
 
 Authorized local archive checked on 2026-11-20: all 10 conversations open, with 226 messages (104 text, 84 thoughts, 38 reasoning_recap), matching the statistics count; 177 assistant messages retain explicit models. Three PNGs and one Markdown attachment are linked through the file library. Six business citations lack associated source metadata and show explicit missing-data placeholders. One local import observation was 218 ms, not a cross-device guarantee. A 10k-node GPT test at 4× CPU preserves metadata-first/window rendering with a 20-second import threshold. Private archives, chats, files, account data and credentials are excluded from commits.
 
-Synthetic regression coverage: `tests/gpt-format.test.mjs`, `tests/gpt-exports.spec.mjs`. Run `npm run test:worker-core`, `npm run test:smoke`, `npm run test:offline`, `npm run validate`, `npm run privacy`, `npm run policy`, and `npm run docs`.
+Synthetic regression coverage: `tests/gpt-format.test.mjs`, `tests/gpt-exports.spec.mjs`, `tests/gpt-dil.test.mjs`, `tests/gpt-dil.spec.mjs`. Run `npm run test:worker-core`, `npm run test:smoke`, `npm run test:offline`, `npm run validate`, `npm run privacy`, `npm run policy`, and `npm run docs`.
