@@ -1,6 +1,6 @@
 function dataWorkerMain(){
   let generation=0,records=[],byUuid=new Map(),decoder=null,textChunks=[],searchIndex=null;
-  const CACHE_DB='claude-rescue-reader-data-v1',CACHE_STORE='conversation-cache',CACHE_SCHEMA=1;
+  const CACHE_DB='claude-rescue-reader-data-v1',CACHE_STORE='conversation-cache',CACHE_SCHEMA=2;
   const parsedCache=new Map(),PARSED_CACHE_LIMIT=3;
   const list=value=>Array.isArray(value)?value:[];
   const shared=archiveAnalysisCore();
@@ -65,6 +65,7 @@ function dataWorkerMain(){
       if(key==='chat_messages'&&raw[start]==='[')meta.message_count=countArrayItems(raw,start,end);
       else if(key==='account')meta.accountUuid=JSON.parse(raw.slice(start,end))?.uuid||'';
       else if(key==='_design')meta._design=JSON.parse(raw.slice(start,end));
+      else if(['sourcePlatform','originalId','defaultModel','currentNode','importWarnings'].includes(key))meta[key]=JSON.parse(raw.slice(start,end));
       else if(key==='uuid'||key==='name'||key==='summary'||key==='created_at'||key==='updated_at'){
         const value=JSON.parse(raw.slice(start,end));meta[key]=typeof value==='string'?value:'';
       }
@@ -73,11 +74,13 @@ function dataWorkerMain(){
     return meta;
   }
   function scanTopLevelArray(text){
-    let index=skipWs(text,0);if(text[index]!=='[')throw new Error('conversations.json 格式不正确');index=skipWs(text,index+1);
+    let index=skipWs(text,0);if(text[index]==='{')text='['+text+']';index=skipWs(text,0);if(text[index]!=='[')throw new Error('conversations.json 格式不正确');index=skipWs(text,index+1);
     const result=[];
     if(text[index]===']')return result;
     while(index<text.length){
-      const end=valueEnd(text,index),raw=text.slice(index,end),meta=inspectConversation(raw);
+      const end=valueEnd(text,index);let raw=text.slice(index,end);
+      if(typeof gptExportCore==='function'&&/"mapping"\s*:/.test(raw)){const value=JSON.parse(raw);if(gptExportCore().isConversation(value))raw=JSON.stringify(gptExportCore().convert(value));}
+      const meta=inspectConversation(raw);meta.sourcePlatform=meta.sourcePlatform||'claude';
       if(!meta.uuid)throw new Error('Conversation UUID is missing');
       result.push({raw,meta});index=skipWs(text,end);
       if(text[index]===','){index=skipWs(text,index+1);continue;}
@@ -115,6 +118,8 @@ function dataWorkerMain(){
   async function cacheDeleteAll(){const db=await cacheDb();if(!db)return false;try{await new Promise((resolve,reject)=>{const request=db.transaction(CACHE_STORE,'readwrite').objectStore(CACHE_STORE).clear();request.onsuccess=()=>resolve();request.onerror=()=>reject(request.error);});return true;}finally{db.close();}}
   function ingestSummary(cacheHit=false){let totalMsgs=0,minDate='',maxDate='';for(const record of records){const meta=record.meta;if(meta._design)continue;totalMsgs+=meta.message_count;const date=meta.created_at;if(date&&(!minDate||date<minDate))minDate=date;if(date&&(!maxDate||date>maxDate))maxDate=date;}return{conversations:records.map(record=>record.meta),totalMsgs,minDate,maxDate,lazy:true,cacheHit};}
   let packageStage=null,contentRevision=0,archiveAccounts=new Set(),packageIds=new Set();
+  const accountPlatform=id=>String(id).startsWith('gpt:')?'gpt':'claude';
+  const accountMismatch=incoming=>{for(const platform of new Set(incoming.map(accountPlatform))){const local=[...archiveAccounts].filter(id=>accountPlatform(id)===platform),next=incoming.filter(id=>accountPlatform(id)===platform);if(new Set(next).size>1||local.length&&next.some(id=>!archiveAccounts.has(id)))return true;}return false;};
   function finishIngest(request,text){
     if(packageStage){packageStage.records.push(...scanTopLevelArray(text));reply(request,{staged:true});return;}
     records=scanTopLevelArray(text);byUuid=new Map(records.map(record=>[record.meta.uuid,record]));searchIndex=null;parsedCache.clear();
@@ -130,7 +135,7 @@ function dataWorkerMain(){
         if(packageStage)throw new Error('Another package is being imported');
         for(const record of records)if(record.meta.accountUuid)archiveAccounts.add(record.meta.accountUuid);
         const incoming=request.payload.accounts||[];
-        if(archiveAccounts.size&&incoming.some(id=>!archiveAccounts.has(id)))throw new Error('Account mismatch: open as a new archive');
+        if(accountMismatch(incoming))throw new Error('Account mismatch: open as a new archive');
         packageStage={...request.payload,records:[]};reply(request,{ok:true});return;
       }
       if(request.type==='packageCommit'){
@@ -138,7 +143,7 @@ function dataWorkerMain(){
         if(packageIds.has(stage.id)){packageStage=null;reply(request,{...ingestSummary(false),revision:contentRevision,conflicts:[],duplicate:true});return;}
         const accounts=new Set(stage.accounts||[]);
         for(const record of stage.records){const id=record.meta.accountUuid;if(id)accounts.add(id);}
-        if(accounts.size>1||archiveAccounts.size&&[...accounts].some(id=>!archiveAccounts.has(id)))throw new Error('Account mismatch: open as a new archive');
+        if(accountMismatch([...accounts]))throw new Error('Account mismatch: open as a new archive');
         const additions=[],conflicts=[],sourceGeneration=generation,revision=contentRevision;let yieldedAt=performance.now();const next=new Map(byUuid);
         for(const record of stage.records){
           // Semantic dedup can parse large records. Yield between records so a batch

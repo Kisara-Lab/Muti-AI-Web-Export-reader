@@ -5,6 +5,10 @@ function importWorkerMain(){
   const emit=(type,request,extra={})=>self.postMessage({type,generation:request.generation,requestId:request.requestId,...extra});
   const check=async current=>{if(current!==operation)throw Object.assign(new Error('Canceled'),{canceled:true});await new Promise(resolve=>setTimeout(resolve,0));if(current!==operation)throw Object.assign(new Error('Canceled'),{canceled:true});};
   const digest=async bytes=>self.crypto?.subtle?new Uint8Array(await crypto.subtle.digest('SHA-256',bytes)):format.sha256(bytes);
+  async function fileHeader(entry){
+    if(entry.file)return new Uint8Array(await entry.file.slice(0,16).arrayBuffer());
+    return new Promise((resolve,reject)=>{const stream=entry.internalStream('uint8array');stream.on('data',chunk=>{stream.pause();resolve(chunk.slice(0,16));});stream.on('error',reject);stream.on('end',()=>resolve(new Uint8Array()));stream.resume();});
+  }
   async function packageFingerprint(inputs,current,request){
     let hash=new Uint8Array(32),done=0;const total=inputs.reduce((n,item)=>n+item.file.size,0);
     for(const item of inputs){
@@ -50,7 +54,7 @@ function importWorkerMain(){
       if(request.type==='resource'){
         const pkg=packages.get(request.payload.packageId);if(!pkg)throw new Error('Package not available; select its ZIP again');
         if(request.payload.memoryId!==undefined){const topic=pkg.memories[request.payload.memoryId];if(!topic)throw new Error('Memory not found');return{body:topic.body,raw:topic.raw};}
-        const file=pkg.files[format.logicalPath(request.payload.path)];if(!file)throw new Error('Resource not found');return{blob:await file.async('blob')};
+        const path=format.logicalPath(request.payload.path),file=pkg.files[path];if(!file)throw new Error('Resource not found');const blob=await file.async('blob');return{blob:pkg.mime?.[path]?new Blob([blob],{type:pkg.mime[path]}):blob};
       }
       if(request.type==='package'){
         const file=request.payload.file;let id='',files;
@@ -66,16 +70,23 @@ function importWorkerMain(){
           if(packages.has(id))return{duplicate:true,id,filename:'folder'};
         }
         const entries=Object.keys(files).filter(n=>!files[n].dir&&!n.startsWith('__MACOSX/'));for(const name of entries){if(/^\/|^[A-Za-z]:/.test(name))throw new Error('Invalid export path');format.logicalPath(files[name].unsafeOriginalName||name);}
-        const convs=entries.filter(n=>/(^|\/)conversations(?:-\d+)?\.json$/i.test(n)),projects=[],memories=[],artifacts=[],users=[],logins=[],accounts=new Set();let legacyMemory=null;const designs=[];
+        let convs=entries.filter(n=>/(^|\/)conversations(?:-\d+)?\.json$/i.test(n));
+        const projects=[],memories=[],artifacts=[],users=[],logins=[],accounts=new Set(),mime=Object.create(null),resources=[],gpt=gptExportCore();let legacyMemory=null,gptManifest=false;const designs=[];
+        if(files['export_manifest.json']){const manifest=JSON.parse(await files['export_manifest.json'].async('text')),shards=gpt.manifest(manifest,entries);if(shards){convs=shards;gptManifest=true;}}
+        if(files['library_files.json']){
+          const library=JSON.parse(await files['library_files.json'].async('text'));for(const item of Array.isArray(library)?library:[]){await check(current);const path=String(item.file_id||'')+'.dat';if(!files[path])continue;const declared=String(item.mime_type||''),header=await fileHeader(files[path]);const detected=[137,80,78,71,13,10,26,10].every((byte,index)=>header[index]===byte)?'image/png':header[0]===255&&header[1]===216&&header[2]===255?'image/jpeg':null;mime[path]=detected||(/^(?:text\/plain|text\/markdown|application\/pdf)$/.test(declared)?declared==='text/plain'&&String(item.file_extension).toLowerCase()==='md'?'text/markdown':declared:'application/octet-stream');resources.push({packageId:id,path,name:String(item.file_name||path),mime:mime[path],fileId:String(item.file_id||'')});}
+        }
         const filename=file?.name||'folder';
         for(const name of entries){await check(current);
-          if(convs.includes(name))continue;
+          if(convs.includes(name)||gptManifest&&['export_manifest.json','library_files.json','sites/export_manifest.json','ads.json','user_settings.json','sectioned_conversations.json'].includes(name))continue;
           if(/\.md$/i.test(name)){
             const logical=name.replace(/^.*?(?=(?:areas|projects)\/)/,'');
             if(/^(?:areas\/|projects\/[^/]+\/)/.test(logical))memories.push(format.memory(logical,await files[name].async('text'),'',filename));continue;
           }
           if(!/\.json$/i.test(name))continue;
           const value=JSON.parse(await files[name].async('text'));
+          if(gpt.isConversation(value)||Array.isArray(value)&&value.length&&value.every(item=>gpt.isConversation(item))){if(gptManifest)throw new Error('GPT conversations outside declared shards');convs.push(name);continue;}
+          if(name==='user.json'&&value&&typeof value==='object'&&!Array.isArray(value)){users.push({...value,sourcePlatform:'gpt'});if(value.id)accounts.add('gpt:'+value.id);continue;}
           if(/(^|\/)projects\/[^/]+\.json$/i.test(name)){if(!value||typeof value.uuid!=='string'||!value.uuid||typeof value.name!=='string')throw new Error('Invalid project metadata');projects.push(value);continue;}
           if(value?.memory_files){memories.push(...format.memoryFiles(value,filename));if(value.account_uuid)accounts.add(value.account_uuid);continue;}
           if(/(^|\/)memories\.json$/i.test(name)){legacyMemory=(Array.isArray(value)?value[0]:value)||null;continue;}
@@ -93,8 +104,8 @@ function importWorkerMain(){
           for(const name of convs){await check(current);await extractConversation(files[name],request,current);}
           // Design records use the same atomic append transaction as conversations.
           if(designs.length){await rpc('ingestStart');const bytes=new TextEncoder().encode(JSON.stringify(designs));for(let at=0;at<bytes.length;at+=4*1024*1024){const batch=bytes.slice(at,at+4*1024*1024);await rpc('ingestChunk',batch.buffer,[batch.buffer]);}await rpc('ingestEnd');}
-          await check(current);const parsed=await rpc('packageCommit');packages.set(id,{files,memories});
-          return{id,filename,parsed,projects,legacyMemory,users,logins,artifacts,memories:memories.map(({body,raw,...topic},memoryId)=>({...topic,memoryId,packageId:id})),images:entries.filter(n=>/\.(?:png|jpe?g|gif|webp|bmp|svg|avif|heic|tiff?)$/i.test(n)).map(path=>({packageId:id,path}))};
+          await check(current);const parsed=await rpc('packageCommit');packages.set(id,{files,memories,mime});
+          return{id,filename,parsed,projects,legacyMemory,users,logins,artifacts,resources,memories:memories.map(({body,raw,...topic},memoryId)=>({...topic,memoryId,packageId:id})),images:[...entries.filter(n=>/\.(?:png|jpe?g|gif|webp|bmp|svg|avif|heic|tiff?)$/i.test(n)).map(path=>({packageId:id,path})),...resources.filter(resource=>resource.mime.startsWith('image/'))]};
         }catch(error){await rpc('packageAbort').catch(()=>{});throw error;}
       }
       if(request.type==='attachment'){
