@@ -16,6 +16,8 @@ test('manifest validates official navigation targets and never interprets instru
 test('memory keeps Unicode metadata, raw source, logical project scope and malformed headers',()=>{
   const raw='---\nname: "中文主题"\nsources: [chat]\naliases: ["a,b", 中文]\n---\n完整正文';
   const topic=core.memory('/projects/synthetic-project/areas/topic.md',raw,'2026-01-01','synthetic');assert.equal(topic.name,'中文主题');assert.equal(topic.projectKey,'synthetic-project');assert.equal(topic.fields.aliases[0],'a,b');assert.equal(topic.raw,raw);assert.equal(topic.body,'完整正文');
+  const nested='---\nname: nested-topic\nmetadata:\n  node_type: memory\n  type: user\n---\nClean body';
+  const nestedMem=core.memory('memory/nested-topic.md',nested,'','synthetic');assert.equal(nestedMem.warning,false);assert.equal(nestedMem.fields['metadata.node_type'],'memory');assert.equal(nestedMem.body,'Clean body');
   const malformed='---\nname: !execute dangerous\n---\nbody';assert.equal(core.frontmatter(malformed).body,malformed);assert.equal(core.frontmatter(malformed).warning,true);
   assert.throws(()=>core.memory('../escape.md','body'));assert.equal(core.memory('areas/plain.md','no header').body,'no header');
 });

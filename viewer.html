@@ -2,7 +2,7 @@
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-7fF/B5XjbufQA8UoIW0Vq0SXv8puVT5NlmG4F2rHmg8=' 'sha256-tMIvewdj4Er6it91vRKx68b9zhu5Sxm35MV7o9YOuqs=' https://cdn.jsdelivr.net https://unpkg.com https://cdnjs.cloudflare.com blob:; script-src-attr 'none'; style-src 'unsafe-inline' https://cdn.jsdelivr.net https://unpkg.com https://cdnjs.cloudflare.com; img-src blob: data: https: http:; font-src data:; connect-src blob:; worker-src blob:; frame-src blob:; object-src 'none'; base-uri 'none'; form-action 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-pewkPJYq6M8btCQImOx8ND8ykoaf8MfhMbw4Tz2px7A=' 'sha256-tMIvewdj4Er6it91vRKx68b9zhu5Sxm35MV7o9YOuqs=' https://cdn.jsdelivr.net https://unpkg.com https://cdnjs.cloudflare.com blob:; script-src-attr 'none'; style-src 'unsafe-inline' https://cdn.jsdelivr.net https://unpkg.com https://cdnjs.cloudflare.com; img-src blob: data: https: http:; font-src data:; connect-src blob:; worker-src blob:; frame-src blob:; object-src 'none'; base-uri 'none'; form-action 'none'">
 <meta name="referrer" content="no-referrer">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Multi-AI Web Export Reader — Local Claude, ChatGPT, Grok &amp; Perplexity Viewer</title>
@@ -611,6 +611,8 @@ mark.cs.active { background:var(--accent); color:#fff; }
 [data-theme=dark] .msg-wrap.perplexity .msg-avatar { background:linear-gradient(135deg,#0891b2,#0e7490); }
 .msg-wrap.codex .msg-avatar { background:linear-gradient(135deg,#4f46e5,#3730a3); color:#fff; font-size:13px; }
 [data-theme=dark] .msg-wrap.codex .msg-avatar { background:linear-gradient(135deg,#6366f1,#4338ca); }
+.msg-wrap.claude_code .msg-avatar { background:linear-gradient(135deg,#d97757,#b45309); color:#fff; font-size:13px; }
+[data-theme=dark] .msg-wrap.claude_code .msg-avatar { background:linear-gradient(135deg,#ea8c68,#d97757); }
 .platform-bar { display:flex; align-items:center; gap:5px; margin-top:7px; flex-wrap:wrap; }
 .platform-btn { flex:0 1 auto; display:inline-flex; align-items:center; justify-content:center; gap:4px; padding:3px 8px; background:var(--bg3); border:1px solid var(--border); border-radius:999px; color:var(--text3); font-size:11px; font-weight:500; cursor:pointer; transition:all .15s; text-align:center; white-space:nowrap; }
 .platform-btn:hover { border-color:var(--border2); color:var(--text2); background:var(--bg2); opacity:1; }
@@ -625,11 +627,13 @@ mark.cs.active { background:var(--accent); color:#fff; }
 .platform-pill.grok { background:color-mix(in srgb,#334155 12%,var(--bg2)); border-color:color-mix(in srgb,#334155 34%,var(--border)); color:#1e293b; }
 .platform-pill.perplexity { background:color-mix(in srgb,#0891b2 11%,var(--bg2)); border-color:color-mix(in srgb,#0891b2 32%,var(--border)); color:#0e647a; }
 .platform-pill.codex { background:color-mix(in srgb,#6366f1 12%,var(--bg2)); border-color:color-mix(in srgb,#6366f1 34%,var(--border)); color:#4338ca; }
+.platform-pill.claude_code { background:color-mix(in srgb,#d97757 12%,var(--bg2)); border-color:color-mix(in srgb,#d97757 34%,var(--border)); color:#b45309; }
 [data-theme=dark] .platform-pill.claude { color:#f0b87a; }
 [data-theme=dark] .platform-pill.gpt { color:#5eead4; }
 [data-theme=dark] .platform-pill.grok { color:#cbd5e1; }
 [data-theme=dark] .platform-pill.perplexity { color:#67e8f9; }
 [data-theme=dark] .platform-pill.codex { color:#a5b4fc; }
+[data-theme=dark] .platform-pill.claude_code { color:#fdba74; }
 .stats-platform-row { display:flex; flex-wrap:wrap; gap:4px; margin-top:5px; }
 .header-pill-btn { padding:5px 9px; background:var(--bg3); border:1px solid var(--border); border-radius:8px; color:var(--text2); font-size:11.5px; cursor:pointer; white-space:nowrap; display:inline-flex; align-items:center; gap:5px; transition:border-color .15s,color .15s,background .15s; }
 .header-pill-btn:hover:not(:disabled) { border-color:var(--accent); color:var(--text); background:var(--bg2); }
@@ -637,6 +641,7 @@ mark.cs.active { background:var(--accent); color:#fff; }
 .header-pill-btn:disabled { opacity:.5; cursor:not-allowed; }
 .import-notice { margin:8px 0 14px; padding:9px 12px; border-left:3px solid var(--orange); border-radius:8px; background:var(--bg3); color:var(--text2); font-size:12px; line-height:1.5; }
 .import-notice.codex-alpha-notice { border-left-color:#e11d48; background:color-mix(in srgb,#6366f1 7%,var(--bg3)); }
+.import-notice.claude-code-alpha-notice { border-left-color:#e11d48; background:color-mix(in srgb,#d97757 8%,var(--bg3)); }
 .gpt-components { display:grid; gap:10px; margin-top:10px; }
 .gpt-card { display:grid; gap:8px; padding:12px 14px; background:var(--bg3); border:1px solid var(--border); border-radius:var(--radius-sm); font-size:12.5px; color:var(--text); box-shadow: var(--specular); }
 .gpt-card-head { display:flex; align-items:center; justify-content:space-between; gap:8px; flex-wrap:wrap; }
@@ -725,7 +730,8 @@ mark.cs.active { background:var(--accent); color:#fff; }
 .platform-guide-card.gpt { border-top-color: #10a37f; }
 .platform-guide-card.grok { border-top-color: #475569; }
 .platform-guide-card.perplexity { border-top-color: #0891b2; }
-.platform-guide-card.codex { border-top-color: #6366f1; grid-column: 1 / -1; }
+.platform-guide-card.codex { border-top-color: #6366f1; }
+.platform-guide-card.claude_code { border-top-color: #d97757; }
 .platform-guide-head { display:flex; align-items:center; gap:7px; font-size:12.5px; font-weight:600; color:var(--text); }
 .platform-dot { width:9px; height:9px; border-radius:50%; flex-shrink:0; }
 .platform-dot.claude { background:linear-gradient(135deg,#d4a855,#c97b3a); }
@@ -733,6 +739,7 @@ mark.cs.active { background:var(--accent); color:#fff; }
 .platform-dot.grok { background:linear-gradient(135deg,#334155,#0f172a); }
 .platform-dot.perplexity { background:linear-gradient(135deg,#0891b2,#155e75); }
 .platform-dot.codex { background:linear-gradient(135deg,#6366f1,#4338ca); }
+.platform-dot.claude_code { background:linear-gradient(135deg,#d97757,#b45309); }
 .platform-beta-badge { margin-left:auto; font-size:9.5px; font-weight:700; letter-spacing:.04em; text-transform:uppercase; padding:1px 6px; border-radius:999px; background:color-mix(in srgb,#d97706 14%,var(--bg3)); color:#b45309; border:1px solid color-mix(in srgb,#d97706 36%,var(--border)); }
 [data-theme=dark] .platform-beta-badge { color:#fbbf24; }
 .platform-alpha-badge { margin-left:auto; font-size:9.5px; font-weight:700; letter-spacing:.04em; padding:1px 7px; border-radius:999px; background:color-mix(in srgb,#e11d48 12%,var(--bg3)); color:#be123c; border:1px solid color-mix(in srgb,#e11d48 34%,var(--border)); }
@@ -764,6 +771,7 @@ mark.cs.active { background:var(--accent); color:#fff; }
 .step-think-card.step-think-hidden { display: inline-flex; align-items: center; gap: 6px; padding: 3px 10px; border-radius: 999px; border: 1px solid color-mix(in srgb, var(--accent) 22%, var(--border)); background: color-mix(in srgb, var(--think) 46%, transparent); }
 .step-think-card.step-think-hidden .ui-icon { color: var(--text3); display: inline-flex; }
 .step-think-card.step-think-hidden .step-node-status-tag { margin: 0; font-size: 10.5px; text-transform: none; letter-spacing: .01em; font-weight: 500; }
+.step-think-dur { font-size: 10px; font-weight: 600; padding: 0 5px; border-radius: 999px; background: var(--bg2); color: var(--text3); border: 1px solid var(--border); font-family: ui-monospace,SFMono-Regular,Consolas,monospace; margin-left: 4px; vertical-align: middle; }
 .step-node-status-tag { display: inline-block; font-size: 10px; font-weight: 600; color: var(--text3); text-transform: uppercase; letter-spacing: .04em; margin-bottom: 4px; }
 .step-think-prose { font-size: 12.8px; line-height: 1.66; color: var(--text2); font-style: normal; }
 .step-think-prose p { margin: 0 0 7px; }
@@ -807,7 +815,8 @@ button.step-agent-head:hover { background: color-mix(in srgb, #6366f1 8%, var(--
 .injected-context.mode-agent { border-left: 3px solid #8b5cf6; }
 .injected-context.mode-compacted { border-left: 3px solid var(--blue); }
 .injected-context.mode-abort { border-left: 3px solid var(--orange); }
-.turn-aborted-pill { display: inline-flex; align-items: center; gap: 6px; margin: 4px 0 8px; padding: 4px 11px; border-radius: 999px; font-size: 11.5px; font-weight: 500; color: var(--orange); background: color-mix(in srgb, var(--orange) 10%, var(--bg2)); border: 1px solid color-mix(in srgb, var(--orange) 30%, var(--border)); }
+.turn-aborted-pill { display: inline-flex; align-items: flex-start; gap: 7px; margin: 4px 0 8px; padding: 6px 12px; border-radius: 11px; max-width: 100%; font-size: 11.5px; line-height: 1.5; font-weight: 500; color: var(--orange); background: color-mix(in srgb, var(--orange) 10%, var(--bg2)); border: 1px solid color-mix(in srgb, var(--orange) 30%, var(--border)); }
+.turn-aborted-pill .ui-icon { flex-shrink: 0; margin-top: 2px; display: inline-flex; }
 .plan-card { margin: 10px 0 14px; border: 1px solid color-mix(in srgb, #6366f1 32%, var(--border)); border-top: 2.5px solid #6366f1; border-radius: 13px; background: var(--bg2); box-shadow: var(--specular), var(--shadow); overflow: hidden; }
 .plan-card-head { padding: 8px 12px; background: linear-gradient(90deg, color-mix(in srgb, #6366f1 10%, var(--bg3)), color-mix(in srgb, #10a37f 6%, var(--bg3))); border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 8px; cursor: pointer; user-select: none; }
 .plan-card-head:not(.open) { border-bottom: 0; }
@@ -958,6 +967,7 @@ button.step-agent-head:hover { background: color-mix(in srgb, #6366f1 8%, var(--
       <button type="button" class="platform-btn" data-platform="grok" aria-pressed="false" title="Grok (Beta Test)">Grok β</button>
       <button type="button" class="platform-btn" data-platform="perplexity" aria-pressed="false" title="Perplexity (Beta Test)">Perplexity β</button>
       <button type="button" class="platform-btn" data-platform="codex" aria-pressed="false" title="Codex (Alpha Test · 最缺少实测)">Codex α</button>
+      <button type="button" class="platform-btn" data-platform="claude_code" aria-pressed="false" title="Claude Code (Alpha Test · 最缺少实测)">Claude Code α</button>
     </div>
   </div>
   <div id="tabs">
@@ -1013,21 +1023,21 @@ button.step-agent-head:hover { background: color-mix(in srgb, #6366f1 8%, var(--
             </svg>
           </div>
           <p class="empty-hero-title" data-i18n="Multi-AI Web Export Reader">Multi-AI Web Export Reader</p>
-          <p class="empty-hero-sub" data-i18n="本地查看、混合搜索并安全导出你的 Claude、ChatGPT、Grok、Perplexity 与 Codex (Alpha) 历史对话">本地查看、混合搜索并安全导出你的 Claude、ChatGPT、Grok、Perplexity 与 Codex (Alpha) 历史对话</p>
+          <p class="empty-hero-sub" data-i18n="本地查看、混合搜索并安全导出你的 Claude、ChatGPT、Grok、Perplexity、Codex (Alpha) 与 Claude Code (Alpha) 历史对话">本地查看、混合搜索并安全导出你的 Claude、ChatGPT、Grok、Perplexity、Codex (Alpha) 与 Claude Code (Alpha) 历史对话</p>
 
           <div class="welcome-step-card">
             <div class="welcome-step-head">
               <b><span class="ui-icon" aria-hidden="true"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v8.5M4.5 7L8 10.5 11.5 7"/><path d="M2.5 11.5v1.5a1 1 0 0 0 1 1h9a1 1 0 0 0 1-1v-1.5"/></svg></span><span data-i18n="导入对话导出包（支持直接拖入页面）">导入对话导出包（支持直接拖入页面）</span></b>
-              <span class="welcome-step-sub" data-i18n="可连续追加 Claude、ChatGPT、Grok、Perplexity 与 Codex 混合阅读">可连续追加 Claude、ChatGPT、Grok、Perplexity 与 Codex 混合阅读</span>
+              <span class="welcome-step-sub" data-i18n="可连续追加 Claude、ChatGPT、Grok、Perplexity、Codex 与 Claude Code 混合阅读">可连续追加 Claude、ChatGPT、Grok、Perplexity、Codex 与 Claude Code 混合阅读</span>
             </div>
             <div class="welcome-action-grid">
               <button type="button" class="welcome-action-btn primary" data-ui-click="pick-zip">
                 <b><span class="ui-icon" aria-hidden="true"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 4.2A1.7 1.7 0 0 1 4.7 2.5h6.6A1.7 1.7 0 0 1 13 4.2v7.6a1.7 1.7 0 0 1-1.7 1.7H4.7A1.7 1.7 0 0 1 3 11.8z"/><path d="M8 2.5v5.8M6.3 6.7L8 8.4l1.7-1.7"/></svg></span><span data-i18n="选择 ZIP 压缩包">选择 ZIP 压缩包</span></b>
-                <span data-i18n="免解压，支持多选 Claude / ChatGPT / Grok / Perplexity ZIP 或 Codex .jsonl">免解压，支持多选 Claude / ChatGPT / Grok / Perplexity ZIP 或 Codex .jsonl</span>
+                <span data-i18n="免解压，支持多选 Claude / ChatGPT / Grok / Perplexity ZIP 或 Codex / Claude Code .jsonl">免解压，支持多选 Claude / ChatGPT / Grok / Perplexity ZIP 或 Codex / Claude Code .jsonl</span>
               </button>
               <button type="button" class="welcome-action-btn" data-ui-click="pick-folder">
                 <b><span class="ui-icon" aria-hidden="true"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.55" stroke-linecap="round" stroke-linejoin="round"><path d="M2 4.3A1.3 1.3 0 0 1 3.3 3h3l1.4 1.5h5A1.3 1.3 0 0 1 14 5.8v6a1.3 1.3 0 0 1-1.3 1.3H3.3A1.3 1.3 0 0 1 2 11.8z"/></svg></span><span data-i18n="选择解压文件夹">选择解压文件夹</span></b>
-                <span data-i18n="适合已解压的导出目录、~/.codex/sessions 或本地历史备份">适合已解压的导出目录、~/.codex/sessions 或本地历史备份</span>
+                <span data-i18n="适合已解压的导出目录、~/.codex/sessions、~/.claude/projects 或本地备份">适合已解压的导出目录、~/.codex/sessions、~/.claude/projects 或本地备份</span>
               </button>
               <button type="button" class="welcome-action-btn" data-ui-click="download-page">
                 <b><span class="ui-icon" aria-hidden="true"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.55" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 10.5v2a1 1 0 0 0 1 1h9a1 1 0 0 0 1-1v-2"/><path d="M8 2.5v7.5M5.3 7.5L8 10.2l2.7-2.7"/></svg></span><span data-i18n="导入中心 / Claude 清单">导入中心 / Claude 清单</span></b>
@@ -1091,11 +1101,19 @@ button.step-agent-head:hover { background: color-mix(in srgb, #6366f1 8%, var(--
                 <li data-i18n="Alpha Test（最缺少真实会话实测）：自动按 cwd 聚合工作区；暂不支持未解压的 .jsonl.zst">Alpha Test（最缺少真实会话实测）：自动按 cwd 聚合工作区；暂不支持未解压的 .jsonl.zst</li>
               </ul>
             </section>
+            <section class="platform-guide-card claude_code">
+              <div class="platform-guide-head"><span class="platform-dot claude_code"></span><span data-i18n="Claude Code 会话指引">Claude Code 会话指引</span><span class="platform-alpha-badge" data-i18n="Alpha Test · 最缺少实测">Alpha Test · 最缺少实测</span></div>
+              <div class="platform-guide-path">~/.claude/projects/**/*.jsonl</div>
+              <ul>
+                <li data-i18n="支持导入会话 .jsonl、subagents 子代理日志、memory/*.md 与打包 ZIP">支持导入会话 .jsonl、subagents 子代理日志、memory/*.md 与打包 ZIP</li>
+                <li data-i18n="Alpha Test（最缺少实测）：自动聚合 cwd、还原 Diff、统计花费与加密思考标记">Alpha Test（最缺少实测）：自动聚合 cwd、还原 Diff、统计花费与加密思考标记</li>
+              </ul>
+            </section>
           </div>
 
           <div class="welcome-note">
             <b data-i18n="纯本地运行 · 多平台混合工作区">纯本地运行 · 多平台混合工作区</b> —
-            <span data-i18n="所有解析、全文搜索、统计分析与隐私脱敏都在浏览器本机完成，不会上传对话内容。你可以按任意顺序导入 Claude、ChatGPT、Grok、Perplexity 与 Codex，在同一工作区按平台筛选并导出安全分享版。">所有解析、全文搜索、统计分析与隐私脱敏都在浏览器本机完成，不会上传对话内容。你可以按任意顺序导入 Claude、ChatGPT、Grok、Perplexity 与 Codex，在同一工作区按平台筛选并导出安全分享版。</span>
+            <span data-i18n="所有解析、全文搜索、统计分析与隐私脱敏都在浏览器本机完成，不会上传对话内容。你可以按任意顺序导入 Claude、ChatGPT、Grok、Perplexity、Codex 与 Claude Code，在同一工作区按平台筛选并导出安全分享版。">所有解析、全文搜索、统计分析与隐私脱敏都在浏览器本机完成，不会上传对话内容。你可以按任意顺序导入 Claude、ChatGPT、Grok、Perplexity、Codex 与 Claude Code，在同一工作区按平台筛选并导出安全分享版。</span>
           </div>
           <div class="welcome-features">
             <span class="welcome-feature" data-i18n="图片与附件">图片与附件</span>
@@ -1311,18 +1329,18 @@ Object.assign(EN,{
   '查看导出信息':'View exported data',
   '消息树存在循环':'Message tree cycle',
   '当前节点缺失或无效，显示最长有效路径':'Invalid current node; showing longest valid path',
-  '支持 Claude / ChatGPT / Grok / Perplexity / Codex (Alpha) 的 ZIP、解压目录或 .jsonl':'ZIP, extracted folder, or .jsonl from Claude / ChatGPT / Grok / Perplexity / Codex (Alpha)',
+  '支持 Claude / ChatGPT / Grok / Perplexity / Codex (Alpha) / Claude Code (Alpha) 的 ZIP、解压目录或 .jsonl':'ZIP, extracted folder, or .jsonl from Claude / ChatGPT / Grok / Perplexity / Codex (Alpha) / Claude Code (Alpha)',
   '🗜️ 打开导出 ZIP（多平台）':'🗜️ Open Export ZIP (Multi-AI)',
   '打开导出 ZIP（多平台）':'Open Export Archive (Multi-AI)',
   '导入中心 / Claude 清单':'Import Center / Claude Manifest',
-  '本地查看、混合搜索并安全导出你的 Claude、ChatGPT、Grok、Perplexity 与 Codex (Alpha) 历史对话':'View, search across, and redact-export your Claude, ChatGPT, Grok, Perplexity & Codex (Alpha) histories locally',
+  '本地查看、混合搜索并安全导出你的 Claude、ChatGPT、Grok、Perplexity、Codex (Alpha) 与 Claude Code (Alpha) 历史对话':'View, search across, and redact-export your Claude, ChatGPT, Grok, Perplexity, Codex (Alpha) & Claude Code (Alpha) histories locally',
   '第二步 · 导入对话导出包（支持直接拖入页面）':'Step 2 · Import Export Archives (or drag & drop here)',
-  '可连续追加 Claude、ChatGPT、Grok、Perplexity 与 Codex 混合阅读':'Append Claude, ChatGPT, Grok, Perplexity & Codex archives in any order',
+  '可连续追加 Claude、ChatGPT、Grok、Perplexity、Codex 与 Claude Code 混合阅读':'Append Claude, ChatGPT, Grok, Perplexity, Codex & Claude Code archives in any order',
   '🗜️ 选择 ZIP 压缩包':'🗜️ Choose ZIP Archive',
   '选择文件或压缩包':'Choose ZIP / JSONL Files',
-  '免解压，支持多选 Claude / ChatGPT / Grok / Perplexity ZIP 或 Codex .jsonl':'No extraction needed; multi-select Claude / ChatGPT / Grok / Perplexity ZIPs or Codex .jsonl',
+  '免解压，支持多选 Claude / ChatGPT / Grok / Perplexity ZIP 或 Codex / Claude Code .jsonl':'No extraction needed; multi-select Claude / ChatGPT / Grok / Perplexity ZIPs or Codex / Claude Code .jsonl',
   '📂 选择解压文件夹':'📂 Choose Extracted Folder',
-  '适合已解压的导出目录、~/.codex/sessions 或本地历史备份':'For extracted export folders, ~/.codex/sessions, or local backups',
+  '适合已解压的导出目录、~/.codex/sessions、~/.claude/projects 或本地备份':'For extracted export folders, ~/.codex/sessions, ~/.claude/projects, or local backups',
   '适用于 Claude 新版 manifest.json 分包下载与管理':'For Claude partitioned manifest.json downloads',
   'Claude 导出指引':'Claude Export Guide',
   '支持新版分包清单（manifest.json + 分包 ZIP）与旧版单包 ZIP / 目录':'Supports partitioned manifest.json + ZIPs and legacy ZIPs / folders',
@@ -1339,15 +1357,35 @@ Object.assign(EN,{
   'Codex (OpenAI) 会话指引':'Codex (OpenAI) Session Guide',
   '支持直接多选 rollout-*.jsonl、整目录选取 ~/.codex/sessions 或导入打包 ZIP':'Select rollout-*.jsonl files, pick ~/.codex/sessions folder, or import a ZIP bundle',
   'Alpha Test（最缺少真实会话实测）：自动按 cwd 聚合工作区；暂不支持未解压的 .jsonl.zst':'Alpha Test (lacks real-world session testing): groups workspaces by cwd; raw .jsonl.zst not supported yet',
+  'Claude Code 会话指引':'Claude Code Session Guide',
+  '支持导入会话 .jsonl、subagents 子代理日志、memory/*.md 与打包 ZIP':'Import session .jsonl, subagent transcripts, memory/*.md & ZIP archives',
+  'Alpha Test（最缺少实测）：自动聚合 cwd、还原 Diff、统计花费与加密思考标记':'Alpha Test (needs real-world testing): auto-groups cwd, reconstructs diffs, tracks cost & omitted thinking',
   'Alpha Test · 最缺少实测':'Alpha Test · Needs real samples',
   'Codex 会话支持处于 Alpha 测试阶段（最缺少真实会话实测）。如遇推理步骤、工具调用或格式异常，欢迎反馈样本以便完善。':'Codex session support is in Alpha testing (most in need of real-world samples). Please report any parsing or rendering issues.',
+  'Claude Code 会话支持处于 Alpha 测试阶段（最缺少真实会话实测）。如遇工具输出、子代理树或格式异常，欢迎反馈样本以便完善。':'Claude Code session support is in Alpha testing (most in need of real-world samples). Please report any parsing or rendering issues.',
   'Codex 工作区按会话中的工作目录 (cwd) 自动聚合归类。':'Codex Workspaces are grouped automatically by session working directory (cwd).',
+  'Claude Code 工作区按会话中的工作目录 (cwd) 自动聚合归类。':'Claude Code Workspaces are grouped automatically by session working directory (cwd).',
   '工作目录 cwd':'Working dir (cwd)',
+  '累计花费':'Total cost',
+  '代码改动':'Code changes',
   '子代理':'Subagent',
   '客户端':'Client',
   'CLI 版本':'CLI version',
   'Git 分支':'Git branch',
   'Token 消耗':'Token usage',
+  '安全分类器提示':'Safety classifier notice',
+  '终端命令提示':'Local command caveat',
+  '系统通知':'System notice',
+  '终端命令输出':'Local command output',
+  '项目指令':'Project instructions',
+  '会话上下文':'Session context',
+  '系统/元提示信息':'Harness meta notice',
+  '系统提示提醒':'System reminder',
+  '已修改工作区文件':'Edited workspace file',
+  '系统提示快照':'System prompt snapshot',
+  '延迟加载工具集':'Deferred tools registry',
+  'IDE 上下文线索':'IDE context',
+  '后台任务通知':'Background task notice',
   '条子代理协作':'subagent events',
   '已加密载荷':'Encrypted payload',
   '含加密字段':'Encrypted fields',
@@ -1355,6 +1393,8 @@ Object.assign(EN,{
   '本轮对话已中断':'Turn interrupted',
   '进入 Plan Mode（只读规划）':'Entered Plan Mode (read-only planning)',
   '切换至默认执行模式':'Switched to Default execution mode',
+  '切换至自动编辑模式':'Switched to Accept-Edits mode',
+  '切换至旁路权限模式':'Switched to Bypass-Permissions mode',
   '协作模式切换':'Collaboration mode update',
   'Skills 工具指令集':'Skills tool instructions',
   '沙盒与执行权限规则':'Sandbox & permission policy',
@@ -1365,7 +1405,7 @@ Object.assign(EN,{
   '系统与开发指令':'Developer instructions',
   '系统提示词':'System prompt',
   '纯本地运行 · 多平台混合工作区':'Local-only · Unified Multi-AI Workspace',
-  '所有解析、全文搜索、统计分析与隐私脱敏都在浏览器本机完成，不会上传对话内容。你可以按任意顺序导入 Claude、ChatGPT、Grok、Perplexity 与 Codex，在同一工作区按平台筛选并导出安全分享版。':'All parsing, full-text search, analytics, and redaction run locally in your browser. Import Claude, ChatGPT, Grok, Perplexity, and Codex in any order to filter by platform and export safely.',
+  '所有解析、全文搜索、统计分析与隐私脱敏都在浏览器本机完成，不会上传对话内容。你可以按任意顺序导入 Claude、ChatGPT、Grok、Perplexity、Codex 与 Claude Code，在同一工作区按平台筛选并导出安全分享版。':'All parsing, full-text search, analytics, and redaction run locally in your browser. Import Claude, ChatGPT, Grok, Perplexity, Codex, and Claude Code in any order to filter by platform and export safely.',
   'AI 助手消息':'Assistant messages',
   'AI 助手字符':'Assistant characters',
   '你的 AI 使用画像':'Your AI usage profile',
@@ -1463,7 +1503,8 @@ const UI_ICONS={
 };
 function stepToolIcon(name){
   const n=String(name||'').toLowerCase();
-  if(/spawn_agent|send_message|followup_task|wait_agent|close_agent|subagent|agent/.test(n))return UI_ICONS.subagent;
+  if(/spawn_agent|send_message|followup_task|wait_agent|close_agent|subagent|^agent$|^task$/.test(n))return UI_ICONS.subagent;
+  if(/plan|todowrite|todo_write|taskcreate|taskupdate|tasklist|taskget/.test(n))return UI_ICONS.plan;
   if(/read|view|open|cat|list|ls|glob|inspect/.test(n))return UI_ICONS.fileText;
   if(/write|edit|create|replace|patch|diff|apply|save/.test(n))return UI_ICONS.fileEdit;
   if(/bash|shell|exec|run|terminal|cmd|python|node/.test(n))return UI_ICONS.terminal;
@@ -1479,16 +1520,18 @@ const PLATFORM_SVGS={
   gpt:'<svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.55"><circle cx="9" cy="9" r="5.6"/><path d="M6.2 6.5c1.8-1.4 4.8-1 6 1M11.8 11.5c-1.8 1.4-4.8 1-6-1" stroke-linecap="round"/></svg>',
   grok:'<svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="9" cy="9" r="5.8" opacity=".4"/><path d="M4.5 13.5L13.5 4.5M5.5 5.2l7 7.6"/></svg>',
   perplexity:'<svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.55" stroke-linejoin="round"><path d="M9 2v14M3.5 5.5L9 9l5.5-3.5M3.5 12.5L9 9l5.5 3.5M4.5 4h9v10h-9z"/></svg>',
-  codex:'<svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round"><rect x="2.2" y="2.8" width="13.6" height="12.4" rx="3"/><path d="M5 6.4L8.2 9 5 11.6M9.6 12h3.4"/></svg>'
+  codex:'<svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round"><rect x="2.2" y="2.8" width="13.6" height="12.4" rx="3"/><path d="M5 6.4L8.2 9 5 11.6M9.6 12h3.4"/></svg>',
+  claude_code:'<svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round"><rect x="2.2" y="2.8" width="13.6" height="12.4" rx="3"/><path d="M5 6.6L7.6 9 5 11.4M9.4 11.6h3.5"/><path d="M12.2 4.6v2.6M10.9 5.9h2.6" stroke-width="1.4"/></svg>'
 };
 const PLATFORMS={
   claude:{id:'claude',name:'Claude',avatar:'✦',beta:false},
   gpt:{id:'gpt',name:'ChatGPT',avatar:'◎',beta:false},
   grok:{id:'grok',name:'Grok',avatar:'𝕏',beta:true},
   perplexity:{id:'perplexity',name:'Perplexity',avatar:'❖',beta:true},
-  codex:{id:'codex',name:'Codex',avatar:'❯',alpha:true,beta:false}
+  codex:{id:'codex',name:'Codex',avatar:'❯',alpha:true,beta:false},
+  claude_code:{id:'claude_code',name:'Claude Code',avatar:'❯_',alpha:true,beta:false}
 };
-const PLATFORM_ORDER=['claude','gpt','grok','perplexity','codex'];
+const PLATFORM_ORDER=['claude','gpt','grok','perplexity','codex','claude_code'];
 function platformMeta(id){return PLATFORMS[id]||PLATFORMS.claude;}
 function renderAvatarHtml(role,pMeta,avatarLabel){
   const svg=role==='human'?UI_ICONS.user:(PLATFORM_SVGS[pMeta.id]||PLATFORM_SVGS.claude);
@@ -1602,7 +1645,7 @@ function attachmentMedia(att,key){const name=att.file_name||att.filename||att.na
 function chooseAttachmentMedia(key){const input=document.createElement('input');input.type='file';input.accept='image/*';input.onchange=()=>{const file=input.files?.[0];if(!file)return;const item={name:file.name,url:URL.createObjectURL(file),type:file.type||'',source:'manual'};const old=ATTACHMENT_MEDIA.get(key);if(old?.source==='manual'&&old.url)try{URL.revokeObjectURL(old.url);}catch(e){}ATTACHMENT_MEDIA.set(key,item);if(currentConv)renderMessages(currentConv.chat_messages||[]);};input.click();}
 
 function isPackageImportFiles(files){
-  return files.some(f=>/\.zip$|\.jsonl(?:\.zst)?$|\.md$|\.dat$|\.xlsx$/i.test(f.name)||/^(?:manifest.*|export_manifest|library_files|user|conversations-[^/]+|prod-grok-backend|prod-mc-auth-mgmt-api|prod-mc-billing)\.json$/i.test(f.name)||/(?:^|\/)(?:memories|artifacts|dalle-generations|prod-mc-asset-server|sessions|archived_sessions)\//.test(f.webkitRelativePath||''))||(files.length===1&&/\.json$/i.test(files[0].name)&&!/^conversations\.json$/i.test(files[0].name));
+  return files.some(f=>/\.zip$|\.jsonl(?:\.zst)?$|\.md$|\.dat$|\.xlsx$/i.test(f.name)||/^(?:manifest.*|export_manifest|library_files|user|conversations-[^/]+|prod-grok-backend|prod-mc-auth-mgmt-api|prod-mc-billing)\.json$/i.test(f.name)||/(?:^|\/)(?:memories|memory|artifacts|dalle-generations|prod-mc-asset-server|sessions|archived_sessions|subagents)\//.test(f.webkitRelativePath||''))||(files.length===1&&/\.json$/i.test(files[0].name)&&!/^conversations\.json$/i.test(files[0].name));
 }
 document.getElementById('file-input').addEventListener('change',async e=>{
   const files=[...e.target.files];
@@ -1911,7 +1954,8 @@ function exportFormatCore(){
     let listKey=null;
     for(const line of match[1].split(/\r?\n/)){
       if(!line.trim()||line.trim().startsWith('#'))continue;
-      const item=line.match(/^\s+-\s+(.*)$/);if(item&&listKey){try{fields[listKey].push(scalar(item[1]));}catch{warning=true;}continue;}
+      const item=line.match(/^\s+-\s+(.*)$/);if(item&&listKey){try{if(!Array.isArray(fields[listKey]))fields[listKey]=[];fields[listKey].push(scalar(item[1]));}catch{warning=true;}continue;}
+      const sub=line.match(/^\s+([A-Za-z_][\w.-]*):\s*(.*)$/);if(sub&&listKey){try{fields[listKey+'.'+sub[1]]=sub[2]?scalar(sub[2]):'';}catch{warning=true;}continue;}
       const m=line.match(/^([A-Za-z_][\w-]*):\s*(.*)$/);if(!m){warning=true;continue;}
       listKey=null;try{if(!m[2]){fields[m[1]]=[];listKey=m[1];}else if(m[2].startsWith('[')){if(!m[2].endsWith(']'))throw Error();const parts=m[2].slice(1,-1).match(/"(?:\\.|[^"\\])*"|'(?:''|[^'])*'|[^,]+/g)||[];fields[m[1]]=parts.map(scalar);}else fields[m[1]]=scalar(m[2]);}catch{warning=true;}
     }
@@ -3581,6 +3625,880 @@ function codexExportCore(){
   };
 }
 
+function claudeCodeExportCore(){
+  const root='00000000-0000-4000-8000-000000000000';
+  const MAX_TOOL_OUTPUT_CHARS=262144; // 256 KB guard per tool output
+  const MAX_IMAGE_BUDGET_BYTES=25*1024*1024; // 25 MB per-session embedded image budget
+  const list=value=>Array.isArray(value)?value:[];
+  const string=value=>typeof value==='string'?value:'';
+  const trim=value=>string(value).trim();
+
+  const KNOWN_RECORD_TYPES=new Set([
+    'user','assistant','system','attachment','ai-title','custom-title','summary',
+    'last-prompt','cost-state','mode','queue-operation','api-request','api-request-blob',
+    'api-request-shape','atis-latch','file-history-snapshot','file-history-delta',
+    'permission-mode','agent-name','pr-link','progress'
+  ]);
+  const SKIP_NOISE_TYPES=new Set([
+    'api-request','api-request-blob','api-request-shape','atis-latch',
+    'file-history-snapshot','file-history-delta','queue-operation',
+    'permission-mode','agent-name','pr-link','progress'
+  ]);
+  const SKIP_ATTACHMENT_TYPES=new Set([
+    'total_tokens_reminder','silent_turn_reminder','batching_reminder_sent',
+    'auto_mode','date','agent_listing_delta','skill_listing','deferred_tools_delta',
+    'environment','model'
+  ]);
+
+  function parseDate(value){
+    if(value==null||value==='')return '';
+    if(typeof value==='number'&&Number.isFinite(value)&&value>0){
+      const ms=value>=1e11?value:value*1000;
+      if(ms>8.64e15)return '';
+      try{return new Date(ms).toISOString();}catch{return '';}
+    }
+    const raw=trim(value);
+    if(!raw)return '';
+    if(/^\d{10,16}$/.test(raw)){
+      const num=Number(raw),ms=num>=1e11?num:num*1000;
+      if(ms<=8.64e15)try{return new Date(ms).toISOString();}catch{}
+    }
+    const ms=Date.parse(raw);
+    if(!Number.isFinite(ms))return '';
+    try{return new Date(ms).toISOString();}catch{return '';}
+  }
+
+  function hashKey(value){
+    const s=String(value||'');
+    let h1=0x811c9dc5,h2=0x9e3779b9;
+    for(let i=0;i<s.length;i++){
+      const c=s.charCodeAt(i);
+      h1^=c;h1=Math.imul(h1,0x01000193);
+      h2^=c;h2=Math.imul(h2,0x85ebca6b);
+    }
+    return (h1>>>0).toString(16).padStart(8,'0')+(h2>>>0).toString(16).padStart(8,'0');
+  }
+
+  function normalizeCwd(value){
+    return trim(value).replace(/\\/g,'/').replace(/\/+$/,'');
+  }
+
+  function safeImageUri(value){
+    const raw=trim(value);
+    if(!raw)return '';
+    if(/^data:image\/(?:png|jpe?g|gif|webp|bmp);base64,[A-Za-z0-9+/=\s]+$/i.test(raw))return raw;
+    try{
+      const url=new URL(raw);
+      return /^(?:https?:)$/.test(url.protocol)&&!url.username&&!url.password?url.href:'';
+    }catch{
+      return '';
+    }
+  }
+
+  function boundedText(value,warnings,label){
+    const text=String(value??'');
+    if(text.length<=MAX_TOOL_OUTPUT_CHARS)return text;
+    if(warnings&&!warnings.includes('oversized_tool_output'))warnings.push('oversized_tool_output');
+    const head=text.slice(0,Math.floor(MAX_TOOL_OUTPUT_CHARS*0.75));
+    const tail=text.slice(-Math.floor(MAX_TOOL_OUTPUT_CHARS*0.15));
+    return head+'\n\n... ['+(label||'output')+' truncated: '+(text.length-head.length-tail.length)+' chars omitted] ...\n\n'+tail;
+  }
+
+  function isPromptHistoryRecord(obj){
+    return !!(obj&&typeof obj==='object'&&!Array.isArray(obj)&&typeof obj.sessionId==='string'&&typeof obj.display==='string'&&!obj.type&&!obj.message);
+  }
+
+  function isClaudeCodeRecord(obj){
+    if(!obj||typeof obj!=='object'||Array.isArray(obj))return false;
+    const t=string(obj.type);
+    if(!t||!KNOWN_RECORD_TYPES.has(t))return false;
+    return !!(
+      typeof obj.sessionId==='string'||
+      (obj.message&&typeof obj.message==='object')||
+      'parentUuid' in obj||
+      t==='cost-state'||t==='ai-title'||t==='custom-title'||t==='mode'||t==='last-prompt'
+    );
+  }
+
+  function inspectJsonlText(text){
+    const raw=String(text||'').replace(/^\uFEFF/,'');
+    const lines=raw.split(/\r?\n/);
+    let checked=0,ccCount=0,historyCount=0;
+    for(const line of lines){
+      const s=line.trim();
+      if(!s)continue;
+      if(++checked>60)break;
+      let parsed;
+      try{parsed=JSON.parse(s);}catch{continue;}
+      if(isClaudeCodeRecord(parsed))ccCount++;
+      else if(isPromptHistoryRecord(parsed))historyCount++;
+    }
+    if(ccCount>0)return {kind:'claude_code',lines};
+    if(historyCount>0&&ccCount===0)return {kind:'history',lines};
+    return {kind:'unknown',lines};
+  }
+
+  function isClaudeCodeText(text){
+    return inspectJsonlText(text).kind==='claude_code';
+  }
+
+  function projectFromCwd(cwd){
+    const norm=normalizeCwd(cwd);
+    if(!norm)return null;
+    const parts=norm.split('/').filter(Boolean);
+    const leaf=parts.length?parts[parts.length-1]:norm;
+    const wsId='cwd_'+hashKey(norm.toLowerCase());
+    return {
+      wsId,
+      project:{
+        uuid:'cc:cwd:'+wsId,
+        name:leaf+' (Claude Code)',
+        description:'Claude Code workspace: '+norm,
+        sourcePlatform:'claude_code',
+        is_archived:false,
+        docs:[]
+      }
+    };
+  }
+
+  function normDedupe(text){
+    return String(text||'').replace(/\r\n/g,'\n').replace(/\s+/g,' ').trim();
+  }
+
+  function parseSubagentPath(filePath){
+    const clean=String(filePath||'').replace(/\\/g,'/');
+    const m=/(?:^|\/)([0-9a-f]{8}-[0-9a-f-]{12,})\/subagents\/(?:workflows\/([^/]+)\/)?(agent-[^/.]+)\.jsonl$/i.exec(clean);
+    if(m)return {parentSessionId:m[1],workflowId:m[2]||'',agentId:m[3]};
+    const m2=/(?:^|\/)subagents\/(agent-[^/.]+)\.jsonl$/i.exec(clean);
+    if(m2)return {parentSessionId:'',workflowId:'',agentId:m2[1]};
+    return null;
+  }
+
+  function buildUnifiedPatchFromStructured(filePath,hunks){
+    const target=filePath||'file';
+    const parts=[];
+    for(const h of list(hunks)){
+      if(!h||typeof h!=='object')continue;
+      const os=Number.isFinite(h.oldStart)?h.oldStart:1;
+      const ol=Number.isFinite(h.oldLines)?h.oldLines:0;
+      const ns=Number.isFinite(h.newStart)?h.newStart:1;
+      const nl=Number.isFinite(h.newLines)?h.newLines:0;
+      const body=list(h.lines).map(l=>String(l??'')).join('\n');
+      parts.push('@@ -'+os+','+ol+' +'+ns+','+nl+' @@\n'+body);
+    }
+    if(!parts.length)return '';
+    return '*** Update File: '+target+'\n'+parts.join('\n');
+  }
+
+  function buildSimpleDiffFromStrings(filePath,oldStr,newStr){
+    if(typeof oldStr!=='string'&&typeof newStr!=='string')return '';
+    const target=filePath||'file';
+    const oldLines=String(oldStr??'').split(/\r?\n/);
+    const newLines=String(newStr??'').split(/\r?\n/);
+    const maxPreview=180;
+    const clippedOld=oldLines.slice(0,maxPreview).map(l=>'-'+l);
+    if(oldLines.length>maxPreview)clippedOld.push('-... ['+(oldLines.length-maxPreview)+' more lines]');
+    const clippedNew=newLines.slice(0,maxPreview).map(l=>'+'+l);
+    if(newLines.length>maxPreview)clippedNew.push('+... ['+(newLines.length-maxPreview)+' more lines]');
+    return '*** Update File: '+target+'\n@@ -1,'+oldLines.length+' +1,'+newLines.length+' @@\n'+clippedOld.concat(clippedNew).join('\n');
+  }
+
+  function formatToolResultOutput(rawContent,toolUseResult,warnings,toolName){
+    let isError=false;
+    const chunks=[];
+
+    const pushContentBlock=node=>{
+      if(node==null)return;
+      if(typeof node==='string'){
+        if(node.trim())chunks.push(node);
+        return;
+      }
+      if(typeof node!=='object')return;
+      if(node.type==='text'&&typeof node.text==='string'){
+        if(node.text.trim())chunks.push(node.text);
+        return;
+      }
+      if(node.type==='tool_reference'&&node.tool_name){
+        chunks.push('[Loaded tool: '+node.tool_name+']');
+        return;
+      }
+      if(typeof node.text==='string'&&node.text.trim())chunks.push(node.text);
+    };
+
+    if(typeof rawContent==='string'){
+      if(rawContent.trim())chunks.push(rawContent);
+    }else if(Array.isArray(rawContent)){
+      for(const item of rawContent)pushContentBlock(item);
+    }
+
+    if(typeof toolUseResult==='string'){
+      if(!chunks.length&&toolUseResult.trim())chunks.push(toolUseResult);
+      if(/denied|error|failed|rejected/i.test(toolUseResult))isError=true;
+    }else if(toolUseResult&&typeof toolUseResult==='object'){
+      if(toolUseResult.interrupted)isError=true;
+      if(typeof toolUseResult.stdout==='string'||typeof toolUseResult.stderr==='string'){
+        const outParts=[];
+        if(trim(toolUseResult.stdout))outParts.push(toolUseResult.stdout.replace(/\s+$/,''));
+        if(trim(toolUseResult.stderr))outParts.push('stderr:\n'+toolUseResult.stderr.replace(/\s+$/,''));
+        if(toolUseResult.interrupted)outParts.push('[Interrupted]');
+        if(outParts.length){
+          chunks.length=0;
+          chunks.push(outParts.join('\n\n'));
+        }
+      }else if(toolName==='Read'&&toolUseResult.file&&typeof toolUseResult.file==='object'){
+        const f=toolUseResult.file;
+        const fp=string(f.filePath);
+        const range=Number.isFinite(f.startLine)?' (lines '+f.startLine+'–'+((f.startLine||1)+(f.numLines||0)-1)+' of '+(f.totalLines||f.numLines||'?')+')':'';
+        const header=fp?'File: '+fp+range:'';
+        if(header&&typeof f.content==='string'){
+          chunks.length=0;
+          chunks.push(header+'\n\n'+f.content);
+        }
+      }
+    }
+
+    const combined=boundedText(chunks.join('\n\n'),warnings,'tool_result');
+    return {text:combined,isError};
+  }
+
+  function extractInlineContextTags(text){
+    const raw=String(text||'');
+    const contextChunks=[];
+    let cleaned=raw;
+    const tagRe=/<(ide_opened_file|ide_selection|system-reminder|local-command-caveat|local-command-stdout|command-name|command-message|command-args|task-notification)>([\s\S]*?)<\/\1>/gi;
+    cleaned=cleaned.replace(tagRe,(full,tag,inner)=>{
+      const lower=tag.toLowerCase();
+      if(lower==='command-name'||lower==='command-message'||lower==='command-args'){
+        const val=trim(inner);
+        return val?full:'';
+      }
+      contextChunks.push({tag:lower,text:full.trim()});
+      return '';
+    });
+    return {cleaned:cleaned.trim(),contextChunks};
+  }
+
+  function appendImageBlock(blocks,sourceObj,imageState,warnings){
+    if(!sourceObj||typeof sourceObj!=='object')return false;
+    let uri='';
+    if(sourceObj.type==='base64'&&sourceObj.data){
+      const mime=/^image\/(?:png|jpe?g|gif|webp|bmp)$/i.test(string(sourceObj.media_type))?string(sourceObj.media_type):'image/png';
+      uri='data:'+mime+';base64,'+String(sourceObj.data).replace(/\s+/g,'');
+    }else if(sourceObj.type==='url'&&sourceObj.url){
+      uri=safeImageUri(sourceObj.url);
+    }
+    if(!uri)return false;
+    if(imageState.usedBytes+uri.length>MAX_IMAGE_BUDGET_BYTES){
+      if(!warnings.includes('image_budget_exceeded'))warnings.push('image_budget_exceeded');
+      blocks.push({type:'text',text:'_[Image omitted: 25 MB session media budget exceeded]_'});
+      return true;
+    }
+    imageState.usedBytes+=uri.length;
+    blocks.push({type:'image',url:uri,source:'claude_code'});
+    return true;
+  }
+
+  function* convertTranscriptSteps(text,opts={}){
+    const inspected=inspectJsonlText(text);
+    const warnings=[];
+    if(inspected.kind!=='claude_code'){
+      return {conversation:null,project:null,warnings,skippedKind:inspected.kind};
+    }
+
+    const lines=inspected.lines;
+    const filePath=string(opts.path||'claude-code-session.jsonl');
+    const fileName=filePath.split(/[\\/]/).pop()||filePath;
+    const subMetaFromPath=parseSubagentPath(filePath);
+    const externalMeta=opts.meta&&typeof opts.meta==='object'?opts.meta:null;
+
+    let sessionId='';
+    let cwd='';
+    let gitBranch='';
+    let cliVersion='';
+    let slug='';
+    let entrypoint='';
+    let defaultModel='';
+    let latestMode='';
+    let customTitle='';
+    let aiTitle='';
+    let summaryTitle='';
+    let lastPromptTitle='';
+    let firstPromptCandidate='';
+    let firstTs='';
+    let lastTs='';
+    let isSidechain=!!(subMetaFromPath||externalMeta);
+    let agentId=subMetaFromPath?.agentId||'';
+    let parentSessionId=subMetaFromPath?.parentSessionId||'';
+    let workflowId=subMetaFromPath?.workflowId||'';
+    let agentType=string(externalMeta?.agentType);
+    let agentDescription=string(externalMeta?.description);
+    let parentAgentId=string(externalMeta?.parentAgentId);
+    let malformedLines=0;
+    let compactedCount=0;
+    let latestCostState=null;
+
+    const imageState={usedBytes:0};
+    const messages=[];
+    const toolMap=new Map(); // tool_use id -> tool_use block (for pairing & diff patching)
+    const assistantMsgById=new Map(); // message.id -> { msg, turn, lastUsage, stopReason, rawModel }
+    const seenToolUseIds=new Set();
+    const seenToolResultIds=new Set();
+    const seenHumanNorms=new Set();
+    const seenPlanNorms=new Set();
+    let lastInjectedKey='';
+    let currentTurn=null;
+    let pendingPreUserBlocks=[];
+
+    const noteTs=iso=>{
+      if(!iso)return;
+      if(!firstTs||iso<firstTs)firstTs=iso;
+      if(!lastTs||iso>lastTs)lastTs=iso;
+    };
+
+    const startTurn=(ts,model)=>{
+      const blocks=pendingPreUserBlocks.length?[...pendingPreUserBlocks]:[];
+      pendingPreUserBlocks=[];
+      return {
+        ts:ts||lastTs||firstTs,
+        model:model||defaultModel||'',
+        blocks,
+        pendingPlans:[],
+        seenTextNorms:new Set(),
+        seenThinkNorms:new Set()
+      };
+    };
+
+    const ensureTurn=(ts,model)=>{
+      if(!currentTurn){
+        currentTurn=startTurn(ts,model);
+      }else{
+        if(ts&&(!currentTurn.ts||ts>currentTurn.ts))currentTurn.ts=ts;
+        if(model&&!currentTurn.model)currentTurn.model=model;
+      }
+      return currentTurn;
+    };
+
+    const pushMessage=(sender,ts,contentBlocks,model)=>{
+      const baseId='cc:'+(agentId||sessionId||'session')+':m'+messages.length;
+      const parentUuid=messages.length?messages[messages.length-1].uuid:root;
+      const stampedContent=[];
+      for(const b of list(contentBlocks)){
+        if(!b||typeof b!=='object')continue;
+        stampedContent.push(b);
+      }
+      if(!stampedContent.length)return null;
+      const msg={
+        uuid:baseId,
+        parent_message_uuid:parentUuid,
+        sender,
+        created_at:ts||firstTs,
+        updated_at:ts||firstTs,
+        sourcePlatform:'claude_code',
+        ...(model?{model}:{}),
+        content:stampedContent,
+        attachments:[]
+      };
+      messages.push(msg);
+      return msg;
+    };
+
+    const flushTurn=()=>{
+      if(!currentTurn)return;
+      for(const pp of currentTurn.pendingPlans){
+        if(!seenPlanNorms.has(pp.pnorm)){
+          seenPlanNorms.add(pp.pnorm);
+          currentTurn.blocks.push({type:'text',text:'> [!NOTE]\n> **Claude Code Plan**\n\n'+pp.plan});
+        }
+      }
+      currentTurn.pendingPlans=[];
+      if(currentTurn.blocks.length){
+        pushMessage('assistant',currentTurn.ts||lastTs||firstTs,currentTurn.blocks,currentTurn.model||defaultModel);
+      }
+      currentTurn=null;
+    };
+
+    const queueInjected=(source,prompt,extra={})=>{
+      const cleanPrompt=boundedText(String(prompt||'').trim(),warnings,'context');
+      if(!cleanPrompt&&!extra.agentMeta)return;
+      const key=source+'::'+cleanPrompt.slice(0,180);
+      if(key===lastInjectedKey)return;
+      lastInjectedKey=key;
+      const block={type:'injected_prompt_block',injection_source:source,prompt:cleanPrompt,...extra};
+      if(currentTurn)currentTurn.blocks.push(block);
+      else if(messages.length&&messages[messages.length-1].sender==='assistant')messages[messages.length-1].content.push(block);
+      else pendingPreUserBlocks.push(block);
+    };
+
+    for(let lineIdx=0;lineIdx<lines.length;lineIdx++){
+      if(lineIdx>0&&lineIdx%256===0)yield;
+      const rawLine=lines[lineIdx].trim();
+      if(!rawLine)continue;
+
+      let obj;
+      try{obj=JSON.parse(rawLine);}catch{malformedLines++;continue;}
+      if(!obj||typeof obj!=='object'||Array.isArray(obj))continue;
+
+      const rtype=string(obj.type);
+      const ts=parseDate(obj.timestamp);
+      if(ts)noteTs(ts);
+
+      if(obj.sessionId&&!sessionId)sessionId=string(obj.sessionId);
+      if(obj.cwd&&!cwd)cwd=string(obj.cwd);
+      if(obj.gitBranch)gitBranch=string(obj.gitBranch);
+      if(obj.version)cliVersion=string(obj.version);
+      if(obj.slug&&!slug)slug=string(obj.slug);
+      if(obj.entrypoint&&!entrypoint)entrypoint=string(obj.entrypoint);
+      if(obj.isSidechain===true)isSidechain=true;
+      if(obj.agentId&&!agentId)agentId=string(obj.agentId);
+
+      // Dynamic session metadata events
+      if(rtype==='ai-title'){
+        if(trim(obj.aiTitle))aiTitle=trim(obj.aiTitle);
+        continue;
+      }
+      if(rtype==='custom-title'){
+        if(trim(obj.customTitle))customTitle=trim(obj.customTitle);
+        continue;
+      }
+      if(rtype==='summary'){
+        if(trim(obj.summary))summaryTitle=trim(obj.summary);
+        continue;
+      }
+      if(rtype==='last-prompt'){
+        if(trim(obj.lastPrompt)&&!lastPromptTitle)lastPromptTitle=trim(obj.lastPrompt);
+        continue;
+      }
+      if(rtype==='cost-state'){
+        latestCostState={
+          totalCostUSD:typeof obj.totalCostUSD==='number'?obj.totalCostUSD:null,
+          totalLinesAdded:typeof obj.totalLinesAdded==='number'?obj.totalLinesAdded:null,
+          totalLinesRemoved:typeof obj.totalLinesRemoved==='number'?obj.totalLinesRemoved:null,
+          totalDurationMs:typeof obj.totalDuration==='number'?obj.totalDuration:null,
+          modelUsage:obj.modelUsage&&typeof obj.modelUsage==='object'?obj.modelUsage:null
+        };
+        continue;
+      }
+      if(rtype==='mode'){
+        const nextMode=string(obj.mode);
+        if(nextMode&&nextMode!==latestMode){
+          const hadMode=!!latestMode;
+          latestMode=nextMode;
+          if(hadMode||nextMode!=='normal'){
+            queueInjected('cc:mode:'+nextMode,'Mode switched to: '+nextMode);
+          }
+        }
+        continue;
+      }
+
+      if(SKIP_NOISE_TYPES.has(rtype))continue;
+
+      if(rtype==='system'){
+        const stype=string(obj.subtype);
+        if(stype==='compact_boundary'){
+          compactedCount++;
+          const trigger=obj.compactMetadata?.trigger||'auto';
+          const preTokens=obj.compactMetadata?.preTokens;
+          const label='Context compacted ('+trigger+(preTokens?', pre-tokens: '+preTokens:'')+')';
+          queueInjected('cc:compacted',label);
+          continue;
+        }
+        if(stype==='turn_duration'){
+          // Optional subtle duration metadata; skip injecting clutter unless needed
+          continue;
+        }
+        if(stype==='model_refusal_no_fallback'||stype==='api_error'||obj.level==='warning'||obj.level==='error'){
+          const t=ensureTurn(ts);
+          const msgText=trim(obj.content||obj.error?.message||obj.apiRefusalExplanation)||(stype==='model_refusal_no_fallback'?'Model refusal (no fallback)':'System alert');
+          t.blocks.push({type:'text',text:'_[Turn aborted: '+msgText+']_'});
+          continue;
+        }
+        if(stype==='informational'||stype==='local_command'){
+          const infoText=trim(obj.content);
+          if(infoText)queueInjected('cc:system:'+stype,infoText);
+          continue;
+        }
+        continue;
+      }
+
+      if(rtype==='attachment'){
+        const att=obj.attachment;
+        if(!att||typeof att!=='object')continue;
+        const atype=string(att.type);
+        if(atype==='model'&&trim(att.identity))defaultModel=trim(att.identity);
+        if(SKIP_ATTACHMENT_TYPES.has(atype))continue;
+
+        if(atype==='queued_command'){
+          const promptArr=list(att.prompt);
+          const rawText=promptArr.length?promptArr.map(p=>typeof p==='string'?p:string(p?.text)).join('\n\n'):string(att.prompt);
+          const {cleaned,contextChunks}=extractInlineContextTags(rawText);
+          if(att.commandMode==='prompt'||att.humanTurn===true){
+            const norm=normDedupe(cleaned);
+            if(norm&&!seenHumanNorms.has(norm)){
+              flushTurn();
+              if(!firstPromptCandidate&&cleaned)firstPromptCandidate=cleaned.split(/\r?\n/)[0].slice(0,90);
+              for(const c of contextChunks)pendingPreUserBlocks.push({type:'injected_prompt_block',injection_source:'cc:context:'+c.tag,prompt:c.text});
+              pushMessage('human',ts,[{type:'text',text:cleaned}],'');
+              seenHumanNorms.add(norm);
+              currentTurn=startTurn(ts,defaultModel);
+            }
+          }else if(rawText.trim()){
+            queueInjected('cc:notification',rawText.trim());
+          }
+          continue;
+        }
+
+        if(atype==='edited_text_file'&&att.filename){
+          queueInjected('cc:edited_file','IDE file modified: '+att.filename+(att.snippet?'\n\n'+att.snippet:''));
+          continue;
+        }
+        if(atype==='prompt_snapshot'){
+          const linesOut=list(att.systemPrompt).slice(0,25).join('\n');
+          if(linesOut)queueInjected('cc:prompt_snapshot',linesOut);
+          continue;
+        }
+        if(atype==='deferred_tools_record'){
+          const toolNames=list(att.entries).map(e=>e?.name).filter(Boolean).join(', ');
+          if(toolNames)queueInjected('cc:deferred_tools','Deferred tools available: '+toolNames);
+          continue;
+        }
+        if(atype==='instructions'||atype==='session_context'){
+          const txt=trim(att.text||att.content||att.rendered||JSON.stringify(att));
+          if(txt)queueInjected('cc:'+atype,txt);
+          continue;
+        }
+        continue;
+      }
+
+      if(rtype==='user'){
+        const msg=obj.message;
+        const msgContent=msg?.content;
+        const rawTur=obj.toolUseResult;
+
+        if(obj.isMeta===true){
+          let metaText='';
+          if(typeof msgContent==='string')metaText=msgContent;
+          else if(Array.isArray(msgContent))metaText=msgContent.map(b=>b?.type==='text'?string(b.text):'').filter(Boolean).join('\n\n');
+          metaText=trim(metaText);
+          if(!metaText)continue;
+          if(/safety classifier/i.test(metaText))queueInjected('cc:classifier',metaText);
+          else if(/<local-command-caveat>/i.test(metaText))queueInjected('cc:caveat',metaText.replace(/<\/?local-command-caveat>/gi,'').trim());
+          else queueInjected('cc:meta',metaText);
+          continue;
+        }
+
+        const humanParts=[];
+        let hasToolResult=false;
+
+        const handleUserText=(txt)=>{
+          if(!txt)return;
+          const {cleaned,contextChunks}=extractInlineContextTags(txt);
+          for(const c of contextChunks){
+            queueInjected('cc:context:'+c.tag,c.text);
+          }
+          if(cleaned){
+            if(/^\[Request interrupted by user/i.test(cleaned)){
+              const t=ensureTurn(ts);
+              t.blocks.push({type:'text',text:'_[Turn aborted: '+cleaned.replace(/^\[|\]$/g,'')+']_'});
+            }else if(obj.isCompactSummary===true){
+              queueInjected('cc:compacted',cleaned);
+            }else{
+              humanParts.push({type:'text',text:cleaned});
+            }
+          }
+        };
+
+        if(typeof msgContent==='string'){
+          handleUserText(msgContent);
+        }else if(Array.isArray(msgContent)){
+          for(const item of msgContent){
+            if(!item||typeof item!=='object')continue;
+            const itype=string(item.type);
+            if(itype==='tool_result'){
+              hasToolResult=true;
+              const useId=string(item.tool_use_id);
+              if(useId&&seenToolResultIds.has(useId))continue;
+              if(useId)seenToolResultIds.add(useId);
+              const paired=useId?toolMap.get(useId):null;
+              const toolName=paired?.name||'';
+
+              // Enrich paired Edit / Write tool_use with unified diff patch if available
+              if(paired&&rawTur&&typeof rawTur==='object'){
+                const fp=string(rawTur.filePath||paired.input?.file_path);
+                if((toolName==='Edit'||toolName==='MultiEdit'||toolName==='Write')&&!paired.input?.patch){
+                  const patch=Array.isArray(rawTur.structuredPatch)&&rawTur.structuredPatch.length
+                    ?buildUnifiedPatchFromStructured(fp,rawTur.structuredPatch)
+                    :(typeof rawTur.oldString==='string'||typeof rawTur.newString==='string')
+                      ?buildSimpleDiffFromStrings(fp,rawTur.oldString,rawTur.newString)
+                      :'';
+                  if(patch)paired.input={...(paired.input||{}),patch};
+                }
+              }
+
+              const formatted=formatToolResultOutput(item.content,rawTur,warnings,toolName);
+              const isErr=!!(item.is_error||formatted.isError);
+              const t=ensureTurn(ts);
+              const resBlocks=[];
+              if(formatted.text)resBlocks.push({type:'text',text:formatted.text});
+              if(Array.isArray(item.content)){
+                for(const sub of item.content){
+                  if(sub?.type==='image'&&sub.source)appendImageBlock(resBlocks,sub.source,imageState,warnings);
+                }
+              }
+              t.blocks.push({
+                type:'tool_result',
+                tool_use_id:useId||('cc-res-'+lineIdx),
+                name:toolName||'tool',
+                is_error:isErr,
+                content:resBlocks
+              });
+
+              // Surface ExitPlanMode plan content as an Antigravity Plan Card
+              if(toolName==='ExitPlanMode'&&!isErr){
+                const planBody=trim(rawTur?.plan||paired?.input?.plan||formatted.text);
+                if(planBody){
+                  const pnorm=normDedupe(planBody);
+                  if(!seenPlanNorms.has(pnorm)){
+                    seenPlanNorms.add(pnorm);
+                    t.blocks.push({type:'text',text:'> [!NOTE]\n> **Claude Code Plan**\n\n'+planBody});
+                  }
+                }
+              }
+              continue;
+            }
+            if(itype==='text'){
+              handleUserText(string(item.text));
+              continue;
+            }
+            if(itype==='image'&&item.source){
+              appendImageBlock(humanParts,item.source,imageState,warnings);
+              continue;
+            }
+            if(itype==='document'){
+              const docTitle=string(item.title||item.source?.media_type||'Document');
+              humanParts.push({type:'text',text:'_[Attached document: '+docTitle+']_'});
+              continue;
+            }
+          }
+        }
+
+        if(humanParts.length){
+          const plain=humanParts.filter(b=>b.type==='text').map(b=>b.text).join('\n\n').trim();
+          const norm=normDedupe(plain);
+          const hasImg=humanParts.some(b=>b.type==='image');
+          if((norm&&!seenHumanNorms.has(norm))||hasImg){
+            flushTurn();
+            if(!firstPromptCandidate&&plain)firstPromptCandidate=plain.split(/\r?\n/)[0].slice(0,90);
+            pushMessage('human',ts,humanParts,'');
+            if(norm)seenHumanNorms.add(norm);
+            currentTurn=startTurn(ts,defaultModel);
+          }
+        }else if(!hasToolResult){
+          // Empty non-tool user record: nothing to push
+        }
+        continue;
+      }
+
+      if(rtype==='assistant'){
+        const msg=obj.message;
+        if(!msg||typeof msg!=='object')continue;
+        const msgId=string(msg.id);
+        const rawModel=string(msg.model);
+        const isSynthetic=rawModel==='<synthetic>'||!!obj.isApiErrorMessage;
+        if(rawModel&&rawModel!=='<synthetic>')defaultModel=rawModel;
+
+        const t=ensureTurn(ts,rawModel!=='<synthetic>'?rawModel:'');
+
+        if(msgId){
+          let entry=assistantMsgById.get(msgId);
+          if(!entry){
+            entry={rawModel,lastUsage:null,stopReason:''};
+            assistantMsgById.set(msgId,entry);
+          }
+          if(msg.stop_reason)entry.stopReason=string(msg.stop_reason);
+          if(msg.usage&&typeof msg.usage==='object')entry.lastUsage=msg.usage;
+        }
+
+        if(isSynthetic){
+          const synthText=list(msg.content).filter(b=>b?.type==='text').map(b=>trim(b.text)).filter(Boolean).join('\n');
+          if(synthText&&!/^No response requested\.?$/i.test(synthText)){
+            t.blocks.push({type:'text',text:'_[Turn aborted: '+synthText+']_'});
+          }
+          continue;
+        }
+
+        for(const b of list(msg.content)){
+          if(!b||typeof b!=='object')continue;
+          const bt=string(b.type);
+          if(bt==='thinking'||bt==='redacted_thinking'){
+            const dur=typeof obj.thinkingDurationMs==='number'&&obj.thinkingDurationMs>0?obj.thinkingDurationMs:undefined;
+            const txt=trim(b.thinking);
+            if(bt==='redacted_thinking'||!txt){
+              t.blocks.push({
+                type:'thinking',
+                thinking:'',
+                thinking_hidden:true,
+                ...(dur!==undefined?{duration_ms:dur}:{})
+              });
+            }else{
+              const tnorm=normDedupe(txt);
+              if(tnorm&&!t.seenThinkNorms.has(tnorm)){
+                t.seenThinkNorms.add(tnorm);
+                t.blocks.push({
+                  type:'thinking',
+                  thinking:txt,
+                  ...(dur!==undefined?{duration_ms:dur}:{})
+                });
+              }
+            }
+            continue;
+          }
+          if(bt==='text'){
+            const txt=trim(b.text);
+            if(!txt)continue;
+            const tnorm=normDedupe(txt);
+            if(tnorm&&!t.seenTextNorms.has(tnorm)){
+              t.seenTextNorms.add(tnorm);
+              t.blocks.push({type:'text',text:b.text});
+            }
+            continue;
+          }
+          if(bt==='tool_use'){
+            const callId=string(b.id)||('cc-call-'+lineIdx);
+            if(seenToolUseIds.has(callId))continue;
+            seenToolUseIds.add(callId);
+            const name=string(b.name)||'tool';
+            const inputObj=b.input&&typeof b.input==='object'?{...b.input}:{};
+            if((name==='Edit'||name==='MultiEdit')&&(typeof inputObj.old_string==='string'||typeof inputObj.new_string==='string')&&!inputObj.patch){
+              const patch=buildSimpleDiffFromStrings(string(inputObj.file_path),inputObj.old_string,inputObj.new_string);
+              if(patch)inputObj.patch=patch;
+            }
+            const toolBlock={type:'tool_use',id:callId,name,input:inputObj};
+            toolMap.set(callId,toolBlock);
+            t.blocks.push(toolBlock);
+            if(name==='ExitPlanMode'&&typeof inputObj.plan==='string'&&trim(inputObj.plan)){
+              // Prefer emitting right after paired tool_result (or in flushTurn if unpaired) so Steps stay grouped
+              const pnorm=normDedupe(inputObj.plan);
+              if(!seenPlanNorms.has(pnorm))t.pendingPlans.push({pnorm,plan:trim(inputObj.plan)});
+            }
+            continue;
+          }
+        }
+        continue;
+      }
+    }
+
+    if(pendingPreUserBlocks.length)ensureTurn(firstTs,defaultModel);
+    flushTurn();
+    if(malformedLines>0)warnings.push('skipped_malformed_jsonl_lines:'+malformedLines);
+
+    // Compute accurate token usage using last fragment per message.id (never sum streaming fragments)
+    let inputTokens=0,outputTokens=0,cacheReadTokens=0,cacheCreateTokens=0,countedUsage=false;
+    for(const entry of assistantMsgById.values()){
+      if(entry.rawModel==='<synthetic>')continue;
+      const u=entry.lastUsage;
+      if(!u)continue;
+      // Only trust finished calls (stopReason present) or single-shot complete usage when costState unavailable
+      if(entry.stopReason){
+        inputTokens+=Number(u.input_tokens||0);
+        outputTokens+=Number(u.output_tokens||0);
+        cacheReadTokens+=Number(u.cache_read_input_tokens||0);
+        cacheCreateTokens+=Number(u.cache_creation_input_tokens||0);
+        countedUsage=true;
+      }
+    }
+    if(latestCostState?.modelUsage){
+      let cIn=0,cOut=0,cRead=0,cCreate=0;
+      for(const mu of Object.values(latestCostState.modelUsage)){
+        if(!mu||typeof mu!=='object')continue;
+        cIn+=Number(mu.inputTokens||0);
+        cOut+=Number(mu.outputTokens||0);
+        cRead+=Number(mu.cacheReadInputTokens||0);
+        cCreate+=Number(mu.cacheCreationInputTokens||0);
+      }
+      if(cIn+cOut+cRead+cCreate>0){
+        inputTokens=cIn;outputTokens=cOut;cacheReadTokens=cRead;cacheCreateTokens=cCreate;countedUsage=true;
+      }
+    }
+    const totalTokens=countedUsage?(inputTokens+outputTokens+cacheReadTokens+cacheCreateTokens):0;
+
+    if(!sessionId){
+      const fnId=/([0-9a-f]{8}-[0-9a-f-]{12,})/i.exec(filePath);
+      sessionId=subMetaFromPath?.parentSessionId||(fnId?fnId[1]:hashKey(filePath+'|'+firstTs));
+    }
+
+    const cwdInfo=projectFromCwd(cwd);
+    const convUuid=agentId?'cc:'+sessionId+':agent:'+agentId:'cc:'+sessionId;
+    const baseTitle=customTitle||aiTitle||summaryTitle||slug||firstPromptCandidate||lastPromptTitle||(cwdInfo?'['+cwdInfo.project.name.replace(/ \(Claude Code\)$/,'')+'] '+fileName:fileName);
+    const agentNickname=agentType||agentId||'';
+    const displayTitle=(isSidechain&&agentNickname&&!baseTitle.includes(agentNickname))
+      ?('['+agentNickname+'] '+baseTitle)
+      :baseTitle;
+
+    const conversation={
+      uuid:convUuid,
+      originalId:agentId?sessionId+':'+agentId:sessionId,
+      sourcePlatform:'claude_code',
+      name:displayTitle,
+      summary:summaryTitle||'',
+      created_at:firstTs||lastTs,
+      updated_at:lastTs||firstTs,
+      ...(cwdInfo?{workspaceId:cwdInfo.wsId}:{}),
+      ...(defaultModel?{defaultModel}:{}),
+      claudeCodeMeta:{
+        cwd:normalizeCwd(cwd),
+        cliVersion,
+        gitBranch,
+        ...(slug?{slug}:{}),
+        ...(entrypoint?{entrypoint}:{}),
+        ...(latestMode?{mode:latestMode}:{}),
+        ...(isSidechain?{isSubagent:true}:{}),
+        ...(agentId?{agentId}:{}),
+        ...(agentType?{agentType}:{}),
+        ...(agentNickname?{agentNickname}:{}),
+        ...(agentDescription?{agentDescription}:{}),
+        ...(parentAgentId?{parentAgentId}:{}),
+        ...(parentSessionId?{parentThreadId:parentSessionId}:{}),
+        ...(workflowId?{workflowId}:{}),
+        ...(compactedCount?{compactedWindows:compactedCount}:{}),
+        ...(latestCostState?{
+          totalCostUSD:latestCostState.totalCostUSD,
+          totalLinesAdded:latestCostState.totalLinesAdded,
+          totalLinesRemoved:latestCostState.totalLinesRemoved,
+          totalDurationMs:latestCostState.totalDurationMs
+        }:{}),
+        ...(countedUsage?{usage:{input_tokens:inputTokens,output_tokens:outputTokens,cache_read_input_tokens:cacheReadTokens,cache_creation_input_tokens:cacheCreateTokens,total_tokens:totalTokens}}:{})
+      },
+      importWarnings:warnings,
+      chat_messages:messages
+    };
+    return {conversation,project:cwdInfo?cwdInfo.project:null,warnings};
+  }
+
+  function parseTranscriptText(text,opts={}){
+    const it=convertTranscriptSteps(text,opts);
+    let step;
+    do{step=it.next();}while(!step.done);
+    return step.value;
+  }
+
+  async function parseTranscriptAsync(text,opts={},checkpoint=async()=>{}){
+    const it=convertTranscriptSteps(text,opts);
+    let step;
+    do{step=it.next();if(!step.done)await checkpoint();}while(!step.done);
+    return step.value;
+  }
+
+  return {
+    inspectJsonlText,
+    isClaudeCodeText,
+    isPromptHistoryRecord,
+    parseTranscriptText,
+    parseTranscriptAsync,
+    parseDate,
+    projectFromCwd
+  };
+}
+
 // Pure, local rules. Offsets always refer to original UTF-16 source text.
 function redactionRules(){
   const WINDOW=32768,OVERLAP=512,LIMIT=4096;
@@ -3846,7 +4764,7 @@ async function markdown(conv,mode,choices,checkpoint){  // Build linear thread (
     if(!msg||typeof msg!=='object')continue;
     if(msg._divider==='linear'){md+='## ⚠️ '+t('对话分支结构异常，已按时间顺序展示全部消息')+'\n\n';continue;}
     if(msg._divider==='orphan'){md+='## 🧩 '+t('以下消息无法归入对话分支（可能是已删除分支的残留）')+' ('+msg.count+')\n\n';continue;}
-    const role='**'+(msg.sender==='human'?t('你'):msg.sender==='assistant'?(conv.sourcePlatform==='gpt'?'ChatGPT':conv.sourcePlatform==='grok'?'Grok':conv.sourcePlatform==='perplexity'?'Perplexity':conv.sourcePlatform==='codex'?'Codex':'Claude'):msg.sender)+'**';
+    const role='**'+(msg.sender==='human'?t('你'):msg.sender==='assistant'?(conv.sourcePlatform==='gpt'?'ChatGPT':conv.sourcePlatform==='grok'?'Grok':conv.sourcePlatform==='perplexity'?'Perplexity':conv.sourcePlatform==='codex'?'Codex':conv.sourcePlatform==='claude_code'?'Claude Code':'Claude'):msg.sender)+'**';
     md+=role+' · '+fmtTime(msg.created_at)+'\n\n';
     // Attachments
     for(const att of[...(msg.attachments||[]),...(msg.files||[])]){
@@ -4201,7 +5119,7 @@ function taskWorkerMain(){
       parts.push('## '+core.t('关联对话')+'\n\n');let done=0;
       for await(const record of token.records(payload.uuids)){
         const c=JSON.parse(record.raw);parts.push('### '+(c.name||core.t('无标题'))+'\n\n> UUID: '+(c.uuid||'')+'\n\n');
-        let n=0;for(const m of core.tree(c).messages){if(n++%128===0)await token.checkpoint();const roleLabel=m.sender==='human'?core.t('你'):m.sender==='assistant'?(c.sourcePlatform==='gpt'?'ChatGPT':c.sourcePlatform==='grok'?'Grok':c.sourcePlatform==='perplexity'?'Perplexity':c.sourcePlatform==='codex'?'Codex':'Claude'):m.sender;parts.push('**'+roleLabel+'** · '+core.fmtTime(m.created_at)+'\n\n');for(const b of m.content||[]){if(b?.type==='text')parts.push((b.text||'')+'\n\n');else if(b?.type==='thinking')parts.push('<details><summary>'+core.t('思考过程')+'</summary>\n\n'+(b.thinking||'')+'\n\n</details>\n\n');else if(b?.type==='tool_use')parts.push('> '+core.t('工具调用')+': `'+(b.name||'')+'`\n\n');}parts.push('---\n\n');}
+        let n=0;for(const m of core.tree(c).messages){if(n++%128===0)await token.checkpoint();const roleLabel=m.sender==='human'?core.t('你'):m.sender==='assistant'?(c.sourcePlatform==='gpt'?'ChatGPT':c.sourcePlatform==='grok'?'Grok':c.sourcePlatform==='perplexity'?'Perplexity':c.sourcePlatform==='codex'?'Codex':c.sourcePlatform==='claude_code'?'Claude Code':'Claude'):m.sender;parts.push('**'+roleLabel+'** · '+core.fmtTime(m.created_at)+'\n\n');for(const b of m.content||[]){if(b?.type==='text')parts.push((b.text||'')+'\n\n');else if(b?.type==='thinking')parts.push('<details><summary>'+core.t('思考过程')+'</summary>\n\n'+(b.thinking||'')+'\n\n</details>\n\n');else if(b?.type==='tool_use')parts.push('> '+core.t('工具调用')+': `'+(b.name||'')+'`\n\n');}parts.push('---\n\n');}
         await token.checkpoint({loaded:++done,total:payload.uuids.length});
       }
       return {blob:new Blob(parts,{type:'text/markdown;charset=utf-8'})};
@@ -4367,7 +5285,7 @@ function importWorkerMain(){
         };
         const stripWrapperRoot=rawFiles=>{
           let currentFiles=normalizeEntryPaths(rawFiles);
-          const reserved=['areas','projects','artifacts','memories','sessions','archived_sessions','dalle-generations','sites','prod-mc-asset-server'];
+          const reserved=['areas','projects','artifacts','memories','memory','sessions','archived_sessions','dalle-generations','sites','prod-mc-asset-server'];
           for(let depth=0;depth<6;depth++){
             const names=Object.keys(currentFiles);
             if(!names.length)break;
@@ -4412,7 +5330,12 @@ function importWorkerMain(){
         }
         const entries=Object.keys(files).filter(n=>!files[n].dir&&!n.startsWith('__MACOSX/'));for(const name of entries){if(/^\/|^[A-Za-z]:/.test(name))throw new Error('Invalid export path');format.logicalPath(String(files[name].unsafeOriginalName||name).replace(/\\/g,'/').replace(/\/+/g,'/'));}
         let convs=entries.filter(n=>/(^|\/)conversations(?:-\d+)?\.json$/i.test(n)).sort((a,b)=>{const na=Number(/(\d+)\.json$/i.exec(a)?.[1]??-1),nb=Number(/(\d+)\.json$/i.exec(b)?.[1]??-1);return na-nb||a.localeCompare(b);});
-        const projects=[],memories=[],artifacts=[],users=[],logins=[],accounts=new Set(),mime=Object.create(null),resources=[],gpt=gptExportCore(),grok=typeof grokExportCore==='function'?grokExportCore():null,pplx=typeof perplexityExportCore==='function'?perplexityExportCore():null,codex=typeof codexExportCore==='function'?codexExportCore():null;let legacyMemory=null,gptManifest=false,sawZst=false;const designs=[],codexConvs=[],codexProjects=new Map();
+        const projects=[],memories=[],artifacts=[],users=[],logins=[],accounts=new Set(),mime=Object.create(null),resources=[],gpt=gptExportCore(),grok=typeof grokExportCore==='function'?grokExportCore():null,pplx=typeof perplexityExportCore==='function'?perplexityExportCore():null,codex=typeof codexExportCore==='function'?codexExportCore():null,claudeCode=typeof claudeCodeExportCore==='function'?claudeCodeExportCore():null;let legacyMemory=null,gptManifest=false,sawZst=false;const designs=[],codexConvs=[],codexProjects=new Map(),ccMetaByPath=new Map();
+        for(const name of entries){
+          if(/\.meta\.json$/i.test(name)){
+            try{ccMetaByPath.set(name.replace(/\.meta\.json$/i,''),parseJsonText(await files[name].async('text')));}catch{}
+          }
+        }
         if(files['export_manifest.json']){const manifest=parseJsonText(await files['export_manifest.json'].async('text')),shards=gpt.manifest(manifest,entries);if(shards){convs=shards;gptManifest=true;}}
         if(files['library_files.json']){
           const library=parseJsonText(await files['library_files.json'].async('text'));for(const item of Array.isArray(library)?library:[]){await check(current);const path=String(item.file_id||'')+'.dat';if(!files[path])continue;const declared=String(item.mime_type||''),header=await fileHeader(files[path]);const detected=detectMagicMime(header);mime[path]=detected||(/^(?:text\/plain|text\/markdown|application\/pdf|audio\/|image\/)/.test(declared)?declared==='text/plain'&&String(item.file_extension).toLowerCase()==='md'?'text/markdown':declared:'application/octet-stream');resources.push({packageId:id,path,name:String(item.file_name||path),mime:mime[path],fileId:String(item.file_id||''),altId:String(item.library_file_id||'')});}
@@ -4440,10 +5363,10 @@ function importWorkerMain(){
           }
         }
         const filename=file?.name||'folder';
-        const auxSkip=new Set(['export_manifest.json','library_files.json','sites/export_manifest.json','ads.json','user_settings.json','sectioned_conversations.json','message_feedback.json','model_comparisons.json','shared_conversations.json','group_chats.json','prod-mc-billing.json']);
+        const auxSkip=new Set(['export_manifest.json','library_files.json','sites/export_manifest.json','ads.json','user_settings.json','sectioned_conversations.json','message_feedback.json','model_comparisons.json','shared_conversations.json','group_chats.json','prod-mc-billing.json','sessions-index.json']);
         for(const name of entries){await check(current);
           const baseName=name.split('/').pop();
-          if(convs.includes(name)||auxSkip.has(name)||auxSkip.has(baseName))continue;
+          if(convs.includes(name)||auxSkip.has(name)||auxSkip.has(baseName)||/\.meta\.json$/i.test(name))continue;
           if(pplx&&/^(?:.*\/)?user-data-[^/]+\.xlsx$/i.test(name)){
             try{
               const wbBuf=files[name].file?await files[name].file.arrayBuffer():await files[name].async('arraybuffer');
@@ -4460,20 +5383,32 @@ function importWorkerMain(){
             continue;
           }
           if(/\.jsonl\.zst$/i.test(name)){sawZst=true;continue;}
-          if(codex&&/\.jsonl$/i.test(name)){
+          if((claudeCode||codex)&&/\.jsonl$/i.test(name)){
             try{
               const jsonlText=await files[name].async('text');
-              const parsedCodex=await codex.parseRolloutAsync(jsonlText,{path:name},()=>check(current));
-              if(parsedCodex&&parsedCodex.conversation){
-                codexConvs.push(parsedCodex.conversation);
-                if(parsedCodex.project&&!codexProjects.has(parsedCodex.project.uuid))codexProjects.set(parsedCodex.project.uuid,parsedCodex.project);
+              let handled=false;
+              if(claudeCode&&claudeCode.isClaudeCodeText(jsonlText)){
+                const sidecarMeta=ccMetaByPath.get(name.replace(/\.jsonl$/i,''))||null;
+                const parsedCc=await claudeCode.parseTranscriptAsync(jsonlText,{path:name,meta:sidecarMeta},()=>check(current));
+                if(parsedCc&&parsedCc.conversation){
+                  codexConvs.push(parsedCc.conversation);
+                  if(parsedCc.project&&!codexProjects.has(parsedCc.project.uuid))codexProjects.set(parsedCc.project.uuid,parsedCc.project);
+                }
+                handled=true;
+              }
+              if(!handled&&codex){
+                const parsedCodex=await codex.parseRolloutAsync(jsonlText,{path:name},()=>check(current));
+                if(parsedCodex&&parsedCodex.conversation){
+                  codexConvs.push(parsedCodex.conversation);
+                  if(parsedCodex.project&&!codexProjects.has(parsedCodex.project.uuid))codexProjects.set(parsedCodex.project.uuid,parsedCodex.project);
+                }
               }
             }catch(error){if(error?.canceled)throw error;}
             continue;
           }
           if(/\.md$/i.test(name)){
-            const logical=name.replace(/^.*?(?=(?:areas|projects|memories)\/)/,'');
-            if(/^(?:areas\/|projects\/[^/]+\/|memories\/)/.test(logical))memories.push(format.memory(logical,await files[name].async('text'),'',filename));continue;
+            const logical=name.replace(/^.*?(?=(?:areas|projects|memories|memory)\/)/,'');
+            if(/^(?:areas\/|projects\/[^/]+\/|memories\/|memory\/)/.test(logical))memories.push(format.memory(logical,await files[name].async('text'),'',filename));continue;
           }
           if(!/\.json$/i.test(name))continue;
           let value;try{value=parseJsonText(await files[name].async('text'));}catch{if(/(^|\/)(?:projects\/|users\.json|login_history\.json|artifacts\/)/i.test(name))throw new Error('Invalid JSON: '+name);continue;}
@@ -4573,7 +5508,7 @@ async function ensureFeature(kind){
   const libraries=kind==='import'?['zip']:kind==='reader'?['markdown','highlight']:['markdown','highlight'];
   const sources=libraries.map(name=>Uint8Array.from(atob(WORKER_LIBRARIES[name].base64),char=>char.charCodeAt(0)));
   const main=kind==='import'?importWorkerMain:kind==='reader'?readerWorkerMain:taskWorkerMain;
-  const url=URL.createObjectURL(new Blob([...sources,'\n',exportFormatCore.toString(),'\n',gptDilCore.toString(),'\n',gptExportCore.toString(),'\n',grokExportCore.toString(),'\n',perplexityExportCore.toString(),'\n',codexExportCore.toString(),'\n',redactionRules.toString(),'\n',workerDomainCore.toString(),'\n',featureWorkerRuntime.toString(),'\n('+main.toString()+')()'],{type:'text/javascript'}));
+  const url=URL.createObjectURL(new Blob([...sources,'\n',exportFormatCore.toString(),'\n',gptDilCore.toString(),'\n',gptExportCore.toString(),'\n',grokExportCore.toString(),'\n',perplexityExportCore.toString(),'\n',codexExportCore.toString(),'\n',claudeCodeExportCore.toString(),'\n',redactionRules.toString(),'\n',workerDomainCore.toString(),'\n',featureWorkerRuntime.toString(),'\n('+main.toString()+')()'],{type:'text/javascript'}));
   let worker;try{worker=new Worker(url);}catch(error){URL.revokeObjectURL(url);throw error;}
   state={worker,url,id:kind+':'+(++featureSequence),generation:dataWorkerGeneration,pending:new Map(),port:null};
   state.ready=new Promise((resolve,reject)=>{state.resolveReady=resolve;state.rejectReady=reject;});state.ready.catch(()=>{});featureWorkers.set(kind,state);
@@ -4641,7 +5576,7 @@ async function renderReaderWindow(options={}){
     }
     if(result.start>0){const button=document.createElement('button');button.className='load-earlier-btn';button.textContent='↑ '+t('加载更早消息')+' ('+result.start+')';button.onclick=()=>void renderReaderWindow({startIndex:Math.max(0,result.start-40)});nav.appendChild(button);container.prepend(nav);}
     if(result.end<result.total){const button=document.createElement('button');button.className='load-earlier-btn';button.textContent='↓ '+t('加载更新消息');button.onclick=()=>void renderReaderWindow({startIndex:result.end});container.appendChild(button);}
-    initZipMedia(container);if(currentConv.sourcePlatform==='codex'&&result.start===0)container.insertAdjacentHTML('afterbegin',codexAlphaNoticeHtml());for(const warning of currentConv.importWarnings||[]){const notice=document.createElement('p');notice.setAttribute('role','status');notice.textContent=warning;container.prepend(notice);}return result;
+    initZipMedia(container);if((currentConv.sourcePlatform==='codex'||currentConv.sourcePlatform==='claude_code')&&result.start===0)container.insertAdjacentHTML('afterbegin',currentConv.sourcePlatform==='claude_code'?claudeCodeAlphaNoticeHtml():codexAlphaNoticeHtml());for(const warning of currentConv.importWarnings||[]){const notice=document.createElement('p');notice.setAttribute('role','status');notice.textContent=warning;container.prepend(notice);}return result;
   }catch(error){if(error.name==='AbortError')return;const container=document.getElementById('messages');container.textContent=error.message;const retry=document.createElement('button');retry.textContent=t('重试');retry.onclick=()=>void openConv(uuid);container.appendChild(retry);}
 }
 async function readerSearch(query){
@@ -4682,7 +5617,7 @@ function exportMediaKey(name){
   const unique=[...new Set(candidates.map(([,entry])=>entry.packageId+'/'+entry.path))];
   return unique.length===1?unique[0]:zipEntries.has(mediaKey(name))&&typeof zipEntries.get(mediaKey(name))==='string'?mediaKey(name):'';
 }
-Object.assign(EN,{'下载与导入':'Import center','导入中心 / Claude 清单':'Import center / Claude manifest','多 AI 导出导入中心':'Multi-AI Export Import Center','支持直接导入 Claude、ChatGPT、Grok、Perplexity 与 Codex (Alpha) 的 ZIP、解压目录、独立 JSON 或 .jsonl，也支持通过 Claude 新版下载清单逐包获取并混合阅读。':'Import Claude, ChatGPT, Grok, Perplexity, and Codex (Alpha) ZIPs, extracted folders, standalone JSON, or .jsonl logs directly — or use Claude’s partitioned download manifest checklist and read all platforms together.','直接导入（多平台通用）':'Direct import (all supported platforms)','无需清单，可直接多选或追加导入 Claude、ChatGPT、Grok、Perplexity 与 Codex 导出包，自动识别平台并混合搜索、筛选与脱敏导出。':'No manifest needed. Select or append Claude, ChatGPT, Grok, Perplexity, and Codex archives in any order for unified search, filtering, and safe export.','Claude 新版分包下载清单':'Claude partitioned download manifest','仅适用于 Claude 新版分包导出：先导入 manifest JSON 获取官方下载链接，下载完 ZIP 后再批量追加。':'For Claude’s partitioned exports only: open manifest JSON to get official download links, then add the downloaded ZIPs together.','01 · 导入清单':'01 · Choose manifest','02 · 官方下载':'02 · Download from Claude','03 · 批量追加':'03 · Add ZIPs locally','清单只用于展示文件与链接。':'The manifest lists files and download links.','在新标签页完成下载，返回这里继续。':'Download in a new tab, then return here.','批量选择 ZIP，可按任意顺序追加（可与其他平台混合）。':'Select ZIP files in any order (can be mixed with other AI platforms).','尚未选择下载清单':'No Claude download manifest selected','如果你拿到的是完整的 ZIP（Claude / ChatGPT / Grok / Perplexity / Codex）或解压目录，请直接用上方按钮导入。':'If you already have full ZIP files / session folders (Claude / ChatGPT / Grok / Perplexity / Codex) or .jsonl files, use the direct import buttons above.','已导入文件':'Imported files','返回对话':'Back to conversations'});
+Object.assign(EN,{'下载与导入':'Import center','导入中心 / Claude 清单':'Import center / Claude manifest','多 AI 导出导入中心':'Multi-AI Export Import Center','支持直接导入 Claude、ChatGPT、Grok、Perplexity、Codex (Alpha) 与 Claude Code (Alpha) 的 ZIP、解压目录、独立 JSON 或 .jsonl，也支持通过 Claude 新版下载清单逐包获取并混合阅读。':'Import Claude, ChatGPT, Grok, Perplexity, Codex (Alpha), and Claude Code (Alpha) ZIPs, extracted folders, standalone JSON, or .jsonl logs directly — or use Claude’s partitioned download manifest checklist and read all platforms together.','直接导入（多平台通用）':'Direct import (all supported platforms)','无需清单，可直接多选或追加导入 Claude、ChatGPT、Grok、Perplexity、Codex 与 Claude Code 导出包，自动识别平台并混合搜索、筛选与脱敏导出。':'No manifest needed. Select or append Claude, ChatGPT, Grok, Perplexity, Codex, and Claude Code archives in any order for unified search, filtering, and safe export.','Claude 新版分包下载清单':'Claude partitioned download manifest','仅适用于 Claude 新版分包导出：先导入 manifest JSON 获取官方下载链接，下载完 ZIP 后再批量追加。':'For Claude’s partitioned exports only: open manifest JSON to get official download links, then add the downloaded ZIPs together.','01 · 导入清单':'01 · Choose manifest','02 · 官方下载':'02 · Download from Claude','03 · 批量追加':'03 · Add ZIPs locally','清单只用于展示文件与链接。':'The manifest lists files and download links.','在新标签页完成下载，返回这里继续。':'Download in a new tab, then return here.','批量选择 ZIP，可按任意顺序追加（可与其他平台混合）。':'Select ZIP files in any order (can be mixed with other AI platforms).','尚未选择下载清单':'No Claude download manifest selected','如果你拿到的是完整的 ZIP（Claude / ChatGPT / Grok / Perplexity / Codex / Claude Code）或解压目录，请直接用上方按钮导入。':'If you already have full ZIP files / session folders (Claude / ChatGPT / Grok / Perplexity / Codex / Claude Code) or .jsonl files, use the direct import buttons above.','已导入文件':'Imported files','返回对话':'Back to conversations'});
 function openDownloadPage(){
   exportViewVersion++;openConversationGeneration++;resetReaderSearch();cancelFeature('reader');
   if(currentView==='analytics')cancelAnalytics();
@@ -4699,8 +5634,8 @@ function renderExportManifest(){
   if(currentView!=='downloads')return;
   const session=exportSession,host=document.getElementById('messages'),panel=document.createElement('section');panel.id='export-session-panel';panel.className='export-page';host.replaceChildren(panel);
   const make=(tag,cls,text,parent=panel)=>{const node=document.createElement(tag);node.className=cls;node.textContent=text;parent.append(node);return node;};
-  const hero=make('header','export-hero','');make('div','export-kicker','Multi-AI Web Export Reader',hero);make('h2','',t('多 AI 导出导入中心'),hero);make('p','export-description',t('支持直接导入 Claude、ChatGPT、Grok、Perplexity 与 Codex (Alpha) 的 ZIP、解压目录、独立 JSON 或 .jsonl，也支持通过 Claude 新版下载清单逐包获取并混合阅读。'),hero);
-  const direct=make('section','export-empty','');direct.style.marginBottom='20px';make('strong','',t('直接导入（多平台通用）'),direct);make('p','export-description',t('无需清单，可直接多选或追加导入 Claude、ChatGPT、Grok、Perplexity 与 Codex 导出包，自动识别平台并混合搜索、筛选与脱敏导出。'),direct);
+  const hero=make('header','export-hero','');make('div','export-kicker','Multi-AI Web Export Reader',hero);make('h2','',t('多 AI 导出导入中心'),hero);make('p','export-description',t('支持直接导入 Claude、ChatGPT、Grok、Perplexity、Codex (Alpha) 与 Claude Code (Alpha) 的 ZIP、解压目录、独立 JSON 或 .jsonl，也支持通过 Claude 新版下载清单逐包获取并混合阅读。'),hero);
+  const direct=make('section','export-empty','');direct.style.marginBottom='20px';make('strong','',t('直接导入（多平台通用）'),direct);make('p','export-description',t('无需清单，可直接多选或追加导入 Claude、ChatGPT、Grok、Perplexity、Codex 与 Claude Code 导出包，自动识别平台并混合搜索、筛选与脱敏导出。'),direct);
   const directBar=make('div','export-toolbar','',direct);for(const [action,label,primary]of [['pick-zip','🗜️ 打开导出 ZIP（多平台）',true],['pick-folder','📂 打开解压目录'],['new-archive','打开新档案'],['clear-archive','清除档案']]){const button=make('button','export-button'+(primary?' primary':action==='clear-archive'?' quiet':''),t(label),directBar);button.type='button';button.dataset.uiClick=action;}
   if(session.packages.length){make('h3','',t('已导入文件'));for(const p of session.packages)make('p','export-meta','✓ '+p.filename);}
   if(session.errors.length){const errors=make('div','export-errors','');errors.setAttribute('role','status');for(const e of session.errors)make('p','',e,errors);}
@@ -6054,6 +6989,7 @@ function archiveAnalysisCore(){
       const wsId=conversation.workspaceId||record.meta?.workspaceId;
       if(wsId&&stats['grok:ws:'+wsId]){map[record.meta.uuid]='grok:ws:'+wsId;evidence[record.meta.uuid]={method:'workspace',confidence:1,files:[],queries:[],keywords:[]};}
       else if(wsId&&stats['codex:cwd:'+wsId]){map[record.meta.uuid]='codex:cwd:'+wsId;evidence[record.meta.uuid]={method:'workspace',confidence:1,files:[],queries:[],keywords:[]};}
+      else if(wsId&&stats['cc:cwd:'+wsId]){map[record.meta.uuid]='cc:cwd:'+wsId;evidence[record.meta.uuid]={method:'workspace',confidence:1,files:[],queries:[],keywords:[]};}
       const colId=conversation.collectionUuid||record.meta?.collectionUuid;
       if(!map[record.meta.uuid]&&colId&&stats['perplexity:col:'+colId]){map[record.meta.uuid]='perplexity:col:'+colId;evidence[record.meta.uuid]={method:'collection',confidence:1,files:[],queries:[],keywords:[]};}
       for(let messageIndex=0;messageIndex<messages.length;messageIndex++){
@@ -6150,7 +7086,7 @@ function dataWorkerMain(){
       if(key==='chat_messages'&&raw[start]==='[')meta.message_count=countArrayItems(raw,start,end);
       else if(key==='account')meta.accountUuid=JSON.parse(raw.slice(start,end))?.uuid||'';
       else if(key==='_design')meta._design=JSON.parse(raw.slice(start,end));
-      else if(['sourcePlatform','originalId','defaultModel','currentNode','importWarnings','workspaceId','collectionUuid','codexMeta'].includes(key))meta[key]=JSON.parse(raw.slice(start,end));
+      else if(['sourcePlatform','originalId','defaultModel','currentNode','importWarnings','workspaceId','collectionUuid','codexMeta','claudeCodeMeta'].includes(key))meta[key]=JSON.parse(raw.slice(start,end));
       else if(key==='uuid'||key==='name'||key==='summary'||key==='created_at'||key==='updated_at'){
         const value=JSON.parse(raw.slice(start,end));meta[key]=typeof value==='string'?value:'';
       }
@@ -6887,12 +7823,12 @@ function renderConvList(convs){
   el.innerHTML=marker+convs.map(c=>{
     const ac=currentConv&&currentConv.uuid===c.uuid?' active':'';
     const last=c.uuid===lastConversationUuid;
-    const cm=c.codexMeta;
-    const subTag=cm&&(cm.agentNickname||(cm.agentPath?cm.agentPath.split('/').filter(Boolean).pop():''));
+    const cm=c.claudeCodeMeta||c.codexMeta;
+    const subTag=cm&&(cm.isSubagent||cm.agentPath)&&(cm.agentNickname||cm.agentType||(cm.agentPath?cm.agentPath.split('/').filter(Boolean).pop():''));
     let displayTitle=String(c.name||'('+t('无标题')+')');
     if(subTag&&displayTitle.startsWith('['+subTag+'] '))displayTitle=displayTitle.slice(subTag.length+3);
     const dateStr=fmtDate(c.updated_at||c.created_at);
-    const subPill=subTag?'<span class="subagent-pill" title="'+escAttr(cm.agentPath||subTag)+'"><span class="ui-icon" aria-hidden="true">'+UI_ICONS.subagent+'</span>'+esc(subTag)+'</span>':'';
+    const subPill=subTag?'<span class="subagent-pill" title="'+escAttr(cm.agentDescription||cm.agentPath||subTag)+'"><span class="ui-icon" aria-hidden="true">'+UI_ICONS.subagent+'</span>'+esc(subTag)+'</span>':'';
     const metaHtml=renderPlatformPill(c.sourcePlatform)+subPill+(dateStr?' <span>· '+esc(dateStr)+'</span>':'');
     return '<div class="conv-item'+ac+(last?' last-supper':'')+(subTag?' is-subagent':'')+'" data-conv-uuid="'+escAttr(c.uuid)+'" role="button" tabindex="0">'
       +'<div class="conv-title">'+esc(displayTitle)+(last?'<span class="last-supper-badge">'+t('最后的晚餐')+'</span>':'')+'</div>'
@@ -7186,8 +8122,12 @@ async function openConv(uuid,sourceView){
   const st=document.getElementById('summary-text');
   st.innerHTML=currentConv.summary?(currentConv._summaryHtml||(typeof marked!=='undefined'?marked.parse(currentConv.summary):esc(currentConv.summary))):'<span style="color:var(--text3)">'+t('无摘要')+'</span>';
   const pInfo=platformMeta(currentConv.sourcePlatform);
-  const cm=currentConv.codexMeta,usageTotal=cm?.usage?.total_tokens;
-  document.getElementById('meta-box').innerHTML=metaRow(t('来源'),pInfo.name+(pInfo.alpha?' (Alpha)':pInfo.beta?' (Beta)':''))+(currentConv.defaultModel?metaRow(t('模型'),currentConv.defaultModel):'')+(cm?.cwd?metaRow(t('工作目录 cwd'),cm.cwd):'')+(cm?.agentPath?metaRow(t('子代理'),cm.agentPath+(cm.agentNickname?' ('+cm.agentNickname+')':'')):'')+(cm?.originator?metaRow(t('客户端'),cm.originator):'')+(cm?.cliVersion?metaRow(t('CLI 版本'),cm.cliVersion):'')+(cm?.gitBranch?metaRow(t('Git 分支'),cm.gitBranch):'')+(Number.isFinite(usageTotal)?metaRow(t('Token 消耗'),usageTotal.toLocaleString()):'')+metaRow(t('创建时间'),fmtDate(currentConv.created_at))+metaRow(t('更新时间'),fmtDate(currentConv.updated_at))+metaRow(t('消息数'),messageCount)+metaRow('UUID',currentConv.uuid.slice(0,18)+'…');
+  const cm=currentConv.claudeCodeMeta||currentConv.codexMeta,usageTotal=cm?.usage?.total_tokens;
+  const subInfo=cm?.agentPath?(cm.agentPath+(cm.agentNickname?' ('+cm.agentNickname+')':'')):cm?.isSubagent?(cm.agentType||cm.agentId||cm.agentNickname||''):'';
+  const clientInfo=cm?.originator||cm?.entrypoint||'';
+  const costStr=(typeof cm?.totalCostUSD==='number'&&Number.isFinite(cm.totalCostUSD))?'$'+cm.totalCostUSD.toFixed(4):'';
+  const diffStr=(typeof cm?.totalLinesAdded==='number'||typeof cm?.totalLinesRemoved==='number')?'+'+(cm.totalLinesAdded||0)+' / -'+(cm.totalLinesRemoved||0):'';
+  document.getElementById('meta-box').innerHTML=metaRow(t('来源'),pInfo.name+(pInfo.alpha?' (Alpha)':pInfo.beta?' (Beta)':''))+(currentConv.defaultModel?metaRow(t('模型'),currentConv.defaultModel):'')+(cm?.cwd?metaRow(t('工作目录 cwd'),cm.cwd):'')+(subInfo?metaRow(t('子代理'),subInfo):'')+(clientInfo?metaRow(t('客户端'),clientInfo):'')+(cm?.cliVersion?metaRow(t('CLI 版本'),cm.cliVersion):'')+(cm?.gitBranch?metaRow(t('Git 分支'),cm.gitBranch):'')+(Number.isFinite(usageTotal)?metaRow(t('Token 消耗'),usageTotal.toLocaleString()):'')+(costStr?metaRow(t('累计花费'),costStr):'')+(diffStr?metaRow(t('代码改动'),diffStr):'')+metaRow(t('创建时间'),fmtDate(currentConv.created_at))+metaRow(t('更新时间'),fmtDate(currentConv.updated_at))+metaRow(t('消息数'),messageCount)+metaRow('UUID',currentConv.uuid.slice(0,18)+'…');
 }
 function metaRow(k,v){return '<div class="meta-row"><span class="meta-key">'+esc(String(k))+'</span><span class="meta-val">'+esc(String(v))+'</span></div>';}
 
@@ -7458,7 +8398,7 @@ async function openProject(uuid){
       +'<b style="color:var(--text2);">'+t('结果仅供参考')+'</b>. '+t('可能存在遗漏或误判。')
       +'</div>';
   }else{
-    const noteText=projPlatform==='grok'?t('Grok 工作区通过导出中的 workspace_id 字段精确关联对话。'):projPlatform==='codex'?t('Codex 工作区按会话中的工作目录 (cwd) 自动聚合归类。'):t('Perplexity Space 来自 user-data 工作簿；如需补充关联可在下方手动修正。');
+    const noteText=projPlatform==='grok'?t('Grok 工作区通过导出中的 workspace_id 字段精确关联对话。'):projPlatform==='codex'?t('Codex 工作区按会话中的工作目录 (cwd) 自动聚合归类。'):projPlatform==='claude_code'?t('Claude Code 工作区按会话中的工作目录 (cwd) 自动聚合归类。'):t('Perplexity Space 来自 user-data 工作簿；如需补充关联可在下方手动修正。');
     h+='<div style="font-size:11.5px;color:var(--text3);background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:8px 12px;margin-bottom:12px;line-height:1.6;">'+esc(noteText)+'</div>';
   }
   if(relatedConvs.length){
@@ -7760,6 +8700,9 @@ function loadEarlierMessages(){
 function codexAlphaNoticeHtml(){
   return '<div class="import-notice codex-alpha-notice" role="status"><b>Alpha Test · Codex CLI / Desktop</b> — '+esc(t('Codex 会话支持处于 Alpha 测试阶段（最缺少真实会话实测）。如遇推理步骤、工具调用或格式异常，欢迎反馈样本以便完善。'))+'</div>';
 }
+function claudeCodeAlphaNoticeHtml(){
+  return '<div class="import-notice claude-code-alpha-notice" role="status"><b>Alpha Test · Claude Code CLI / IDE</b> — '+esc(t('Claude Code 会话支持处于 Alpha 测试阶段（最缺少真实会话实测）。如遇工具输出、子代理树或格式异常，欢迎反馈样本以便完善。'))+'</div>';
+}
 function renderMessages(msgs,opts){
   if(currentConv?._readerBacked&&!opts?._mountOnly)return renderReaderWindow(opts||{});
   const container=document.getElementById('messages');
@@ -7779,6 +8722,7 @@ function renderMessages(msgs,opts){
   const scrollPos=(opts&&opts.keepScroll)?container.scrollTop:null;
   let h='',lastDate='';
   if(!opts?._mountOnly&&currentConv?.sourcePlatform==='codex')h+=codexAlphaNoticeHtml();
+  else if(!opts?._mountOnly&&currentConv?.sourcePlatform==='claude_code')h+=claudeCodeAlphaNoticeHtml();
   if(start>0)h+='<div class="load-earlier-wrap"><button class="load-earlier-btn" type="button" data-ui-click="load-earlier">↑ '+t('加载更早消息')+' ('+t('剩余')+' '+start+t('条')+')</button></div>';
   for(const msg of linear.slice(start)){
     if(!msg||typeof msg!=='object')continue;
@@ -8233,30 +9177,61 @@ function toolCallSnippet(b){
   if(!b)return '';
   if(b.message)return String(b.message);
   const inp=b.input||{};
-  if(typeof inp.patch==='string'&&inp.patch){const m=/\*\*\* (?:Update|Add|Delete) File:\s*([^\r\n\\"']+)/.exec(inp.patch);if(m)return m[1].trim();}
+  const shortPath=p=>{const s=String(p||'');const parts=s.split(/[\\/]/).filter(Boolean);return parts.length>2?'…/'+parts.slice(-2).join('/'):s;};
+  if(typeof inp.patch==='string'&&inp.patch){const m=/\*\*\* (?:Update|Add|Delete) File:\s*([^\r\n\\"']+)/.exec(inp.patch);if(m)return shortPath(m[1].trim());}
   if(typeof inp.code==='string'&&inp.code){
-    if(inp.code.includes('*** Begin Patch')){const m=/\*\*\* (?:Update|Add|Delete) File:\s*([^\r\n\\"']+)/.exec(inp.code);if(m)return 'apply_patch · '+m[1].trim();}
+    if(inp.code.includes('*** Begin Patch')){const m=/\*\*\* (?:Update|Add|Delete) File:\s*([^\r\n\\"']+)/.exec(inp.code);if(m)return 'apply_patch · '+shortPath(m[1].trim());}
     const cmdM=/\bcmd\s*:\s*(['"])((?:\\.|(?!\1).)+)\1/.exec(inp.code);
     if(cmdM)return cmdM[2].replace(/\\n/g,' ').replace(/\\"/g,'"').replace(/\\\\/g,'\\');
     if(/tools\.write_stdin\s*\(/.test(inp.code)){const sid=/session_id\s*:\s*(\d+)/.exec(inp.code);return sid?'write_stdin (#'+sid[1]+')':'write_stdin';}
     const first=inp.code.split(/\r?\n/).find(l=>l.trim());
     if(first)return first.trim();
   }
+  if(inp.subagent_type)return '['+inp.subagent_type+'] '+(inp.description||inp.prompt||'');
+  if(Array.isArray(inp.todos))return inp.todos.filter(x=>x?.status==='completed').length+'/'+inp.todos.length+' tasks';
   if(Array.isArray(inp.questions)&&inp.questions[0]?.question)return String(inp.questions[0].question);
-  return String(inp.query||inp.command||inp.cmd||inp.target||inp.task_name||inp.workdir||inp.path||inp.file_path||inp.url||'');
+  if(inp.pattern)return String(inp.pattern)+(inp.path?' · '+shortPath(inp.path):'');
+  if(inp.description&&inp.command)return String(inp.description);
+  if(inp.file_path||inp.path)return shortPath(inp.file_path||inp.path);
+  return String(inp.query||inp.command||inp.cmd||inp.target||inp.task_name||inp.workdir||inp.url||inp.subject||'');
 }
 function injectedMeta(block){
   const src=String(block?.injection_source||'');
   const raw=String(block?.prompt||'');
-  if(/<collaboration_mode>\s*#\s*Plan Mode/i.test(raw))return {icon:UI_ICONS.plan,label:t('进入 Plan Mode（只读规划）'),cls:'mode-plan',kind:'mode'};
-  if(/<collaboration_mode>\s*#\s*Collaboration Mode:\s*Default/i.test(raw))return {icon:UI_ICONS.spark,label:t('切换至默认执行模式'),cls:'mode-default',kind:'mode'};
-  if(/<collaboration_mode>/i.test(raw))return {icon:UI_ICONS.spark,label:t('协作模式切换'),cls:'mode-default',kind:'mode'};
+  const preview=s=>{const clean=String(s||'').replace(/<[^>]+>/g,' ').replace(/\s+/g,' ').trim();return clean.length>48?clean.slice(0,48)+'…':clean;};
+  if(src==='cc:mode:plan'||/<collaboration_mode>\s*#\s*Plan Mode/i.test(raw))return {icon:UI_ICONS.plan,label:t('进入 Plan Mode（只读规划）'),cls:'mode-plan',kind:'mode'};
+  if(src==='cc:mode:acceptEdits')return {icon:UI_ICONS.fileEdit,label:t('切换至自动编辑模式'),cls:'mode-default',kind:'mode'};
+  if(src==='cc:mode:bypassPermissions')return {icon:UI_ICONS.lock,label:t('切换至旁路权限模式'),cls:'mode-abort',kind:'mode'};
+  if(src==='cc:mode:normal'||/<collaboration_mode>\s*#\s*Collaboration Mode:\s*Default/i.test(raw))return {icon:UI_ICONS.spark,label:t('切换至默认执行模式'),cls:'mode-default',kind:'mode'};
+  if(src.startsWith('cc:mode:')||/<collaboration_mode>/i.test(raw))return {icon:UI_ICONS.spark,label:t('协作模式切换'),cls:'mode-default',kind:'mode'};
+  if(src==='codex:compacted'||src==='cc:compacted')return {icon:UI_ICONS.steps,label:t('上下文压缩窗口摘要'),cls:'mode-compacted',kind:'context'};
+  if(src==='cc:classifier')return {icon:UI_ICONS.alert,label:t('安全分类器提示'),cls:'mode-abort',kind:'context'};
+  if(src==='cc:caveat')return {icon:UI_ICONS.terminal,label:t('终端命令提示'),cls:'',kind:'context'};
+  if(src==='cc:system:informational')return {icon:UI_ICONS.alert,label:t('系统通知')+(raw?' · '+preview(raw):''),cls:'mode-abort',kind:'context'};
+  if(src==='cc:system:local_command')return {icon:UI_ICONS.terminal,label:t('终端命令输出'),cls:'',kind:'context'};
+  if(src.startsWith('cc:system:'))return {icon:UI_ICONS.alert,label:t('系统通知')+(raw?' · '+preview(raw):''),cls:'mode-abort',kind:'context'};
+  if(src==='cc:edited_file'){
+    const fm=/IDE file modified:\s*([^\r\n]+)/i.exec(raw);
+    const fn=fm?fm[1].trim().split(/[\\/]/).pop():'';
+    return {icon:UI_ICONS.fileEdit,label:t('已修改工作区文件')+(fn?' · '+fn:''),cls:'',kind:'context'};
+  }
+  if(src==='cc:instructions')return {icon:UI_ICONS.fileText,label:t('项目指令')+(raw?' · '+preview(raw):''),cls:'',kind:'context'};
+  if(src==='cc:session_context')return {icon:UI_ICONS.terminal,label:t('会话上下文'),cls:'',kind:'context'};
+  if(src==='cc:prompt_snapshot')return {icon:UI_ICONS.fileText,label:t('系统提示快照'),cls:'',kind:'context'};
+  if(src==='cc:deferred_tools')return {icon:UI_ICONS.tool,label:t('延迟加载工具集'),cls:'',kind:'context'};
+  if(src==='cc:context:system-reminder')return {icon:UI_ICONS.alert,label:t('系统提示提醒'),cls:'',kind:'context'};
+  if(src==='cc:notification'||src==='cc:context:task-notification'){
+    const sm=/<summary>([^<]+)<\/summary>/i.exec(raw);
+    const snip=sm?sm[1].trim():preview(raw);
+    return {icon:UI_ICONS.subagent,label:t('后台任务通知')+(snip?' · '+snip:''),cls:'mode-agent',kind:'context'};
+  }
+  if(src.startsWith('cc:context:ide_'))return {icon:UI_ICONS.terminal,label:t('IDE 上下文线索'),cls:'',kind:'context'};
+  if(src.startsWith('cc:'))return {icon:UI_ICONS.fileText,label:t('系统/元提示信息')+(raw?' · '+preview(raw):''),cls:'',kind:'context'};
   if(/<skills_instructions>/i.test(raw))return {icon:UI_ICONS.tool,label:t('Skills 工具指令集'),cls:'',kind:'context'};
   if(/<permissions/i.test(raw))return {icon:UI_ICONS.lock,label:t('沙盒与执行权限规则'),cls:'',kind:'context'};
   if(/<multi_agent_role>|<multi_agent_mode>/i.test(raw))return {icon:UI_ICONS.subagent,label:t('多代理角色与协同规范'),cls:'mode-agent',kind:'context'};
   if(/<environment_context>|^# Context from my IDE setup:/i.test(raw))return {icon:UI_ICONS.terminal,label:t('运行环境与 IDE 上下文'),cls:'',kind:'context'};
   if(/<turn_aborted>/i.test(raw))return {icon:UI_ICONS.alert,label:t('中断恢复上下文'),cls:'mode-abort',kind:'context'};
-  if(src==='codex:compacted')return {icon:UI_ICONS.steps,label:t('上下文压缩窗口摘要'),cls:'mode-compacted',kind:'context'};
   if(src==='codex:developer')return {icon:UI_ICONS.fileText,label:t('系统与开发指令'),cls:'',kind:'context'};
   if(src==='codex:system')return {icon:UI_ICONS.fileText,label:t('系统提示词'),cls:'',kind:'context'};
   return {icon:UI_ICONS.fileText,label:t('注入上下文')+(src?' · '+src:''),cls:'',kind:'context'};
@@ -8289,7 +9264,7 @@ function renderAgentHandoffCard(block,insideRail){
     +'</div>';
 }
 function extractCodexPlan(text){
-  const m=/^>\s*\[!NOTE\]\s*\r?\n>\s*\*\*(Proposed Plan|Codex Plan)\*\*\s*\r?\n+([\s\S]+)$/i.exec(String(text||'').trim());
+  const m=/^>\s*\[!NOTE\]\s*\r?\n>\s*\*\*(Proposed Plan|Codex Plan|Claude Code Plan)\*\*\s*\r?\n+([\s\S]+)$/i.exec(String(text||'').trim());
   if(!m)return null;
   const body=m[2].trim();
   const h1=/^#\s+([^\r\n]+)/m.exec(body);
@@ -8301,7 +9276,7 @@ function renderPlanCard(plan,preHtml){
     try{
       const doc=new DOMParser().parseFromString(preHtml,'text/html');
       const first=doc.body.firstElementChild;
-      if(first&&(first.classList.contains('md-alert')||first.classList.contains('callout-note')||first.tagName==='BLOCKQUOTE')&&/(?:Proposed Plan|Codex Plan)/i.test(first.textContent||'')){
+      if(first&&(first.classList.contains('md-alert')||first.classList.contains('callout-note')||first.tagName==='BLOCKQUOTE')&&/(?:Proposed Plan|Codex Plan|Claude Code Plan)/i.test(first.textContent||'')){
         first.remove();
       }
       bodyHtml=doc.body.innerHTML.trim();
@@ -8363,18 +9338,21 @@ function renderStepGroup(entries){
   if(agentCount)summaryParts.push(agentCount+' '+t('条子代理协作'));
   const summaryText=summaryParts.join(' · ')||t('推理与工具步骤');
   const toolPreview=toolNames.slice(0,3).join(', ')+(toolNames.length>3?' +'+(toolNames.length-3):'');
+  const fmtDur=ms=>typeof ms==='number'&&Number.isFinite(ms)&&ms>0?(ms>=1000?(ms/1000).toFixed(1)+'s':Math.round(ms)+'ms'):'';
   let rail='';
   for(const node of nodes){
     if(node.kind==='think'){
       const b=node.block;
+      const durStr=fmtDur(b.duration_ms);
+      const durBadge=durStr?'<span class="step-think-dur">'+esc(durStr)+'</span>':'';
       const statuses=[b.hidden||b.thinking_hidden?t('导出包含隐藏状态标记'):'',b.truncated?t('截断'):'',b.cut_off?'cut_off':''].filter(Boolean).join(' · ');
       const label=t(b.summaries===true?'思考摘要':'思考过程')+(statuses?' · '+statuses:'');
       if(!b.thinking&&!b._thinkingHtml&&!(b.summaries&&b.summaries!==true)&&(b.hidden||b.thinking_hidden)){
-        rail+='<div class="step-node kind-think"><div class="step-think-card step-think-hidden"><span class="ui-icon" aria-hidden="true">'+UI_ICONS.lock+'</span><span class="step-node-status-tag">'+esc(label)+'</span></div></div>';
+        rail+='<div class="step-node kind-think"><div class="step-think-card step-think-hidden"><span class="ui-icon" aria-hidden="true">'+UI_ICONS.lock+'</span><span class="step-node-status-tag">'+esc(label)+'</span>'+durBadge+'</div></div>';
       }else{
         const prose=b._thinkingHtml||(b.thinking?renderMd(b.thinking):'<span style="color:var(--text3)">'+esc(t('无导出的思考正文'))+'</span>');
         const extra=b.summaries&&b.summaries!==true?'<pre>'+esc(JSON.stringify(b.summaries,null,2))+'</pre>':'';
-        const tag=(b.summaries===true||statuses)?'<div class="step-node-status-tag">'+esc(label)+'</div>':'';
+        const tag=(b.summaries===true||statuses||durBadge)?'<div class="step-node-status-tag">'+esc(label)+durBadge+'</div>':'';
         rail+='<div class="step-node kind-think"><div class="step-think-card">'+tag+'<div class="step-think-prose"'+(b._field?' data-reader-field="'+escAttr(b._field)+'"':'')+'>'+prose+extra+'</div></div></div>';
       }
     }else if(node.kind==='agent'){
@@ -8393,7 +9371,7 @@ function renderStepGroup(entries){
         const uInp=u.input||{};
         if(typeof uInp.patch==='string'&&uInp.patch){
           body+='<div><div class="step-sub-label">Patch</div><pre><code class="language-diff">'+esc(uInp.patch)+'</code></pre></div>';
-          const rest=Object.fromEntries(Object.entries(uInp).filter(([k])=>k!=='patch'));
+          const rest=Object.fromEntries(Object.entries(uInp).filter(([k])=>k!=='patch'&&k!=='old_string'&&k!=='new_string'));
           if(Object.keys(rest).length)body+='<div><div class="step-sub-label">'+esc(t('参数'))+'</div><pre><code class="language-json">'+esc(JSON.stringify(rest,null,2))+'</code></pre></div>';
         }else if(typeof uInp.code==='string'&&uInp.code){
           body+='<div><div class="step-sub-label">'+esc(t('参数'))+'</div><pre><code class="language-javascript">'+esc(uInp.code)+'</code></pre></div>';
