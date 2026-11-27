@@ -2,23 +2,11 @@
 
 # Multi-AI Web Export Reader
 
-**本地多 AI 导出历史查看器（Claude / ChatGPT / Grok Beta / Perplexity Beta）**
+**纯本地多 AI 对话导出查看器 — 支持 Claude · ChatGPT · Grok (Beta) · Perplexity (Beta)**
 
-**新增 xAI Grok & Perplexity.ai 导出支持（Beta Test）**：
-- **xAI Grok**：支持直接导入官方导出的单层 ZIP（含 `prod-grok-backend.json`、`prod-mc-auth-mgmt-api.json` 与 `prod-mc-asset-server` 本地附件）或独立 JSON，支持分支路径、思考/工具步骤、内联引文与工作区关联。
-- **Perplexity.ai**：支持直接导入官方导出的 ZIP（含 `conversations-*.json` 与 `user-data-*.xlsx` 账户/偏好/Space 工作簿）或独立 JSON，可与 Claude、ChatGPT、Grok 混合阅读、筛选、统计与脱敏导出。
+把各大 AI 平台导出的 ZIP、解压目录或独立 JSON，在浏览器本机变成可混合阅读、全文搜索、统计分析与隐私脱敏导出的统一工作区。
 
-> ⚠️ **Beta Test 提示**：Grok 与 Perplexity.ai 导出解析目前均处于早期测试阶段，受限于官方导出格式变动及样本覆盖范围，部分特殊字段、引文来源、多媒体附件或交互卡片可能尚不完善，欢迎提交脱敏样本反馈。
-
-**新增 ChatGPT 网页历史导出支持**：可导入 ZIP、解压目录及独立对话 JSON，与 Claude 档案混合阅读、搜索、统计和脱敏导出。支持导出的网页／文件引用、图片组、实体、离线地点图和禁用的历史上传组件；按需读取 `.dat` 图片与 Markdown 附件。不会执行包内网页或组件动作。[GPT 支持范围与验证](docs/gpt-export.md)
-
-**GPT 正文组件修复**：按原位置展示 DIL 布局、餐厅实体、评分、柱状图、地图路线和历史订位时间；恢复单选、输入、复选清单与进度条。确认按钮仅在本地生成可复制消息。普通版默认关闭远程图片与 OpenStreetMap 底图请求，可在首页第一步或顶部栏一键开启；完整离线版仅使用本地展示。[组件覆盖与验证](docs/gpt-components.md)
-
-**已适配 Claude 新版分包导出**：下载清单 → 官方分包下载页 → 批量导入 ZIP。支持两种记忆导出入口与 Artifact 历史版本，继续兼容旧版 ZIP / 文件夹。[新版导入说明](docs/new-export-import.md)
-
-> **把 Claude 官方导出的清单与 ZIP 分包，变成可搜索、可分析、可安全分享的本地对话档案。**
-
-无需安装 · 单文件打开 · ZIP 免解压 · 纯本地处理 · 支持大型历史
+> 🔒 **纯本地运行 · 零上传 · 零后端**：所有解析、搜索、统计与脱敏都在当前浏览器完成。普通版默认关闭远程图片与地图请求（可在首页第一步或顶部栏一键开启）；完整离线版无需任何网络。
 
 [![Latest release](https://img.shields.io/github/v/release/Artistkisa/claude-rescue-reader?label=release)](https://github.com/Artistkisa/claude-rescue-reader/releases/latest)
 [![Viewer Validation](https://github.com/Artistkisa/claude-rescue-reader/actions/workflows/viewer-validation.yml/badge.svg?branch=main)](https://github.com/Artistkisa/claude-rescue-reader/actions/workflows/viewer-validation.yml)
@@ -27,258 +15,69 @@
 [![Offline bundle](https://github.com/Artistkisa/claude-rescue-reader/actions/workflows/release-verify.yml/badge.svg)](https://github.com/Artistkisa/claude-rescue-reader/releases/latest)
 [![License: MIT](https://img.shields.io/badge/license-MIT-yellow.svg)](LICENSE)
 
-**[⬇ 直接下载 viewer.html](https://github.com/Artistkisa/claude-rescue-reader/releases/latest/download/viewer.html)** · **[🔌 下载完整离线版](https://github.com/Artistkisa/claude-rescue-reader/releases/latest/download/claude-rescue-reader-offline.zip)** · **[🧪 合成演示 ZIP](docs/demo/claude-rescue-reader-synthetic-demo.zip)** · **[🌐 English](README.en.md)**
+**[⬇ 下载单文件版 `viewer.html`](https://github.com/Artistkisa/claude-rescue-reader/releases/latest/download/viewer.html)** · **[🔌 下载完整离线版](https://github.com/Artistkisa/claude-rescue-reader/releases/latest/download/claude-rescue-reader-offline.zip)** · **[🧪 合成演示 ZIP](docs/demo/claude-rescue-reader-synthetic-demo.zip)** · **[🌐 English](README.en.md)**
 
-![Claude Rescue Reader 界面：对话、Thinking、工具调用与 Markdown 表格](docs/images/viewer-overview.png)
+![Multi-AI Web Export Reader 界面总览](docs/images/viewer-overview.png)
 
 <sub>截图使用“北辰咖啡订阅服务”虚构历史生成；人物、品牌、文件与数值均为合成演示数据。</sub>
 
 ---
 
-## 30 秒开始
+## 支持的 AI 平台
 
-1. [直接下载 `viewer.html`](https://github.com/Artistkisa/claude-rescue-reader/releases/latest/download/viewer.html)，双击用浏览器打开。
-2. **新版导出拿到 JSON 清单？** 点击侧栏「下载与导入」→「导入下载清单」，选择 `manifest-*.json`；逐项点击「打开下载页」，在新标签页中手动下载官方 ZIP。
-3. 一次选择或拖入下载好的多个 ZIP——**不用解压，不用上传，不用安装。** 后续分包用「追加分包」加入同一档案。
+支持在同一个工作区**按任意顺序追加导入**多个平台的历史导出，自动隔离账户并按平台筛选、混合搜索与对比统计：
 
-**旧版只有一个 ZIP？** 直接拖入即可，无需清单；解压后的整个文件夹也能导入。Chrome、Edge 和 Firefox 均可使用。
+| 平台 | 状态 | 导出入口 | 支持的格式与解析能力 | 说明 |
+|---|---|---|---|---|
+| **Claude** | 稳定 | `Settings → Account → Export Data` | 新版 `manifest-*.json` + 分包 ZIP、旧版单包 ZIP / 目录；对话分支、Thinking 状态、工具调用、Artifact 历史版本、项目与三层关联、全局/项目记忆、Design、账户与登录记录 | [新版导入说明](docs/new-export-import.md) |
+| **ChatGPT** | 稳定 | `Settings → Data controls → Export data` | 完整 ZIP（分片 `conversations-*.json`、`export_manifest.json`）及独立 JSON；分支路径、引文、DIL 交互组件、图表、地图、`.dat` 本地图片/Markdown 附件、账户信息 | [GPT 支持范围](docs/gpt-export.md) · [组件说明](docs/gpt-components.md) |
+| **Grok (xAI)** | **Beta Test** | `accounts.x.ai → Data → Download Account Data` | 官方导出 ZIP（`prod-grok-backend.json`、`prod-mc-auth-mgmt-api.json`、`prod-mc-asset-server` 附件）及独立 JSON；`leaf_response_id` 分支、思考/工具步骤、内联引文、工作区精确关联 | 早期测试中，部分新字段或媒体格式仍在适配 |
+| **Perplexity.ai** | **Beta Test** | `Settings → Account → Export Data` | 官方导出 ZIP（`conversations-*.json`、`user-data-*.xlsx`）及独立 JSON；多轮问答链、`user-data` 账户/偏好/Space 工作簿 | 早期测试中，官方正文 `[n]` 引文暂不含 URL，部分字段仍在适配 |
 
-### 新旧 Claude 导出都能读
-
-| 拿到的文件 | 如何使用 |
-|---|---|
-| 新版 `manifest-*.json` | 专门的下载清单页显示类别、分包和导入状态；按钮打开官方地址，不自动请求链接，也不把打开页面当作下载完成 |
-| 新版多个 ZIP 分包 | 对话、项目、记忆、作品（`frames`）和账户资料可按任意顺序追加；没有清单也能识别导入，缺包不阻止查看已有内容 |
-| 账户导出中的记忆 | 读取 `memories/<账号>.json` 的 `memory_files`，保留主题、来源和可用时间 |
-| 独立记忆 ZIP | 读取 Markdown 目录与 frontmatter；可单独打开或明确追加到当前档案，不同正文保留可切换版本 |
-| 旧版 ZIP / 导出文件夹 | 继续支持 `conversations.json`、`memories.json`、项目文件和 Design，原入口仍可使用 |
-
-新版还支持 **Artifact 独立作品列表与历史版本选择**、导出中明确存在的 Thinking 状态、折叠的注入上下文，以及本地只读账户资料和分页登录记录。缺失模型显示「未提供」，不会推测补齐。
-
-下载链接可能在 24 小时内或使用后提前失效，请在浏览器中完成官方下载。另一份档案用「打开新档案」，同一份档案的后续包用「追加分包」。[完整流程与兼容说明](docs/new-export-import.md)
-
-| 你会得到 | 不只是“能打开” |
-|---|---|
-| 💬 **完整阅读** | Markdown、代码、Thinking、工具调用、Artifact、Design、附件和对话分支 |
-| 🔎 **快速找回** | 标题/摘要搜索、全文搜索、对话内定位、项目级搜索 |
-| 📊 **理解历史** | 活跃趋势、模型/工具分布、词频、最长对话、使用画像和健康报告 |
-| 🧭 **重建项目** | 项目记忆、知识文件、关联证据、置信度、手动修正和引用关系图 |
-| 🧪 **审计 Claude 行为** | 工具调用时间线、隐藏结果探针、Thinking 完整性和回答证据链 |
-| 🛡️ **安全分享** | 扩展凭据检测、标准/强力脱敏、一致化名、自定义敏感词及安全 PDF/Markdown；[使用说明](docs/redaction.md) |
-
-> 🔒 所有历史解析、搜索、统计和脱敏都在当前浏览器本地完成。查看器没有后端，也不会上传你的对话。
-
-![拖入 ZIP、打开对话、检查项目关系图、浏览统计并进行安全导出的完整闭环](docs/images/workflow-demo.gif)
-
-## 差异一眼可见
-
-| 能力 | 文本编辑器 | 普通导出查看器 | Rescue Reader |
-|---|:---:|:---:|:---:|
-| 大型 ZIP 直读 | ❌ | 部分 | ✅ |
-| 对话分支 | ❌ | 部分 | ✅ |
-| 项目关联证据 | ❌ | ❌ | ✅ |
-| 全局 / 项目记忆 | ❌ | 部分 | ✅ |
-| Thinking 完整性 | ❌ | ❌ | ✅ |
-| 工具结果来源与审计 | ❌ | ❌ | ✅ |
-| Worker 懒解析 | ❌ | 部分 | ✅ |
-| 导出前脱敏预览 | ❌ | ❌ | ✅ |
-| 完全离线发行版 | — | 部分 | ✅ |
-
-<sub>“普通导出查看器”指常见功能基线，不影射或点名任何项目；“部分”表示支持程度会随实现和导出结构变化。</sub>
-
-## Claude 的导出 ZIP，远不只是聊天文本
-
-Rescue Reader 会把普通聊天记录里不显眼的内容重新呈现出来：
-
-- Claude 已生成、但网页端不一定突出展示的对话摘要
-- 全局记忆、项目记忆、项目自定义指令与知识文件
-- Thinking 的截断、隐藏、摘要、签名和替代展示状态
-- 工具审批、MCP / 集成来源、调用参数、错误与隐藏结构化结果
-- 项目知识搜索记录，以及它们为项目归属推断提供的证据
-- 分支、孤儿消息、空记录、时间倒序与不完整附件
-- 附件路径、内部元数据、flags，以及分享前值得检查的其他字段
-
-这些字段只能证明“导出档案中存在相应记录”，**不能单独证明**账号被风控、模型被降级或后台采取了某种处置。
-
-## 把导出里“有但不显眼”的关系重新拼回来
-
-### 项目记忆 → 项目文件 → 关联对话
-
-Claude 官方导出没有保存“这条对话属于哪个项目”的直接关系。本查看器不会只按标题硬分组，而是使用三层证据进行高置信度推断：
-
-1. **唯一项目文件**：对话引用了仅属于某个项目的文件，置信度最高。
-2. **项目知识搜索**：`project_knowledge_search` 的查询词与项目文档内容匹配。
-3. **项目记忆关键词**：对话标题或官方摘要命中该项目独有记忆；平局和低信度结果保持未归属。
-
-每条结果都会显示匹配方式、置信度、命中的文件/查询/记忆，并允许用户在本地手动修正。关系图进一步把项目记忆、知识文件和关联对话连成一条可检查的证据链。
-
-![虚构项目中的项目记忆、项目文件、关联对话关系图及三种匹配证据](docs/images/project-associations.png)
-
-<sub>这不是预设好的静态图片：截图中的 88% 项目知识匹配、98% 唯一文件匹配和项目记忆匹配，均由正式匹配代码对合成导出实时计算。</sub>
-
-### 全局记忆、项目记忆与官方导出摘要
-
-查看器会解析全局记忆的工作背景、个人背景、当前重点和历史摘要，也会按项目展示目的、状态、规划、经验、工作方式与资源。对话侧栏则直接显示导出中已有的 `summary` 和元数据——**不会联网，也不会重新调用模型生成摘要。**
-
-<table>
-<tr>
-<td width="72%"><img src="docs/images/memory-view.png" alt="全局记忆、项目记忆与项目引用关系"></td>
-<td width="28%"><img src="docs/images/conversation-summary.png" alt="Claude 导出中的对话摘要和元数据"></td>
-</tr>
-<tr>
-<td><b>全局记忆 + 项目级记忆</b></td>
-<td><b>官方导出的对话摘要</b></td>
-</tr>
-</table>
-
-<details>
-<summary><b>账号被封了？这正是项目最初诞生的原因</b></summary>
-
-Claude 账号受限后，通常仍可通过限制页面申请官方数据导出。收到 ZIP 后，即使无法再进入原来的聊天界面，也能用本工具在本地恢复阅读、搜索和导出。
-
-所以，账号可能没了，但对话不必跟着消失。
-
-</details>
+> ⚠️ **Beta Test 说明**：**Grok** 与 **Perplexity.ai** 解析目前处于早期测试阶段，受限于官方导出格式变动及样本覆盖范围，部分特殊字段、引文来源、多媒体附件或交互卡片可能尚不完善，欢迎提交脱敏样本反馈。
 
 ---
 
-## 为什么需要这个工具
+## 30 秒上手
 
-Claude 的导出文件是这样的：
+1. **打开查看器**：下载单文件版 [`viewer.html`](https://github.com/Artistkisa/claude-rescue-reader/releases/latest/download/viewer.html)（或使用[离线包](#离线模式)），双击用 Chrome / Edge / Firefox 打开。
+2. **第一步 · 确认远程资源策略**：首页默认**仅本地模式**（不主动请求任何外部图片或 OpenStreetMap 地图）；如需查看 ChatGPT 导出中的远程图片/底图，可在首页或顶部栏一键开启。
+3. **第二步 · 导入或拖入导出包**：
+   - **直接导入 ZIP / 文件夹**：点击「选择 ZIP 压缩包」或直接把一个或多个 ZIP / 解压目录拖入页面（**免解压**，可连续追加不同平台）。
+   - **Claude 新版分包清单**：进入「导入中心 / Claude 清单」导入 `manifest-*.json`，在官方页面下载各分包 ZIP 后批量追加。
+4. **阅读、搜索与安全分享**：按平台胶囊筛选、全文检索、切换分支，或使用「安全导出 Markdown / PDF」完成本地隐私脱敏后分享。
 
-```json
-[{"uuid": "3f8a1c2d-e947-4b6f-9d3e-72a5b8c1f0e4", "name": "\u67d0\u9879\u76ee\u7684\u6280\u672f\u8c03\u7814\u8bb0\u5f55", "summary": "**Conversation Overview**\n\nThis conversation focused entirely on technical research...", "chat_messages": [{"uuid":"01a2b3c4-d5e6-7f8a-9b0c-d1e2f3a4b5c6", "text":"...", "content": [{"start_timestamp":"2024-11-08T09:23:14.882341Z","stop_timestamp":"2024-11-08T09:23:17.103Z","flags":null,"type":"thinking","thinking":"Let me analyze the user's request..."}, {"type":"text","text":"...实际回答内容...","citations":[]}], "sender":"assistant", "parent_message_uuid":"00000000-0000-4000-8000-000000000000", ...}]}]
-```
+![拖入 ZIP、打开对话、检查项目关系图、浏览统计并进行安全导出的完整闭环](docs/images/workflow-demo.gif)
 
-150MB，一行，无换行，中文全部 Unicode 转义（`\u67d0\u9879\u76ee` = 某项目），思考过程和正文混在同一个 `content` 数组里，对话树靠 `parent_message_uuid` 链接，项目文档是另一堆 JSON 文件，记忆是 Markdown 塞在 JSON 字符串里。
+---
 
-**直接用文本编辑器打开的结果**：VS Code 会弹出这个提示——
+## 核心功能
 
-> **SHOW MORE (150MB)**
-> Rendering paused for long line for performance reasons.
-> This can be configured via `editor.stopRenderingLineAfter`.
+### 💬 多平台忠实阅读与分支还原
+- **统一时间线与平台徽章**：侧栏列表、对话标题栏、项目卡片与统计总览均带独立平台色标与实时计数，支持在「全部 / Claude / ChatGPT / Grok β / Perplexity β」间一键切换。
+- **富文本与技术块**：完整 Markdown（表格、代码语法高亮 + 一键复制）、可折叠 **Thinking 思考过程**（含耗时、截断/隐藏状态）、**工具调用与结果**、内联引文、网页搜索面板。
+- **交互与多媒体**：对话分支树默认走最长路径（或平台记录的 `leaf_response_id` / `current_node`），支持就地切换分支；支持 Artifact 隔离沙箱预览（SVG / Mermaid / HTML）、ChatGPT DIL 交互组件与本地 `.dat` / `/content` 附件查看。
 
-然后拒绝渲染剩余内容。一行文字，150MB，把编辑器本身干沉默了。
+### 🧭 项目、工作区与记忆重建
+- **多平台项目/工作区统一视图**：集中浏览 Claude Projects、Grok Workspaces 与 Perplexity Spaces。
+  - **Claude**：官方导出不含归属字段，查看器通过**唯一项目文件 → 知识搜索词 → 项目记忆独有关键词**三层高置信度证据自动关联，并支持本地手动修正与关系图展示。
+  - **Grok / Perplexity**：支持读取官方 `workspace_id` / Space 关联字段与自定义指令。
+- **记忆管理**：支持 Claude 全局记忆（4 分区）与项目记忆（6 分区），以及新版独立 Markdown 记忆 ZIP 的多版本切换。
 
-这个工具把它变成可以正常阅读的对话界面。
+### 📊 统计分析与 🧪 行为实验室
+- **探索分析与全档案总览**：按时间范围、平台来源、项目、模型、角色组合筛选；查看趋势图、7/30 日移动平均、**平台对话/消息分布对比**、使用画像、词频云、最长对话与点击下钻；[统计口径与协议](docs/analytics.md)。
+- **行为实验室**：本地按需审计工具调用配对率、审批与 MCP 来源、隐藏结构化结果、Thinking 完整性与回答健康度（注：导出状态标记仅反映归档内容，不用于推断后台策略）。
 
-## 使用场景
+### 🛡️ 隐私安全导出（Markdown / PDF / SCP 模式）
+- 导出前在本地自动扫描密钥/凭据、邮箱、手机号、证件号、IP/URL 令牌及上下文隐私词（姓名、地址、单位、社媒账号等），提供**标准 / 强力**两档过滤、一致化名替换与自定义敏感词。
+- 支持 **SCP 机密档案模式**（`[数据删除]` 黑条 + `CONFIDENTIAL` 水印），所有命中均展示脱敏预览、位置与原因；[脱敏规则与说明](docs/redaction.md)。
 
-- 🔒 账号被封后，通过官方导出功能抢救历史数据
-- 📦 整理和回顾自己的 Claude 对话记录
-- 🔍 搜索、导出特定对话内容
+---
 
-## 完整使用说明
+## 大型导出性能与架构
 
-### 第一步：导出 Claude 数据
-
-账号被封后，登录会直接跳转到 [claude.ai/restricted](https://claude.ai/restricted)。页面上有个按钮：
-
-> **Export your data**
-> We'll package up your conversations, projects, and settings for download. This might take some time to complete.
-
-点它，等邮件，下载，解压。就这么简单——至少导出这件事他们做得还算人道。
-
-<details>
-<summary>顺便，官方 FAQ 的措辞也挺值得一读（点击展开）</summary>
-
-**Q: Why was my account put on hold?**
-> We put your account on hold because of unusual activity. We can't share the specifics—that would help bad actors get around the same checks.
-
-翻译：我们不告诉你为什么封你，因为告诉你的话坏人就知道怎么绕过去了。至于你是不是坏人，那是另一回事。
-
-**Q: How long will the review take?**
-> Reviews take about 10 days.
-
-十天。祝你在这十天里找到一个能聊天的替代品，虽然你大概找不到。
-
-**Q: Will my billing be affected?**
-> We cancelled your subscription and refunded your most recent payment in full.
-
-这个确实做得不错，给退钱了。
-
-**Q: What if I think this is a mistake?**
-> Request a review and our team will look over your account. The more specific you are about what you were working on, the better.
-
-所以你需要向 Anthropic 解释你在用 Claude 干什么，才能让他们判断你是不是坏人。希望你的世界观写作、代码调试或者闲聊记录足够自证清白。
-
-</details>
-
-旧版导出文件夹结构示例（新版按类别分包，不要求这些文件位于同一个 ZIP）：
-
-```
-claude-export/
-├── conversations.json   # 所有对话（含完整消息）
-├── users.json           # 账号信息
-├── memories.json        # Claude 的记忆（全局 + 项目级）
-└── projects/
-    └── <uuid>.json      # 各项目文档
-```
-
-### 第二步：打开查看器
-
-1. 下载 [`viewer.html`](viewer.html)，直接用浏览器打开（推荐 Chrome / Edge / Firefox）
-2. 按导出格式加载：
-   - **新版清单**：进入「下载与导入」，导入 `manifest-*.json`，打开官方分包下载页；下载后批量选择 ZIP，用「追加分包」补充内容
-   - **已有 ZIP**：直接选择或拖入一个或多个 ZIP（**免解压，不要求清单**）
-   - **已有文件夹**：点击「📂 选择导出文件夹」，选择解压后的整个目录；旧版格式继续兼容
-3. 等待加载完成（大文件约需数秒，150MB 约 3–5 秒）
-
-> **注意**：需要网络连接以加载渲染依赖（来自 jsDelivr CDN）。离线使用请参考下方[离线模式](#离线模式)说明。
-
-## 功能介绍
-
-### 对话列表
-- 按更新时间 / 创建时间 / 消息数排序
-- 搜索对话标题和摘要，勾选「全文搜索」可搜索消息正文
-- 支持对话内搜索、高亮结果并在命中项之间导航
-- ↑ / ↓ 或 J / K 键盘导航
-
-### 消息渲染
-- Markdown 完整渲染（标题、表格、代码块、引用等）
-- 代码块带语言标签 + 一键复制按钮
-- 💭 **思考过程**（Thinking 块）可折叠展开
-- ⚙ **工具调用** 和结果可折叠展开
-- 支持编辑/重新生成形成的对话分支版本切换
-- 支持 artifact、Mermaid 图表、生成文件、网页搜索面板、附件与搜索引用等富内容
-- 当导出只保留图片文件名时，可从同时导入的目录/ZIP 自动补挂载图片，也可手动选择本地图片；已绑定图片会进入 PDF 渲染
-- 单条消息可复制为纯文本
-
-### 项目
-- 查看项目文档（Markdown 渲染，可折叠）
-- 独立展示并复制项目自定义指令，项目知识文件可逐个下载原始内容
-- 高置信度推断关联对话：唯一文件证据 → 项目知识搜索 → 项目独有关键词
-- 项目匹配解释面板：展示命中的记忆、文件、关键词和置信度
-- 支持手动修正项目归属；确认结果仅保存在当前浏览器本地，不修改原始导出
-- 项目级全文搜索、统计、Markdown 导出，以及项目记忆 → 文档 → 对话引用关系图
-- **注**：Claude 官方导出不含项目-对话归属关系；重复文件名、匹配平局和低信度结果会保持未归属，避免强行误配
-
-### 记忆
-- 全局对话记忆按 4 个分区（工作/个人/重点/历史）展示
-- 各项目记忆按 6 个标准分区展示，可折叠
-
-### 统计
-- 默认进入「探索分析」，支持日期、项目、模型、角色组合筛选，以及消息、活跃对话、字符趋势、7/30 日移动平均和上一等长周期对比
-- 支持全历史、最近 7/30/90 天、自定义日期；快捷范围以档案最新有效消息为终点，按本地时区统计，周一为周起点
-- 点击趋势桶查看每页 50 条的匹配对话摘要，也可带筛选进入对话列表；返回统计页保留筛选、选中区间和页码
-- 首次打开「统计」才创建独立 Analytics Worker；普通导入、阅读、搜索不建立统计索引，离开统计页取消未完成计算
-- 「全档案总览」保留以下原有统计与词频功能，始终统计整份档案，不受探索筛选影响：
-- 展示对话、消息、角色、字符、Thinking、工具、附件与网页搜索总量
-- 展示月度/星期/小时活跃度、对话深度、角色消息与字符分布、内容块构成、模型信息（导出包含时）与最长对话
-- 在 Worker 内生成中英文高频词云，并汇总搜索、文件、Artifact 与 Thinking 数量
-- 额外分析活跃天数/连续活跃、回复延迟、对话跨度、分支与替代消息、空消息等历史健康指标
-- 生成本地“使用画像”和极值洞察：最活跃时段、深夜消息、连续活跃区间、最常用工具、最长 Thinking 与工具失败最多的对话
-- Data Worker 通过 MessageChannel 直接供数，消费确认后才发送下一批（最多 4 条、目标 512 KiB，超大单条独立发送）；主线程只接收控制信息和统计摘要
-- 统计 Worker 仅保留精简索引及最多 12 组聚合缓存，不保存第二份原始档案，不新增网络依赖；[统计口径与内部协议](docs/analytics.md)
-
-### 大型导出性能
-- `conversations.json` 以 4 MiB 分块读取，并通过 Transferable `ArrayBuffer` 交给持久 Data Worker
-- 初次导入只扫描顶层数组并返回标题、时间、摘要和消息数；打开某条对话时才解析该对话的完整消息
-- 对话原始 JSON（含消息正文）及可能建立的全文搜索索引按文件大小、修改时间和首尾各 64 KiB 的内容指纹缓存在本机 IndexedDB；这不是全文件摘要，若仅中段变化且大小和修改时间不变，可能命中旧缓存，请用侧栏按钮清除。指纹不代表只保存元数据
-- 缓存始终留在当前浏览器，可通过侧栏的「清除本地解析缓存」随时删除
-- 代码高亮、Mermaid、Artifact iframe 和 ZIP 解析按实际功能/视口加载，不阻塞初始对话列表
-
-#### 可复现的 CPU 限速基准
+- **流式分块与懒解析**：大文件以 4 MiB 分块通过 Transferable `ArrayBuffer` 送入持久 Data Worker；初始导入只扫描顶层元数据，打开对话时才按窗口渲染消息，代码高亮 / Mermaid / ZIP 图片按需加载。
+- **五类按需 Worker**：Data、Import、Task、Reader、Analytics 核心逻辑均在 [`src/`](src/) 维护，并通过受控内联同步到单文件 [`viewer.html`](viewer.html)；详见 [Worker 性能管线](docs/worker-pipelines.md)。
 
 | 合成 `conversations.json` | CPU 限速 | 初始列表 | 打开 100 条消息对话 | 全文搜索 |
 |---:|---:|---:|---:|---:|
@@ -286,155 +85,64 @@ claude-export/
 | 150 MiB | 6× | 1.69 秒 | 0.90 秒 | 0.10 秒 |
 | 300 MiB | 6× | 3.19 秒 | 1.02 秒 | 0.23 秒 |
 
-结果取 3 次全新浏览器运行的中位数，使用 Chromium `150.0.7871.187`、Playwright `1.62.0`（旧脚本硬编码，实际版本未记录），并在导入前通过 CDP 设置 CPU 限速。每份文件都由脚本在本地生成到精确体积，只含虚构 ASCII 对话；每条完整记录包含 100 条人类 / Claude 交替消息，搜索使用统一的合成标记词。测试不会读取或公布真实历史、真实标题、本地路径、账号数据或硬件型号。
+<sub>取 3 次全新浏览器运行中位数（Chromium `150.0.7871.187`、Playwright `1.62.0`（旧脚本硬编码，实际版本未记录）），由 [`npm run benchmark:readme`](scripts/benchmark-readme-performance.mjs) 生成本地合成 ASCII 夹具并实测，[原始报告](docs/benchmarks/readme-performance.json)。单行超大导出曾是社区痛点（如[这条 ClaudeAI 讨论](https://www.reddit.com/r/ClaudeAI/comments/1oee39d/built_a_tool_to_view_claude_conversation_exports/)）。</sub>
 
-运行 `npm run benchmark:readme` 即可复现；[基准脚本](scripts/benchmark-readme-performance.mjs)和[原始报告](docs/benchmarks/readme-performance.json)与表格一同提交。数字用于说明不同体积下的相对表现，不承诺所有磁盘、浏览器、导出结构和散热状态都得到相同结果。大型单行 Claude 导出让编辑器或普通页面卡顿，是社区反复出现的实际痛点；[这条 ClaudeAI 讨论](https://www.reddit.com/r/ClaudeAI/comments/1oee39d/built_a_tool_to_view_claude_conversation_exports/)就是一个公开案例。
-
-### 其他
-- 🌙 / ☀️ 明暗主题切换，偏好自动保存
-- ⬇ **导出**：将当前对话导出为 Markdown（Ctrl/Cmd+E）或 PDF
-- PDF 复用阅读器的完整消息渲染，保留代码、Artifact、思考/工具面板与分支结构警告
-- Artifact 可导出为 PNG；SVG、Mermaid 与静态 HTML 会内联计算样式，失败时回退下载原始源码
-- 自动探测并单独分类 Claude Design 导出，不会混入普通对话或统计数据
-- 对话区右侧提供快速回到顶部/底部的悬浮按钮
-
-## 键盘快捷键
-
-| 快捷键 | 功能 |
-|--------|------|
-| ↑ / K  | 上一条对话 |
-| ↓ / J  | 下一条对话 |
-| Ctrl+E | 导出当前对话为 Markdown |
+---
 
 ## 离线模式
 
-从 GitHub Release 下载 `claude-rescue-reader-offline.zip`，解压后直接打开其中的 `viewer.html`。请保持 `vendor/` 文件夹与 `viewer.html` 位于同一目录；Markdown、ZIP、代码高亮和 Mermaid 依赖均已包含，无需联网。
+下载 [`claude-rescue-reader-offline.zip`](https://github.com/Artistkisa/claude-rescue-reader/releases/latest/download/claude-rescue-reader-offline.zip) 并解压，保持 `vendor/` 与 `viewer.html` 位于同一目录即可完全断网运行（已内置 `marked`、`highlight.js`、`JSZip`、`mermaid`）。
 
-普通的 `viewer.html` 仍保持单文件发行方式，适合联网环境或只需要基础浏览的场景。历史 Artifact 自身写死的外部资源不属于查看器依赖，离线时仍可能不可用。
-
-如需从源码制作离线版，在仓库目录运行以下命令（需要 Node.js 22.12.0 或更高版本）：
+从源码构建离线版（需要 Node.js `>= 22.12.0`）：
 
 ```bash
 npm ci
 npm run build:offline
 ```
 
-构建脚本会替换依赖路径并重新生成内容安全策略（CSP）的脚本哈希；完成后打开 `dist/offline/viewer.html`，保留同目录下的 `vendor/` 文件夹。请通过构建脚本更新路径和策略，手改脚本会使已有哈希失效。
+构建产物位于 `dist/offline/viewer.html`。
 
-以下是离线包 `vendor/` 中的依赖文件及其对应固定版本地址：
+---
 
-```
-marked.umd.js          ← https://cdn.jsdelivr.net/npm/marked@18.0.11/lib/marked.umd.js
-highlight.min.js       ← https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.11.1/build/highlight.min.js
-jszip.min.js           ← https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js
-mermaid.min.js         ← https://cdn.jsdelivr.net/npm/mermaid@12.2.0/dist/mermaid.min.js
-github.min.css         ← https://cdn.jsdelivr.net/npm/highlight.js@11.11.1/styles/github.min.css
-github-dark.min.css    ← https://cdn.jsdelivr.net/npm/highlight.js@11.11.1/styles/github-dark.min.css
-```
+## 隐私、本地存储与安全边界
 
-## 隐私与安全
+- **无服务器通信**：不会上传对话或统计数据。仅当用户主动点击开启「远程资源」时，浏览器才会按需请求 ChatGPT 导出中的外部图片或 OpenStreetMap 底图；完整离线包已禁用所有外部资源加载。
+- **本地解析缓存**：原始对话文本与搜索索引会缓存在本机 IndexedDB（`claude-rescue-reader-data-v1`），以便刷新后秒开；**共用设备离开前请点击侧栏「清除本地解析缓存」**。
+- **界面偏好**：主题（`cv-theme`）、语言（`cv-lang`）与手动项目归属（`claude-rescue-reader-project-overrides-v1`）保存在 `localStorage`。
+- **Artifact 安全沙箱**：HTML / SVG 预览运行在禁用联网的隔离沙箱中，不会在主页面上下文执行导入脚本。
 
-- ✅ 本地分析，无后端、无埋点；单文件版按需从固定版本 CDN 加载依赖，完整离线包无需联网
-- ✅ 数据不会被上传或分享
-- ⚠️ 解析缓存将对话原文及可能建立的搜索索引保存在本机 IndexedDB（`claude-rescue-reader-data-v1`），关闭浏览器后仍保留；侧栏“清除本地解析缓存”可删除它，共用设备请在离开前清除
-- ✅ `localStorage` 保存主题（`cv-theme`）、语言（`cv-lang`）和手动项目归属（`claude-rescue-reader-project-overrides-v1`）；清除解析缓存不会删除这些偏好，需在浏览器中清除本站数据
-- ✅ 导入内容的远程图片不会自动加载；外部链接由用户主动打开。Artifact 预览禁止联网，并在隔离沙箱中运行
-- HTML/SVG 生成文件保留源码下载，通过 Artifact 沙箱预览；HTML 预览的 PNG 按钮会回退下载源码，避免将页面移入主文档
-- ✅ 安全导出展示命中类型、遮罩预览、位置和匹配原因，不在预览中暴露完整敏感值
-- ✅ 可选强力隐私过滤会进一步处理姓名、学校/单位、详细地址、证件、UID、社媒账号和链接，并明确提示可能误伤
-- ✅ SCP 档案模式使用黑条与 `[数据删除]`，PDF 额外带有 `CONFIDENTIAL` 水印和保密徽章
-- ⚠️ 导出的 JSON 文件包含您的完整对话历史，请妥善保管
+---
 
-## 已知限制
+## ⌨️ 快捷键
 
-- 导出文件不含图片二进制内容，仅显示占位符
-- 依赖脚本运行或 Canvas 动态绘制的交互式 HTML Artifact，PNG 导出可能只保留其静态结构；此时可使用自动回退的原始源码
-- 对话树默认展示最长路径；遇到编辑或重新生成的分支时，可在消息旁切换版本
-- 项目与对话的归属关系为高置信度推断结果，非官方数据；为避免误配，低信度对话会保持未归属
-- 超大对话（本工具测试数据：300+ 条对话 / 150MB+ / 单条最长 600+ 条消息）在低内存设备上可能加载缓慢
-- 账号无项目或无记忆时，对应 Tab 会自动隐藏，不显示错误
+| 快捷键 | 功能 |
+|---|---|
+| `↑` / `K` | 上一条对话 |
+| `↓` / `J` | 下一条对话 |
+| `Ctrl+E` / `Cmd+E` | 导出当前对话为 Markdown |
 
-## 数据结构说明
+---
 
-本工具解析的 Claude 导出格式（截至 2026 年）：
+## 参与开发与社区
 
-| 文件 | 内容 |
-|------|------|
-| `conversations.json` | 全部对话，含完整消息树、`content` 块（text/thinking/tool_use/tool_result）、附件 |
-| `memories.json` | 全局记忆 + 项目记忆，Markdown 格式，按 section 分区 |
-| `projects/<uuid>.json` | 项目元数据 + docs 文档内容 |
+修改 `src/*.js` 后运行 `node scripts/update-viewer-policy.mjs` 同步到 `viewer.html`，并通过 `npm run validate`、`npm run privacy`、`npm run docs` 与 `npm run test:worker-core` 验证。
 
-**注**：Claude 官方导出不包含「对话属于哪个项目」的字段。本工具通过三层推断补全此关联，详见项目页说明。
+- [贡献指南](CONTRIBUTING.md) · [社区行为准则](CODE_OF_CONDUCT.md) · [安全策略](SECURITY.md) · [MIT License](LICENSE)
 
-## 技术栈
+---
 
-- 纯原生 HTML + CSS + JavaScript，发布产物仍是可直接打开的单文件，无框架依赖
-- [marked.js](https://marked.js.org/) — Markdown 渲染
-- [highlight.js](https://highlightjs.org/) — 代码语法高亮
-- [JSZip](https://stuk.github.io/jszip/) — ZIP 压缩包直读（免解压）
+## 更新日志
 
-五类按需 Worker（Data、Import、Task、Reader、Analytics）及共享算法在 `src/` 维护；ZIP 解压、脱敏导出、质量与行为扫描、对话搜索和 Markdown 预处理均在 Worker 中执行。长对话按窗口显示，代码与 Thinking 可搜索，ZIP 图片按需解压。详见 [Worker 性能管线](docs/worker-pipelines.md)。修改后运行 `scripts/build-single-file.ps1` 重新内联到 `viewer.html`；普通用户不需要构建。
+- **v2.0 — Multi-AI 升级**：更名为 **Multi-AI Web Export Reader**；新增 **ChatGPT** 完整支持（分片、DIL 组件、图表、地图、`.dat` 附件）；新增 **xAI Grok (Beta)** 与 **Perplexity.ai (Beta)** 解析支持；新增统一平台注册表、彩色徽章、实时筛选计数、平台分布统计与新版双步隐私引导。
 
-## 参与社区
+<details>
+<summary>历史版本（v1.0 – v1.5）</summary>
 
-- [贡献指南](CONTRIBUTING.md) — 开发环境、测试命令、PR 流程与隐私规则
-- [社区行为准则](CODE_OF_CONDUCT.md) — 尊重协作与敏感数据边界
-- [安全策略](SECURITY.md) — 支持版本及私密漏洞报告方式
-- [MIT License](LICENSE)
+- **v1.5** *(2026-10-21)*：适配 Claude 新版 `manifest-*.json` 分包导出、独立记忆 ZIP 多版本、Artifact 历史版本与账户/登录记录。
+- **v1.4** *(2026-07-30)*：增强图片补挂载、可解释脱敏命中细则、强力隐私过滤、SCP 机密 PDF 水印与 50/150/300 MiB CPU 限速基准。
+- **v1.3** *(2026-07-29)*：新增行为实验室、持久 Data Worker、项目关联解释与关系图、预打包离线发行版。
+- **v1.2** *(2026-07-28)*：新增 ZIP 直读与拖拽、分支切换、对话内搜索、Artifact/Mermaid 渲染与高精度项目归属推断。
+- **v1.1** *(2026-07-17)*：修复分支最长路径、附件兜底、暗色主题、全文搜索与排序。
+- **v1.0** *(2026-07-16)*：初始版本，支持加载 Claude 导出文件夹并渲染对话。
 
-## Changelog
-
-**v1.5** *(2026-10-21)*
-- **适配 Claude 新版导出**：manifest 下载清单、专门的下载页面、多个 ZIP 分包批量导入与追加
-- 同时支持账户分包记忆与独立 Markdown 记忆 ZIP，保留主题来源与可切换版本；兼容旧 `memories.json`
-- 新增 Artifact 作品及历史版本、本地账户资料与分页登录记录，适配 Thinking 和注入上下文字段
-- 保留旧版 ZIP、文件夹和 Design 导入，以及单文件与完整离线发行方式
-
-**v1.4** *(2026-07-30)*
-- 增强图片补挂载、项目自定义指令、项目文件下载和更完整的统计洞察
-- 安全导出新增可解释命中细则：遮罩预览、位置、类型与匹配原因
-- 新增强力隐私过滤，覆盖姓名、学校/单位、地址、证件、UID、社媒账号和链接，并明确提示可能误伤
-- SCP 档案模式新增 `CONFIDENTIAL` 水印、保密徽章与更完整的黑条导出样式
-- 扩充成熟账号形态的纯合成演示 ZIP，并加入 20 秒端到端工作流 GIF
-- 新增 50 / 150 / 300 MiB 可复现 CPU 限速性能基准及原始报告
-- 产品名统一为 Claude Rescue Reader，下载入口改为最新 Release 资产直链
-
-**v1.3** *(2026-07-29)*
-- 新增 Claude 行为实验室：工具调用审计、隐藏结果探针、Thinking 完整性和回答证据链报告
-- 大型历史解析、全文搜索、统计、项目匹配和行为分析复用持久 Data Worker，减少主线程对象复制与卡顿
-- 新增项目关联解释、手动归属修正、项目级搜索/统计/导出及记忆引用关系图
-- 新增预打包离线发行版，内含固定版本的 Markdown、ZIP、代码高亮和 Mermaid 依赖
-- 普通单文件版与离线 ZIP 同时发布，并提供 SHA-256 校验文件
-
-**v1.2** *(2026-07-28)*
-- 新增 ZIP 直读和拖拽加载，兼容顶层目录、散落 JSON 文件及 macOS `__MACOSX` 条目
-- 新增对话分支版本切换、对话内搜索导航、单条消息纯文本复制
-- 新增 artifact、Mermaid、生成文件卡片和网页搜索结果等富内容渲染
-- 修复孤儿消息丢失、artifact 主题异常、SVG 外部资源与沙箱安全问题
-- 修复 `file://` 模式下语法高亮加载失败，并安全处理 Markdown 原始 HTML
-- 大型历史记录改为渐进式消息渲染、延迟富内容渲染和页面缓存，降低首屏阻塞
-- 项目关系索引改为后台分批构建，并加入失败恢复与竞态保护
-- 项目归属推断改为高精度优先：使用唯一文件证据、项目知识和独有关键词，拒绝平局与低信度匹配
-
-**v1.1** *(2026-07-17)*
-- **修复：对话消息数量不对**（如显示 3 条，实际有 7 条）
-  根本原因：对话树遍历时固定取"最后一个子节点"，在有分支时会走进空消息的死胡同。改为递归选择**最长路径**，并在等长时优先选有内容的分支。
-- **修复：部分消息显示为"(空消息)"**
-  Claude 导出的 `files` 数组中，`file_name` 字段有时为空字符串。现在回退到 `file_type` → `file_uuid` 兜底，确保附件气泡有内容显示，而不是空白或占位符。
-- **修复：代码块显示 `[object Object]`**
-  marked.js v5+ 将 `renderer.code` 的参数从 `(code, lang)` 改为传 token 对象，`String(code)` 因此变成 `[object Object]`。现在兼容新旧两种签名。
-- **修复：点击对话无反应**
-  事件绑定时 `forEach(el => ...)` 的回调参数 `el` 遮蔽了外层同名变量，导致 `el.dataset.convUuid` 读到容器本身（无此属性）。将回调参数改名为 `item` 解决。
-- **修复："最早"排序与"最新"排序结果几乎一致**
-  "最早"误用了降序（`b - a`），改为升序（`a - b`），现在最老的对话排最前。
-- 新增全文搜索、排序按钮、统计面板、Markdown 导出、键盘导航
-- 新增暗色/亮色主题适配（含思考块、工具调用块等所有颜色变量化）
-- 新增移动端响应式布局（≤640px 侧边栏转顶部）
-- 项目关联对话改为三层推断：文件路径精确匹配 → PKS 查询词匹配 → 关键词模糊匹配
-
-**v1.0** *(2026-07-16)*
-- 初始版本：加载 Claude 导出文件夹，渲染对话列表与消息内容
-
-## License
-
-MIT
+</details>
