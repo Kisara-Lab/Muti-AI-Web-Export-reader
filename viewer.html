@@ -2,7 +2,7 @@
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-pLe9ybEcsN5iBcrGaF1o3/EmOkzqV9CXCFFq/XesxOQ=' 'sha256-tMIvewdj4Er6it91vRKx68b9zhu5Sxm35MV7o9YOuqs=' https://cdn.jsdelivr.net https://unpkg.com https://cdnjs.cloudflare.com blob:; script-src-attr 'none'; style-src 'unsafe-inline' https://cdn.jsdelivr.net https://unpkg.com https://cdnjs.cloudflare.com; img-src blob: data: https: http:; font-src data:; connect-src blob:; worker-src blob:; frame-src blob:; object-src 'none'; base-uri 'none'; form-action 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-AVFE5fHW6uss+fi6SajvoRf0zaOLNQ13MCgtli6APfQ=' 'sha256-tMIvewdj4Er6it91vRKx68b9zhu5Sxm35MV7o9YOuqs=' https://cdn.jsdelivr.net https://unpkg.com https://cdnjs.cloudflare.com blob:; script-src-attr 'none'; style-src 'unsafe-inline' https://cdn.jsdelivr.net https://unpkg.com https://cdnjs.cloudflare.com; img-src blob: data: https: http:; font-src data:; connect-src blob:; worker-src blob:; frame-src blob:; object-src 'none'; base-uri 'none'; form-action 'none'">
 <meta name="referrer" content="no-referrer">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Multi-AI Web Export Reader — Local Claude, ChatGPT, Grok &amp; Perplexity Viewer</title>
@@ -10,69 +10,75 @@
 /* ── Light theme (Warm Atelier Paper) ── */
 :root {
   --bg: #f8f6f2; --bg2: #ffffff; --bg3: #f1eee7; --bg4: #e6e2d8;
-  --border: #e5e1d8; --border2: #d3cec2;
-  --text: #1c1b18; --text2: #57544d; --text3: #8c887f;
+  --border: rgba(28,27,24,.10); --border2: rgba(28,27,24,.18);
+  --text: #1c1b18; --text2: #57544d; --text3: #8a857b;
   --accent: #c45d3b; --accent2: #a8492a;
   --human-bg: #efeae0; --human-border: rgba(28,27,24,.06);
-  --think: #f5f2eb; --think-border: #e3ded2;
-  --think-text: #625d52; --think-hover: rgba(140,128,105,.08);
-  --tool-bg: #f3f5f2; --tool-border: #dbe3da;
-  --tool-result-bg: #f6f8f5; --tool-result-border: #d7e0d6;
-  --badge-bg: rgba(196,93,59,.10); --badge-border: rgba(196,93,59,.24);
-  --green: #1a7f4b; --orange: #a16207; --red: #c92a2a; --blue: #1864ab;
-  --shadow: 0 1px 3px rgba(28,27,24,.06), 0 1px 2px rgba(28,27,24,.04);
-  --shadow-lg: 0 12px 36px rgba(28,27,24,.10), 0 2px 8px rgba(28,27,24,.05);
+  --think: #f5f2eb; --think-border: rgba(28,27,24,.09);
+  --think-text: #5f5a4f; --think-hover: rgba(140,128,105,.08);
+  --tool-bg: #f4f5f2; --tool-border: rgba(28,27,24,.10);
+  --tool-result-bg: #f7f8f5; --tool-result-border: rgba(28,27,24,.10);
+  --badge-bg: rgba(196,93,59,.10); --badge-border: rgba(196,93,59,.26);
+  --green: #16794b; --orange: #b45309; --red: #c92a2a; --blue: #1d4ed8;
+  --shadow: 0 1px 3px rgba(28,27,24,.05), 0 1px 2px rgba(28,27,24,.03);
+  --shadow-lg: 0 14px 36px rgba(28,27,24,.11), 0 2px 8px rgba(28,27,24,.05);
+  --specular: inset 0 1px 0 rgba(255,255,255,.72);
   --surface-glass: color-mix(in srgb, var(--bg2) 86%, transparent);
-  --canvas-glow: radial-gradient(ellipse 75% 42% at 50% 0%, rgba(196,93,59,.07), transparent 72%);
-  --code-bg: #f5f3ee; --code-head: #ece8df; --code-text: #242320;
-  --syn-kw: #9d3b6e; --syn-str: #1f6f54; --syn-fn: #3757a8; --syn-num: #b25517;
-  --syn-cmt: #8a867c; --syn-type: #7a4c9e; --syn-attr: #9b5122; --syn-meta: #5f6675;
-  --step-bg: #f3f1eb; --step-border: #e3dfd4; --step-rail: #d8d3c6; --step-dot: #9b9589;
+  --canvas-glow: radial-gradient(ellipse 72% 40% at 36% 0%, rgba(196,93,59,.07), transparent 68%), radial-gradient(ellipse 55% 32% at 72% 0%, rgba(217,155,78,.05), transparent 65%);
+  --code-bg: #f6f4ef; --code-head: #ece8df; --code-text: #22211e;
+  --syn-inline: #a32656; --syn-inline-bg: rgba(196,93,59,.08); --syn-inline-border: rgba(196,93,59,.18);
+  --syn-kw: #b91c68; --syn-str: #0f766e; --syn-fn: #1d4ed8; --syn-num: #c2410c;
+  --syn-cmt: #78716c; --syn-type: #6d28d9; --syn-attr: #9a3412; --syn-meta: #475569;
+  --step-bg: #f3f1eb; --step-border: rgba(28,27,24,.11); --step-rail: #d8d3c6; --step-dot: #9b9589;
   --radius: 14px; --radius-sm: 10px;
   font-size: 14px;
 }
 /* ── Dark theme (Obsidian Studio) ── */
 [data-theme=dark] {
-  --bg: #0e1015; --bg2: #151821; --bg3: #1c202b; --bg4: #262b38;
-  --border: #252936; --border2: #343a4d;
-  --text: #e6e9f2; --text2: #9ba3b8; --text3: #687085;
-  --accent: #8b7cf6; --accent2: #a396fa;
-  --human-bg: #212636; --human-border: rgba(139,124,246,.18);
-  --think: #171b26; --think-border: #2a3145;
-  --think-text: #9da8c6; --think-hover: rgba(139,124,246,.08);
-  --tool-bg: #161b23; --tool-border: #26333a;
-  --tool-result-bg: #13191f; --tool-result-border: #243536;
-  --badge-bg: rgba(139,124,246,.15); --badge-border: rgba(139,124,246,.32);
+  --bg: #0d0f14; --bg2: #141720; --bg3: #1b1f2b; --bg4: #242a38;
+  --border: rgba(226,232,240,.09); --border2: rgba(226,232,240,.16);
+  --text: #e6e9f2; --text2: #9ca5ba; --text3: #6b7388;
+  --accent: #8b7cf6; --accent2: #a598fc;
+  --human-bg: #202536; --human-border: rgba(139,124,246,.22);
+  --think: #161a25; --think-border: rgba(139,124,246,.18);
+  --think-text: #a5b0ce; --think-hover: rgba(139,124,246,.09);
+  --tool-bg: #151a23; --tool-border: rgba(226,232,240,.10);
+  --tool-result-bg: #121820; --tool-result-border: rgba(226,232,240,.10);
+  --badge-bg: rgba(139,124,246,.16); --badge-border: rgba(139,124,246,.34);
   --green: #4ade80; --orange: #fbbf24; --red: #f87171; --blue: #60a5fa;
-  --shadow: 0 2px 6px rgba(0,0,0,.28);
-  --shadow-lg: 0 14px 40px rgba(0,0,0,.45);
+  --shadow: 0 2px 8px rgba(0,0,0,.30);
+  --shadow-lg: 0 16px 42px rgba(0,0,0,.52);
+  --specular: inset 0 1px 0 rgba(255,255,255,.06);
   --surface-glass: color-mix(in srgb, var(--bg2) 84%, transparent);
-  --canvas-glow: radial-gradient(ellipse 75% 42% at 50% 0%, rgba(139,124,246,.11), transparent 72%);
-  --code-bg: #12151d; --code-head: #191d28; --code-text: #e2e6f0;
-  --syn-kw: #e287c0; --syn-str: #7ee2b8; --syn-fn: #8ab4f8; --syn-num: #f5a97f;
-  --syn-cmt: #6c7388; --syn-type: #c4a7e7; --syn-attr: #e5c07b; --syn-meta: #8a93ab;
-  --step-bg: #171b25; --step-border: #272d3d; --step-rail: #31384d; --step-dot: #737c96;
+  --canvas-glow: radial-gradient(ellipse 70% 40% at 38% 0%, rgba(139,124,246,.12), transparent 68%), radial-gradient(ellipse 55% 32% at 74% 0%, rgba(56,189,248,.07), transparent 64%);
+  --code-bg: #10131b; --code-head: #171b26; --code-text: #e2e6f2;
+  --syn-inline: #f0a8cf; --syn-inline-bg: rgba(139,124,246,.15); --syn-inline-border: rgba(139,124,246,.28);
+  --syn-kw: #f472b6; --syn-str: #5eead4; --syn-fn: #7dd3fc; --syn-num: #fdba74;
+  --syn-cmt: #64748b; --syn-type: #c4b5fd; --syn-attr: #fde047; --syn-meta: #94a3b8;
+  --step-bg: #161a24; --step-border: rgba(226,232,240,.10); --step-rail: #31384d; --step-dot: #737c96;
 }
 * { box-sizing: border-box; margin: 0; padding: 0; }
 body { background: var(--bg); color: var(--text); font-family: -apple-system,BlinkMacSystemFont,'Inter','Segoe UI','PingFang SC','Hiragino Sans GB','Microsoft YaHei',sans-serif; -webkit-font-smoothing: antialiased; height: 100vh; display: flex; overflow: hidden; }
 .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
-.ui-icon { display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.ui-icon { display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; line-height: 1; }
 .ui-icon svg { width: 14px; height: 14px; display: block; }
 
 /* ── Sidebar ── */
-#sidebar { width: 300px; min-width: 300px; background: var(--bg2); border-right: 1px solid var(--border); display: flex; flex-direction: column; transition: width .22s cubic-bezier(.4,0,.2,1), min-width .22s cubic-bezier(.4,0,.2,1), opacity .18s ease; }
+#sidebar { width: 296px; min-width: 296px; background: var(--bg2); border-right: 1px solid var(--border); display: flex; flex-direction: column; transition: width .22s cubic-bezier(.4,0,.2,1), min-width .22s cubic-bezier(.4,0,.2,1), opacity .18s ease; }
 #sidebar.collapsed { width: 0; min-width: 0; border-right: none; overflow: hidden; opacity: 0; pointer-events: none; }
-#sidebar-header { padding: 15px 14px 10px; border-bottom: 1px solid var(--border); }
-#sidebar-header h1 { font-size: 13.5px; font-weight: 650; letter-spacing: -.01em; color: var(--text); display: flex; align-items: center; gap: 8px; }
-.brand-mark { width: 22px; height: 22px; border-radius: 7px; background: linear-gradient(135deg,var(--accent),color-mix(in srgb,var(--accent) 65%,#6366f1)); color: #fff; display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; box-shadow: 0 2px 6px color-mix(in srgb,var(--accent) 28%,transparent); }
+#sidebar-header { padding: 14px 13px 10px; border-bottom: 1px solid var(--border); }
+#sidebar-header h1 { font-size: 13.5px; font-weight: 650; letter-spacing: -.015em; color: var(--text); display: flex; align-items: center; gap: 8px; }
+.brand-mark { width: 22px; height: 22px; border-radius: 7px; background: linear-gradient(135deg,var(--accent),color-mix(in srgb,var(--accent) 55%,#6366f1)); color: #fff; display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; box-shadow: 0 2px 8px color-mix(in srgb,var(--accent) 32%,transparent); }
 .brand-mark svg { width: 13px; height: 13px; }
 #conv-total { background: var(--bg3); border: 1px solid var(--border); color: var(--text2); font-size: 10.5px; font-weight: 600; font-variant-numeric: tabular-nums; padding: 1px 7px; border-radius: 999px; margin-left: auto; flex-shrink: 0; }
-#load-zip-btn { width: 100%; margin-top: 10px; padding: 8px 12px; background: var(--accent); color: #fff; border: none; border-radius: var(--radius-sm); cursor: pointer; font-size: 12.5px; font-weight: 550; display: inline-flex; align-items: center; justify-content: center; gap: 7px; transition: background .16s, transform .1s, box-shadow .16s; box-shadow: 0 1px 3px color-mix(in srgb,var(--accent) 30%,transparent); }
+#load-zip-btn { width: 100%; margin-top: 10px; padding: 8px 12px; background: var(--accent); color: #fff; border: none; border-radius: var(--radius-sm); cursor: pointer; font-size: 12.5px; font-weight: 550; display: inline-flex; align-items: center; justify-content: center; gap: 7px; transition: background .16s, transform .1s, box-shadow .16s; box-shadow: var(--specular), 0 2px 6px color-mix(in srgb,var(--accent) 26%,transparent); }
 #load-zip-btn:hover { background: var(--accent2); transform: translateY(-.5px); }
 .sidebar-sub-actions { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 6px; margin-top: 6px; }
 #load-btn, #download-page-btn { width: 100%; padding: 6px 8px; background: var(--bg3); color: var(--text2); border: 1px solid var(--border); border-radius: 8px; cursor: pointer; font: inherit; font-size: 11.5px; font-weight: 500; display: inline-flex; align-items: center; justify-content: center; gap: 5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; transition: border-color .15s, background .15s, color .15s; }
 #load-btn:hover, #download-page-btn:hover, #download-page-btn[aria-current="page"] { border-color: var(--accent); color: var(--text); background: var(--bg2); }
 #download-page-btn { color: var(--accent); }
+#clear-cache-btn { display: inline-flex; align-items: center; justify-content: center; gap: 5px; width: 100%; margin-top: 6px; padding: 5px 8px; background: transparent; color: var(--text3); border: 1px solid var(--border); border-radius: 8px; cursor: pointer; font-size: 11px; transition: border-color .15s, color .15s; }
+#clear-cache-btn:hover { border-color: var(--border2); color: var(--text2); }
 .export-page { max-width:1060px;margin:auto;padding:24px 28px 48px; }
 .export-hero { margin-bottom:28px; }
 .export-kicker { color:var(--accent);font-size:11px;letter-spacing:.12em;text-transform:uppercase;font-weight:600; }
@@ -82,7 +88,7 @@ body { background: var(--bg); color: var(--text); font-family: -apple-system,Bli
 .export-button { display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:10px 16px;border:1px solid var(--border);border-radius:8px;background:var(--bg2);color:var(--text);font:inherit;font-size:13px;font-weight:500;cursor:pointer;text-decoration:none;transition:border-color .15s,background .15s; }
 .export-button:hover { border-color:var(--accent);background:var(--bg3);text-decoration:none; }
 .export-button:focus-visible,#download-page-btn:focus-visible { outline:2px solid var(--accent);outline-offset:3px; }
-.export-button.primary { background:var(--accent);color:var(--bg);border-color:var(--accent); }
+.export-button.primary { background:var(--accent);color:#fff;border-color:var(--accent); }
 .export-button.quiet { background:transparent;color:var(--text3); }
 .export-steps { display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin:24px 0; }
 .export-step,.export-empty { padding:18px;border:1px solid var(--border);border-radius:10px;background:var(--bg2); }
@@ -97,17 +103,20 @@ body { background: var(--bg); color: var(--text); font-family: -apple-system,Bli
 @media(max-width:700px){.export-page{padding:18px 14px 32px}.export-steps{grid-template-columns:1fr}.export-package{align-items:flex-start;flex-direction:column}.export-package .export-button{width:100%}}
 #export-session-panel p { overflow-wrap:anywhere; }
 #export-session-panel a { color:var(--accent); }
-#search-box { width: 100%; margin-top: 8px; padding: 7px 11px; background: var(--bg3); border: 1px solid transparent; border-radius: var(--radius-sm); color: var(--text); font-size: 12.5px; transition: border-color .15s, background .15s, box-shadow .15s; }
+.search-wrap { position: relative; margin-top: 8px; }
+.search-wrap .search-ico { position: absolute; left: 9px; top: 50%; transform: translateY(-50%); color: var(--text3); pointer-events: none; }
+#search-box { width: 100%; padding: 7px 11px 7px 29px; background: var(--bg3); border: 1px solid transparent; border-radius: var(--radius-sm); color: var(--text); font-size: 12.5px; transition: border-color .15s, background .15s, box-shadow .15s; }
 #search-box::placeholder { color: var(--text3); }
 #search-box:focus { outline: none; background: var(--bg2); border-color: var(--accent); box-shadow: 0 0 0 3px var(--badge-bg); }
-#tabs { display: flex; flex-wrap:wrap; gap: 2px; padding: 0 8px; border-bottom: 1px solid var(--border); background: var(--bg2); }
-.tab-btn { flex: 1 0 22%; padding: 9px 4px; background: none; border: none; color: var(--text3); font-size: 12px; font-weight: 500; cursor: pointer; border-bottom: 2px solid transparent; transition: all .18s; }
+#tabs { display: flex; flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; gap: 2px; padding: 0 8px; border-bottom: 1px solid var(--border); background: var(--bg2); }
+#tabs::-webkit-scrollbar { display: none; }
+.tab-btn { flex: 0 0 auto; white-space: nowrap; padding: 8px 9px; background: none; border: none; color: var(--text3); font-size: 12px; font-weight: 500; cursor: pointer; border-bottom: 2px solid transparent; display: inline-flex; align-items: center; justify-content: center; gap: 4px; transition: all .18s; }
 .tab-btn:hover { color: var(--text2); }
 .tab-btn.active { color: var(--accent); font-weight: 600; border-bottom-color: var(--accent); }
 #conv-list { flex: 1; overflow-y: auto; padding: 8px; }
 .conv-item { padding: 9px 11px; border-radius: 10px; cursor: pointer; margin-bottom: 3px; transition: background .15s, border-color .15s; border: 1px solid transparent; }
 .conv-item:hover { background: var(--bg3); }
-.conv-item.active { background: color-mix(in srgb,var(--accent) 8%,var(--bg3)); border-color: color-mix(in srgb,var(--accent) 40%,var(--border)); }
+.conv-item.active { background: color-mix(in srgb,var(--accent) 8%,var(--bg3)); border-color: color-mix(in srgb,var(--accent) 36%,var(--border)); }
 .conv-item.last-supper { border-color:rgba(174,128,28,.55); background:linear-gradient(135deg,rgba(221,174,65,.10),transparent 68%); }
 .conv-item.last-supper:hover,.conv-item.last-supper.active { border-color:#c99a32; background:linear-gradient(135deg,rgba(221,174,65,.18),var(--bg3) 72%); }
 .last-supper-badge { margin-left:6px; padding:1px 5px; border:1px solid rgba(174,128,28,.55); border-radius:999px; color:#956d16; font-family:Georgia,'Times New Roman',serif; font-size:9px; letter-spacing:.05em; vertical-align:1px; }
@@ -116,26 +125,54 @@ body { background: var(--bg); color: var(--text); font-family: -apple-system,Bli
 .conv-meta { font-size: 11px; color: var(--text3); margin-top: 4px; display: flex; justify-content: space-between; align-items: center; }
 .conv-count { background: var(--bg4); padding: 1px 6px; border-radius: 999px; font-variant-numeric: tabular-nums; }
 
-/* ── Main ── */
+/* ── Main & Split Canvas Workspace ── */
 #main { flex: 1; display: flex; flex-direction: column; min-width: 0; position: relative; background: var(--bg); }
-#chat-header { padding: 10px 18px; background: var(--surface-glass); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; gap: 8px; z-index: 10; }
-#chat-title { font-size: 14.5px; font-weight: 600; letter-spacing: -.01em; flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-#chat-header-meta { font-size: 11px; color: var(--text3); white-space: nowrap; display: flex; align-items: center; gap: 6px; }
+#chat-header { padding: 9px 16px; background: var(--surface-glass); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; gap: 8px; z-index: 10; }
+.header-left { display: flex; align-items: center; gap: 8px; flex: 1 1 auto; min-width: 0; }
+.header-right { display: flex; align-items: center; gap: 5px; flex-shrink: 0; }
+.header-tool-cluster { display: inline-flex; align-items: center; gap: 4px; }
+#chat-title { font-size: 14.5px; font-weight: 600; letter-spacing: -.012em; flex: 1 1 140px; min-width: 60px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+#chat-header-meta { font-size: 11px; color: var(--text3); white-space: nowrap; display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
 #chat-header.last-supper { border-bottom-color:#bd8d2b; background:linear-gradient(90deg,rgba(204,154,49,.16),var(--bg2) 34%,rgba(204,154,49,.08)); box-shadow:inset 0 3px 0 rgba(202,151,44,.65); }
 #last-supper-plaque { display:none; flex-shrink:0; padding:3px 9px; border:1px solid #b78626; border-radius:3px; background:linear-gradient(#f5dfa0,#d8ad4c); color:#4e3710; box-shadow:0 1px 4px rgba(88,59,8,.25); font-family:Georgia,'Times New Roman',serif; font-size:11px; font-weight:700; letter-spacing:.12em; }
 #chat-header.last-supper #last-supper-plaque { display:inline-block; }
 #messages.last-supper-gallery { box-shadow:inset 0 0 0 3px rgba(190,139,35,.4),inset 0 0 0 7px rgba(225,189,105,.13); }
-#toggle-summary, #toggle-sidebar { padding: 5px 10px; background: var(--bg3); border: 1px solid var(--border); border-radius: 8px; color: var(--text2); font-size: 12px; cursor: pointer; display: inline-flex; align-items: center; gap: 5px; transition: border-color .15s, color .15s, background .15s; white-space: nowrap; }
-#toggle-summary:hover, #toggle-sidebar:hover { border-color: var(--accent); color: var(--text); }
+.hdr-btn, #toggle-summary, #toggle-sidebar { padding: 5px 9px; background: var(--bg3); border: 1px solid var(--border); border-radius: 8px; color: var(--text2); font-size: 12px; font-weight: 500; cursor: pointer; display: inline-flex; align-items: center; gap: 5px; transition: border-color .15s, color .15s, background .15s; white-space: nowrap; }
+.hdr-btn:hover, #toggle-summary:hover, #toggle-sidebar:hover { border-color: var(--accent); color: var(--text); background: var(--bg2); }
 #toggle-sidebar { padding: 5px 8px; }
-#toggle-sidebar.active { border-color: var(--accent); color: var(--accent); background: var(--badge-bg); }
+#toggle-sidebar.active, .hdr-btn.active { border-color: var(--accent); color: var(--accent); background: var(--badge-bg); }
+.csearch-group { display: inline-flex; align-items: center; gap: 3px; }
+.hdr-icon-btn { width: 28px; height: 28px; padding: 0; background: var(--bg3); border: 1px solid var(--border); border-radius: 8px; color: var(--text2); cursor: pointer; display: inline-flex; align-items: center; justify-content: center; transition: border-color .15s, color .15s, background .15s; }
+.hdr-icon-btn:hover { border-color: var(--accent); color: var(--text); background: var(--bg2); }
+
+/* ── Split Workspace & Gemini Side Canvas ── */
+#workspace-body { flex: 1; min-height: 0; display: flex; position: relative; overflow: hidden; }
+#messages-stage { flex: 1; min-width: 280px; display: flex; flex-direction: column; position: relative; min-height: 0; }
+#canvas-resizer { width: 6px; cursor: col-resize; display: none; align-items: center; justify-content: center; background: transparent; border-left: 1px solid var(--border); flex-shrink: 0; transition: background .15s; }
+#canvas-resizer:hover, #canvas-resizer.dragging { background: color-mix(in srgb, var(--accent) 22%, transparent); }
+#canvas-resizer::after { content: ''; width: 2px; height: 32px; border-radius: 99px; background: var(--border2); }
+#canvas-pane { width: 46%; min-width: 320px; max-width: 72%; background: var(--bg2); display: none; flex-direction: column; min-height: 0; border-left: 1px solid var(--border); box-shadow: var(--specular), -8px 0 28px rgba(0,0,0,.07); z-index: 8; }
+#workspace-body.canvas-open #canvas-resizer, #workspace-body.canvas-open #canvas-pane { display: flex; }
+.canvas-head { padding: 9px 14px; background: var(--bg3); border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+.canvas-title-wrap { display: flex; align-items: center; gap: 7px; flex: 1; min-width: 0; }
+.canvas-kicker { font-size: 10px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; padding: 2px 6px; border-radius: 6px; background: var(--badge-bg); color: var(--accent); border: 1px solid var(--badge-border); flex-shrink: 0; }
+#canvas-title { font-size: 13px; font-weight: 600; color: var(--text); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.canvas-tabs { display: inline-flex; padding: 2px; background: var(--bg2); border: 1px solid var(--border); border-radius: 8px; gap: 2px; }
+.canvas-tab-btn { padding: 3px 9px; border: 0; border-radius: 6px; background: transparent; color: var(--text3); font: inherit; font-size: 11.5px; font-weight: 550; cursor: pointer; transition: background .14s, color .14s; }
+.canvas-tab-btn.active { background: var(--accent); color: #fff; }
+.canvas-actions { display: inline-flex; align-items: center; gap: 5px; flex-shrink: 0; }
+.canvas-body { flex: 1; min-height: 0; overflow: auto; padding: 14px; background: var(--bg); }
+.canvas-preview-frame { width: 100%; height: 100%; min-height: 460px; border: 1px solid var(--border); border-radius: 12px; background: #fff; display: block; }
+.canvas-mermaid-stage { background: var(--bg2); border: 1px solid var(--border); border-radius: 12px; padding: 16px; min-height: 280px; overflow: auto; display: flex; align-items: center; justify-content: center; }
+.canvas-code-view { margin: 0; padding: 14px 16px; background: var(--code-bg); border: 1px solid var(--border); border-radius: 12px; font-size: 12.5px; line-height: 1.62; color: var(--code-text); overflow: auto; font-family: ui-monospace,'SFMono-Regular',Consolas,'Liberation Mono',Menlo,monospace; }
+.canvas-code-view code { background: none; padding: 0; color: inherit; }
 
 /* ── Messages canvas ── */
-#messages { flex: 1; overflow-y: auto; padding: 28px 0 64px; display: flex; flex-direction: column; gap: 6px; background-image: var(--canvas-glow); background-repeat: no-repeat; background-attachment: local; }
+#messages { flex: 1; overflow-y: auto; padding: 24px 0 68px; display: flex; flex-direction: column; gap: 6px; background-image: var(--canvas-glow); background-repeat: no-repeat; background-attachment: local; }
 #messages::-webkit-scrollbar { width: 6px; }
 #messages::-webkit-scrollbar-thumb { background: var(--bg4); border-radius: 3px; }
-#empty-state { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; color: var(--text3); padding: 24px 16px 36px; }
-#empty-state p { font-size: 15px; }
+#empty-state { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; color: var(--text3); padding: 18px 20px 28px; }
+#empty-state p { font-size: 14.5px; }
 
 .msg-wrap { display: flex; gap: 14px; padding: 10px 28px; max-width: 860px; margin: 0 auto; width: 100%; scroll-margin-top: 20px; transition: background .35s ease; }
 .msg-wrap.human { flex-direction: row-reverse; margin-top: 12px; }
@@ -152,27 +189,51 @@ body { background: var(--bg); color: var(--text); font-family: -apple-system,Bli
 .human .msg-meta { justify-content: flex-end; }
 .msg-name { font-weight: 600; color: var(--text2); }
 
-/* Human bubble: modern flex alignment, no legacy float */
+/* Human bubble */
 .human .msg-content { background: var(--human-bg); border: 1px solid var(--human-border); border-radius: 18px 18px 4px 18px; padding: 11px 17px; max-width: 78%; font-size: 14.5px; line-height: 1.68; word-break: break-word; color: var(--text); box-shadow: 0 1px 2px rgba(0,0,0,.04); }
 
-/* Assistant: Gemini-inspired editorial canvas */
+/* Assistant: Gemini + Antigravity editorial canvas */
 .assistant .msg-content { font-size: 15px; line-height: 1.78; color: var(--text); word-break: break-word; letter-spacing: .004em; }
 .assistant .msg-content > *:first-child { margin-top: 0 !important; }
 .assistant .msg-content > *:last-child { margin-bottom: 0 !important; }
 
-/* Markdown typography */
+/* Antigravity Markdown typography, semantic headings, alerts & math */
 .msg-content p { margin: 0 0 12px; }
 .msg-content p:last-child { margin: 0; }
-.msg-content h1 { font-size: 1.42em; font-weight: 700; letter-spacing: -.02em; margin: 22px 0 10px; border-bottom: 1px solid var(--border); padding-bottom: 7px; }
-.msg-content h2 { font-size: 1.22em; font-weight: 680; letter-spacing: -.015em; margin: 18px 0 8px; }
-.msg-content h3 { font-size: 1.07em; font-weight: 640; margin: 15px 0 6px; }
-.msg-content h4,.msg-content h5 { font-size: 1em; font-weight: 600; margin: 12px 0 4px; }
+.msg-content h1 { font-size: 1.44em; font-weight: 720; letter-spacing: -.022em; margin: 24px 0 12px; padding-bottom: 8px; border-bottom: 1.5px solid color-mix(in srgb,var(--accent) 32%,var(--border)); color: var(--text); }
+.msg-content h2 { position: relative; font-size: 1.22em; font-weight: 680; letter-spacing: -.015em; margin: 20px 0 9px; padding-left: 11px; color: var(--text); }
+.msg-content h2::before { content: ''; position: absolute; left: 0; top: .22em; bottom: .22em; width: 3px; border-radius: 99px; background: linear-gradient(180deg,var(--accent),color-mix(in srgb,var(--accent) 45%,var(--blue))); }
+.msg-content h3 { font-size: 1.07em; font-weight: 650; margin: 16px 0 6px; color: color-mix(in srgb,var(--accent) 26%,var(--text)); }
+.msg-content h4,.msg-content h5 { font-size: 1em; font-weight: 620; margin: 12px 0 4px; color: var(--text2); }
 .msg-content ul,.msg-content ol { padding-left: 22px; margin: 8px 0 12px; }
-.msg-content li { margin: 5px 0; line-height: 1.7; }
+.msg-content li { margin: 5px 0; line-height: 1.72; }
+.msg-content ul > li::marker, .msg-content ol > li::marker { color: var(--accent); font-weight: 650; }
 .msg-content li > ul,.msg-content li > ol { margin: 4px 0; }
-.msg-content blockquote { background: var(--bg3); border-left: 3px solid var(--accent); border-radius: 0 10px 10px 0; padding: 10px 16px; color: var(--text2); margin: 12px 0; font-style: normal; }
+.msg-content li > input[type="checkbox"] { width: 14px; height: 14px; margin-right: 7px; vertical-align: -2px; accent-color: var(--accent); cursor: default; }
+.msg-content blockquote { background: color-mix(in srgb,var(--bg3) 84%,transparent); border-left: 3px solid var(--accent); border-radius: 0 10px 10px 0; padding: 10px 16px; color: var(--text2); margin: 12px 0; font-style: normal; }
+.msg-content kbd { display: inline-block; padding: 1px 6px; font-size: .82em; font-family: ui-monospace,SFMono-Regular,Consolas,monospace; color: var(--text); background: var(--bg3); border: 1px solid var(--border2); border-bottom-width: 2px; border-radius: 5px; }
 .msg-content hr { border: none; border-top: 1px solid var(--border); margin: 18px 0; }
-.table-scroll { overflow-x: auto; margin: 14px 0; border: 1px solid var(--border); border-radius: 10px; background: var(--bg2); }
+
+/* GFM / Antigravity Callout Alerts */
+.md-alert { --alert-color: var(--blue); margin: 14px 0; padding: 11px 15px; border-radius: 12px; border: 1px solid color-mix(in srgb, var(--alert-color) 24%, var(--border)); border-left: 3.5px solid var(--alert-color); background: color-mix(in srgb, var(--alert-color) 6.5%, var(--bg2)); box-shadow: var(--specular); }
+.md-alert-note { --alert-color: #2563eb; }
+.md-alert-tip { --alert-color: #16a34a; }
+.md-alert-important { --alert-color: #7c3aed; }
+.md-alert-warning { --alert-color: #d97706; }
+.md-alert-caution { --alert-color: #dc2626; }
+[data-theme=dark] .md-alert-note { --alert-color: #60a5fa; }
+[data-theme=dark] .md-alert-tip { --alert-color: #4ade80; }
+[data-theme=dark] .md-alert-important { --alert-color: #a78bfa; }
+[data-theme=dark] .md-alert-warning { --alert-color: #fbbf24; }
+[data-theme=dark] .md-alert-caution { --alert-color: #f87171; }
+.md-alert-title { display: flex; align-items: center; gap: 7px; font-size: 12.5px; font-weight: 700; letter-spacing: .01em; color: var(--alert-color); margin-bottom: 6px; }
+.md-alert-icon { display: inline-flex; width: 15px; height: 15px; }
+.md-alert-icon svg { width: 15px; height: 15px; }
+.md-alert-body { font-size: 13.8px; line-height: 1.68; color: var(--text); }
+.md-alert-body > *:first-child { margin-top: 0; }
+.md-alert-body > *:last-child { margin-bottom: 0; }
+
+.table-scroll { overflow-x: auto; margin: 14px 0; border: 1px solid var(--border); border-radius: 12px; background: var(--bg2); box-shadow: var(--shadow); }
 .table-scroll table { margin: 0; border: none; }
 .msg-content table { border-collapse: collapse; font-size: 13px; margin: 12px 0; width: 100%; }
 .msg-content th,.msg-content td { border: 1px solid var(--border); padding: 8px 13px; text-align: left; }
@@ -180,36 +241,63 @@ body { background: var(--bg); color: var(--text); font-family: -apple-system,Bli
 .table-scroll th:last-child,.table-scroll td:last-child { border-right: none; }
 .table-scroll thead tr:first-child th { border-top: none; }
 .table-scroll tbody tr:last-child td { border-bottom: none; }
-.msg-content th { background: var(--bg3); font-weight: 600; color: var(--text); }
+.msg-content th { background: color-mix(in srgb,var(--accent) 5%,var(--bg3)); font-weight: 650; color: var(--text); }
+.msg-content tbody tr:hover td { background: color-mix(in srgb,var(--accent) 4%,transparent); }
 .msg-content a { color: var(--blue); text-decoration: none; font-weight: 500; }
 .msg-content a:hover { text-decoration: underline; }
-.msg-content strong { font-weight: 650; }
+.msg-content strong { font-weight: 670; color: var(--text); }
 .msg-content em { color: var(--text2); }
 
-/* Code inline */
-.msg-content code:not(pre code) { background: color-mix(in srgb,var(--text3) 14%,transparent); padding: 2px 6px; border-radius: 6px; font-size: 0.87em; font-family: ui-monospace,'SFMono-Regular',Consolas,'Liberation Mono',Menlo,monospace; }
+/* Chromatic inline code pills */
+.msg-content code:not(pre code) { background: var(--syn-inline-bg); border: 1px solid var(--syn-inline-border); color: var(--syn-inline); padding: 1.5px 6px; border-radius: 6px; font-size: 0.86em; font-weight: 520; font-family: ui-monospace,'SFMono-Regular',Consolas,'Liberation Mono',Menlo,monospace; }
 
-/* Code block & built-in offline syntax tokens */
-.code-block { background: var(--code-bg); border: 1px solid var(--border); border-radius: 12px; margin: 14px 0; overflow: clip; box-shadow: 0 1px 2px rgba(0,0,0,.03); }
-.code-block-header { position: sticky; top: 0; z-index: 2; display: flex; align-items: center; justify-content: space-between; padding: 8px 14px; background: var(--code-head); border-bottom: 1px solid var(--border); }
-.code-lang { font-size: 11.5px; font-weight: 600; color: var(--text2); font-family: ui-monospace,monospace; text-transform: lowercase; letter-spacing: .02em; }
-.copy-btn { background: var(--bg2); border: 1px solid var(--border2); color: var(--text2); font-size: 11px; font-weight: 500; padding: 3px 10px; border-radius: 6px; cursor: pointer; display: inline-flex; align-items: center; gap: 4px; transition: all .15s; }
-.copy-btn:hover { border-color: var(--accent); color: var(--accent); }
+/* Code block & Antigravity jewel-toned syntax tokens */
+.code-block { background: var(--code-bg); border: 1px solid var(--border); border-radius: 12px; margin: 14px 0; overflow: clip; box-shadow: var(--specular), var(--shadow); }
+.code-block-header { position: sticky; top: 0; z-index: 2; display: flex; align-items: center; gap: 7px; padding: 7px 12px; background: var(--code-head); border-bottom: 1px solid var(--border); }
+.code-lang-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--text3); flex-shrink: 0; }
+.code-lang-dot[data-lang="js"],.code-lang-dot[data-lang="javascript"],.code-lang-dot[data-lang="ts"],.code-lang-dot[data-lang="typescript"],.code-lang-dot[data-lang="jsx"],.code-lang-dot[data-lang="tsx"] { background: #eab308; }
+.code-lang-dot[data-lang="py"],.code-lang-dot[data-lang="python"] { background: #3b82f6; }
+.code-lang-dot[data-lang="json"],.code-lang-dot[data-lang="yaml"],.code-lang-dot[data-lang="yml"],.code-lang-dot[data-lang="toml"] { background: #06b6d4; }
+.code-lang-dot[data-lang="bash"],.code-lang-dot[data-lang="sh"],.code-lang-dot[data-lang="zsh"],.code-lang-dot[data-lang="shell"],.code-lang-dot[data-lang="powershell"],.code-lang-dot[data-lang="pwsh"] { background: #10b981; }
+.code-lang-dot[data-lang="html"],.code-lang-dot[data-lang="xml"],.code-lang-dot[data-lang="svg"],.code-lang-dot[data-lang="css"],.code-lang-dot[data-lang="scss"] { background: #f97316; }
+.code-lang-dot[data-lang="sql"],.code-lang-dot[data-lang="md"],.code-lang-dot[data-lang="markdown"],.code-lang-dot[data-lang="rust"],.code-lang-dot[data-lang="go"] { background: #8b5cf6; }
+.code-lang { font-size: 11.5px; font-weight: 600; color: var(--text2); font-family: ui-monospace,monospace; text-transform: lowercase; letter-spacing: .02em; margin-right: auto; }
+.code-actions { display: inline-flex; align-items: center; gap: 5px; margin-left: auto; }
+.code-line-count { font-size: 10.5px; color: var(--text3); font-variant-numeric: tabular-nums; padding-right: 3px; }
+.code-action-btn, .copy-btn { background: var(--bg2); border: 1px solid var(--border); color: var(--text2); font-size: 11px; font-weight: 500; padding: 2.5px 8px; border-radius: 6px; cursor: pointer; display: inline-flex; align-items: center; gap: 4px; transition: all .14s; }
+.code-action-btn:hover, .copy-btn:hover { border-color: var(--accent); color: var(--accent); }
+.code-action-btn.active { border-color: var(--accent); background: var(--badge-bg); color: var(--accent); }
 .copy-btn.copied { color: var(--green); border-color: var(--green); }
-.code-block pre { margin: 0; padding: 14px 16px; overflow-x: auto; font-size: 13px; line-height: 1.6; color: var(--code-text); font-family: ui-monospace,'SFMono-Regular',Consolas,'Liberation Mono',Menlo,monospace; }
-.code-block pre code { background: none; padding: 0; font-size: inherit; color: inherit; }
+.code-body { display: flex; align-items: stretch; overflow-x: auto; }
+.code-gutter { display: none; padding: 14px 10px 14px 12px; border-right: 1px solid var(--border); background: color-mix(in srgb,var(--code-head) 45%,var(--code-bg)); color: var(--text3); font-size: 12px; line-height: 1.62; text-align: right; user-select: none; font-family: ui-monospace,'SFMono-Regular',Consolas,monospace; font-variant-numeric: tabular-nums; white-space: pre; flex-shrink: 0; }
+.code-block.show-lines .code-gutter { display: block; }
+.code-block pre { flex: 1; min-width: 0; margin: 0; padding: 14px 16px; overflow-x: auto; font-size: 13px; line-height: 1.62; color: var(--code-text); font-family: ui-monospace,'SFMono-Regular',Consolas,'Liberation Mono',Menlo,monospace; }
+.code-block.is-wrapped pre { white-space: pre-wrap; word-break: break-word; overflow-x: hidden; }
+.code-block.is-collapsed .code-body { max-height: 180px; overflow: hidden; mask-image: linear-gradient(180deg, #000 62%, transparent); -webkit-mask-image: linear-gradient(180deg, #000 62%, transparent); }
+.code-block pre code { background: none !important; border: none !important; padding: 0 !important; font-size: inherit; color: inherit; }
 pre.reader-partial { background: var(--code-bg); border: 1px solid var(--border); border-radius: 12px; padding: 14px 16px; overflow-x: auto; font-size: 13px; line-height: 1.6; color: var(--code-text); margin: 10px 0; font-family: ui-monospace,'SFMono-Regular',Consolas,'Liberation Mono',Menlo,monospace; }
 pre.reader-partial code { background: none; padding: 0; font-size: inherit; color: inherit; }
-.hljs-comment,.hljs-quote { color: var(--syn-cmt); font-style: italic; }
-.hljs-keyword,.hljs-selector-tag,.hljs-subst { color: var(--syn-kw); font-weight: 550; }
-.hljs-number,.hljs-literal,.hljs-variable,.hljs-template-variable,.hljs-tag .hljs-attr { color: var(--syn-num); }
-.hljs-string,.hljs-doctag,.hljs-regexp { color: var(--syn-str); }
-.hljs-title,.hljs-section,.hljs-selector-id,.hljs-title\.function_ { color: var(--syn-fn); font-weight: 600; }
-.hljs-type,.hljs-class .hljs-title,.hljs-title\.class_,.hljs-built_in { color: var(--syn-type); }
-.hljs-tag,.hljs-name,.hljs-attribute,.hljs-attr { color: var(--syn-attr); }
-.hljs-meta,.hljs-symbol,.hljs-bullet,.hljs-link { color: var(--syn-meta); }
-.hljs-addition { color: var(--green); background: color-mix(in srgb,var(--green) 12%,transparent); }
-.hljs-deletion { color: var(--red); background: color-mix(in srgb,var(--red) 12%,transparent); }
+#messages .hljs, .canvas-code-view .hljs { background: transparent !important; color: var(--code-text) !important; padding: 0 !important; }
+#messages .hljs-comment,#messages .hljs-quote,.canvas-code-view .hljs-comment,.canvas-code-view .hljs-quote { color: var(--syn-cmt) !important; font-style: italic; }
+#messages .hljs-keyword,#messages .hljs-selector-tag,#messages .hljs-subst,.canvas-code-view .hljs-keyword,.canvas-code-view .hljs-selector-tag,.canvas-code-view .hljs-subst { color: var(--syn-kw) !important; font-weight: 560; }
+#messages .hljs-number,#messages .hljs-literal,#messages .hljs-variable,#messages .hljs-template-variable,#messages .hljs-tag .hljs-attr,.canvas-code-view .hljs-number,.canvas-code-view .hljs-literal,.canvas-code-view .hljs-variable,.canvas-code-view .hljs-template-variable,.canvas-code-view .hljs-tag .hljs-attr { color: var(--syn-num) !important; }
+#messages .hljs-string,#messages .hljs-doctag,#messages .hljs-regexp,.canvas-code-view .hljs-string,.canvas-code-view .hljs-doctag,.canvas-code-view .hljs-regexp { color: var(--syn-str) !important; }
+#messages .hljs-title,#messages .hljs-section,#messages .hljs-selector-id,#messages .hljs-title\.function_,.canvas-code-view .hljs-title,.canvas-code-view .hljs-section,.canvas-code-view .hljs-selector-id,.canvas-code-view .hljs-title\.function_ { color: var(--syn-fn) !important; font-weight: 600; }
+#messages .hljs-type,#messages .hljs-class .hljs-title,#messages .hljs-title\.class_,#messages .hljs-built_in,.canvas-code-view .hljs-type,.canvas-code-view .hljs-class .hljs-title,.canvas-code-view .hljs-title\.class_,.canvas-code-view .hljs-built_in { color: var(--syn-type) !important; }
+#messages .hljs-tag,#messages .hljs-name,#messages .hljs-attribute,#messages .hljs-attr,.canvas-code-view .hljs-tag,.canvas-code-view .hljs-name,.canvas-code-view .hljs-attribute,.canvas-code-view .hljs-attr { color: var(--syn-attr) !important; }
+#messages .hljs-meta,#messages .hljs-symbol,#messages .hljs-bullet,#messages .hljs-link,.canvas-code-view .hljs-meta,.canvas-code-view .hljs-symbol,.canvas-code-view .hljs-bullet,.canvas-code-view .hljs-link { color: var(--syn-meta) !important; }
+#messages .hljs-addition,.canvas-code-view .hljs-addition { color: var(--green) !important; background: color-mix(in srgb,var(--green) 14%,transparent); }
+#messages .hljs-deletion,.canvas-code-view .hljs-deletion { color: var(--red) !important; background: color-mix(in srgb,var(--red) 14%,transparent); }
+
+/* Offline safe math typography */
+.math-block { margin: 12px 0; padding: 11px 16px; border-radius: 10px; background: color-mix(in srgb, var(--bg3) 72%, var(--bg2)); border: 1px solid var(--border); overflow-x: auto; text-align: center; font-family: 'Cambria Math','STIX Two Math','Times New Roman',Georgia,serif; font-size: 1.08em; line-height: 1.8; color: var(--text); }
+.math-inline { font-family: 'Cambria Math','STIX Two Math','Times New Roman',Georgia,serif; font-size: 1.03em; padding: 0 2px; color: var(--text); }
+.math-frac { display: inline-flex; flex-direction: column; align-items: center; vertical-align: middle; margin: 0 3px; font-size: .88em; line-height: 1.15; }
+.math-num { padding: 0 3px 1px; border-bottom: 1px solid currentColor; }
+.math-den { padding: 1px 3px 0; }
+.math-sqrt { display: inline-flex; align-items: baseline; }
+.math-rad { border-top: 1px solid currentColor; padding: 0 2px; margin-left: 1px; }
+.math-var { font-style: italic; }
 
 .date-divider { text-align: center; margin: 20px 0 10px; padding: 0 24px; }
 .date-divider span { background: var(--bg3); border: 1px solid var(--border); color: var(--text3); font-size: 11.5px; padding: 4px 12px; border-radius: 999px; }
@@ -249,10 +337,14 @@ pre.reader-partial code { background: none; padding: 0; font-size: inherit; colo
 .attachment-actions { display:flex; flex-wrap:wrap; gap:6px; }
 
 /* ── Summary panel ── */
-#summary { width: 300px; min-width: 300px; background: var(--bg2); border-left: 1px solid var(--border); display: flex; flex-direction: column; overflow: hidden; transition: width .25s, min-width .25s; }
-#summary.hidden { width: 0; min-width: 0; }
-#summary-inner { padding: 18px 16px; overflow-y: auto; flex: 1; min-width: 300px; }
-#summary-inner h2 { font-size: 13px; font-weight: 600; color: var(--text2); text-transform: uppercase; letter-spacing: .06em; margin-bottom: 10px; }
+#summary { width: 300px; min-width: 300px; background: var(--bg2); border-left: 1px solid var(--border); display: flex; flex-direction: column; overflow: hidden; transition: width .22s ease, min-width .22s ease; }
+#summary.hidden { width: 0; min-width: 0; border-left: none; }
+#summary-inner { padding: 16px; overflow-y: auto; flex: 1; min-width: 300px; }
+.summary-drawer-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding-bottom: 10px; margin-bottom: 12px; border-bottom: 1px solid var(--border); }
+.summary-drawer-head h2 { margin: 0 !important; display: inline-flex; align-items: center; gap: 6px; }
+.summary-close-btn { width: 26px; height: 26px; border: 1px solid var(--border); border-radius: 7px; background: var(--bg3); color: var(--text2); cursor: pointer; display: inline-flex; align-items: center; justify-content: center; transition: border-color .14s, color .14s; }
+.summary-close-btn:hover { border-color: var(--accent); color: var(--text); }
+#summary-inner h2 { font-size: 12.5px; font-weight: 650; color: var(--text2); text-transform: uppercase; letter-spacing: .06em; margin-bottom: 10px; }
 #summary-text { font-size: 13px; line-height: 1.65; color: var(--text2); }
 #summary-text p { margin-bottom: 8px; } #summary-text p:last-child { margin: 0; }
 .meta-row { display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px solid var(--border); font-size: 12px; }
@@ -265,21 +357,26 @@ pre.reader-partial code { background: none; padding: 0; font-size: inherit; colo
 .proj-card-name { font-size: 13px; font-weight: 600; }
 .proj-card-desc { font-size: 11px; color: var(--text3); margin-top: 3px; }
 .project-tools { display:flex; flex-wrap:wrap; gap:8px; margin:0 0 16px; }
-.project-tools input { flex:1; min-width:180px; padding:7px 10px; border:1px solid var(--border); border-radius:7px; background:var(--bg2); color:var(--text); }
-.project-tools button,.project-assign { padding:6px 10px; border:1px solid var(--border); border-radius:7px; background:var(--bg3); color:var(--text2); cursor:pointer; }
+.project-tools input { flex:1; min-width:180px; padding:7px 10px; border:1px solid var(--border); border-radius:8px; background:var(--bg2); color:var(--text); }
+.project-tools button,.project-assign { padding:6px 10px; border:1px solid var(--border); border-radius:8px; background:var(--bg3); color:var(--text2); cursor:pointer; display:inline-flex; align-items:center; gap:5px; }
 .project-tools button:hover,.project-assign:hover { border-color:var(--accent); color:var(--text); }
-.project-prompt { margin:0 0 18px; padding:14px 16px; border:1px solid var(--border); border-radius:10px; background:var(--bg2); }
+.project-prompt { margin:0 0 18px; padding:14px 16px; border:1px solid var(--border); border-radius:12px; background:var(--bg2); box-shadow: var(--shadow); }
 .project-prompt-head,.project-doc-head { display:flex; align-items:center; gap:8px; justify-content:space-between; }
 .project-prompt pre { max-height:320px; overflow:auto; margin:10px 0 0; white-space:pre-wrap; color:var(--text2); font:12px/1.6 ui-monospace,SFMono-Regular,Consolas,monospace; }
 .project-stat-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(120px,1fr)); gap:8px; margin-bottom:18px; }
-.project-stat { padding:10px 12px; border:1px solid var(--border); border-radius:9px; background:var(--bg3); font-size:11px; color:var(--text3); }
+.project-stat { padding:10px 12px; border:1px solid var(--border); border-radius:10px; background:var(--bg2); font-size:11px; color:var(--text3); box-shadow: var(--shadow); }
 .project-stat b { display:block; color:var(--text); font-size:17px; margin-bottom:2px; }
-.match-panel { margin:6px 0 10px; padding:10px 12px; border:1px solid var(--border); border-radius:8px; background:var(--bg2); font-size:12px; color:var(--text2); line-height:1.6; }
-.match-confidence { display:inline-block; padding:1px 7px; border-radius:999px; background:var(--bg4); color:var(--accent2); font-weight:700; }
-.project-graph { display:flex; align-items:stretch; gap:10px; overflow-x:auto; padding:12px; border:1px solid var(--border); border-radius:10px; background:var(--bg2); margin-bottom:18px; }
-.graph-column { min-width:180px; flex:1; }
-.graph-node { padding:7px 9px; margin:5px 0; border-left:3px solid var(--accent); border-radius:5px; background:var(--bg3); font-size:11px; color:var(--text2); }
-.graph-arrow { display:flex; align-items:center; color:var(--text3); font-size:20px; }
+.match-panel { margin:6px 0 10px; padding:10px 12px; border:1px solid var(--border); border-radius:9px; background:var(--bg2); font-size:12px; color:var(--text2); line-height:1.6; }
+.match-confidence { display:inline-block; padding:1px 7px; border-radius:999px; background:var(--badge-bg); color:var(--accent); font-weight:700; }
+.project-graph { position:relative; display:grid; grid-template-columns:repeat(3,minmax(160px,1fr)); gap:22px; overflow-x:auto; padding:14px; border:1px solid var(--border); border-radius:12px; background:var(--bg2); margin-bottom:18px; box-shadow: var(--specular), var(--shadow); }
+.project-graph-svg { position:absolute; inset:0; width:100%; height:100%; pointer-events:none; z-index:0; }
+.project-graph-svg path { fill:none; stroke: var(--border2); stroke-width:1.4; opacity:.65; transition:stroke .16s, opacity .16s, stroke-width .16s; }
+.project-graph-svg path.is-hot { stroke: var(--accent); stroke-width:2.1; opacity:1; }
+.graph-column { position:relative; z-index:1; min-width:150px; display:flex; flex-direction:column; gap:5px; }
+.graph-column-title { font-size:11.5px; font-weight:650; color:var(--text2); display:inline-flex; align-items:center; gap:5px; margin-bottom:3px; }
+.graph-node { padding:7px 9px; border-left:3px solid var(--accent); border-radius:7px; background:var(--bg3); border-top:1px solid var(--border); border-right:1px solid var(--border); border-bottom:1px solid var(--border); font-size:11.5px; color:var(--text2); transition:border-color .15s, background .15s, transform .12s; }
+.graph-node:hover, .graph-node.is-hot { border-color: var(--accent); background: color-mix(in srgb,var(--accent) 8%,var(--bg2)); color: var(--text); }
+.graph-arrow { display:none; }
 .assignment-list { max-height:360px; overflow:auto; margin-top:8px; }
 .assignment-row { display:grid; grid-template-columns:minmax(160px,1fr) minmax(150px,220px); gap:8px; align-items:center; padding:7px 0; border-bottom:1px solid var(--border); font-size:12px; }
 .proj-doc { padding: 6px 10px; margin: 4px 0; background: var(--bg3); border-radius: 6px; font-size: 12px; color: var(--text2); cursor: pointer; }
@@ -296,15 +393,7 @@ pre.reader-partial code { background: none; padding: 0; font-size: inherit; colo
 /* ── Table even rows ── */
 .msg-content tr:nth-child(even) td { background: var(--bg3); }
 
-/* ── Responsive ── */
-@media (max-width: 640px) {
-  #sidebar { width: 100%; min-width: 0; max-width: 100%; height: 40vh; border-right: none; border-bottom: 1px solid var(--border); }
-  #main { height: 60vh; }
-  #summary { width: 100%; min-width: 0; }
-  body { flex-direction: column; }
-  .msg-wrap { padding: 4px 12px; }
-  .msg-content { max-width: 88% !important; }
-}
+/* ── Scrollbars & spinners ── */
 ::-webkit-scrollbar { width: 5px; } ::-webkit-scrollbar-thumb { background: var(--bg4); border-radius: 3px; }
 input[type=file] { display: none; }
 .spinner { display: inline-block; width: 14px; height: 14px; border: 2px solid var(--bg4); border-top-color: var(--accent); border-radius: 50%; animation: spin .6s linear infinite; }
@@ -355,8 +444,9 @@ mark.cs.active { background:var(--accent); color:#fff; }
 /* ── Rich content: artifacts / generated files / web search ── */
 .visual { margin:8px 0; border:1px solid var(--border); border-radius:var(--radius-sm); overflow:hidden; }
 .vcap { display:flex; align-items:center; gap:8px; padding:6px 10px; background:var(--bg3); border-bottom:1px solid var(--border); }
-.vtitle { font-size:12px; font-weight:600; color:var(--text2); }
-.vdl { margin-left:auto; padding:2px 8px; font-size:11px; border:1px solid var(--border); border-radius:5px; background:var(--bg2); color:var(--text2); cursor:pointer; }
+.vtitle { font-size:12px; font-weight:600; color:var(--text2); margin-right:auto; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.vcap-actions { display:inline-flex; align-items:center; gap:6px; flex-shrink:0; }
+.vdl { padding:2px 8px; font-size:11px; border:1px solid var(--border); border-radius:5px; background:var(--bg2); color:var(--text2); cursor:pointer; }
 .vdl:hover { border-color:var(--accent); color:var(--accent); }
 .vhtml { width:100%; border:none; display:block; min-height:120px; background:#fff; }
 .vsrc summary { padding:4px 10px; font-size:11px; color:var(--text3); cursor:pointer; }
@@ -515,13 +605,13 @@ mark.cs.active { background:var(--accent); color:#fff; }
 [data-theme=dark] .msg-wrap.grok .msg-avatar { background:linear-gradient(135deg,#334155,#1e293b); }
 .msg-wrap.perplexity .msg-avatar { background:linear-gradient(135deg,#0e7490,#155e75); color:#fff; font-size:13px; }
 [data-theme=dark] .msg-wrap.perplexity .msg-avatar { background:linear-gradient(135deg,#0891b2,#0e7490); }
-.platform-bar { display:flex; align-items:center; gap:5px; margin-top:6px; flex-wrap:wrap; }
-.platform-btn { flex:1; min-width:58px; display:inline-flex; align-items:center; justify-content:center; gap:4px; padding:3px 6px; background:none; border:1px solid var(--border); border-radius:5px; color:var(--text3); font-size:11px; cursor:pointer; transition:all .15s; text-align:center; white-space:nowrap; }
-.platform-btn:hover { border-color:var(--border2); color:var(--text2); opacity:1; }
-.platform-btn.empty:not(.active) { opacity:.48; }
-.platform-btn.active { background:var(--accent); border-color:var(--accent); color:#fff; opacity:1; }
-.platform-count { font-size:9.5px; padding:0 4px; border-radius:999px; background:var(--bg3); color:var(--text2); line-height:1.45; }
-.platform-btn.active .platform-count { background:rgba(255,255,255,.22); color:#fff; }
+.platform-bar { display:flex; align-items:center; gap:5px; margin-top:7px; flex-wrap:wrap; }
+.platform-btn { flex:0 1 auto; display:inline-flex; align-items:center; justify-content:center; gap:4px; padding:3px 8px; background:var(--bg3); border:1px solid var(--border); border-radius:999px; color:var(--text3); font-size:11px; font-weight:500; cursor:pointer; transition:all .15s; text-align:center; white-space:nowrap; }
+.platform-btn:hover { border-color:var(--border2); color:var(--text2); background:var(--bg2); opacity:1; }
+.platform-btn.empty:not(.active) { opacity:.46; }
+.platform-btn.active { background:var(--badge-bg); border-color:var(--badge-border); color:var(--accent); font-weight:600; opacity:1; }
+.platform-count { font-size:9.5px; padding:0 5px; border-radius:999px; background:var(--bg2); color:var(--text3); line-height:1.45; font-variant-numeric:tabular-nums; }
+.platform-btn.active .platform-count { background:color-mix(in srgb,var(--accent) 18%,transparent); color:var(--accent); }
 .platform-pill { display:inline-flex; align-items:center; gap:4px; padding:1px 7px; border-radius:999px; font-size:10.5px; font-weight:600; line-height:1.5; border:1px solid var(--border); background:var(--bg3); color:var(--text2); vertical-align:middle; }
 .platform-pill .platform-dot { width:6.5px; height:6.5px; }
 .platform-pill.claude { background:color-mix(in srgb,#c97b3a 11%,var(--bg2)); border-color:color-mix(in srgb,#c97b3a 32%,var(--border)); color:#9a541d; }
@@ -533,21 +623,13 @@ mark.cs.active { background:var(--accent); color:#fff; }
 [data-theme=dark] .platform-pill.grok { color:#cbd5e1; }
 [data-theme=dark] .platform-pill.perplexity { color:#67e8f9; }
 .stats-platform-row { display:flex; flex-wrap:wrap; gap:4px; margin-top:5px; }
-.header-pill-btn { padding:5px 9px; background:var(--bg3); border:1px solid var(--border); border-radius:6px; color:var(--text2); font-size:11.5px; cursor:pointer; white-space:nowrap; transition:border-color .15s,color .15s,background .15s; }
-.header-pill-btn:hover:not(:disabled) { border-color:var(--accent); color:var(--text); }
-.header-pill-btn.active { border-color:var(--accent); color:var(--accent); background:color-mix(in srgb,var(--accent) 10%,var(--bg3)); }
+.header-pill-btn { padding:5px 9px; background:var(--bg3); border:1px solid var(--border); border-radius:8px; color:var(--text2); font-size:11.5px; cursor:pointer; white-space:nowrap; display:inline-flex; align-items:center; gap:5px; transition:border-color .15s,color .15s,background .15s; }
+.header-pill-btn:hover:not(:disabled) { border-color:var(--accent); color:var(--text); background:var(--bg2); }
+.header-pill-btn.active { border-color:var(--accent); color:var(--accent); background:var(--badge-bg); }
 .header-pill-btn:disabled { opacity:.5; cursor:not-allowed; }
-.remote-setup-card { width:520px; max-width:92vw; margin:14px 0 4px; padding:14px 16px; border:1.5px solid var(--accent); border-radius:12px; background:color-mix(in srgb,var(--accent) 6%,var(--bg2)); text-align:left; }
-.remote-setup-head { display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap; margin-bottom:6px; }
-.remote-setup-badge { font-size:10.5px; font-weight:700; letter-spacing:.05em; text-transform:uppercase; padding:2px 8px; border-radius:999px; background:var(--accent); color:#fff; }
-.remote-setup-actions { display:flex; gap:8px; margin-top:10px; flex-wrap:wrap; }
-.remote-choice-btn { flex:1; min-width:140px; padding:8px 12px; border:1px solid var(--border); border-radius:8px; background:var(--bg3); color:var(--text2); font:inherit; font-size:12px; font-weight:500; cursor:pointer; transition:all .15s; }
-.remote-choice-btn:hover:not(:disabled) { border-color:var(--accent); color:var(--text); }
-.remote-choice-btn.active { background:var(--accent); border-color:var(--accent); color:#fff; }
-.remote-choice-btn:disabled { opacity:.45; cursor:not-allowed; }
-.import-notice { margin:8px 0 14px; padding:9px 12px; border-left:3px solid var(--orange); border-radius:6px; background:var(--bg3); color:var(--text2); font-size:12px; line-height:1.5; }
+.import-notice { margin:8px 0 14px; padding:9px 12px; border-left:3px solid var(--orange); border-radius:8px; background:var(--bg3); color:var(--text2); font-size:12px; line-height:1.5; }
 .gpt-components { display:grid; gap:10px; margin-top:10px; }
-.gpt-card { display:grid; gap:8px; padding:12px 14px; background:var(--bg3); border:1px solid var(--border); border-radius:var(--radius-sm); font-size:12.5px; color:var(--text); }
+.gpt-card { display:grid; gap:8px; padding:12px 14px; background:var(--bg3); border:1px solid var(--border); border-radius:var(--radius-sm); font-size:12.5px; color:var(--text); box-shadow: var(--specular); }
 .gpt-card-head { display:flex; align-items:center; justify-content:space-between; gap:8px; flex-wrap:wrap; }
 .gpt-card-badge { font-size:11px; color:var(--text3); background:var(--bg2); border:1px solid var(--border); border-radius:999px; padding:2px 8px; }
 .gpt-card-desc { margin:0; color:var(--text2); font-size:12px; line-height:1.5; }
@@ -602,60 +684,82 @@ mark.cs.active { background:var(--accent); color:#fff; }
 .gpt-dil-output p { margin:0; font-size:12px; color:var(--text2); }
 .gpt-dil-output textarea { width:100%; padding:8px 10px; background:var(--bg); border:1px solid var(--border); border-radius:6px; color:var(--text); font:inherit; font-size:12.5px; resize:vertical; }
 .think-body { white-space:pre-wrap; }
-.welcome-step-card { width:620px; max-width:94vw; margin-top:12px; padding:14px 16px; border:1px solid var(--border); border-radius:12px; background:var(--bg2); text-align:left; }
+
+/* ── Welcome Single-Screen Gemini Canvas ── */
+.empty-hero-emblem { width: 48px; height: 48px; border-radius: 15px; background: linear-gradient(145deg, color-mix(in srgb,var(--accent) 18%,var(--bg2)), var(--bg3)); border: 1px solid color-mix(in srgb,var(--accent) 28%,var(--border)); display: grid; place-items: center; color: var(--accent); box-shadow: var(--specular), 0 10px 26px color-mix(in srgb,var(--accent) 16%,transparent); margin-bottom: 0; }
+.empty-hero-emblem svg { width: 25px; height: 25px; opacity: 1 !important; }
+#empty-state .empty-hero-title { font-size: 22px; font-weight: 720; letter-spacing: -.028em; color: var(--text); margin: 0; }
+#empty-state .empty-hero-sub { font-size: 13px; color: var(--text2); max-width: 560px; text-align: center; line-height: 1.55; margin-bottom: 2px; }
+.welcome-step-card { width:720px; max-width:94vw; padding:14px 16px; border:1px solid var(--border); border-radius:16px; background:var(--bg2); text-align:left; box-shadow: var(--specular), var(--shadow); }
 .welcome-step-head { display:flex; align-items:center; justify-content:space-between; gap:8px; margin-bottom:10px; flex-wrap:wrap; }
-.welcome-step-head b { font-size:13px; color:var(--text); }
+.welcome-step-head b { font-size:13px; color:var(--text); display:inline-flex; align-items:center; gap:6px; }
 .welcome-step-sub { font-size:11.5px; color:var(--text3); }
-.welcome-action-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:8px; }
-.welcome-action-btn { display:flex; flex-direction:column; gap:4px; padding:11px 12px; border:1px solid var(--border); border-radius:10px; background:var(--bg3); color:var(--text); text-align:left; font:inherit; cursor:pointer; transition:border-color .15s,background .15s,transform .1s; }
-.welcome-action-btn:hover { border-color:var(--accent); background:var(--bg4); transform:translateY(-1px); }
-.welcome-action-btn.primary { border-color:var(--accent); background:color-mix(in srgb,var(--accent) 12%,var(--bg2)); }
-.welcome-action-btn b { font-size:12.5px; color:var(--text); }
-.welcome-action-btn span { font-size:11px; color:var(--text3); line-height:1.45; }
-.platform-guide-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:10px; width:740px; max-width:94vw; margin-top:12px; text-align:left; }
-.platform-guide-card { padding:13px 14px; border:1px solid var(--border); border-radius:10px; background:var(--bg2); display:grid; gap:6px; align-content:start; }
-.platform-guide-head { display:flex; align-items:center; gap:7px; font-size:13px; font-weight:600; color:var(--text); }
-.platform-dot { width:10px; height:10px; border-radius:50%; flex-shrink:0; }
+.welcome-action-grid { display:grid; grid-template-columns:1.35fr 1fr 1fr; gap:8px; }
+.welcome-action-btn { display:flex; flex-direction:column; gap:4px; padding:11px 13px; border:1px solid var(--border); border-radius:12px; background:var(--bg3); color:var(--text); text-align:left; font:inherit; cursor:pointer; transition:border-color .15s,background .15s,transform .12s,box-shadow .15s; }
+.welcome-action-btn:hover { border-color:var(--accent); background:var(--bg2); transform:translateY(-1px); box-shadow:var(--shadow); }
+.welcome-action-btn.primary { border-color:color-mix(in srgb,var(--accent) 48%,var(--border)); background:linear-gradient(155deg,color-mix(in srgb,var(--accent) 13%,var(--bg2)),var(--bg2)); }
+.welcome-action-btn b { font-size:12.5px; color:var(--text); display:inline-flex; align-items:center; gap:6px; }
+.welcome-action-btn span { font-size:11px; color:var(--text3); line-height:1.42; }
+.remote-setup-card { width:720px; max-width:94vw; margin:2px 0 0; padding:10px 14px; border:1px solid var(--border); border-radius:12px; background:var(--bg2); text-align:left; box-shadow:var(--shadow); display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap; }
+.remote-setup-info { flex:1 1 240px; min-width:0; }
+.remote-setup-head { display:flex; align-items:center; gap:7px; flex-wrap:wrap; margin-bottom:2px; }
+.remote-setup-badge { font-size:9.5px; font-weight:700; letter-spacing:.05em; text-transform:uppercase; padding:1px 7px; border-radius:999px; background:var(--badge-bg); color:var(--accent); border:1px solid var(--badge-border); }
+.remote-setup-actions { display:inline-flex; gap:6px; flex-wrap:wrap; flex-shrink:0; }
+.remote-choice-btn { padding:6px 11px; border:1px solid var(--border); border-radius:999px; background:var(--bg3); color:var(--text2); font:inherit; font-size:11.5px; font-weight:500; cursor:pointer; display:inline-flex; align-items:center; gap:5px; transition:all .15s; }
+.remote-choice-btn:hover:not(:disabled) { border-color:var(--accent); color:var(--text); }
+.remote-choice-btn.active { background:var(--accent); border-color:var(--accent); color:#fff; }
+.remote-choice-btn:disabled { opacity:.45; cursor:not-allowed; }
+.platform-guide-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:8px; width:720px; max-width:94vw; margin-top:2px; text-align:left; }
+.platform-guide-card { padding:11px 13px; border:1px solid var(--border); border-top-width: 2.5px; border-radius:12px; background:var(--bg2); display:grid; gap:5px; align-content:start; box-shadow:var(--specular), var(--shadow); transition:transform .14s, border-color .14s; }
+.platform-guide-card:hover { transform:translateY(-1px); }
+.platform-guide-card.claude { border-top-color: #c97b3a; }
+.platform-guide-card.gpt { border-top-color: #10a37f; }
+.platform-guide-card.grok { border-top-color: #475569; }
+.platform-guide-card.perplexity { border-top-color: #0891b2; }
+.platform-guide-head { display:flex; align-items:center; gap:7px; font-size:12.5px; font-weight:600; color:var(--text); }
+.platform-dot { width:9px; height:9px; border-radius:50%; flex-shrink:0; }
 .platform-dot.claude { background:linear-gradient(135deg,#d4a855,#c97b3a); }
 .platform-dot.gpt { background:linear-gradient(135deg,#10a37f,#0d8a6c); }
 .platform-dot.grok { background:linear-gradient(135deg,#334155,#0f172a); }
 .platform-dot.perplexity { background:linear-gradient(135deg,#0891b2,#155e75); }
-.platform-beta-badge { margin-left:auto; font-size:10px; font-weight:700; letter-spacing:.04em; text-transform:uppercase; padding:1px 6px; border-radius:999px; background:color-mix(in srgb,#d97706 16%,var(--bg3)); color:#b45309; border:1px solid color-mix(in srgb,#d97706 40%,var(--border)); }
+.platform-beta-badge { margin-left:auto; font-size:9.5px; font-weight:700; letter-spacing:.04em; text-transform:uppercase; padding:1px 6px; border-radius:999px; background:color-mix(in srgb,#d97706 14%,var(--bg3)); color:#b45309; border:1px solid color-mix(in srgb,#d97706 36%,var(--border)); }
 [data-theme=dark] .platform-beta-badge { color:#fbbf24; }
-.platform-guide-path { font-size:11.5px; color:var(--text2); background:var(--bg3); padding:5px 8px; border-radius:6px; font-family:ui-monospace,SFMono-Regular,Consolas,monospace; }
-.platform-guide-card ul { margin:2px 0 0; padding-left:16px; font-size:11.5px; color:var(--text3); line-height:1.6; }
-.remote-setup-card { width:740px; max-width:94vw; margin:14px 0 0; padding:14px 16px; border:1.5px solid var(--accent); border-radius:12px; background:color-mix(in srgb,var(--accent) 6%,var(--bg2)); text-align:left; }
-.welcome-note { width:740px; max-width:94vw; margin-top:12px; padding:10px 14px; border:1px solid color-mix(in srgb,var(--accent) 35%,var(--border)); border-radius:10px; color:var(--text2); font-size:12px; line-height:1.6; text-align:left; background:var(--bg2); }
-/* ── Antigravity Steps Timeline ── */
+.platform-guide-path { font-size:11px; color:var(--text2); background:var(--bg3); padding:4px 8px; border-radius:6px; font-family:ui-monospace,SFMono-Regular,Consolas,monospace; }
+.platform-guide-card ul { margin:1px 0 0; padding-left:15px; font-size:11px; color:var(--text3); line-height:1.52; }
+.welcome-note { width:720px; max-width:94vw; margin-top:2px; padding:9px 13px; border:1px solid var(--border); border-radius:10px; color:var(--text2); font-size:11.5px; line-height:1.52; text-align:left; background:color-mix(in srgb,var(--bg2) 80%,transparent); }
+.welcome-features { margin-top: 2px; }
+.welcome-feature { display:inline-flex; align-items:center; gap:5px; }
+
+/* ── Antigravity Steps 2.0 (Weightless Timeline) ── */
 .step-group { margin: 6px 0 14px; }
-.step-pill { display: inline-flex; align-items: center; gap: 7px; max-width: 100%; padding: 5px 11px 5px 9px; border-radius: 999px; background: var(--step-bg); border: 1px solid var(--step-border); color: var(--text2); font: inherit; font-size: 12px; font-weight: 500; cursor: pointer; transition: border-color .15s, background .15s, color .15s; text-align: left; }
+.step-pill { display: inline-flex; align-items: center; gap: 7px; max-width: 100%; padding: 5px 11px 5px 9px; border-radius: 999px; background: var(--step-bg); border: 1px solid var(--step-border); color: var(--text2); font: inherit; font-size: 12px; font-weight: 500; cursor: pointer; box-shadow: var(--specular); transition: border-color .15s, background .15s, color .15s; text-align: left; }
 .step-pill:hover { border-color: var(--accent); color: var(--text); background: var(--bg2); }
-.step-pill.open { border-color: color-mix(in srgb,var(--accent) 42%,var(--step-border)); color: var(--text); background: var(--bg2); }
+.step-pill.open { border-color: color-mix(in srgb,var(--accent) 44%,var(--step-border)); color: var(--text); background: var(--bg2); }
 .step-pill-spark { color: var(--accent); display: inline-flex; align-items: center; flex-shrink: 0; }
 .step-pill-spark svg { width: 13px; height: 13px; }
 .step-pill-summary { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .step-pill-tools { color: var(--text3); font-size: 11px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .step-pill-chevron { transition: transform .18s ease; flex-shrink: 0; color: var(--text3); display: inline-flex; }
 .step-pill.open .step-pill-chevron { transform: rotate(90deg); color: var(--accent); }
-.step-rail { margin: 10px 0 6px 12px; padding: 2px 0 2px 18px; border-left: 1.5px solid var(--step-rail); display: grid; gap: 10px; }
+.step-rail { margin: 9px 0 6px 11px; padding: 2px 0 2px 17px; border-left: 1.5px solid var(--step-rail); display: grid; gap: 8px; }
 .step-node { position: relative; min-width: 0; }
-.step-node::before { content: ''; position: absolute; left: -22.5px; top: 9px; width: 7px; height: 7px; border-radius: 50%; background: var(--bg2); border: 2px solid var(--step-dot); }
+.step-node::before { content: ''; position: absolute; left: -21.5px; top: 10px; width: 7px; height: 7px; border-radius: 50%; background: var(--bg2); border: 2px solid var(--step-dot); }
 .step-node.kind-think::before { border-color: var(--accent); }
 .step-node.kind-error::before { border-color: var(--red); background: var(--red); }
-.step-think-card { background: var(--think); border: 1px solid var(--think-border); border-radius: 10px; padding: 9px 13px; }
-.step-node-label { display: flex; align-items: center; gap: 6px; font-size: 11px; font-weight: 600; color: var(--text3); text-transform: uppercase; letter-spacing: .04em; margin-bottom: 5px; }
-.step-think-prose { font-size: 13px; line-height: 1.68; color: var(--text2); font-style: normal; }
-.step-think-prose p { margin: 0 0 8px; }
+.step-think-card { border-left: 2px solid color-mix(in srgb, var(--accent) 32%, transparent); background: color-mix(in srgb, var(--think) 58%, transparent); border-radius: 0 9px 9px 0; padding: 6px 12px; }
+.step-node-status-tag { display: inline-block; font-size: 10px; font-weight: 600; color: var(--text3); text-transform: uppercase; letter-spacing: .04em; margin-bottom: 4px; }
+.step-think-prose { font-size: 12.8px; line-height: 1.66; color: var(--text2); font-style: normal; }
+.step-think-prose p { margin: 0 0 7px; }
 .step-think-prose p:last-child { margin: 0; }
-.step-tool-card { background: var(--bg2); border: 1px solid var(--border); border-radius: 10px; overflow: hidden; }
-.step-tool-head { width: 100%; padding: 7px 11px; display: flex; align-items: center; gap: 7px; background: transparent; border: 0; color: inherit; font: inherit; font-size: 12px; text-align: left; cursor: pointer; }
+.step-tool-card { background: var(--bg2); border: 1px solid var(--border); border-radius: 10px; overflow: hidden; box-shadow: var(--specular); }
+.step-tool-head { width: 100%; padding: 6px 10px; display: flex; align-items: center; gap: 7px; background: transparent; border: 0; color: inherit; font: inherit; font-size: 12px; text-align: left; cursor: pointer; }
 .step-tool-head:hover { background: var(--bg3); }
 .step-tool-head svg.step-chev { width: 11px; height: 11px; color: var(--text3); transition: transform .18s; flex-shrink: 0; }
 .step-tool-head.open svg.step-chev { transform: rotate(90deg); }
 .step-tool-title { font-weight: 600; color: var(--text); white-space: nowrap; }
-.step-tool-snippet { color: var(--text3); font-size: 11.5px; flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.step-status { margin-left: auto; font-size: 10.5px; font-weight: 600; padding: 1px 7px; border-radius: 999px; flex-shrink: 0; }
-.step-status.ok { background: color-mix(in srgb,var(--green) 12%,transparent); color: var(--green); }
+.step-tool-snippet { color: var(--text3); font-size: 11.5px; flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-family: ui-monospace,SFMono-Regular,Consolas,monospace; }
+.step-status { margin-left: auto; font-size: 10.5px; font-weight: 600; padding: 1px 7px; border-radius: 999px; flex-shrink: 0; display: inline-flex; align-items: center; gap: 3px; }
+.step-status.ok { background: color-mix(in srgb,var(--green) 11%,transparent); color: var(--green); }
 .step-status.err { background: color-mix(in srgb,var(--red) 12%,transparent); color: var(--red); }
 .step-status.call { background: var(--bg3); color: var(--text3); }
 .step-tool-body { padding: 9px 12px; border-top: 1px solid var(--border); display: grid; gap: 8px; font-size: 12px; background: var(--bg); }
@@ -663,8 +767,8 @@ mark.cs.active { background:var(--accent); color:#fff; }
 .step-tool-body pre { margin: 0; padding: 9px 11px; background: var(--code-bg); border: 1px solid var(--border); border-radius: 8px; overflow: auto; max-height: 240px; font-size: 11.5px; color: var(--code-text); }
 
 /* ── Sources Pill Strip (Gemini / Perplexity style) ── */
-.searchpanel { margin: 10px 0 12px; border: 1px solid var(--border); border-radius: 12px; background: var(--bg2); overflow: hidden; }
-.searchpanel .sp-hd { padding: 8px 12px; background: var(--bg3); font-size: 12px; font-weight: 550; color: var(--text2); border-bottom: 1px solid transparent; display: flex; align-items: center; gap: 7px; }
+.searchpanel { margin: 8px 0 12px; border: 1px solid var(--border); border-radius: 12px; background: var(--bg2); overflow: hidden; box-shadow: var(--specular); }
+.searchpanel .sp-hd { padding: 7px 11px; background: var(--bg3); font-size: 12px; font-weight: 550; color: var(--text2); border-bottom: 1px solid transparent; display: flex; align-items: center; gap: 7px; }
 .searchpanel .sp-hd.open { border-bottom-color: var(--border); }
 .searchpanel .sp-hd > svg:first-child { transition: transform .18s; flex-shrink: 0; }
 .searchpanel .sp-hd.open > svg:first-child { transform: rotate(90deg); }
@@ -679,75 +783,95 @@ mark.cs.active { background:var(--accent); color:#fff; }
 .sp-row a { color: var(--blue); text-decoration: none; }
 .sp-row a:hover { text-decoration: underline; }
 
-/* ── Copy button & Floating Dock + Prompt Minimap ── */
+/* ── Message Footer Action Strip, Floating Dock & Prompt Minimap ── */
 .msgcopy { padding: 2px 7px; background: none; border: 1px solid transparent; border-radius: 6px; color: var(--text3); font-size: 11px; cursor: pointer; opacity: 0; display: inline-flex; align-items: center; gap: 3px; transition: opacity .15s, border-color .15s, background .15s; }
 .msg-wrap:hover .msgcopy, .msgcopy:focus-visible { opacity: 1; }
 .msgcopy:hover { border-color: var(--border); color: var(--text); background: var(--bg3); }
-.quick-nav { position: fixed; right: 20px; bottom: 18px; z-index: 25; display: none; flex-direction: column; align-items: flex-end; gap: 8px; }
-.quick-nav-dock { display: inline-flex; align-items: center; gap: 3px; padding: 4px; border-radius: 999px; background: var(--surface-glass); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid var(--border); box-shadow: var(--shadow-lg); }
+.msg-footer { display: flex; align-items: center; gap: 4px; margin-top: 8px; opacity: .45; transition: opacity .16s; flex-wrap: wrap; }
+.msg-wrap:hover .msg-footer, .msg-footer:focus-within { opacity: 1; }
+.msg-foot-btn { display: inline-flex; align-items: center; gap: 4px; padding: 3px 8px; border: 1px solid transparent; border-radius: 7px; background: transparent; color: var(--text3); font: inherit; font-size: 11px; font-weight: 500; cursor: pointer; transition: border-color .14s, background .14s, color .14s; }
+.msg-foot-btn:hover { border-color: var(--border); background: var(--bg3); color: var(--text); }
+.msg-foot-btn.copied { color: var(--green); border-color: color-mix(in srgb,var(--green) 40%,transparent); }
+
+.prompt-minimap { position: absolute; right: 10px; top: 50%; transform: translateY(-50%); z-index: 14; display: none; flex-direction: column; align-items: flex-end; gap: 5px; padding: 8px 4px; }
+.minimap-tick { position: relative; width: 14px; height: 10px; padding: 0; border: 0; background: transparent; cursor: pointer; display: flex; align-items: center; justify-content: flex-end; }
+.minimap-tick::before { content: ''; width: 10px; height: 2.5px; border-radius: 99px; background: var(--border2); transition: width .15s, background .15s, opacity .15s; opacity: .72; }
+.minimap-tick:hover::before { width: 18px; background: var(--text2); opacity: 1; }
+.minimap-tick.active::before { width: 20px; background: var(--accent); opacity: 1; }
+.minimap-tooltip { position: absolute; right: 26px; top: 50%; transform: translateY(-50%); white-space: nowrap; max-width: 240px; overflow: hidden; text-overflow: ellipsis; padding: 4px 9px; border-radius: 8px; background: var(--bg2); border: 1px solid var(--border); box-shadow: var(--shadow-lg); color: var(--text); font-size: 11.5px; opacity: 0; pointer-events: none; transition: opacity .12s; }
+.minimap-tick:hover .minimap-tooltip, .minimap-tick:focus-visible .minimap-tooltip { opacity: 1; }
+
+.quick-nav { position: absolute; right: 18px; bottom: 16px; z-index: 25; display: none; flex-direction: column; align-items: flex-end; gap: 8px; }
+.quick-nav-dock { display: inline-flex; align-items: center; gap: 3px; padding: 4px; border-radius: 999px; background: var(--surface-glass); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid var(--border); box-shadow: var(--specular), var(--shadow-lg); }
 .quick-nav-dock button { width: auto; min-width: 30px; height: 30px; padding: 0 9px; border: 0; border-radius: 999px; background: transparent; color: var(--text2); box-shadow: none; cursor: pointer; font-size: 12px; font-weight: 550; display: inline-flex; align-items: center; justify-content: center; gap: 5px; transition: background .15s, color .15s; }
 .quick-nav-dock button:hover, .quick-nav-dock button.active { background: var(--bg3); color: var(--accent); }
-.prompt-outline { width: 280px; max-width: 84vw; max-height: 320px; display: none; flex-direction: column; background: var(--bg2); border: 1px solid var(--border); border-radius: 14px; box-shadow: var(--shadow-lg); overflow: hidden; }
+.prompt-outline { width: 286px; max-width: 84vw; max-height: 320px; display: none; flex-direction: column; background: var(--bg2); border: 1px solid var(--border); border-radius: 14px; box-shadow: var(--specular), var(--shadow-lg); overflow: hidden; }
 .prompt-outline.open { display: flex; }
 .prompt-outline-head { padding: 9px 12px; border-bottom: 1px solid var(--border); font-size: 11.5px; font-weight: 650; color: var(--text2); display: flex; align-items: center; justify-content: space-between; background: var(--bg3); }
 .prompt-outline-list { overflow-y: auto; padding: 6px; display: grid; gap: 3px; }
 .prompt-outline-item { width: 100%; padding: 7px 9px; border: 0; border-radius: 8px; background: transparent; color: var(--text2); font: inherit; font-size: 12px; text-align: left; cursor: pointer; display: flex; align-items: flex-start; gap: 7px; transition: background .12s, color .12s; }
 .prompt-outline-item:hover { background: var(--bg3); color: var(--text); }
+.prompt-outline-item.active { background: var(--badge-bg); color: var(--text); }
+.prompt-outline-item.active .prompt-outline-num { background: var(--accent); color: #fff; }
 .prompt-outline-num { font-size: 10px; font-weight: 700; font-variant-numeric: tabular-nums; padding: 1px 5px; border-radius: 5px; background: var(--bg3); color: var(--text3); margin-top: 1px; flex-shrink: 0; }
 .prompt-outline-text { display: block; flex: 1; min-width: 0; color: inherit; line-height: 1.45; white-space: normal; word-break: break-word; }
 
-/* ── Empty State & Bento Guides Visual Polish ── */
-.empty-hero-emblem { width: 54px; height: 54px; border-radius: 16px; background: linear-gradient(145deg, color-mix(in srgb,var(--accent) 16%,var(--bg2)), var(--bg3)); border: 1px solid color-mix(in srgb,var(--accent) 28%,var(--border)); display: grid; place-items: center; color: var(--accent); box-shadow: 0 8px 24px color-mix(in srgb,var(--accent) 16%,transparent); margin-bottom: 2px; }
-.empty-hero-emblem svg { width: 28px; height: 28px; opacity: 1 !important; }
-#empty-state .empty-hero-title { font-size: 23px; font-weight: 720; letter-spacing: -.025em; color: var(--text); margin: 0; }
-#empty-state .empty-hero-sub { font-size: 13px; color: var(--text2); max-width: 580px; text-align: center; line-height: 1.6; }
-.platform-guide-card { padding: 14px 15px; border: 1px solid var(--border); border-top-width: 2.5px; border-radius: 12px; background: var(--bg2); display: grid; gap: 6px; align-content: start; box-shadow: var(--shadow); transition: transform .15s, border-color .15s; }
-.platform-guide-card:hover { transform: translateY(-1px); }
-.platform-guide-card.claude { border-top-color: #c97b3a; }
-.platform-guide-card.gpt { border-top-color: #10a37f; }
-.platform-guide-card.grok { border-top-color: #475569; }
-.platform-guide-card.perplexity { border-top-color: #0891b2; }
-.welcome-step-card, .remote-setup-card { border-radius: 14px; box-shadow: var(--shadow); }
-.remote-setup-card { border: 1px solid color-mix(in srgb,var(--accent) 36%,var(--border)); }
-
 @media(max-width:640px) {
-  body { flex-direction:column; height:100dvh; }
-  #sidebar { width: 100%; min-width: 0; max-width: 100%; height: 42vh; border-right: none; border-bottom: 1px solid var(--border); }
-  #sidebar.collapsed { height: 0; min-height: 0; width: 100%; border-bottom: none; }
-  #main { height: 58vh; flex: 1; }
-  #chat-header { flex-wrap:wrap; padding:10px 12px; gap:6px; }
-  #chat-title { width:auto; font-size:14px; }
+  body { flex-direction:column; height:100dvh; overflow-x:hidden; }
+  #sidebar { width: 100%; min-width: 0; max-width: 100%; height: auto; max-height: 40vh; overflow-y: auto; border-right: none; border-bottom: 1px solid var(--border); flex-shrink: 0; }
+  #sidebar.collapsed { height: 0; max-height: 0; min-height: 0; width: 100%; border-bottom: none; overflow: hidden; }
+  #conv-list { overflow: visible; flex: 0 0 auto; }
+  #main { flex: 1; min-height: 0; height: auto; width: 100%; overflow: hidden; }
+  #messages-stage { min-width: 0; width: 100%; }
+  #chat-header { flex-wrap:wrap; padding:8px 10px; gap:6px; }
+  .header-left { width: 100%; }
+  .header-right { width: 100%; flex-wrap: wrap; flex-shrink: 1; justify-content: flex-start; gap: 5px; }
+  .header-tool-cluster { flex-wrap: wrap; }
+  .csearch-group { flex: 1 1 160px; min-width: 110px; }
+  #csearch { width: 100%; min-width: 96px; flex: 1; }
+  #chat-header-meta { display: none; }
+  #chat-title { width:auto; font-size:13.5px; }
+  #summary { width: 100%; min-width: 0; max-height: 36vh; border-left: none; border-top: 1px solid var(--border); }
+  #summary.hidden { height: 0; max-height: 0; min-height: 0; border-top: none; }
+  #summary-inner { min-width: 0; }
   .msg-wrap { padding: 8px 14px; }
+  .msg-content { max-width: 100% !important; }
   .human .msg-content { max-width: 88% !important; }
-  .gpt-dil-grid,.welcome-action-grid,.platform-guide-grid { grid-template-columns:1fr!important; }
-  .remote-setup-card,.welcome-step-card { padding:12px; }
+  .gpt-dil-grid,.welcome-action-grid,.platform-guide-grid,.project-graph { grid-template-columns:1fr!important; }
+  .welcome-step-card,.remote-setup-card { padding:11px; }
   .quick-nav { right: 12px; bottom: 12px; }
+  .prompt-minimap { display: none !important; }
+  #workspace-body.canvas-open #canvas-pane { position:absolute; inset:0; width:100% !important; max-width:100%; border-left:none; z-index:28; }
+  #workspace-body.canvas-open #canvas-resizer { display:none; }
 }
-@media print { .gpt-dil-toolbar, .quick-nav, #toggle-sidebar { display:none !important; } .gpt-dil { break-inside:auto; } }
+@media print { .gpt-dil-toolbar, .quick-nav, .prompt-minimap, .msg-footer, #toggle-sidebar, #canvas-pane, #canvas-resizer { display:none !important; } .gpt-dil { break-inside:auto; } }
 </style>
 </head>
 <body>
-<div id="drop-overlay" class="drop-overlay" aria-hidden="true"><div class="drop-card"><b data-i18n="📥 松开以导入历史">📥 松开以导入历史</b><span data-i18n="支持 Claude / ChatGPT / Grok / Perplexity 导出的 ZIP 或解压目录">支持 Claude / ChatGPT / Grok / Perplexity 导出的 ZIP 或解压目录</span></div></div>
+<div id="drop-overlay" class="drop-overlay" aria-hidden="true"><div class="drop-card"><b data-i18n="松开以导入历史">松开以导入历史</b><span data-i18n="支持 Claude / ChatGPT / Grok / Perplexity 导出的 ZIP 或解压目录">支持 Claude / ChatGPT / Grok / Perplexity 导出的 ZIP 或解压目录</span></div></div>
 
 <!-- Sidebar -->
 <div id="sidebar">
   <div id="sidebar-header">
     <h1><span class="brand-mark" aria-hidden="true"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M8 1.8l1.6 3.9 3.9 1.6-3.9 1.6L8 12.8 6.4 8.9 2.5 7.3l3.9-1.6z"/></svg></span><span data-i18n="Multi-AI Web Export Reader">Multi-AI Web Export Reader</span> <span id="conv-total">0</span></h1>
-    <button id="load-zip-btn" data-i18n="🗜️ 打开导出 ZIP（多平台）" data-ui-click="pick-zip">🗜️ 打开导出 ZIP（多平台）</button>
+    <button id="load-zip-btn" data-ui-click="pick-zip"><span class="ui-icon" aria-hidden="true"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 4.2A1.7 1.7 0 0 1 4.7 2.5h6.6A1.7 1.7 0 0 1 13 4.2v7.6a1.7 1.7 0 0 1-1.7 1.7H4.7A1.7 1.7 0 0 1 3 11.8z"/><path d="M8 2.5v5.8M6.3 6.7L8 8.4l1.7-1.7"/></svg></span><span data-i18n="打开导出 ZIP（多平台）">打开导出 ZIP（多平台）</span></button>
     <input type="file" id="zip-input" accept=".zip,application/zip,.json,application/json" multiple style="display:none;">
     <div class="sidebar-sub-actions">
-      <button id="load-btn" data-i18n="📂 打开目录" data-i18n-title="打开解压目录" title="打开解压目录" data-ui-click="pick-folder">📂 打开目录</button>
-      <button id="download-page-btn" data-ui-click="download-page" data-i18n="📥 导入中心" data-i18n-title="导入中心 / Claude 清单" title="导入中心 / Claude 清单">📥 导入中心</button>
+      <button id="load-btn" data-i18n-title="打开解压目录" title="打开解压目录" data-ui-click="pick-folder"><span class="ui-icon" aria-hidden="true"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.55" stroke-linecap="round" stroke-linejoin="round"><path d="M2 4.3A1.3 1.3 0 0 1 3.3 3h3l1.4 1.5h5A1.3 1.3 0 0 1 14 5.8v6a1.3 1.3 0 0 1-1.3 1.3H3.3A1.3 1.3 0 0 1 2 11.8z"/></svg></span><span data-i18n="打开目录">打开目录</span></button>
+      <button id="download-page-btn" data-ui-click="download-page" data-i18n-title="导入中心 / Claude 清单" title="导入中心 / Claude 清单"><span class="ui-icon" aria-hidden="true"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.55" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 10.5v2a1 1 0 0 0 1 1h9a1 1 0 0 0 1-1v-2"/><path d="M8 2.5v7.5M5.3 7.5L8 10.2l2.7-2.7"/></svg></span><span data-i18n="导入中心">导入中心</span></button>
     </div>
     <input type="file" id="file-input" webkitdirectory multiple accept=".json">
     <input type="file" id="manifest-input" accept=".json,application/json" style="display:none;">
-    <button id="clear-cache-btn" data-i18n="清除本地解析缓存" data-ui-click="clear-cache" style="width:100%;margin-top:6px;padding:5px;background:transparent;color:var(--text3);border:1px solid var(--border);border-radius:7px;cursor:pointer;font-size:11px;">清除本地解析缓存</button>
+    <button id="clear-cache-btn" data-ui-click="clear-cache"><span class="ui-icon" aria-hidden="true"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2.8 4.5h10.4M6 2.5h4M4.3 4.5l.6 8.3a1 1 0 0 0 1 .9h4.2a1 1 0 0 0 1-.9l.6-8.3"/></svg></span><span data-i18n="清除本地解析缓存">清除本地解析缓存</span></button>
     <p data-i18n="解析缓存包含对话原文，关闭浏览器后仍保留；共用设备请在离开前清除。" style="font-size:11px;color:var(--text3);margin:5px 0;">解析缓存包含对话原文，关闭浏览器后仍保留；共用设备请在离开前清除。</p>
-    <div id="stats-bar" style="display:none;margin-top:8px;padding:8px 10px;background:var(--bg3);border-radius:8px;font-size:11.5px;color:var(--text3);line-height:1.8;"></div>
-    <input type="text" id="search-box" data-i18n-placeholder="搜索对话…" placeholder="搜索对话…" data-ui-input="search-conversations">
+    <div id="stats-bar" style="display:none;margin-top:8px;padding:8px 10px;background:var(--bg3);border:1px solid var(--border);border-radius:10px;font-size:11.5px;color:var(--text3);line-height:1.75;"></div>
+    <div class="search-wrap">
+      <span class="ui-icon search-ico" aria-hidden="true"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><circle cx="7" cy="7" r="4.5"/><path d="M10.5 10.5L14 14"/></svg></span>
+      <input type="text" id="search-box" data-i18n-placeholder="搜索对话…" placeholder="搜索对话…" data-ui-input="search-conversations">
+    </div>
     <div style="display:flex;align-items:center;gap:6px;margin-top:6px;">
       <label style="font-size:11px;color:var(--text3);display:flex;align-items:center;gap:4px;cursor:pointer;">
-        <input type="checkbox" id="search-fulltext" style="width:12px;height:12px;"> <span data-i18n="全文搜索">全文搜索</span>
+        <input type="checkbox" id="search-fulltext" style="width:12px;height:12px;accent-color:var(--accent);"> <span data-i18n="全文搜索">全文搜索</span>
       </label>
       <span style="flex:1"></span>
       <button class="sort-btn active" data-sort="updated" data-i18n="最新" data-i18n-title="按最近更新时间排序" data-ui-click="sort" data-ui-value="updated" title="按最近更新时间排序">最新</button>
@@ -768,7 +892,7 @@ mark.cs.active { background:var(--accent); color:#fff; }
     <button class="tab-btn" data-i18n="记忆" data-ui-click="tab" data-ui-value="memory">记忆</button>
     <button class="tab-btn" data-i18n="Design" data-ui-click="tab" data-ui-value="design" style="display:none">Design</button>
     <button class="tab-btn" data-analytics-tab data-i18n="统计" data-ui-click="tab" data-ui-value="analytics">统计</button>
-    <button class="tab-btn" data-i18n="行为实验室" data-ui-click="tab" data-ui-value="behavior">🧪 行为实验室</button>
+    <button class="tab-btn" data-ui-click="tab" data-ui-value="behavior"><span class="ui-icon" aria-hidden="true"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.55" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2.5h4M7 2.5v3.6l-3.4 5.7a1.1 1.1 0 0 0 1 1.7h6.8a1.1 1.1 0 0 0 1-1.7L9 6.1V2.5"/><path d="M5 10h6"/></svg></span><span data-i18n="行为实验室">行为实验室</span></button>
     <button class="tab-btn" data-i18n="作品" data-ui-click="tab" data-ui-value="artifacts" style="display:none">作品</button>
     <button class="tab-btn" data-i18n="账户资料" data-ui-click="tab" data-ui-value="account" style="display:none">账户资料</button>
   </div>
@@ -778,130 +902,173 @@ mark.cs.active { background:var(--accent); color:#fff; }
 <!-- Main -->
 <div id="main">
   <div id="chat-header">
-    <button id="toggle-sidebar" type="button" data-ui-click="toggle-sidebar" data-i18n-title="收起/展开侧边栏" title="收起/展开侧边栏" aria-pressed="false"><span class="ui-icon" aria-hidden="true"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2.5" width="12" height="11" rx="2"/><path d="M6 2.5v11"/></svg></span></button>
-    <div id="chat-title" data-i18n="← 选择一个对话" style="color:var(--text3)">← 选择一个对话</div>
-    <div id="last-supper-plaque" data-i18n="最后的晚餐" data-i18n-title="这份导出中，时间上最后结束的对话" title="这份导出中，时间上最后结束的对话">最后的晚餐</div>
-    <div id="chat-header-meta"></div>
-    <button id="toggle-summary" data-ui-click="summary">摘要 ▶</button>
-    <input type="text" id="csearch" data-i18n-placeholder="对话内搜索…" placeholder="对话内搜索…" style="display:none;" data-ui-input="search-messages" data-ui-key="search">
-    <span id="csearch-count" style="display:none;"></span>
-    <button id="cprev" data-ui-click="search-prev" data-i18n-title="上一个匹配" title="上一个匹配" style="display:none;padding:4px 7px;background:var(--bg3);border:1px solid var(--border);border-radius:7px;color:var(--text2);cursor:pointer;">↑</button>
-    <button id="cnext" data-ui-click="search-next" data-i18n-title="下一个匹配" title="下一个匹配" style="display:none;padding:4px 7px;background:var(--bg3);border:1px solid var(--border);border-radius:7px;color:var(--text2);cursor:pointer;">↓</button>
-    <button id="quality-btn" data-ui-click="quality" data-i18n-title="对话质量分析" title="对话质量分析" style="display:none;padding:5px 8px;background:var(--bg3);border:1px solid var(--border);border-radius:7px;color:var(--text2);font-size:12px;cursor:pointer;">🩺</button>
-    <button id="tree-mode-btn" data-ui-click="tree" data-i18n-title="切换分支显示模式" title="切换分支显示模式" style="display:none;padding:5px 8px;background:var(--bg3);border:1px solid var(--border);border-radius:7px;color:var(--text2);font-size:11px;cursor:pointer;">🌿 <span data-i18n="最长路径">最长路径</span></button>
-    <button id="remote-resources-btn" type="button" class="header-pill-btn" style="display:none;" aria-pressed="false">🌐 远程资源: 关</button>
-    <div class="export-wrap" id="export-wrap" style="display:none"><button id="export-btn" data-ui-click="export-menu" data-i18n-title="导出当前对话" title="导出当前对话" style="padding:5px 9px;background:var(--bg3);border:1px solid var(--border);border-radius:7px;color:var(--text2);font-size:13px;cursor:pointer;">⬇ 导出</button><div id="export-menu" class="export-menu" style="display:none"><button data-ui-click="export-markdown">📝 <span data-i18n="导出 Markdown">导出 Markdown</span></button><button data-ui-click="export-safe-markdown">🛡️ <span data-i18n="安全导出">安全导出 Markdown</span></button><button data-ui-click="export-pdf">🖨️ <span data-i18n="导出 PDF">导出 PDF</span></button><button data-ui-click="export-safe-pdf">🛡️ <span data-i18n="安全导出 PDF">安全导出 PDF</span></button></div></div>
-    <button id="lang-btn" data-ui-click="language" title="Switch UI language" style="padding:5px 9px;background:var(--bg3);border:1px solid var(--border);border-radius:7px;color:var(--text2);font-size:12px;cursor:pointer;line-height:1;">🌐 EN</button>
-    <button id="theme-btn" data-ui-click="theme" data-i18n-title="切换明暗主题" title="切换明暗主题" style="padding:5px 9px;background:var(--bg3);border:1px solid var(--border);border-radius:7px;color:var(--text2);font-size:14px;cursor:pointer;line-height:1;">🌙</button>
-  </div>
-  <div id="messages">
-    <div id="empty-state">
-      <div class="empty-hero-emblem" aria-hidden="true">
-        <svg viewBox="0 0 28 28" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M14 3.5l2.5 6.2 6.2 2.5-6.2 2.5L14 21l-2.5-6.3L5.3 12.2l6.2-2.5z"/>
-          <circle cx="21.5" cy="6.5" r="1.4" fill="currentColor" stroke="none"/>
-          <circle cx="6.5" cy="21" r="1.1" fill="currentColor" stroke="none"/>
-        </svg>
+    <div class="header-left">
+      <button id="toggle-sidebar" type="button" data-ui-click="toggle-sidebar" data-i18n-title="收起/展开侧边栏" title="收起/展开侧边栏" aria-pressed="false"><span class="ui-icon" aria-hidden="true"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2.5" width="12" height="11" rx="2"/><path d="M6 2.5v11"/></svg></span></button>
+      <div id="chat-title" data-i18n="← 选择一个对话" style="color:var(--text3)">← 选择一个对话</div>
+      <div id="last-supper-plaque" data-i18n="最后的晚餐" data-i18n-title="这份导出中，时间上最后结束的对话" title="这份导出中，时间上最后结束的对话">最后的晚餐</div>
+      <div id="chat-header-meta"></div>
+    </div>
+    <div class="header-right">
+      <div class="csearch-group">
+        <input type="text" id="csearch" data-i18n-placeholder="对话内搜索…" placeholder="对话内搜索…" style="display:none;" data-ui-input="search-messages" data-ui-key="search">
+        <span id="csearch-count" style="display:none;"></span>
+        <button id="cprev" class="hdr-icon-btn" data-ui-click="search-prev" data-i18n-title="上一个匹配" title="上一个匹配" style="display:none;"><span class="ui-icon" aria-hidden="true"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M8 12.5V3.5M4.5 7L8 3.5 11.5 7"/></svg></span></button>
+        <button id="cnext" class="hdr-icon-btn" data-ui-click="search-next" data-i18n-title="下一个匹配" title="下一个匹配" style="display:none;"><span class="ui-icon" aria-hidden="true"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3.5v9M4.5 9l3.5 3.5L11.5 9"/></svg></span></button>
       </div>
-      <p class="empty-hero-title" data-i18n="Multi-AI Web Export Reader">Multi-AI Web Export Reader</p>
-      <p class="empty-hero-sub" data-i18n="本地查看、混合搜索并安全导出你的 Claude、ChatGPT、Grok 与 Perplexity 历史对话">本地查看、混合搜索并安全导出你的 Claude、ChatGPT、Grok 与 Perplexity 历史对话</p>
-
-      <div class="remote-setup-card">
-        <div class="remote-setup-head">
-          <b data-i18n="第一步 · 隐私与远程资源设置" style="font-size:13px;color:var(--text);">第一步 · 隐私与远程资源设置</b>
-          <span class="remote-setup-badge" data-i18n="建议先确认">建议先确认</span>
-        </div>
-        <div id="welcome-remote-status" style="font-size:12px;color:var(--text2);line-height:1.6;">当前为仅本地模式（推荐）：不会向第三方图片或地图服务发送请求。</div>
-        <div class="remote-setup-actions">
-          <button type="button" class="remote-choice-btn active" data-remote-choice="off" aria-pressed="true" data-i18n="🔒 仅本地（默认，不外发请求）">🔒 仅本地（默认，不外发请求）</button>
-          <button type="button" class="remote-choice-btn" data-remote-choice="on" aria-pressed="false" data-i18n="🌐 允许加载远程图片与地图">🌐 允许加载远程图片与地图</button>
-        </div>
+      <div class="header-tool-cluster">
+        <button id="quality-btn" class="hdr-icon-btn" data-ui-click="quality" data-i18n-title="对话质量分析" title="对话质量分析" style="display:none;"><span class="ui-icon" aria-hidden="true"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.55" stroke-linecap="round" stroke-linejoin="round"><path d="M2 8h2.5l1.6-4.2L8.4 12 10 8h4"/></svg></span></button>
+        <button id="tree-mode-btn" class="hdr-btn" data-ui-click="tree" data-i18n-title="切换分支显示模式" title="切换分支显示模式" style="display:none;font-size:11.5px;"><span class="ui-icon" aria-hidden="true"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.55" stroke-linecap="round" stroke-linejoin="round"><circle cx="4.5" cy="4" r="1.5"/><circle cx="11.5" cy="6" r="1.5"/><circle cx="4.5" cy="12" r="1.5"/><path d="M4.5 5.5v5M4.5 8c3.5 0 7-.5 7-2"/></svg></span><span data-i18n="最长路径">最长路径</span></button>
+        <button id="remote-resources-btn" type="button" class="header-pill-btn" style="display:none;" aria-pressed="false"></button>
       </div>
-
-      <div class="welcome-step-card">
-        <div class="welcome-step-head">
-          <b data-i18n="第二步 · 导入对话导出包（支持直接拖入页面）">第二步 · 导入对话导出包（支持直接拖入页面）</b>
-          <span class="welcome-step-sub" data-i18n="可连续追加 Claude、ChatGPT、Grok 与 Perplexity 混合阅读">可连续追加 Claude、ChatGPT、Grok 与 Perplexity 混合阅读</span>
-        </div>
-        <div class="welcome-action-grid">
-          <button type="button" class="welcome-action-btn primary" data-ui-click="pick-zip">
-            <b data-i18n="🗜️ 选择 ZIP 压缩包">🗜️ 选择 ZIP 压缩包</b>
-            <span data-i18n="免解压，支持多选 Claude / ChatGPT / Grok / Perplexity 官方导出 ZIP">免解压，支持多选 Claude / ChatGPT / Grok / Perplexity 官方导出 ZIP</span>
-          </button>
-          <button type="button" class="welcome-action-btn" data-ui-click="pick-folder">
-            <b data-i18n="📂 选择解压文件夹">📂 选择解压文件夹</b>
-            <span data-i18n="适合已解压的导出目录或本地历史备份">适合已解压的导出目录或本地历史备份</span>
-          </button>
-          <button type="button" class="welcome-action-btn" data-ui-click="download-page">
-            <b data-i18n="📥 导入中心 / Claude 清单">📥 导入中心 / Claude 清单</b>
-            <span data-i18n="适用于 Claude 新版 manifest.json 分包下载与管理">适用于 Claude 新版 manifest.json 分包下载与管理</span>
-          </button>
-        </div>
-      </div>
-
-      <div class="platform-guide-grid">
-        <section class="platform-guide-card claude">
-          <div class="platform-guide-head"><span class="platform-dot claude"></span><span data-i18n="Claude 导出指引">Claude 导出指引</span></div>
-          <div class="platform-guide-path">Settings → Account → Export Data</div>
-          <ul>
-            <li data-i18n="支持新版分包清单（manifest.json + 分包 ZIP）与旧版单包 ZIP / 目录">支持新版分包清单（manifest.json + 分包 ZIP）与旧版单包 ZIP / 目录</li>
-            <li data-i18n="自动解析项目、记忆、Artifact、思考过程与工具调用">自动解析项目、记忆、Artifact、思考过程与工具调用</li>
-          </ul>
-        </section>
-        <section class="platform-guide-card gpt">
-          <div class="platform-guide-head"><span class="platform-dot gpt"></span><span data-i18n="ChatGPT 导出指引">ChatGPT 导出指引</span></div>
-          <div class="platform-guide-path">Settings → Data controls → Export data</div>
-          <ul>
-            <li data-i18n="支持完整 ZIP（分片 conversations-*.json、export_manifest.json）及独立 JSON">支持完整 ZIP（分片 conversations-*.json、export_manifest.json）及独立 JSON</li>
-            <li data-i18n="自动还原分支路径、引文、DIL 组件、图表、地图与 .dat 本地附件">自动还原分支路径、引文、DIL 组件、图表、地图与 .dat 本地附件</li>
-          </ul>
-        </section>
-        <section class="platform-guide-card grok">
-          <div class="platform-guide-head"><span class="platform-dot grok"></span><span data-i18n="Grok (xAI) 导出指引">Grok (xAI) 导出指引</span><span class="platform-beta-badge">Beta Test</span></div>
-          <div class="platform-guide-path">accounts.x.ai → Data → Download Account Data</div>
-          <ul>
-            <li data-i18n="支持官方导出 ZIP（含 prod-grok-backend.json 与附件目录）及独立 JSON">支持官方导出 ZIP（含 prod-grok-backend.json 与附件目录）及独立 JSON</li>
-            <li data-i18n="Beta Test：当前解析可能尚不完善，部分新字段或媒体格式仍在适配中">Beta Test：当前解析可能尚不完善，部分新字段或媒体格式仍在适配中</li>
-          </ul>
-        </section>
-        <section class="platform-guide-card perplexity">
-          <div class="platform-guide-head"><span class="platform-dot perplexity"></span><span data-i18n="Perplexity 导出指引">Perplexity 导出指引</span><span class="platform-beta-badge">Beta Test</span></div>
-          <div class="platform-guide-path">Settings → Account → Export Data</div>
-          <ul>
-            <li data-i18n="支持官方导出 ZIP（含 conversations-*.json 与 user-data-*.xlsx）及独立 JSON">支持官方导出 ZIP（含 conversations-*.json 与 user-data-*.xlsx）及独立 JSON</li>
-            <li data-i18n="Beta Test：当前解析可能尚不完善，部分引文来源或新字段仍在适配中">Beta Test：当前解析可能尚不完善，部分引文来源或新字段仍在适配中</li>
-          </ul>
-        </section>
-      </div>
-
-      <div class="welcome-note">
-        <b data-i18n="纯本地运行 · 多平台混合工作区">纯本地运行 · 多平台混合工作区</b><br>
-        <span data-i18n="所有解析、全文搜索、统计分析与隐私脱敏都在浏览器本机完成，不会上传对话内容。你可以按任意顺序导入 Claude、ChatGPT、Grok 与 Perplexity，在同一工作区按平台筛选并导出安全分享版。">所有解析、全文搜索、统计分析与隐私脱敏都在浏览器本机完成，不会上传对话内容。你可以按任意顺序导入 Claude、ChatGPT、Grok 与 Perplexity，在同一工作区按平台筛选并导出安全分享版。</span>
-      </div>
-      <div class="welcome-features"><span class="welcome-feature" data-i18n="🖼️ 图片与附件">🖼️ 图片与附件</span><span class="welcome-feature" data-i18n="🌿 分支时间线">🌿 分支时间线</span><span class="welcome-feature" data-i18n="🔎 全文搜索">🔎 全文搜索</span><span class="welcome-feature" data-i18n="📊 统计分析">📊 统计分析</span><span class="welcome-feature" data-i18n="🩺 对话健康检查">🩺 对话健康检查</span><span class="welcome-feature" data-i18n="🔐 隐私安全导出">🔐 隐私安全导出</span></div>
+      <button id="toggle-summary" data-ui-click="summary"><span class="ui-icon" aria-hidden="true"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.55" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="2.5" width="10" height="11" rx="1.8"/><path d="M5.5 6h5M5.5 8.5h5M5.5 11h3"/></svg></span><span data-i18n="摘要">摘要</span></button>
+      <div class="export-wrap" id="export-wrap" style="display:none"><button id="export-btn" class="hdr-btn" data-ui-click="export-menu" data-i18n-title="导出当前对话" title="导出当前对话"><span class="ui-icon" aria-hidden="true"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 10.5v2a1 1 0 0 0 1 1h9a1 1 0 0 0 1-1v-2"/><path d="M8 2.5v7.5M5.3 7.5L8 10.2l2.7-2.7"/></svg></span><span data-i18n="导出">导出</span></button><div id="export-menu" class="export-menu" style="display:none"><button data-ui-click="export-markdown"><span data-i18n="导出 Markdown">导出 Markdown</span></button><button data-ui-click="export-safe-markdown"><span data-i18n="安全导出">安全导出 Markdown</span></button><button data-ui-click="export-pdf"><span data-i18n="导出 PDF">导出 PDF</span></button><button data-ui-click="export-safe-pdf"><span data-i18n="安全导出 PDF">安全导出 PDF</span></button></div></div>
+      <button id="lang-btn" class="hdr-btn" data-ui-click="language" title="Switch UI language"><span class="ui-icon" aria-hidden="true"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="8" r="5.6"/><path d="M2.6 8h10.8M8 2.4c1.6 1.6 2.3 3.5 2.3 5.6S9.6 12 8 13.6C6.4 12 5.7 10.1 5.7 8S6.4 4 8 2.4z"/></svg></span><span>EN</span></button>
+      <button id="theme-btn" class="hdr-icon-btn" data-ui-click="theme" data-i18n-title="切换明暗主题" title="切换明暗主题"><span class="ui-icon" aria-hidden="true"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M13 9.7A5.3 5.3 0 0 1 6.3 3a5.4 5.4 0 1 0 6.7 6.7z"/></svg></span></button>
     </div>
   </div>
+  <div id="quality-panel" class="quality-panel" style="display:none"></div>
+  <div id="workspace-body">
+    <div id="messages-stage">
+      <div id="messages">
+        <div id="empty-state">
+          <div class="empty-hero-emblem" aria-hidden="true">
+            <svg viewBox="0 0 28 28" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M14 3.5l2.5 6.2 6.2 2.5-6.2 2.5L14 21l-2.5-6.3L5.3 12.2l6.2-2.5z"/>
+              <circle cx="21.5" cy="6.5" r="1.4" fill="currentColor" stroke="none"/>
+              <circle cx="6.5" cy="21" r="1.1" fill="currentColor" stroke="none"/>
+            </svg>
+          </div>
+          <p class="empty-hero-title" data-i18n="Multi-AI Web Export Reader">Multi-AI Web Export Reader</p>
+          <p class="empty-hero-sub" data-i18n="本地查看、混合搜索并安全导出你的 Claude、ChatGPT、Grok 与 Perplexity 历史对话">本地查看、混合搜索并安全导出你的 Claude、ChatGPT、Grok 与 Perplexity 历史对话</p>
+
+          <div class="welcome-step-card">
+            <div class="welcome-step-head">
+              <b><span class="ui-icon" aria-hidden="true"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v8.5M4.5 7L8 10.5 11.5 7"/><path d="M2.5 11.5v1.5a1 1 0 0 0 1 1h9a1 1 0 0 0 1-1v-1.5"/></svg></span><span data-i18n="导入对话导出包（支持直接拖入页面）">导入对话导出包（支持直接拖入页面）</span></b>
+              <span class="welcome-step-sub" data-i18n="可连续追加 Claude、ChatGPT、Grok 与 Perplexity 混合阅读">可连续追加 Claude、ChatGPT、Grok 与 Perplexity 混合阅读</span>
+            </div>
+            <div class="welcome-action-grid">
+              <button type="button" class="welcome-action-btn primary" data-ui-click="pick-zip">
+                <b><span class="ui-icon" aria-hidden="true"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 4.2A1.7 1.7 0 0 1 4.7 2.5h6.6A1.7 1.7 0 0 1 13 4.2v7.6a1.7 1.7 0 0 1-1.7 1.7H4.7A1.7 1.7 0 0 1 3 11.8z"/><path d="M8 2.5v5.8M6.3 6.7L8 8.4l1.7-1.7"/></svg></span><span data-i18n="选择 ZIP 压缩包">选择 ZIP 压缩包</span></b>
+                <span data-i18n="免解压，支持多选 Claude / ChatGPT / Grok / Perplexity 官方导出 ZIP">免解压，支持多选 Claude / ChatGPT / Grok / Perplexity 官方导出 ZIP</span>
+              </button>
+              <button type="button" class="welcome-action-btn" data-ui-click="pick-folder">
+                <b><span class="ui-icon" aria-hidden="true"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.55" stroke-linecap="round" stroke-linejoin="round"><path d="M2 4.3A1.3 1.3 0 0 1 3.3 3h3l1.4 1.5h5A1.3 1.3 0 0 1 14 5.8v6a1.3 1.3 0 0 1-1.3 1.3H3.3A1.3 1.3 0 0 1 2 11.8z"/></svg></span><span data-i18n="选择解压文件夹">选择解压文件夹</span></b>
+                <span data-i18n="适合已解压的导出目录或本地历史备份">适合已解压的导出目录或本地历史备份</span>
+              </button>
+              <button type="button" class="welcome-action-btn" data-ui-click="download-page">
+                <b><span class="ui-icon" aria-hidden="true"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.55" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 10.5v2a1 1 0 0 0 1 1h9a1 1 0 0 0 1-1v-2"/><path d="M8 2.5v7.5M5.3 7.5L8 10.2l2.7-2.7"/></svg></span><span data-i18n="导入中心 / Claude 清单">导入中心 / Claude 清单</span></b>
+                <span data-i18n="适用于 Claude 新版 manifest.json 分包下载与管理">适用于 Claude 新版 manifest.json 分包下载与管理</span>
+              </button>
+            </div>
+          </div>
+
+          <div class="remote-setup-card">
+            <div class="remote-setup-info">
+              <div class="remote-setup-head">
+                <b data-i18n="隐私与远程资源模式" style="font-size:12.5px;color:var(--text);">隐私与远程资源模式</b>
+                <span class="remote-setup-badge" data-i18n="默认纯本地">默认纯本地</span>
+              </div>
+              <div id="welcome-remote-status" style="font-size:11.5px;color:var(--text2);line-height:1.48;">当前为仅本地模式（推荐）：不会向第三方图片或地图服务发送请求。</div>
+            </div>
+            <div class="remote-setup-actions">
+              <button type="button" class="remote-choice-btn active" data-remote-choice="off" aria-pressed="true"><span class="ui-icon" aria-hidden="true"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.55" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="7" width="9" height="6.5" rx="1.5"/><path d="M5.5 7V5a2.5 2.5 0 0 1 5 0v2"/></svg></span><span data-i18n="仅本地（推荐）">仅本地（推荐）</span></button>
+              <button type="button" class="remote-choice-btn" data-remote-choice="on" aria-pressed="false"><span class="ui-icon" aria-hidden="true"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="8" r="5.6"/><path d="M2.6 8h10.8M8 2.4c1.6 1.6 2.3 3.5 2.3 5.6S9.6 12 8 13.6C6.4 12 5.7 10.1 5.7 8S6.4 4 8 2.4z"/></svg></span><span data-i18n="允许远程图片与地图">允许远程图片与地图</span></button>
+            </div>
+          </div>
+
+          <div class="platform-guide-grid">
+            <section class="platform-guide-card claude">
+              <div class="platform-guide-head"><span class="platform-dot claude"></span><span data-i18n="Claude 导出指引">Claude 导出指引</span></div>
+              <div class="platform-guide-path">Settings → Account → Export Data</div>
+              <ul>
+                <li data-i18n="支持新版分包清单（manifest.json + 分包 ZIP）与旧版单包 ZIP / 目录">支持新版分包清单（manifest.json + 分包 ZIP）与旧版单包 ZIP / 目录</li>
+                <li data-i18n="自动解析项目、记忆、Artifact、思考过程与工具调用">自动解析项目、记忆、Artifact、思考过程与工具调用</li>
+              </ul>
+            </section>
+            <section class="platform-guide-card gpt">
+              <div class="platform-guide-head"><span class="platform-dot gpt"></span><span data-i18n="ChatGPT 导出指引">ChatGPT 导出指引</span></div>
+              <div class="platform-guide-path">Settings → Data controls → Export data</div>
+              <ul>
+                <li data-i18n="支持完整 ZIP（分片 conversations-*.json、export_manifest.json）及独立 JSON">支持完整 ZIP（分片 conversations-*.json、export_manifest.json）及独立 JSON</li>
+                <li data-i18n="自动还原分支路径、引文、DIL 组件、图表、地图与 .dat 本地附件">自动还原分支路径、引文、DIL 组件、图表、地图与 .dat 本地附件</li>
+              </ul>
+            </section>
+            <section class="platform-guide-card grok">
+              <div class="platform-guide-head"><span class="platform-dot grok"></span><span data-i18n="Grok (xAI) 导出指引">Grok (xAI) 导出指引</span><span class="platform-beta-badge">Beta Test</span></div>
+              <div class="platform-guide-path">accounts.x.ai → Data → Download Account Data</div>
+              <ul>
+                <li data-i18n="支持官方导出 ZIP（含 prod-grok-backend.json 与附件目录）及独立 JSON">支持官方导出 ZIP（含 prod-grok-backend.json 与附件目录）及独立 JSON</li>
+                <li data-i18n="Beta Test：当前解析可能尚不完善，部分新字段或媒体格式仍在适配中">Beta Test：当前解析可能尚不完善，部分新字段或媒体格式仍在适配中</li>
+              </ul>
+            </section>
+            <section class="platform-guide-card perplexity">
+              <div class="platform-guide-head"><span class="platform-dot perplexity"></span><span data-i18n="Perplexity 导出指引">Perplexity 导出指引</span><span class="platform-beta-badge">Beta Test</span></div>
+              <div class="platform-guide-path">Settings → Account → Export Data</div>
+              <ul>
+                <li data-i18n="支持官方导出 ZIP（含 conversations-*.json 与 user-data-*.xlsx）及独立 JSON">支持官方导出 ZIP（含 conversations-*.json 与 user-data-*.xlsx）及独立 JSON</li>
+                <li data-i18n="Beta Test：当前解析可能尚不完善，部分引文来源或新字段仍在适配中">Beta Test：当前解析可能尚不完善，部分引文来源或新字段仍在适配中</li>
+              </ul>
+            </section>
+          </div>
+
+          <div class="welcome-note">
+            <b data-i18n="纯本地运行 · 多平台混合工作区">纯本地运行 · 多平台混合工作区</b> —
+            <span data-i18n="所有解析、全文搜索、统计分析与隐私脱敏都在浏览器本机完成，不会上传对话内容。你可以按任意顺序导入 Claude、ChatGPT、Grok 与 Perplexity，在同一工作区按平台筛选并导出安全分享版。">所有解析、全文搜索、统计分析与隐私脱敏都在浏览器本机完成，不会上传对话内容。你可以按任意顺序导入 Claude、ChatGPT、Grok 与 Perplexity，在同一工作区按平台筛选并导出安全分享版。</span>
+          </div>
+          <div class="welcome-features">
+            <span class="welcome-feature" data-i18n="图片与附件">图片与附件</span>
+            <span class="welcome-feature" data-i18n="分支时间线">分支时间线</span>
+            <span class="welcome-feature" data-i18n="全文搜索">全文搜索</span>
+            <span class="welcome-feature" data-i18n="统计分析">统计分析</span>
+            <span class="welcome-feature" data-i18n="对话健康检查">对话健康检查</span>
+            <span class="welcome-feature" data-i18n="隐私安全导出">隐私安全导出</span>
+          </div>
+        </div>
+      </div>
+      <div class="prompt-minimap" id="prompt-minimap" aria-hidden="true"></div>
+      <div class="quick-nav" id="quick-nav">
+        <div class="prompt-outline" id="prompt-outline" aria-hidden="true">
+          <div class="prompt-outline-head"><span data-i18n="对话大纲">对话大纲</span><span id="prompt-outline-count">0</span></div>
+          <div class="prompt-outline-list" id="prompt-outline-list"></div>
+        </div>
+        <div class="quick-nav-dock">
+          <button type="button" data-ui-click="jump-top" data-i18n-title="跳到顶部" title="跳到顶部"><span class="ui-icon" aria-hidden="true"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M8 12.5V3.5M4.5 7L8 3.5 11.5 7"/></svg></span></button>
+          <button type="button" id="outline-btn" data-ui-click="toggle-outline" data-i18n-title="对话问题大纲" title="对话问题大纲" aria-expanded="false"><span class="ui-icon" aria-hidden="true"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M3 4.5h10M3 8h10M3 11.5h6"/></svg></span> <span id="outline-btn-count">0</span></button>
+          <button type="button" data-ui-click="jump-bottom" data-i18n-title="跳到底部" title="跳到底部"><span class="ui-icon" aria-hidden="true"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3.5v9M4.5 9l3.5 3.5L11.5 9"/></svg></span></button>
+        </div>
+      </div>
+    </div>
+    <div id="canvas-resizer" aria-hidden="true"></div>
+    <aside id="canvas-pane" aria-hidden="true">
+      <div class="canvas-head">
+        <div class="canvas-title-wrap">
+          <span class="canvas-kicker" id="canvas-kind">Canvas</span>
+          <span id="canvas-title">Canvas</span>
+        </div>
+        <div class="canvas-tabs" role="tablist">
+          <button type="button" class="canvas-tab-btn active" data-ui-click="canvas-tab" data-ui-value="preview" data-i18n="预览">预览</button>
+          <button type="button" class="canvas-tab-btn" data-ui-click="canvas-tab" data-ui-value="code" data-i18n="源码">源码</button>
+        </div>
+        <div class="canvas-actions">
+          <button type="button" class="hdr-btn" id="canvas-download-btn" data-ui-click="canvas-download" style="font-size:11px;padding:4px 8px;" data-i18n="下载">下载</button>
+          <button type="button" class="hdr-icon-btn" id="canvas-close-btn" data-ui-click="canvas-close" data-i18n-title="关闭画布" title="关闭画布"><span class="ui-icon" aria-hidden="true"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M4 4l8 8M12 4l-8 8"/></svg></span></button>
+        </div>
+      </div>
+      <div class="canvas-body" id="canvas-body"></div>
+    </aside>
+  </div>
 </div>
-<div id="quality-panel" class="quality-panel" style="display:none"></div>
 <div id="redaction-modal" style="display:none"></div>
-<div class="quick-nav" id="quick-nav">
-  <div class="prompt-outline" id="prompt-outline" aria-hidden="true">
-    <div class="prompt-outline-head"><span data-i18n="对话大纲">对话大纲</span><span id="prompt-outline-count">0</span></div>
-    <div class="prompt-outline-list" id="prompt-outline-list"></div>
-  </div>
-  <div class="quick-nav-dock">
-    <button type="button" data-ui-click="jump-top" data-i18n-title="跳到顶部" title="跳到顶部">↑</button>
-    <button type="button" id="outline-btn" data-ui-click="toggle-outline" data-i18n-title="对话问题大纲" title="对话问题大纲" aria-expanded="false">☰ <span id="outline-btn-count">0</span></button>
-    <button type="button" data-ui-click="jump-bottom" data-i18n-title="跳到底部" title="跳到底部">↓</button>
-  </div>
-</div>
 
 <!-- Summary Panel -->
 <div id="summary" class="hidden">
   <div id="summary-inner">
-    <h2 data-i18n="📋 对话摘要">📋 对话摘要</h2>
+    <div class="summary-drawer-head">
+      <h2><span class="ui-icon" aria-hidden="true"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.55" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="2.5" width="10" height="11" rx="1.8"/><path d="M5.5 6h5M5.5 8.5h5M5.5 11h3"/></svg></span><span data-i18n="对话摘要">对话摘要</span></h2>
+      <button type="button" class="summary-close-btn" data-ui-click="summary" data-i18n-title="关闭摘要" title="关闭摘要"><span class="ui-icon" aria-hidden="true"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M4 4l8 8M12 4l-8 8"/></svg></span></button>
+    </div>
     <div id="summary-text"></div>
-    <div style="margin-top:16px;"><h2 data-i18n="🗂 元数据">🗂 元数据</h2></div>
+    <div style="margin-top:16px;"><h2 data-i18n="元数据">元数据</h2></div>
     <div id="meta-box" style="margin-top:8px;"></div>
   </div>
 </div>
@@ -1116,15 +1283,80 @@ Object.assign(EN,{
   '已复制':'Copied',
   '📂 打开目录':'📂 Folder',
   '📥 导入中心':'📥 Import Hub',
-  '打开解压目录':'Open extracted folder'
+  '打开解压目录':'Open extracted folder',
+  '松开以导入历史':'Drop to import history',
+  '打开导出 ZIP（多平台）':'Open Export ZIP (Multi-AI)',
+  '打开目录':'Folder',
+  '导入中心':'Import Hub',
+  '导入对话导出包（支持直接拖入页面）':'Import Export Archives (or drag & drop here)',
+  '选择 ZIP 压缩包':'Choose ZIP Archive',
+  '选择解压文件夹':'Choose Extracted Folder',
+  '导入中心 / Claude 清单':'Import Center / Claude Manifest',
+  '隐私与远程资源模式':'Privacy & Remote Resources',
+  '默认纯本地':'Local Only',
+  '仅本地（推荐）':'Local Only (Recommended)',
+  '允许远程图片与地图':'Allow Remote Images & Maps',
+  '图片与附件':'Images & attachments',
+  '分支时间线':'Branch timeline',
+  '对话健康检查':'Conversation health',
+  '隐私安全导出':'Private, safe export',
+  '对话摘要':'Conversation summary',
+  '元数据':'Metadata',
+  '关闭摘要':'Close summary',
+  '关闭画布':'Close canvas',
+  '预览':'Preview',
+  '源码':'Code',
+  '画布':'Canvas',
+  '在画布中打开':'Open in Canvas',
+  '自动换行':'Toggle line wrap',
+  '换行':'Wrap',
+  '行号':'Line numbers',
+  '折叠':'Collapse',
+  '展开':'Expand',
+  '折叠代码':'Collapse or expand code block',
+  '复制正文':'Copy text',
+  '复制 Markdown':'Copy Markdown',
+  '切换步骤':'Toggle steps',
+  '展开/收起步骤':'Toggle steps',
+  '显示行号':'Toggle line numbers',
+  '代码块':'Code Block',
+  '切换浅色主题':'Light theme',
+  '切换深色主题':'Dark theme',
+  '更换目录':'Switch folder'
 });
 const UI_ICONS={
   spark:'<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2l1.3 3.7L13 7l-3.7 1.3L8 12l-1.3-3.7L3 7l3.7-1.3z"/></svg>',
   search:'<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="7" cy="7" r="4.5"/><path d="M10.5 10.5L14 14"/></svg>',
   tool:'<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9.8 3.2a3.3 3.3 0 0 0-4.3 4.3L2.4 10.6a1.1 1.1 0 0 0 0 1.6l1.4 1.4a1.1 1.1 0 0 0 1.6 0l3.1-3.1a3.3 3.3 0 0 0 4.3-4.3l-1.9 1.9-2.2-.7-.7-2.2z"/></svg>',
+  fileText:'<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 2.3h5.2l3.3 3.3v8.1a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V3.3a1 1 0 0 1 1-1z"/><path d="M9 2.3v3.5h3.5M5.5 8.5h5M5.5 11h3.5"/></svg>',
+  fileEdit:'<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M11.3 2.5l2.2 2.2-7.3 7.3-2.9.7.7-2.9z"/></svg>',
+  terminal:'<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.55" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2.5" width="12" height="11" rx="2"/><path d="M4.8 6.2L7 8l-2.2 1.8M8.3 10.2h2.8"/></svg>',
   copy:'<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5H2.5a1 1 0 0 1-1-1v-7a1 1 0 0 1 1-1h7a1 1 0 0 1 1 1V3"/></svg>',
-  user:'<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="5.5" r="2.7"/><path d="M3 13.5c.8-2.3 2.7-3.5 5-3.5s4.2 1.2 5 3.5"/></svg>'
+  check:'<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M3.5 8.5l3 3 6-6.5"/></svg>',
+  alert:'<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="8" r="5.8"/><path d="M8 5v3.6M8 11h.01"/></svg>',
+  user:'<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="5.5" r="2.7"/><path d="M3 13.5c.8-2.3 2.7-3.5 5-3.5s4.2 1.2 5 3.5"/></svg>',
+  folder:'<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.55" stroke-linecap="round" stroke-linejoin="round"><path d="M2 4.3A1.3 1.3 0 0 1 3.3 3h3l1.4 1.5h5A1.3 1.3 0 0 1 14 5.8v6a1.3 1.3 0 0 1-1.3 1.3H3.3A1.3 1.3 0 0 1 2 11.8z"/></svg>',
+  zip:'<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 4.2A1.7 1.7 0 0 1 4.7 2.5h6.6A1.7 1.7 0 0 1 13 4.2v7.6a1.7 1.7 0 0 1-1.7 1.7H4.7A1.7 1.7 0 0 1 3 11.8z"/><path d="M8 2.5v5.8M6.3 6.7L8 8.4l1.7-1.7"/></svg>',
+  globe:'<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="8" r="5.6"/><path d="M2.6 8h10.8M8 2.4c1.6 1.6 2.3 3.5 2.3 5.6S9.6 12 8 13.6C6.4 12 5.7 10.1 5.7 8S6.4 4 8 2.4z"/></svg>',
+  sun:'<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><circle cx="8" cy="8" r="3"/><path d="M8 2v1.4M8 12.6V14M2 8h1.4M12.6 8H14M3.8 3.8l1 1M11.2 11.2l1 1M12.2 3.8l-1 1M4.8 11.2l-1 1"/></svg>',
+  moon:'<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M13 9.7A5.3 5.3 0 0 1 6.3 3a5.4 5.4 0 1 0 6.7 6.7z"/></svg>',
+  canvas:'<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.55" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2.5" width="12" height="11" rx="2"/><path d="M9.5 2.5v11"/></svg>',
+  markdown:'<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3.5" width="12" height="9" rx="1.8"/><path d="M4.5 10V6l2 2.2L8.5 6v4M11.2 6v4m-1-1.4L11.2 10l1-1.4"/></svg>',
+  steps:'<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.55" stroke-linecap="round" stroke-linejoin="round"><circle cx="4" cy="4" r="1.4"/><circle cx="4" cy="8" r="1.4"/><circle cx="4" cy="12" r="1.4"/><path d="M7 4h6M7 8h5M7 12h6"/></svg>',
+  close:'<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M4 4l8 8M12 4l-8 8"/></svg>'
 };
+function stepToolIcon(name){
+  const n=String(name||'').toLowerCase();
+  if(/read|view|open|cat|list|ls|glob|inspect/.test(n))return UI_ICONS.fileText;
+  if(/write|edit|create|replace|patch|save/.test(n))return UI_ICONS.fileEdit;
+  if(/bash|shell|exec|run|terminal|cmd|python|node/.test(n))return UI_ICONS.terminal;
+  if(/search|grep|find|fetch|web|browse|query/.test(n))return UI_ICONS.search;
+  return UI_ICONS.tool;
+}
+function setBtnWithIcon(btn,svg,label,i18nKey){
+  if(!btn)return;
+  btn.innerHTML='<span class="ui-icon" aria-hidden="true">'+svg+'</span><span'+(i18nKey?' data-i18n="'+escAttr(i18nKey)+'"':'')+'>'+esc(label)+'</span>';
+}
 const PLATFORM_SVGS={
   claude:'<svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M9 2.2v13.6M2.2 9h13.6M4.2 4.2l9.6 9.6M13.8 4.2l-9.6 9.6"/></svg>',
   gpt:'<svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.55"><circle cx="9" cy="9" r="5.6"/><path d="M6.2 6.5c1.8-1.4 4.8-1 6 1M11.8 11.5c-1.8 1.4-4.8 1-6-1" stroke-linecap="round"/></svg>',
@@ -1182,9 +1414,9 @@ function applyLanguage(lang){
   document.querySelectorAll('[data-i18n-placeholder]').forEach(el=>el.placeholder=t(el.dataset.i18nPlaceholder));
   document.querySelectorAll('[data-i18n-title]').forEach(el=>el.title=t(el.dataset.i18nTitle));
   const langBtn=document.getElementById('lang-btn');
-  if(langBtn){langBtn.textContent=currentLang==='en'?'🌐 中文':'🌐 EN';langBtn.title=currentLang==='en'?'切换到中文界面':'Switch to English UI';}
-  document.getElementById('export-btn').textContent='⬇ '+t('导出');
-  document.getElementById('toggle-summary').textContent=t('摘要')+(summaryVisible?' ◀':' ▶');
+  if(langBtn){const lbl=langBtn.querySelector('span:last-child');if(lbl)lbl.textContent=currentLang==='en'?'中文':'EN';else langBtn.textContent=currentLang==='en'?'中文':'EN';langBtn.title=currentLang==='en'?'切换到中文界面':'Switch to English UI';}
+  const sumBtn=document.getElementById('toggle-summary');
+  if(sumBtn){sumBtn.classList.toggle('active',summaryVisible);sumBtn.setAttribute('aria-pressed',summaryVisible?'true':'false');}
   syncPlatformFilterCounts();
   if(typeof syncRemoteResourceControls==='function')syncRemoteResourceControls();
 }
@@ -1361,7 +1593,8 @@ async function ingestData(convSource,projTexts,memText,designTexts,btn){
   convProjectMapReady=!allProjects.length;
   convProjectMapPromise=null;
   resetAnalytics();
-  btn.textContent='✅ '+(currentLang==='en'?'Loaded '+allConvs.length+' conversations'+(allDesigns.length?' + '+allDesigns.length+' Design':''):'已加载 '+allConvs.length+' 条对话'+(allDesigns.length?' + '+allDesigns.length+' 条 Design 对话':''));
+  if(btn&&btn.id==='load-btn')setBtnWithIcon(btn,UI_ICONS.folder,t('更换目录'),'更换目录');
+  else if(btn&&btn.id==='load-zip-btn')setBtnWithIcon(btn,UI_ICONS.zip,t('打开导出 ZIP（多平台）'),'打开导出 ZIP（多平台）');
   const totalMsgs=Number.isFinite(parsed.totalMsgs)?parsed.totalMsgs:allConvs.reduce((s,c)=>s+(c.message_count||0),0);
   const dates=parsed.minDate&&parsed.maxDate?[parsed.minDate,parsed.maxDate]:allConvs.map(c=>c.created_at).filter(Boolean).sort();
   loadedSummary={totalMsgs,minDate:dates[0]||'',maxDate:dates[dates.length-1]||''};
@@ -1378,10 +1611,10 @@ function renderLoadedSummary(){
   const pills=PLATFORM_ORDER.filter(k=>counts[k]>0).map(k=>renderPlatformPill(k,{compact:true,count:counts[k]})).join('');
   const sb=document.getElementById('stats-bar');
   sb.style.display='';
-  sb.innerHTML='📊 <b>'+allConvs.length+'</b>'+t('条对话')+' · <b>'+loadedSummary.totalMsgs.toLocaleString(currentLang==='en'?'en-US':'zh-CN')+'</b>'+t('条消息')
-    +(allProjects.length?' · 📁 <b>'+allProjects.length+'</b>'+t('个项目'):'')
-    +(allDesigns.length?' · ✒️ <b>'+allDesigns.length+'</b>'+t('条 Design 对话'):'')
-    +(span?'<br>📅 '+esc(span):'')
+  sb.innerHTML='<span class="ui-icon" aria-hidden="true" style="vertical-align:-2px;margin-right:4px;color:var(--accent)">'+UI_ICONS.check+'</span><b>'+allConvs.length+'</b>'+t('条对话')+' · <b>'+loadedSummary.totalMsgs.toLocaleString(currentLang==='en'?'en-US':'zh-CN')+'</b>'+t('条消息')
+    +(allProjects.length?' · <b>'+allProjects.length+'</b>'+t('个项目'):'')
+    +(allDesigns.length?' · <b>'+allDesigns.length+'</b>'+t('条 Design 对话'):'')
+    +(span?'<div style="margin-top:2px;font-size:11px;">'+esc(span)+'</div>':'')
     +(pills?'<div class="stats-platform-row">'+pills+'</div>':'');
 }
 
@@ -1393,7 +1626,7 @@ function switchTab(tab,btn){
   openConversationGeneration++;
   currentView=tab;
   const isConversationView=tab==='convs'||tab==='design';
-  if(!isConversationView){document.getElementById('quality-btn').style.display='none';document.getElementById('tree-mode-btn').style.display='none';document.getElementById('quality-panel').style.display='none';qualityOpen=false;}
+  if(!isConversationView){if(typeof closeCanvas==='function')closeCanvas();document.getElementById('quality-btn').style.display='none';document.getElementById('tree-mode-btn').style.display='none';document.getElementById('quality-panel').style.display='none';qualityOpen=false;}
   document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
   btn.classList.add('active');
   if(tab==='convs')renderConvList(getSortedConvs());
@@ -2828,6 +3061,14 @@ function configureMarked(){
   markedConfigured=true;
   marked.setOptions({breaks:true,gfm:true});
   const renderer=new marked.Renderer();
+  const ALERT_ICONS={
+    note:'<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="8" r="6"/><path d="M8 7v4M8 5h.01"/></svg>',
+    tip:'<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M6 12.5h4M6.5 14.5h3M5.5 10.2C4.3 9.3 3.8 8 3.8 6.5a4.2 4.2 0 1 1 8.4 0c0 1.5-.5 2.8-1.7 3.7-.4.3-.7.8-.7 1.3H6.2c0-.5-.3-1-.7-1.3z"/></svg>',
+    important:'<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3.5A1.5 1.5 0 0 1 4.5 2h7A1.5 1.5 0 0 1 13 3.5v8A1.5 1.5 0 0 1 11.5 13H6l-3 2V3.5z"/><path d="M8 5.2v3.3M8 10.6h.01"/></svg>',
+    warning:'<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M7.1 2.7L1.7 12a1 1 0 0 0 .9 1.5h10.8a1 1 0 0 0 .9-1.5L8.9 2.7a1 1 0 0 0-1.8 0z"/><path d="M8 6.3v3M8 11.4h.01"/></svg>',
+    caution:'<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5.5 2h5l3.5 3.5v5L10.5 14h-5L2 10.5v-5L5.5 2z"/><path d="M8 5.4v3.4M8 11h.01"/></svg>'
+  };
+  const ALERT_LABELS={note:'Note',tip:'Tip',important:'Important',warning:'Warning',caution:'Caution'};
   renderer.html=function(html){
     const raw=html&&typeof html==='object'?html.text:html;
     return esc(raw==null?'':raw);
@@ -2841,6 +3082,14 @@ function configureMarked(){
     if(src)return '<img src="'+escAttr(src)+'" alt="'+escAttr(label)+'"'+(token.title?' title="'+escAttr(token.title)+'"':'')+'>';
     return '<span class="img-placeholder">🖼 '+esc(t('外部图片不会自动加载'))+' · '+importedLink(token.href,label)+'</span>';
   };
+  renderer.blockquote=function(token){
+    const body=typeof token==='string'?token:this.parser.parse(token?.tokens||[]);
+    const match=body.match(/^\s*<p>\s*\[!(NOTE|TIP|IMPORTANT|WARNING|CAUTION)\](?:[ \t]*<br\s*\/?>|[ \t]*\n|[ \t]+|(?=<\/p>))([\s\S]*)$/i);
+    if(!match)return '<blockquote>'+body+'</blockquote>\n';
+    const kind=match[1].toLowerCase();
+    const cleaned=('<p>'+match[2]).replace(/^<p>\s*<\/p>\s*/,'');
+    return '<div class="md-alert md-alert-'+kind+'"><div class="md-alert-title"><span class="md-alert-icon" aria-hidden="true">'+(ALERT_ICONS[kind]||ALERT_ICONS.note)+'</span><span>'+(ALERT_LABELS[kind]||kind)+'</span></div><div class="md-alert-body">'+cleaned+'</div></div>\n';
+  };
   renderer.code=function(code,lang){
     // marked v5+ passes a token object {text,lang,escaped}; older versions pass (code,lang) directly
     let rawCode, l;
@@ -2853,17 +3102,27 @@ function configureMarked(){
     }
     l=String(l).split(/\s/,1)[0];
     const safeCode=esc(rawCode);
-    if(l==='mermaid')return '<div class="visual"><div class="mermaid">'+safeCode+'</div><details class="vsrc"><summary>'+t('查看 Mermaid 源码')+'</summary><pre><code>'+safeCode+'</code></pre></details></div>';
+    if(l==='mermaid')return '<div class="visual" data-vkind="mermaid" data-vcode="'+escAttr(encodeURIComponent(rawCode))+'" data-vtitle="'+escAttr(t('流程图'))+'"><div class="vcap"><span class="vtitle">'+esc(t('流程图'))+'</span><span class="vcap-actions"><button class="vdl" type="button" data-ui-click="open-canvas-inline">'+esc(t('画布'))+'</button></span></div><div class="mermaid">'+safeCode+'</div><details class="vsrc"><summary>'+t('查看 Mermaid 源码')+'</summary><pre><code>'+safeCode+'</code></pre></details></div>';
     const id='cb_'+Math.random().toString(36).slice(2);codes.set(id,rawCode);
     const highlighted=rawCode.length<=65536&&typeof hljs!=='undefined'&&l&&hljs.getLanguage(l)
       ?hljs.highlight(rawCode,{language:l}).value
       :safeCode;
-    return '<div class="code-block">'
+    const lineCount=rawCode?rawCode.replace(/\n$/,'').split('\n').length:0;
+    const langKey=(l||'plain').toLowerCase();
+    return '<div class="code-block" data-code-lines="'+lineCount+'">'
       +'<div class="code-block-header">'
+      +'<span class="code-lang-dot" data-lang="'+escAttr(langKey)+'" aria-hidden="true"></span>'
       +'<span class="code-lang">'+esc(l)+'</span>'
-      +'<button class="copy-btn" data-ui-click="copy-code" data-ui-value="'+id+'">'+t('复制')+'</button>'
+      +'<div class="code-actions">'
+      +(lineCount?'<span class="code-line-count">'+lineCount+'L</span>':'')
+      +'<button type="button" class="code-action-btn" data-ui-click="code-wrap" aria-pressed="false" title="'+escAttr(t('自动换行'))+'">Wrap</button>'
+      +'<button type="button" class="code-action-btn" data-ui-click="code-lines" aria-pressed="false" title="'+escAttr(t('行号'))+'">#</button>'
+      +'<button type="button" class="code-action-btn" data-ui-click="code-canvas" data-ui-value="'+id+'" data-code-lang="'+escAttr(l)+'" title="'+escAttr(t('在画布中打开'))+'">Canvas</button>'
+      +(lineCount>32?'<button type="button" class="code-action-btn" data-ui-click="code-collapse" aria-expanded="true" title="'+escAttr(t('折叠代码'))+'">'+esc(t('折叠'))+'</button>':'')
+      +'<button type="button" class="copy-btn" data-ui-click="copy-code" data-ui-value="'+id+'">'+t('复制')+'</button>'
       +'</div>'
-      +'<pre><code id="'+id+'" class="'+(l?'language-'+escAttr(l):'')+'">'+highlighted+'</code></pre>'
+      +'</div>'
+      +'<div class="code-body"><div class="code-gutter" aria-hidden="true"></div><pre><code id="'+id+'" class="'+(l?'language-'+escAttr(l):'')+'">'+highlighted+'</code></pre></div>'
       +'</div>';
   };
   const baseTable=marked.Renderer.prototype.table;
@@ -5809,7 +6068,7 @@ async function toggleQualityPanel(){
   try{const result=await scanConversationQuality(conv);if(qualityOpen&&currentConv===conv)renderQualityReport(result,conv);}
   catch(error){if(error.name==='AbortError'||!qualityOpen||currentConv!==conv)return;panel.textContent=error.message;const retry=document.createElement('button');retry.textContent=t('重试');retry.onclick=()=>{qualityOpen=false;void toggleQualityPanel();};panel.appendChild(retry);}
 }
-function toggleTreeMode(){resetReaderSearch();conversationTreeMode=conversationTreeMode==='longest'?'full':'longest';const b=document.querySelector('#tree-mode-btn span');if(b)b.textContent=t(conversationTreeMode==='longest'?'最长路径':'完整树');if(currentConv)renderMessages(currentConv.chat_messages||[]);}
+function toggleTreeMode(){resetReaderSearch();conversationTreeMode=conversationTreeMode==='longest'?'full':'longest';const b=document.querySelector('#tree-mode-btn span:last-child');if(b){const k=conversationTreeMode==='longest'?'最长路径':'完整树';b.dataset.i18n=k;b.textContent=t(k);}if(currentConv)renderMessages(currentConv.chat_messages||[]);}
 function buildFullTree(msgs){return workerDomainCore().tree({chat_messages:msgs},'full').messages;}
 
 function findLastConversationUuid(convs){
@@ -6031,7 +6290,7 @@ async function openConv(uuid,sourceView){
   const requestGeneration=++openConversationGeneration;
   const design=sourceView==='design'||allDesigns.some(c=>c.uuid===uuid);
   currentView=design?'design':'convs';currentProjectUuid='';
-  if(!currentConv||currentConv.uuid!==uuid)branchChoices={}; // 切换对话时重置分支选择
+  if(!currentConv||currentConv.uuid!==uuid){branchChoices={};if(typeof closeCanvas==='function')closeCanvas();} // 切换对话时重置分支选择
   if(currentConv&&currentConv.uuid!==uuid)clearCSearchMarks(); // 切换对话时清除旧高亮
   const selected=(design?allDesigns:allConvs).find(c=>c.uuid===uuid);
   if(!selected)return;
@@ -6064,7 +6323,7 @@ async function openConv(uuid,sourceView){
     remoteBtn.style.display=currentConv?.sourcePlatform==='gpt'?'':'none';
     if(typeof syncRemoteResourceControls==='function')syncRemoteResourceControls();
   }
-  const modeLabel=document.querySelector('#tree-mode-btn span');if(modeLabel)modeLabel.textContent=t(conversationTreeMode==='longest'?'最长路径':'完整树');
+  const modeLabel=document.querySelector('#tree-mode-btn span:last-child');if(modeLabel){const k=conversationTreeMode==='longest'?'最长路径':'完整树';modeLabel.dataset.i18n=k;modeLabel.textContent=t(k);}
   updateQuickNav();
   const st=document.getElementById('summary-text');
   st.innerHTML=currentConv.summary?(currentConv._summaryHtml||(typeof marked!=='undefined'?marked.parse(currentConv.summary):esc(currentConv.summary))):'<span style="color:var(--text3)">'+t('无摘要')+'</span>';
@@ -6204,7 +6463,63 @@ function renderProjectGraph(p,convs){
   const memory=memoryData?.project_memories?.[p.uuid]||'';
   const memoryNodes=getProjectKeywords(p).slice(0,8);
   const docs=(p.docs||[]).slice(0,12);
-  return '<div class="project-graph"><div class="graph-column"><b>🧠 '+t('项目记忆')+'</b>'+(memoryNodes.length?memoryNodes.map(x=>'<div class="graph-node">'+esc(x)+'</div>').join(''):'<div class="graph-node">'+esc(memory?t('项目记忆'):t('无内容'))+'</div>')+'</div><div class="graph-arrow">→</div><div class="graph-column"><b>📄 '+t('项目文档')+'</b>'+docs.map(d=>'<div class="graph-node">'+esc(d.filename||t('未命名'))+'</div>').join('')+'</div><div class="graph-arrow">→</div><div class="graph-column"><b>💬 '+t('关联对话')+'</b>'+convs.slice(0,20).map(c=>{const e=convProjectEvidence[c.uuid]||{},manual=Object.prototype.hasOwnProperty.call(projectOverrides,c.uuid),label=projectMatchMethodLabel(e,manual);return '<div class="graph-node">'+esc(c.name||t('无标题'))+'<br><small>'+label+'</small></div>';}).join('')+'</div></div>';
+  const memHtml=memoryNodes.length
+    ?memoryNodes.map((x,i)=>'<div class="graph-node" data-gcol="mem" data-gkey="'+escAttr(String(x).toLowerCase())+'" data-gidx="'+i+'">'+esc(x)+'</div>').join('')
+    :'<div class="graph-node" data-gcol="mem" data-gkey="*" data-gidx="0">'+esc(memory?t('项目记忆'):t('无内容'))+'</div>';
+  const docHtml=docs.map((d,i)=>'<div class="graph-node" data-gcol="doc" data-gkey="'+escAttr(String(d.filename||'').toLowerCase())+'" data-gidx="'+i+'">'+esc(d.filename||t('未命名'))+'</div>').join('');
+  const convHtml=convs.slice(0,20).map((c,i)=>{
+    const e=convProjectEvidence[c.uuid]||{},manual=Object.prototype.hasOwnProperty.call(projectOverrides,c.uuid),label=projectMatchMethodLabel(e,manual);
+    const kws=[...(e.keywords||[]),...(e.queries||[])].map(x=>String(x).toLowerCase()).join('|');
+    const files=(e.files||[]).map(x=>String(x).split('/').pop().toLowerCase()).join('|');
+    return '<div class="graph-node" data-gcol="conv" data-gidx="'+i+'" data-gmem="'+escAttr(kws)+'" data-gdoc="'+escAttr(files)+'">'+esc(c.name||t('无标题'))+'<br><small style="color:var(--text3)">'+esc(label)+'</small></div>';
+  }).join('');
+  return '<div class="project-graph"><svg class="project-graph-svg" aria-hidden="true"></svg>'
+    +'<div class="graph-column"><div class="graph-column-title"><span class="ui-icon" aria-hidden="true">'+UI_ICONS.spark+'</span><span>'+t('项目记忆')+'</span></div>'+memHtml+'</div>'
+    +'<div class="graph-column"><div class="graph-column-title"><span class="ui-icon" aria-hidden="true">'+UI_ICONS.fileText+'</span><span>'+t('项目文档')+'</span></div>'+docHtml+'</div>'
+    +'<div class="graph-column"><div class="graph-column-title"><span class="ui-icon" aria-hidden="true">'+UI_ICONS.steps+'</span><span>'+t('关联对话')+'</span></div>'+convHtml+'</div>'
+    +'</div>';
+}
+function drawProjectGraphLinks(root){
+  const graph=root?.querySelector('.project-graph');if(!graph)return;
+  const svg=graph.querySelector('.project-graph-svg');if(!svg)return;
+  const rect=graph.getBoundingClientRect();if(rect.width<360||rect.height<40){svg.innerHTML='';return;}
+  const memNodes=[...graph.querySelectorAll('.graph-node[data-gcol="mem"]')];
+  const docNodes=[...graph.querySelectorAll('.graph-node[data-gcol="doc"]')];
+  const convNodes=[...graph.querySelectorAll('.graph-node[data-gcol="conv"]')];
+  const anchor=(el,side)=>{const r=el.getBoundingClientRect();return{x:(side==='left'?r.left:r.right)-rect.left+graph.scrollLeft,y:r.top+r.height/2-rect.top+graph.scrollTop};};
+  const curve=(a,b)=>'M '+a.x.toFixed(1)+' '+a.y.toFixed(1)+' C '+(a.x+(b.x-a.x)*0.48).toFixed(1)+' '+a.y.toFixed(1)+', '+(b.x-(b.x-a.x)*0.48).toFixed(1)+' '+b.y.toFixed(1)+', '+b.x.toFixed(1)+' '+b.y.toFixed(1);
+  const paths=[];
+  if(memNodes.length&&docNodes.length){
+    for(const m of memNodes){
+      const targetDoc=docNodes[Number(m.dataset.gidx||0)%docNodes.length];
+      paths.push({d:curve(anchor(m,'right'),anchor(targetDoc,'left')),from:'mem:'+m.dataset.gidx,to:'doc:'+targetDoc.dataset.gidx});
+    }
+  }
+  for(const c of convNodes){
+    const cFiles=(c.dataset.gdoc||'').split('|').filter(Boolean);
+    const cMems=(c.dataset.gmem||'').split('|').filter(Boolean);
+    let matchedDoc=false;
+    for(const d of docNodes){
+      const dk=d.dataset.gkey||'';
+      if(cFiles.some(f=>dk===f||dk.includes(f)||f.includes(dk))){
+        paths.push({d:curve(anchor(d,'right'),anchor(c,'left')),from:'doc:'+d.dataset.gidx,to:'conv:'+c.dataset.gidx});
+        matchedDoc=true;
+      }
+    }
+    if(!matchedDoc&&docNodes.length){
+      const fallback=docNodes[0];
+      paths.push({d:curve(anchor(fallback,'right'),anchor(c,'left')),from:'doc:'+fallback.dataset.gidx,to:'conv:'+c.dataset.gidx});
+    }
+    for(const m of memNodes){
+      const mk=m.dataset.gkey||'';
+      if(mk&&mk!=='*'&&cMems.some(k=>k.includes(mk)||mk.includes(k))){
+        const targetDoc=docNodes[Number(m.dataset.gidx||0)%Math.max(1,docNodes.length)];
+        if(!targetDoc)paths.push({d:curve(anchor(m,'right'),anchor(c,'left')),from:'mem:'+m.dataset.gidx,to:'conv:'+c.dataset.gidx});
+      }
+    }
+  }
+  svg.setAttribute('viewBox','0 0 '+Math.ceil(graph.scrollWidth)+' '+Math.ceil(graph.scrollHeight));
+  svg.innerHTML=paths.map(x=>'<path class="project-graph-link" d="'+x.d+'" data-gfrom="'+escAttr(x.from)+'" data-gto="'+escAttr(x.to)+'"/>').join('');
 }
 
 async function openProject(uuid){
@@ -6215,7 +6530,7 @@ async function openProject(uuid){
   document.querySelectorAll('.proj-card').forEach(el=>el.classList.toggle('active',el.dataset.projUuid===uuid));
   document.getElementById('chat-header').classList.remove('last-supper');
   document.getElementById('messages').classList.remove('last-supper-gallery');
-  document.getElementById('chat-title').textContent='📁 '+(p.name||t('项目（单数）'));
+  document.getElementById('chat-title').textContent=p.name||t('项目（单数）');
   document.getElementById('chat-title').style.color='';
 
   if(!convProjectMapReady){
@@ -6244,29 +6559,29 @@ async function openProject(uuid){
   const el=document.getElementById('messages');
   let h='<div style="max-width:860px;margin:0 auto;padding:24px;">';
 
-  h+='<div class="project-tools"><input type="search" placeholder="'+escAttr(t('搜索当前项目对话'))+'" data-ui-input="project-search" data-ui-value="'+escAttr(p.uuid)+'"><button data-ui-click="project-export" data-ui-value="'+escAttr(p.uuid)+'">⬇ '+t('导出项目')+'</button></div>';
+  h+='<div class="project-tools"><input type="search" placeholder="'+escAttr(t('搜索当前项目对话'))+'" data-ui-input="project-search" data-ui-value="'+escAttr(p.uuid)+'"><button data-ui-click="project-export" data-ui-value="'+escAttr(p.uuid)+'">'+t('导出项目')+'</button></div>';
   h+='<div class="project-stat-grid"><div class="project-stat"><b>'+stats.conversations+'</b>'+t('条对话')+'</div><div class="project-stat"><b>'+stats.messages+'</b>'+t('条消息')+'</div><div class="project-stat"><b>'+stats.chars.toLocaleString()+'</b>'+t('字')+'</div><div class="project-stat"><b style="font-size:12px">'+esc(stats.range)+'</b>'+t('时间范围')+'</div></div>';
   if(projPlatform==='claude'){
-    h+='<div style="font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px;">🕸 '+t('项目记忆与对话引用关系图')+'</div>'+renderProjectGraph(p,relatedConvs);
+    h+='<div style="font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px;">'+t('项目记忆与对话引用关系图')+'</div>'+renderProjectGraph(p,relatedConvs);
   }
 
   // Description
   if(p.description){
-    h+='<div style="background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:14px 18px;margin-bottom:20px;font-size:14px;color:var(--text2);line-height:1.6;">'+esc(p.description)+'</div>';
+    h+='<div style="background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:14px 18px;margin-bottom:18px;font-size:14px;color:var(--text2);line-height:1.6;">'+esc(p.description)+'</div>';
   }
   const prompt=projectPrompt(p);
-  if(prompt){const promptKey='prompt-'+p.uuid;PROJECT_TEXT_STORE.set(promptKey,prompt);h+='<section class="project-prompt"><div class="project-prompt-head"><b>🧭 '+t('项目自定义指令')+'</b><button class="fbtn primary" type="button" data-ui-click="project-copy" data-ui-value="'+escAttr(promptKey)+'">📋 '+t('复制指令')+'</button></div><pre>'+esc(prompt)+'</pre></section>';}
+  if(prompt){const promptKey='prompt-'+p.uuid;PROJECT_TEXT_STORE.set(promptKey,prompt);h+='<section class="project-prompt"><div class="project-prompt-head"><b>'+t('项目自定义指令')+'</b><button class="fbtn primary" type="button" data-ui-click="project-copy" data-ui-value="'+escAttr(promptKey)+'">'+t('复制指令')+'</button></div><pre>'+esc(prompt)+'</pre></section>';}
 
   // Docs section
   if((p.docs||[]).length){
-    h+='<div style="font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px;">📄 '+t('项目文档')+'</div>';
+    h+='<div style="font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px;">'+t('项目文档')+'</div>';
     for(const doc of p.docs){
       const id='doc_'+doc.uuid;
-      h+='<div style="border:1px solid var(--border);border-radius:10px;margin-bottom:10px;overflow:hidden;">'
+      h+='<div style="border:1px solid var(--border);border-radius:12px;margin-bottom:10px;overflow:hidden;background:var(--bg2);">'
         +'<div class="project-doc-head" style="padding:10px 16px;background:var(--bg3);">'
-        +'<span style="font-size:13px;font-weight:600;cursor:pointer;flex:1" data-ui-click="document-toggle">📄 '+esc(doc.filename||t('未命名'))+'</span>'
+        +'<span style="font-size:13px;font-weight:600;cursor:pointer;flex:1" data-ui-click="document-toggle">'+esc(doc.filename||t('未命名'))+'</span>'
         +'<span style="font-size:11px;color:var(--text3);">'+((doc.content||'').length)+t('字')+'</span>'
-        +'<button class="fbtn" type="button" data-ui-click="project-document" data-ui-value="'+escAttr(p.uuid)+'" data-ui-doc="'+escAttr(doc.uuid)+'">⬇ '+t('下载原始文件')+'</button><span style="cursor:pointer" data-ui-click="document-toggle">'+ICON+'</span>'
+        +'<button class="fbtn" type="button" data-ui-click="project-document" data-ui-value="'+escAttr(p.uuid)+'" data-ui-doc="'+escAttr(doc.uuid)+'">'+t('下载原始文件')+'</button><span style="cursor:pointer;display:inline-flex" data-ui-click="document-toggle">'+ICON+'</span>'
         +'</div>'
         +'<div id="'+id+'" style="display:none;padding:16px 18px;font-size:13.5px;line-height:1.7;color:var(--text);">'
         +(doc.content?(typeof marked!=='undefined'?marked.parse(doc.content):esc(doc.content)):'<span style="color:var(--text3)">'+t('无内容')+'</span>')
@@ -6276,30 +6591,31 @@ async function openProject(uuid){
   }
 
   // Related conversations section
-  h+='<div style="font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px;">💬 '+t('关联对话')+' ('+relatedConvs.length+')</div>';
+  h+='<div style="font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px;">'+t('关联对话')+' ('+relatedConvs.length+')</div>';
   if(projPlatform==='claude'){
-    h+='<div style="font-size:11.5px;color:var(--text3);background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:8px 12px;margin-bottom:12px;line-height:1.6;">'
-      +'⚠️ <b style="color:var(--text2);">'+t('局限性说明')+'</b>: '+t('Claude 官方导出文件中不包含对话与项目的归属关系。')+' '
+    h+='<div style="font-size:11.5px;color:var(--text3);background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:8px 12px;margin-bottom:12px;line-height:1.6;">'
+      +'<b style="color:var(--text2);">'+t('局限性说明')+'</b>: '+t('Claude 官方导出文件中不包含对话与项目的归属关系。')+' '
       +t('本查看器通过以下三种方式推断：① 工具调用中的项目文件路径（精确）；② 知识搜索查询词与项目文档的匹配（较准确）；③ 项目记忆关键词匹配（模糊）。')+' '
       +'<b style="color:var(--text2);">'+t('结果仅供参考')+'</b>. '+t('可能存在遗漏或误判。')
       +'</div>';
   }else{
     const noteText=projPlatform==='grok'?t('Grok 工作区通过导出中的 workspace_id 字段精确关联对话。'):t('Perplexity Space 来自 user-data 工作簿；如需补充关联可在下方手动修正。');
-    h+='<div style="font-size:11.5px;color:var(--text3);background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:8px 12px;margin-bottom:12px;line-height:1.6;">ℹ️ '+esc(noteText)+'</div>';
+    h+='<div style="font-size:11.5px;color:var(--text3);background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:8px 12px;margin-bottom:12px;line-height:1.6;">'+esc(noteText)+'</div>';
   }
   if(relatedConvs.length){
-    h+=relatedConvs.map(c=>'<div class="conv-item" data-project-conv="'+escAttr(c.uuid)+'" data-project-uuid="'+escAttr(p.uuid)+'" role="button" tabindex="0" style="border:1px solid var(--border);border-radius:10px;margin-bottom:8px;padding:10px 14px;">'
+    h+=relatedConvs.map(c=>'<div class="conv-item" data-project-conv="'+escAttr(c.uuid)+'" data-project-uuid="'+escAttr(p.uuid)+'" role="button" tabindex="0" style="border:1px solid var(--border);border-radius:12px;margin-bottom:8px;padding:11px 14px;background:var(--bg2);">'
       +'<div class="conv-title">'+renderPlatformPill(c.sourcePlatform,{compact:true})+' '+esc(c.name||'('+t('无标题')+')')+'</div>'
       +'<div class="conv-meta"><span>'+fmtDate(c.updated_at)+'</span><span class="conv-count">'+(Number.isFinite(c.message_count)?c.message_count:(c.chat_messages||[]).length)+t('条')+'</span></div>'
-      +projectMatchExplanation(c)+'<button type="button" data-ui-click="open-conversation" data-ui-value="'+escAttr(c.uuid)+'">'+t('打开对话')+'</button></div>').join('');
+      +projectMatchExplanation(c)+'<button type="button" class="fbtn primary" style="margin-top:6px;" data-ui-click="open-conversation" data-ui-value="'+escAttr(c.uuid)+'">'+t('打开对话')+'</button></div>').join('');
   } else {
     h+='<div style="color:var(--text3);font-size:13px;padding:12px 0;">'+t('未能从对话名称/摘要中自动识别关联对话')+'</div>';
   }
-  h+='<details style="margin-top:18px"><summary style="cursor:pointer;color:var(--text2);font-weight:600">✏️ '+t('手动修正项目归属')+'</summary><div class="assignment-list">'+allConvs.map(c=>'<div class="assignment-row"><span>'+esc(c.name||t('无标题'))+'</span>'+projectAssignmentOptions(c.uuid)+'</div>').join('')+'</div><div style="font-size:11px;color:var(--text3);margin-top:8px">'+t('人工确认结果只保存在当前浏览器本地')+'</div></details>';
+  h+='<details style="margin-top:18px"><summary style="cursor:pointer;color:var(--text2);font-weight:600">'+t('手动修正项目归属')+'</summary><div class="assignment-list">'+allConvs.map(c=>'<div class="assignment-row"><span>'+esc(c.name||t('无标题'))+'</span>'+projectAssignmentOptions(c.uuid)+'</div>').join('')+'</div><div style="font-size:11px;color:var(--text3);margin-top:8px">'+t('人工确认结果只保存在当前浏览器本地')+'</div></details>';
   h+='</div>';
 
   el.innerHTML=h;
   initLazyHighlight(el);
+  requestAnimationFrame(()=>drawProjectGraphLinks(el));
   el.scrollTop=0;
 }
 
@@ -6328,7 +6644,12 @@ function openConvAndSwitch(uuid){
 function toggleSummary(){
   summaryVisible=!summaryVisible;
   document.getElementById('summary').classList.toggle('hidden',!summaryVisible);
-  document.getElementById('toggle-summary').textContent=t('摘要')+(summaryVisible?' ◀':' ▶');
+  const btn=document.getElementById('toggle-summary');
+  if(btn){
+    btn.classList.toggle('active',summaryVisible);
+    btn.setAttribute('aria-pressed',summaryVisible?'true':'false');
+    btn.title=t(summaryVisible?'关闭摘要':'摘要');
+  }
 }
 
 // ── 分支状态：parentKey -> 选中的兄弟索引（切换对话时重置）──
@@ -6350,6 +6671,39 @@ function switchBranch(key,idx,ev){
   if(currentConv)renderMessages(currentConv.chat_messages||[],{keepScroll:true});
 }
 
+function highlightJsonHtml(src){
+  const s=String(src||'');
+  if(s.length>40000)return esc(s);
+  const re=/("(?:\\.|[^"\\])*")(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d+)?(?:[eE][+-]?\d+)?/g;
+  let out='',last=0,m;
+  while((m=re.exec(s))!==null){
+    if(m.index>last)out+=esc(s.slice(last,m.index));
+    if(m[1]){
+      out+=m[2]?'<span class="hljs-attr">'+esc(m[1])+'</span>'+m[2]:'<span class="hljs-string">'+esc(m[1])+'</span>';
+    }else if(m[3]){
+      out+='<span class="hljs-literal">'+esc(m[3])+'</span>';
+    }else{
+      out+='<span class="hljs-number">'+esc(m[0])+'</span>';
+    }
+    last=m.index+m[0].length;
+  }
+  if(last<s.length)out+=esc(s.slice(last));
+  return out;
+}
+
+async function highlightWithin(root){
+  if(!root)return;
+  const nodes=[...root.querySelectorAll('pre code:not(.hljs)')].filter(el=>!el.querySelector('span[class^="hljs-"]'));
+  if(!nodes.length)return;
+  const rest=[];
+  for(const el of nodes){
+    if(el.classList.contains('language-json')){el.innerHTML=highlightJsonHtml(el.textContent||'');el.classList.add('hljs');}
+    else rest.push(el);
+  }
+  if(!rest.length)return;
+  try{if(await ensureHighlight())rest.forEach(el=>hljs.highlightElement(el));}catch(e){}
+}
+
 function initLazyHighlight(container){
   if(currentConv?._readerBacked)return;
   if(highlightObserver){highlightObserver.disconnect();highlightObserver=null;}
@@ -6366,6 +6720,146 @@ function initLazyHighlight(container){
   },{root:container,rootMargin:'800px 0px'});
   blocks.forEach(el=>highlightObserver.observe(el));
 }
+
+const MATH_SYMBOLS={
+  alpha:'α',beta:'β',gamma:'γ',delta:'δ',epsilon:'ε',varepsilon:'ε',zeta:'ζ',eta:'η',theta:'θ',vartheta:'ϑ',
+  iota:'ι',kappa:'κ',lambda:'λ',mu:'μ',nu:'ν',xi:'ξ',pi:'π',rho:'ρ',sigma:'σ',tau:'τ',upsilon:'υ',
+  phi:'φ',varphi:'ϕ',chi:'χ',psi:'ψ',omega:'ω',Gamma:'Γ',Delta:'Δ',Theta:'Θ',Lambda:'Λ',Xi:'Ξ',
+  Pi:'Π',Sigma:'Σ',Upsilon:'Υ',Phi:'Φ',Psi:'Ψ',Omega:'Ω',
+  times:'×',div:'÷',pm:'±',mp:'∓',cdot:'·',ast:'∗',star:'⋆',circ:'∘',bullet:'•',
+  le:'≤',leq:'≤',ge:'≥',geq:'≥',neq:'≠',ne:'≠',approx:'≈',equiv:'≡',sim:'∼',simeq:'≃',cong:'≅',propto:'∝',
+  infty:'∞',partial:'∂',nabla:'∇',sum:'∑',prod:'∏',coprod:'∐',int:'∫',iint:'∬',oint:'∮',
+  to:'→',rightarrow:'→',leftarrow:'←',leftrightarrow:'↔',Rightarrow:'⇒',Leftarrow:'⇐',Leftrightarrow:'⇔',mapsto:'↦',
+  'in':'∈',notin:'∉',ni:'∋',subset:'⊂',subseteq:'⊆',supset:'⊃',supseteq:'⊇',cup:'∪',cap:'∩',setminus:'∖',
+  forall:'∀',exists:'∃',nexists:'∄',emptyset:'∅',varnothing:'∅',neg:'¬',land:'∧',lor:'∨',
+  therefore:'∴',because:'∵',angle:'∠',perp:'⊥',parallel:'∥',dots:'…',ldots:'…',cdots:'⋯',vdots:'⋮',
+  langle:'⟨',rangle:'⟩',lceil:'⌈',rceil:'⌉',lfloor:'⌊',rfloor:'⌋',ell:'ℓ',hbar:'ℏ',Re:'ℜ',Im:'ℑ',aleph:'ℵ',
+  quad:'\u2003',qquad:'\u2003\u2003',enspace:'\u2002',thinspace:'\u2009',
+  '%':'%','$':'$','{':'{','}':'}','_':'_',',':' ',' ':' ',';':' ',':':' '
+};
+function readBraceGroup(str,pos){
+  if(str[pos]!=='{')return null;
+  let depth=0,i=pos;
+  while(i<str.length){
+    if(str[i]==='\\'&&i+1<str.length){i+=2;continue;}
+    if(str[i]==='{')depth++;
+    else if(str[i]==='}'){depth--;if(depth===0)return{text:str.slice(pos+1,i),end:i+1};}
+    i++;
+  }
+  return null;
+}
+function renderMathFragment(expr){
+  const frag=document.createDocumentFragment();
+  let i=0,s=String(expr||'');
+  const skipWs=()=>{while(i<s.length&&/\s/.test(s[i]))i++;};
+  const parseAtom=()=>{
+    skipWs();
+    if(i>=s.length)return document.createTextNode('');
+    if(s[i]==='{'){const g=readBraceGroup(s,i);if(g){i=g.end;return renderMathFragment(g.text);}}
+    if(s[i]==='\\'){
+      const m=s.slice(i+1).match(/^([A-Za-z]+|.)/);
+      if(m){const cmd=m[1];i+=1+cmd.length;return document.createTextNode(MATH_SYMBOLS[cmd]||cmd);}
+    }
+    return document.createTextNode(s[i++]);
+  };
+  while(i<s.length){
+    const ch=s[i];
+    if(ch==='\\'){
+      const m=s.slice(i+1).match(/^([A-Za-z]+|.)/);
+      if(!m){frag.appendChild(document.createTextNode(s[i++]));continue;}
+      const cmd=m[1];i+=1+cmd.length;
+      if(cmd==='frac'||cmd==='dfrac'||cmd==='tfrac'){
+        skipWs();const g1=readBraceGroup(s,i);if(g1)i=g1.end;
+        skipWs();const g2=readBraceGroup(s,i);if(g2)i=g2.end;
+        if(g1&&g2){
+          const wrap=document.createElement('span');wrap.className='math-frac';
+          const num=document.createElement('span');num.className='math-num';num.appendChild(renderMathFragment(g1.text));
+          const den=document.createElement('span');den.className='math-den';den.appendChild(renderMathFragment(g2.text));
+          wrap.appendChild(num);wrap.appendChild(den);frag.appendChild(wrap);continue;
+        }
+      }
+      if(cmd==='sqrt'){
+        skipWs();const g=readBraceGroup(s,i);
+        if(g){
+          i=g.end;
+          const wrap=document.createElement('span');wrap.className='math-sqrt';
+          wrap.appendChild(document.createTextNode('√'));
+          const rad=document.createElement('span');rad.className='math-rad';rad.appendChild(renderMathFragment(g.text));
+          wrap.appendChild(rad);frag.appendChild(wrap);continue;
+        }
+      }
+      if(cmd==='text'||cmd==='mathrm'||cmd==='operatorname'||cmd==='mathbf'||cmd==='boldsymbol'){
+        skipWs();const g=readBraceGroup(s,i);
+        if(g){
+          i=g.end;
+          const el=document.createElement(cmd==='mathbf'||cmd==='boldsymbol'?'strong':'span');
+          el.textContent=g.text;frag.appendChild(el);continue;
+        }
+      }
+      if(cmd==='left'||cmd==='right'){continue;}
+      frag.appendChild(document.createTextNode(MATH_SYMBOLS[cmd]||(cmd)));
+      continue;
+    }
+    if(ch==='^'||ch==='_'){
+      i++;
+      const el=document.createElement(ch==='^'?'sup':'sub');
+      el.appendChild(parseAtom());
+      frag.appendChild(el);
+      continue;
+    }
+    if(ch==='{'||ch==='}'){i++;continue;}
+    frag.appendChild(document.createTextNode(ch));
+    i++;
+  }
+  return frag;
+}
+function isLikelyMath(expr){
+  const s=expr.trim();
+  if(!s||/^[\d,.\s]+$/.test(s))return false;
+  if(/[\\=^_{}+*/<>|]/.test(s))return true;
+  if(/^[A-Za-z](?:[A-Za-z0-9_'\-(),\s]{0,24})$/.test(s)&&!/^[A-Za-z]{2,}\s+[A-Za-z]{2,}/.test(s))return true;
+  return false;
+}
+function applyMathFormatting(root){
+  if(!root)return;
+  const walker=document.createTreeWalker(root,NodeFilter.SHOW_TEXT,{
+    acceptNode:n=>{
+      const v=n.nodeValue;
+      if(!v||(!v.includes('$')&&!v.includes('\\(')&&!v.includes('\\[')))return NodeFilter.FILTER_SKIP;
+      if(n.parentElement&&n.parentElement.closest('pre,code,script,style,a,svg,.vsrc,.math-block,.math-inline,mark,button,textarea,input'))return NodeFilter.FILTER_REJECT;
+      return NodeFilter.FILTER_ACCEPT;
+    }
+  });
+  const targets=[];let node;
+  while((node=walker.nextNode()))targets.push(node);
+  const re=/\$\$([\s\S]+?)\$\$|\\\[([\s\S]+?)\\\]|\\\(([^\n]+?)\\\)|(?<!\\)\$(?!\s)([^\n$]{1,120}?)(?<!\s)\$(?!\d)/g;
+  for(const textNode of targets){
+    const text=textNode.nodeValue;
+    re.lastIndex=0;
+    let last=0,m,changed=false;
+    const frag=document.createDocumentFragment();
+    while((m=re.exec(text))!==null){
+      const isBlock=m[1]!=null||m[2]!=null;
+      const expr=m[1]??m[2]??m[3]??m[4]??'';
+      if(m[4]!=null&&!isLikelyMath(expr))continue;
+      changed=true;
+      if(m.index>last)frag.appendChild(document.createTextNode(text.slice(last,m.index)));
+      const box=document.createElement(isBlock?'div':'span');
+      box.className=isBlock?'math-block':'math-inline';
+      box.appendChild(renderMathFragment(expr.trim()));
+      frag.appendChild(box);
+      last=m.index+m[0].length;
+    }
+    if(!changed)continue;
+    if(last<text.length)frag.appendChild(document.createTextNode(text.slice(last)));
+    textNode.parentNode.replaceChild(frag,textNode);
+  }
+}
+
+document.getElementById('messages').addEventListener('toggle',ev=>{
+  const d=ev.target;
+  if(d&&d.tagName==='DETAILS'&&d.open)void highlightWithin(d);
+},true);
 
 function messageRenderWeight(msg){
   if(!msg||msg._divider)return 0;
@@ -6412,6 +6906,7 @@ function renderMessages(msgs,opts){
   for(const k in VISUALURLS){try{URL.revokeObjectURL(VISUALURLS[k]);}catch(e){}delete VISUALURLS[k];}
   for(const k in VISUALDOCS)delete VISUALDOCS[k];
   for(const k in MSGTEXT)delete MSGTEXT[k];
+  for(const k in MSGMARKDOWN)delete MSGMARKDOWN[k];
   if(!msgs.length){container.innerHTML='<div style="display:flex;align-items:center;justify-content:center;height:100%;color:var(--text3)">'+t('此对话无消息')+'</div>';return;}
   const linear=opts?._mountOnly?msgs:conversationTreeMode==='full'?buildFullTree(msgs):buildPath(msgs);
   const convUuid=currentConv&&currentConv.uuid||'';
@@ -6432,17 +6927,19 @@ function renderMessages(msgs,opts){
     catch(e){h+='<div style="padding:8px 16px;color:var(--text3);font-size:12px;">⚠️ '+t('此消息渲染出错')+'</div>';console.warn('renderMsg error',e);}
   }
   container.innerHTML=h;
+  applyMathFormatting(container);
   initLazyHighlight(container);
   container.querySelectorAll('.collapsible-header').forEach(el=>el.addEventListener('click',function(){
     const body=this.nextElementSibling;
     const open=body.style.display!=='none';
     body.style.display=open?'none':'';
     this.classList.toggle('open',!open);
+    if(!open)void highlightWithin(body);
   }));
   // scroll
   if(opts&&opts.anchor)container.scrollTop=opts.anchor.top+(container.scrollHeight-opts.anchor.height);
   else if(scrollPos!=null)container.scrollTop=scrollPos;
-  else setTimeout(()=>container.scrollTop=container.scrollHeight,50);
+  else setTimeout(()=>{container.scrollTop=container.scrollHeight;syncActivePromptTick();},50);
   autosizeIframes(container);
   initLazyVisuals(container);
   updateQuickNav();
@@ -6496,7 +6993,8 @@ function renderVisual(v){
   const id='v'+(_vid++);
   const showCap=v.title&&!(/^[a-z0-9]+(_[a-z0-9]+)+$/.test(v.title));
   const cap='<div class="vcap"><span class="vtitle">'+esc(showCap?v.title:(v.kind==='mermaid'?t('流程图'):v.kind==='svg'?t('图表'):t('交互预览')))+'</span>'
-    +'<button class="vdl" type="button" data-ui-click="visual-download" data-ui-value="'+id+'">'+t('下载 PNG')+'</button></div>';
+    +'<span class="vcap-actions"><button class="vdl" type="button" data-ui-click="open-canvas-inline" data-ui-value="'+id+'">'+t('画布')+'</button>'
+    +'<button class="vdl" type="button" data-ui-click="visual-download" data-ui-value="'+id+'">'+t('下载 PNG')+'</button></span></div>';
   const src='<details class="vsrc"><summary>'+t('查看源码')+'</summary><pre><code>'+esc(v.code)+'</code></pre></details>';
   let body;
   if(v.kind==='mermaid')body='<div class="mermaid">'+esc(v.code)+'</div>';
@@ -6671,24 +7169,26 @@ function registerFile(name,content){
   const id='f'+(_fid++);
   const ext=(name.split('.').pop()||'').toLowerCase();
   const mime={html:'text/html',htm:'text/html',svg:'image/svg+xml',md:'text/markdown',txt:'text/plain',json:'application/json',js:'text/javascript',css:'text/css',py:'text/plain',csv:'text/csv'}[ext]||'application/octet-stream';
-  FILESTORE[id]={url:URL.createObjectURL(new Blob([content],{type:mime})),name};
+  const raw=String(content||'');
+  FILESTORE[id]={url:URL.createObjectURL(new Blob([raw],{type:mime})),name,content:raw};
   return id;
 }
 function renderFileCards(files){
   if(!files.length)return '';
   const rows=files.map(f=>{
     if(f.content==null){
-      return '<div class="filerow"><span>📄</span><span class="fname">'+esc(f.name)+'</span><span class="fsize nocontent">'+t('内容未包含在导出中')+'</span></div>';
+      return '<div class="filerow"><span class="ui-icon" aria-hidden="true">'+UI_ICONS.fileText+'</span><span class="fname">'+esc(f.name)+'</span><span class="fsize nocontent">'+t('内容未包含在导出中')+'</span></div>';
     }
     const id=registerFile(f.name,f.content);
     const preview=/\.(html?|svg)$/i.test(f.name)?renderVisual({kind:/\.svg$/i.test(f.name)?'svg':'html',code:String(f.content),title:f.name}):'';
-    return '<div class="filerow"><span>📄</span><span class="fname">'+esc(f.name)+'</span>'
+    return '<div class="filerow"><span class="ui-icon" aria-hidden="true">'+UI_ICONS.fileText+'</span><span class="fname">'+esc(f.name)+'</span>'
       +'<span class="fsize">'+(f.content.length/1024).toFixed(1)+' KB</span>'
       +'<span class="fbtns">'
+      +'<button type="button" class="fbtn" data-ui-click="open-canvas-file" data-ui-value="'+id+'">'+t('画布')+'</button>'
       +'<a class="fbtn primary" href="'+FILESTORE[id].url+'" download="'+escAttr(f.name)+'">'+t('下载')+'</a>'
       +'</span></div>'+(preview?'<details><summary>'+t('交互预览')+'</summary>'+preview+'</details>':'');
   }).join('');
-  return '<div class="files"><div class="filehd">📦 '+t('此回复生成的文件')+' ('+files.length+')</div>'+rows+'</div>';
+  return '<div class="files"><div class="filehd"><span class="ui-icon" aria-hidden="true">'+UI_ICONS.folder+'</span> '+t('此回复生成的文件')+' ('+files.length+')</div>'+rows+'</div>';
 }
 
 function renderMsg(msg){
@@ -6804,17 +7304,29 @@ function renderMsg(msg){
   // 纯文本复制
   const cid='m'+(_mid++);
   const plain=content.filter(b=>b&&b.type==='text').map(b=>b.text||'').join('\n\n')||msg.text||'';
+  const mdRaw=msgToMarkdown(msg)||plain;
   MSGTEXT[cid]=currentConv?._readerBacked?{sourceIndex:msg._sourceIndex}:plain;
+  MSGMARKDOWN[cid]=currentConv?._readerBacked?{sourceIndex:msg._sourceIndex}:mdRaw;
   const copyBtn=plain?'<button class="msgcopy" data-ui-click="copy-message" data-ui-value="'+cid+'" title="'+t('复制这条消息')+'"><span class="ui-icon" aria-hidden="true">'+UI_ICONS.copy+'</span></button>':'';
   const pMeta=platformMeta(msg.sourcePlatform||currentConv?.sourcePlatform||'claude');
   const isAssistantLike=msg.sender!=='human';
   const avatarLabel=role==='human'?t('你'):pMeta.avatar;
   const nameLabel=msg.sender==='human'?t('你'):!msg.sender||msg.sender==='assistant'?pMeta.name:msg.sender;
+  const hasSteps=isAssistantLike&&(inner.includes('step-group')||inner.includes('think-block'));
+  let footerHtml='';
+  if(isAssistantLike&&(plain||mdRaw||hasSteps)){
+    footerHtml='<div class="msg-footer">'
+      +(plain?'<button type="button" class="msg-foot-btn" data-ui-click="copy-message" data-ui-value="'+cid+'" title="'+escAttr(t('复制这条消息'))+'"><span class="ui-icon" aria-hidden="true">'+UI_ICONS.copy+'</span><span>'+esc(t('复制正文'))+'</span></button>':'')
+      +(mdRaw?'<button type="button" class="msg-foot-btn" data-ui-click="msg-copy-md" data-ui-value="'+cid+'" title="'+escAttr(t('复制 Markdown'))+'"><span class="ui-icon" aria-hidden="true">'+UI_ICONS.markdown+'</span><span>'+esc(t('复制 Markdown'))+'</span></button>':'')
+      +(hasSteps?'<button type="button" class="msg-foot-btn" data-ui-click="msg-toggle-steps"><span class="ui-icon" aria-hidden="true">'+UI_ICONS.steps+'</span><span>'+esc(t('展开/收起步骤'))+'</span></button>':'')
+      +'</div>';
+  }
   return '<div class="msg-wrap '+role+(isAssistantLike&&pMeta.id!=='claude'?' '+pMeta.id:'')+'"'+(Number.isInteger(msg._sourceIndex)?' data-source-index="'+msg._sourceIndex+'"':'')+'>'
     +'<div class="msg-avatar">'+renderAvatarHtml(role,pMeta,avatarLabel)+'</div>'
     +'<div class="msg-body">'
     +'<div class="msg-meta"><span class="msg-name">'+esc(nameLabel)+'</span><span>'+time+'</span>'+brNav+copyBtn+'</div>'
     +'<div class="msg-content">'+inner+'</div>'
+    +footerHtml
     +'</div></div>';
 }
 
@@ -6904,7 +7416,8 @@ function renderStepGroup(entries){
       const label=t(b.summaries===true?'思考摘要':'思考过程')+(statuses?' · '+statuses:'');
       const prose=b._thinkingHtml||(b.thinking?renderMd(b.thinking):'<span style="color:var(--text3)">'+esc(t('无导出的思考正文'))+'</span>');
       const extra=b.summaries&&b.summaries!==true?'<pre>'+esc(JSON.stringify(b.summaries,null,2))+'</pre>':'';
-      rail+='<div class="step-node kind-think"><div class="step-think-card"><div class="step-node-label">'+esc(label)+'</div><div class="step-think-prose"'+(b._field?' data-reader-field="'+escAttr(b._field)+'"':'')+'>'+prose+extra+'</div></div></div>';
+      const tag=(b.summaries===true||statuses)?'<div class="step-node-status-tag">'+esc(label)+'</div>':'';
+      rail+='<div class="step-node kind-think"><div class="step-think-card">'+tag+'<div class="step-think-prose"'+(b._field?' data-reader-field="'+escAttr(b._field)+'"':'')+'>'+prose+extra+'</div></div></div>';
     }else{
       const u=node.use,r=node.result;
       const isErr=!!r?.is_error;
@@ -6913,6 +7426,7 @@ function renderStepGroup(entries){
       const snip=toolCallSnippet(u);
       const statusCls=r?(isErr?'err':'ok'):'call';
       const statusText=r?(isErr?t('出错'):t('已完成')):t('调用');
+      const statusIcon=r?(isErr?UI_ICONS.alert:UI_ICONS.check):'';
       let body='';
       if(u){
         const inp=u.input?JSON.stringify(u.input,null,2):'';
@@ -6925,10 +7439,10 @@ function renderStepGroup(entries){
       rail+='<div class="step-node'+(isErr?' kind-error':'')+'"><div class="step-tool-card">'
         +'<button type="button" class="collapsible-header step-tool-head">'
         +'<svg class="step-chev" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 2l4 4-4 4"/></svg>'
-        +'<span class="ui-icon" aria-hidden="true">'+UI_ICONS.tool+'</span>'
+        +'<span class="ui-icon" aria-hidden="true">'+stepToolIcon(nm)+'</span>'
         +'<span class="step-tool-title">'+esc(nm)+(intg?' ('+esc(intg)+')':'')+'</span>'
         +(snip?'<span class="step-tool-snippet">'+esc(snip)+'</span>':'')
-        +'<span class="step-status '+statusCls+'">'+esc(statusText)+'</span>'
+        +'<span class="step-status '+statusCls+'">'+(statusIcon?'<span class="ui-icon" aria-hidden="true">'+statusIcon+'</span>':'')+esc(statusText)+'</span>'
         +'</button>'
         +'<div class="step-tool-body" style="display:none">'+(body||'<span style="color:var(--text3)">'+esc(t('无内容'))+'</span>')+'</div>'
         +'</div></div>';
@@ -7007,17 +7521,41 @@ function toggleSidebar(){
   localStorage.setItem('cv-sidebar-collapsed',next?'1':'0');
   applySidebarState();
 }
+let activePromptIdx=0,_minimapRaf=0;
+function syncActivePromptTick(){
+  const container=document.getElementById('messages');if(!container)return;
+  const humans=[...container.querySelectorAll('.msg-wrap.human')];
+  if(!humans.length)return;
+  const anchor=container.scrollTop+Math.min(180,container.clientHeight*0.32);
+  let activeIdx=0;
+  for(let i=0;i<humans.length;i++){
+    if(humans[i].offsetTop<=anchor)activeIdx=i;
+    else break;
+  }
+  activePromptIdx=activeIdx;
+  document.querySelectorAll('#prompt-minimap .minimap-tick').forEach((n,i)=>n.classList.toggle('active',i===activeIdx));
+  document.querySelectorAll('#prompt-outline-list .prompt-outline-item').forEach((n,i)=>n.classList.toggle('active',i===activeIdx));
+}
 function refreshPromptOutline(){
-  const list=document.getElementById('prompt-outline-list'),btnCount=document.getElementById('outline-btn-count'),headCount=document.getElementById('prompt-outline-count');
+  const list=document.getElementById('prompt-outline-list'),btnCount=document.getElementById('outline-btn-count'),headCount=document.getElementById('prompt-outline-count'),minimap=document.getElementById('prompt-minimap');
   if(!list)return;
   const humans=[...document.querySelectorAll('#messages .msg-wrap.human')];
   if(btnCount)btnCount.textContent=String(humans.length);
   if(headCount)headCount.textContent=String(humans.length);
-  list.innerHTML=humans.map((node,idx)=>{
+  const items=humans.map((node,idx)=>{
     const raw=(node.querySelector('.msg-content')?.textContent||'').replace(/\s+/g,' ').trim();
-    const text=raw?(raw.length>72?raw.slice(0,72)+'…':raw):t('未知提问');
-    return '<button type="button" class="prompt-outline-item" data-ui-click="jump-prompt" data-ui-value="'+idx+'"><span class="prompt-outline-num">#'+(idx+1)+'</span><span class="prompt-outline-text">'+esc(text)+'</span></button>';
-  }).join('');
+    const short=raw?(raw.length>72?raw.slice(0,72)+'…':raw):t('未知提问');
+    const tip=raw?(raw.length>42?raw.slice(0,42)+'…':raw):t('未知提问');
+    return {idx,short,tip};
+  });
+  list.innerHTML=items.map(({idx,short})=>'<button type="button" class="prompt-outline-item" data-ui-click="jump-prompt" data-ui-value="'+idx+'"><span class="prompt-outline-num">#'+(idx+1)+'</span><span class="prompt-outline-text">'+esc(short)+'</span></button>').join('');
+  if(minimap){
+    const showMinimap=items.length>1&&(currentView==='convs'||currentView==='design')&&!!currentConv;
+    minimap.style.display=showMinimap?'flex':'none';
+    minimap.setAttribute('aria-hidden',showMinimap?'false':'true');
+    minimap.innerHTML=showMinimap?items.map(({idx,tip})=>'<button type="button" class="minimap-tick" data-ui-click="jump-prompt" data-ui-value="'+idx+'" aria-label="#'+(idx+1)+'"><span class="minimap-tooltip">#'+(idx+1)+' · '+esc(tip)+'</span></button>').join(''):'';
+  }
+  syncActivePromptTick();
 }
 function closePromptOutline(){
   const panel=document.getElementById('prompt-outline'),btn=document.getElementById('outline-btn');
@@ -7036,20 +7574,26 @@ function togglePromptOutline(ev){
 function jumpToPrompt(idx){
   const humans=[...document.querySelectorAll('#messages .msg-wrap.human')];
   const target=humans[idx];if(!target)return;
+  activePromptIdx=idx;
   target.scrollIntoView({block:'start',behavior:'smooth'});
   target.classList.remove('jump-highlight');void target.offsetWidth;target.classList.add('jump-highlight');
   setTimeout(()=>target.classList.remove('jump-highlight'),1600);
+  syncActivePromptTick();
   if(window.innerWidth<=640)closePromptOutline();
 }
 function updateQuickNav(){
-  const el=document.getElementById('quick-nav'),messages=document.getElementById('messages');
+  const el=document.getElementById('quick-nav'),messages=document.getElementById('messages'),minimap=document.getElementById('prompt-minimap');
   const isConversationView=currentView==='convs'||currentView==='design';
-  if(!el||!messages||!isConversationView||!currentConv){if(el)el.style.display='none';closePromptOutline();return;}
+  if(!el||!messages||!isConversationView||!currentConv){if(el)el.style.display='none';if(minimap)minimap.style.display='none';closePromptOutline();return;}
   const visible=messages.scrollHeight>messages.clientHeight+120||document.querySelectorAll('#messages .msg-wrap.human').length>1;
   el.style.display=visible?'flex':'none';
   if(visible)refreshPromptOutline();
+  else if(minimap)minimap.style.display='none';
 }
-document.getElementById('messages').addEventListener('scroll',updateQuickNav,{passive:true});
+document.getElementById('messages').addEventListener('scroll',()=>{
+  if(_minimapRaf)return;
+  _minimapRaf=requestAnimationFrame(()=>{_minimapRaf=0;syncActivePromptTick();});
+},{passive:true});
 function fullConversationHtml(conv){
   const linear=buildPath(conv.chat_messages||[]);let html='',lastDate='';
   for(const msg of linear){
@@ -7093,7 +7637,7 @@ async function exportPDF(mode){
     const styles=[...document.querySelectorAll('style')].map(s=>s.textContent).join('\n');
     const title=esc(mode==='safe'?(conv._exportTitle||t('安全导出')):(conv.name||t('对话'))),meta=esc(fmtDate(conv.created_at)+' · '+(conv.message_count??(conv.chat_messages||[]).length)+t('条消息'));
     const scp=redaction&&redaction.style==='scp';const scpCss=scp?'body:before{content:"CONFIDENTIAL";position:fixed;z-index:0;left:8%;top:43%;font:900 72px/1 system-ui;color:rgba(125,0,0,.075);transform:rotate(-28deg);letter-spacing:.12em;pointer-events:none}.classified-badge{position:fixed;z-index:20;right:24px;top:20px;padding:9px 13px;border:3px double #790000;border-radius:8px;color:#790000;background:#fff;font:800 11px/1.25 system-ui;letter-spacing:.12em;text-align:center;transform:rotate(3deg)}':'';const badge=scp?'<div class="classified-badge">🔒 CLASSIFIED<br>CONFIDENTIAL</div>':'';
-    popup.document.open();popup.document.write('<!doctype html><html><head><meta charset="utf-8"><title>'+title+'</title><style>'+styles+'\nbody{display:block!important;background:#fff!important;color:#222!important;overflow:visible!important}.pdf-page{position:relative;z-index:1;max-width:820px;margin:0 auto;padding:24px}.pdf-title{font-size:22px;margin:0 0 4px}.pdf-meta{font-size:12px;color:#666;margin-bottom:20px}.pdf-actions{margin-bottom:16px}.pdf-conversation .msg-wrap{break-inside:avoid;page-break-inside:avoid}.pdf-conversation .msg-content{max-width:none}.pdf-conversation iframe.vhtml{width:100%;min-height:240px}.pdf-conversation .vdl,.pdf-conversation .msgcopy,.pdf-conversation .brnav,.pdf-conversation .load-earlier-wrap{display:none!important}'+scpCss+'@media print{.pdf-actions{display:none}.pdf-page{padding:0}.pdf-conversation details.vsrc{display:none}}<\/style></head><body>'+badge+'<main class="pdf-page"><h1 class="pdf-title">'+title+'</h1><div class="pdf-meta">'+meta+'</div><button class="pdf-actions" id="pdf-print">'+t('打印 / 另存为 PDF')+'</button><div class="pdf-conversation">'+conversationHtml+'</div></main></body></html>');popup.document.close();popup.document.getElementById('pdf-print').addEventListener('click',()=>popup.print());setTimeout(()=>{if(!popup.closed)popup.print();},900);
+    popup.document.open();popup.document.write('<!doctype html><html><head><meta charset="utf-8"><title>'+title+'</title><style>'+styles+'\nbody{display:block!important;background:#fff!important;color:#222!important;overflow:visible!important}.pdf-page{position:relative;z-index:1;max-width:820px;margin:0 auto;padding:24px}.pdf-title{font-size:22px;margin:0 0 4px}.pdf-meta{font-size:12px;color:#666;margin-bottom:20px}.pdf-actions{margin-bottom:16px}.pdf-conversation .msg-wrap{break-inside:avoid;page-break-inside:avoid}.pdf-conversation .msg-content{max-width:none}.pdf-conversation iframe.vhtml{width:100%;min-height:240px}.pdf-conversation .vdl,.pdf-conversation .msgcopy,.pdf-conversation .msg-footer,.pdf-conversation .brnav,.pdf-conversation .load-earlier-wrap{display:none!important}'+scpCss+'@media print{.pdf-actions{display:none}.pdf-page{padding:0}.pdf-conversation details.vsrc{display:none}}<\/style></head><body>'+badge+'<main class="pdf-page"><h1 class="pdf-title">'+title+'</h1><div class="pdf-meta">'+meta+'</div><button class="pdf-actions" id="pdf-print">'+t('打印 / 另存为 PDF')+'</button><div class="pdf-conversation">'+conversationHtml+'</div></main></body></html>');popup.document.close();popup.document.getElementById('pdf-print').addEventListener('click',()=>popup.print());setTimeout(()=>{if(!popup.closed)popup.print();},900);
   }catch(err){popup.close();console.error('PDF export',err);alert(errorMessage(err));}
 }
 
@@ -7144,14 +7688,15 @@ function configureMarked(){if(markedConfigured||typeof marked==='undefined')retu
 // ── 单条消息纯文本复制 ──
 const MSGTEXT={};let _mid=0;
 function copyMsg(id,btn){
-  const t=MSGTEXT[id];if(t==null)return;if(typeof t==='object'){featureRequest('reader','copy',{sourceIndex:t.sourceIndex}).then(result=>{MSGTEXT[id]=result.text;copyMsg(id,btn);}).catch(error=>console.warn(error));return;}
-  const restore=()=>{btn.innerHTML='<span class="ui-icon" aria-hidden="true">'+UI_ICONS.copy+'</span>';};
-  const done=()=>{btn.textContent='✓';setTimeout(restore,1500);};
+  const val=MSGTEXT[id];if(val==null)return;if(typeof val==='object'){featureRequest('reader','copy',{sourceIndex:val.sourceIndex}).then(result=>{MSGTEXT[id]=result.text;copyMsg(id,btn);}).catch(error=>console.warn(error));return;}
+  const oldHtml=btn.innerHTML,isFoot=btn.classList.contains('msg-foot-btn');
+  const restore=()=>{btn.innerHTML=oldHtml;btn.classList.remove('copied');};
+  const done=()=>{if(isFoot){btn.classList.add('copied');btn.innerHTML='<span class="ui-icon" aria-hidden="true">'+UI_ICONS.check+'</span><span>'+t('已复制')+'</span>';}else btn.textContent='✓';setTimeout(restore,1500);};
   const fail=()=>{btn.textContent='⚠️';setTimeout(restore,1500);};
   try{
-    if(navigator.clipboard&&typeof navigator.clipboard.writeText==='function') navigator.clipboard.writeText(t).then(done).catch(()=>fallbackCopy(t)?done():fail());
-    else if(!fallbackCopy(t))fail(); else done();
-  }catch(e){if(!fallbackCopy(t))fail();else done();}
+    if(navigator.clipboard&&typeof navigator.clipboard.writeText==='function') navigator.clipboard.writeText(val).then(done).catch(()=>fallbackCopy(val)?done():fail());
+    else if(!fallbackCopy(val))fail(); else done();
+  }catch(e){if(!fallbackCopy(val))fail();else done();}
 }
 function fallbackCopy(t){try{const ta=document.createElement('textarea');ta.value=t;ta.style.position='fixed';ta.style.opacity='0';document.body.appendChild(ta);ta.focus();ta.select();const ok=document.execCommand('copy');ta.remove();return ok;}catch(e){return false;}}
 
@@ -7218,6 +7763,126 @@ function copyCode(btn,id){
   navigator.clipboard.writeText(el.innerText).then(markCopied).catch(()=>{if(fallbackCopy(el.innerText))markCopied();});
 }
 
+const MSGMARKDOWN={};
+function msgToMarkdown(msg){
+  if(!msg||typeof msg!=='object')return '';
+  const blocks=Array.isArray(msg.content)?msg.content:[];
+  const parts=[];
+  for(const b of blocks){
+    if(!b||typeof b!=='object')continue;
+    if(b.type==='text'&&b.text)parts.push(String(b.text));
+  }
+  if(!parts.length&&msg.text)parts.push(String(msg.text));
+  for(const f of(msg.files||[])){
+    if(f?.name&&f.content!=null){
+      const ext=(f.name.split('.').pop()||'').toLowerCase();
+      parts.push('\n<!-- file: '+f.name+' -->\n```'+ext+'\n'+String(f.content)+'\n```');
+    }
+  }
+  return parts.join('\n\n').trim();
+}
+function copyMsgMarkdown(id,btn){
+  const val=MSGMARKDOWN[id];if(val==null)return;
+  if(typeof val==='object'){featureRequest('reader','copy',{sourceIndex:val.sourceIndex}).then(result=>{MSGMARKDOWN[id]=result.text;copyMsgMarkdown(id,btn);}).catch(error=>console.warn(error));return;}
+  const restore=()=>{btn.innerHTML='<span class="ui-icon" aria-hidden="true">'+UI_ICONS.markdown+'</span><span>'+t('复制 Markdown')+'</span>';btn.classList.remove('copied');};
+  const done=()=>{btn.classList.add('copied');btn.innerHTML='<span class="ui-icon" aria-hidden="true">'+UI_ICONS.check+'</span><span>'+t('已复制')+'</span>';setTimeout(restore,1500);};
+  const fail=()=>{btn.textContent='⚠️';setTimeout(restore,1500);};
+  try{
+    if(navigator.clipboard&&typeof navigator.clipboard.writeText==='function')navigator.clipboard.writeText(val).then(done).catch(()=>fallbackCopy(val)?done():fail());
+    else if(!fallbackCopy(val))fail();else done();
+  }catch(e){if(!fallbackCopy(val))fail();else done();}
+}
+
+let canvasState=null,canvasBlobUrl='';
+function openCanvas(spec){
+  if(!spec)return;
+  const kind=spec.kind||'code',lang=(spec.lang||'').toLowerCase();
+  const hasPreview=spec.hasPreview!=null?!!spec.hasPreview:(kind==='html'||kind==='svg'||kind==='mermaid'||lang==='html'||lang==='htm'||lang==='svg');
+  const normKind=kind==='mermaid'?'mermaid':(kind==='svg'||lang==='svg')?'svg':(kind==='html'||lang==='html'||lang==='htm')?'html':'code';
+  canvasState={kind:normKind,title:spec.title||lang||'Canvas',code:String(spec.code||''),lang,ext:spec.ext||'',hasPreview,tab:hasPreview?(spec.tab||'preview'):'code'};
+  const wb=document.getElementById('workspace-body'),pane=document.getElementById('canvas-pane');
+  if(wb)wb.classList.add('canvas-open');
+  if(pane)pane.setAttribute('aria-hidden','false');
+  const kEl=document.getElementById('canvas-kind'),tEl=document.getElementById('canvas-title');
+  if(kEl)kEl.textContent=normKind==='mermaid'?'Mermaid':normKind==='svg'?'SVG':normKind==='html'?'HTML':(lang||'Code').toUpperCase();
+  if(tEl)tEl.textContent=canvasState.title;
+  const pBtn=pane&&pane.querySelector('.canvas-tab-btn[data-ui-value="preview"]');
+  if(pBtn){pBtn.style.display=hasPreview?'':'none';}
+  renderCanvasBody();
+}
+function setCanvasTab(tab){
+  if(!canvasState)return;
+  if(tab==='preview'&&!canvasState.hasPreview)return;
+  canvasState.tab=tab;
+  renderCanvasBody();
+}
+function closeCanvas(){
+  if(canvasBlobUrl){try{URL.revokeObjectURL(canvasBlobUrl);}catch(e){}canvasBlobUrl='';}
+  canvasState=null;
+  const wb=document.getElementById('workspace-body'),pane=document.getElementById('canvas-pane'),body=document.getElementById('canvas-body');
+  if(wb)wb.classList.remove('canvas-open');
+  if(pane)pane.setAttribute('aria-hidden','true');
+  if(body)body.textContent='';
+}
+function renderCanvasBody(){
+  const body=document.getElementById('canvas-body');if(!body||!canvasState)return;
+  if(canvasBlobUrl){try{URL.revokeObjectURL(canvasBlobUrl);}catch(e){}canvasBlobUrl='';}
+  document.querySelectorAll('.canvas-tab-btn').forEach(b=>b.classList.toggle('active',b.dataset.uiValue===canvasState.tab));
+  body.textContent='';
+  if(canvasState.tab==='preview'&&canvasState.hasPreview){
+    if(canvasState.kind==='mermaid'){
+      body.innerHTML='<div class="canvas-mermaid-stage"><div class="mermaid">'+esc(canvasState.code)+'</div></div>';
+      const mEl=body.querySelector('.mermaid');if(mEl)renderMermaidNode(mEl);
+    }else{
+      const docHtml=visualDocument({kind:canvasState.kind==='svg'?'svg':'html',code:canvasState.code,title:canvasState.title});
+      canvasBlobUrl=URL.createObjectURL(new Blob([docHtml],{type:'text/html;charset=utf-8'}));
+      const frame=document.createElement('iframe');
+      frame.className='canvas-preview-frame';
+      frame.setAttribute('sandbox',canvasState.kind==='svg'?'':'allow-scripts');
+      frame.src=canvasBlobUrl;
+      body.appendChild(frame);
+    }
+    return;
+  }
+  const pre=document.createElement('pre');pre.className='canvas-code-view';
+  const codeEl=document.createElement('code');
+  if(canvasState.lang)codeEl.className='language-'+canvasState.lang;
+  if(canvasState.lang==='json'){codeEl.innerHTML=highlightJsonHtml(canvasState.code);codeEl.classList.add('hljs');}
+  else codeEl.textContent=canvasState.code;
+  pre.appendChild(codeEl);body.appendChild(pre);
+  void highlightWithin(body);
+}
+function downloadCanvas(){
+  if(!canvasState)return;
+  if(canvasState.kind==='mermaid'&&canvasState.tab==='preview'){
+    const svg=document.querySelector('#canvas-body .mermaid svg');
+    if(svg){void elementToPng(svg,canvasState.title||'mermaid');return;}
+  }
+  const ext=canvasState.ext||(canvasState.kind==='svg'?'svg':canvasState.kind==='html'?'html':canvasState.kind==='mermaid'?'mmd':(canvasState.lang||'txt'));
+  downloadBlob(new Blob([canvasState.code],{type:'text/plain;charset=utf-8'}),safeDownloadName(canvasState.title||'artifact',ext));
+}
+(function initCanvasResizer(){
+  const resizer=document.getElementById('canvas-resizer'),pane=document.getElementById('canvas-pane'),wb=document.getElementById('workspace-body');
+  if(!resizer||!pane||!wb)return;
+  resizer.addEventListener('mousedown',ev=>{
+    ev.preventDefault();
+    resizer.classList.add('dragging');
+    const frames=[...pane.querySelectorAll('iframe')];frames.forEach(f=>f.style.pointerEvents='none');
+    const onMove=e=>{
+      const rect=wb.getBoundingClientRect();
+      const maxW=Math.max(360,rect.width*0.72),minW=Math.min(320,rect.width*0.4);
+      const w=Math.max(minW,Math.min(maxW,rect.right-e.clientX));
+      pane.style.width=Math.round(w)+'px';
+    };
+    const onUp=()=>{
+      resizer.classList.remove('dragging');
+      frames.forEach(f=>f.style.pointerEvents='');
+      window.removeEventListener('mousemove',onMove);window.removeEventListener('mouseup',onUp);
+    };
+    window.addEventListener('mousemove',onMove);window.addEventListener('mouseup',onUp);
+  });
+})();
+
 function toggleTheme(){
   const isDark=document.documentElement.getAttribute('data-theme')==='dark';
   const newTheme=isDark?'light':'dark';
@@ -7227,7 +7892,12 @@ function toggleTheme(){
 function applyTheme(theme){
   const dark=theme==='dark';
   document.documentElement.setAttribute('data-theme',dark?'dark':'');
-  document.getElementById('theme-btn').textContent=dark?'☀️':'🌙';
+  const btn=document.getElementById('theme-btn');
+  if(btn){
+    btn.innerHTML='<span class="ui-icon" aria-hidden="true">'+(dark?UI_ICONS.sun:UI_ICONS.moon)+'</span>';
+    btn.title=t(dark?'切换浅色主题':'切换深色主题');
+    btn.setAttribute('aria-pressed',dark?'true':'false');
+  }
   if(document.getElementById('hljs-theme'))ensureHighlightTheme();
 }
 // Init: load saved preference, default = light
@@ -7236,10 +7906,34 @@ function applyTheme(theme){
   applyTheme(saved);
   applyLanguage(currentLang);
   applySidebarState();
-  // Keyboard navigation: j/k or ↑↓ to move between conversations (convs tab only)
+  // Keyboard navigation & workspace shortcuts
   document.addEventListener('keydown',e=>{
     if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='b'){e.preventDefault();toggleSidebar();return;}
-    if(['INPUT','TEXTAREA'].includes(document.activeElement.tagName))return;
+    if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='f'){
+      e.preventDefault();
+      const cs=document.getElementById('csearch');
+      const target=(currentConv&&cs&&cs.style.display!=='none')?cs:document.getElementById('search');
+      if(target){target.focus();target.select?.();}
+      return;
+    }
+    if(e.key==='Escape'){
+      const outline=document.getElementById('prompt-outline');if(outline&&outline.classList.contains('open')){closePromptOutline();return;}
+      const expMenu=document.getElementById('export-menu');if(expMenu&&expMenu.classList.contains('open')){closeExportMenu();return;}
+      const wb=document.getElementById('workspace-body');if(wb&&wb.classList.contains('canvas-open')){closeCanvas();return;}
+      if(summaryVisible){toggleSummary();return;}
+    }
+    const ae=document.activeElement;
+    if(ae&&(['INPUT','TEXTAREA','SELECT'].includes(ae.tagName)||ae.isContentEditable))return;
+    if(e.key==='/'){e.preventDefault();const s=document.getElementById('search');if(s){s.focus();s.select?.();}return;}
+    if(e.key==='['||e.key===']'){
+      const humans=[...document.querySelectorAll('#messages .msg-wrap.human')];
+      if(humans.length){
+        e.preventDefault();
+        const nextIdx=Math.max(0,Math.min(humans.length-1,(activePromptIdx<0?0:activePromptIdx)+(e.key===']'?1:-1)));
+        jumpToPrompt(nextIdx);
+      }
+      return;
+    }
     const onConvsTab=document.querySelectorAll('#conv-list [data-conv-uuid]').length>0;
     if(e.key==='ArrowDown'||e.key==='j'){if(onConvsTab){e.preventDefault();navigateConv(1);}}
     else if(e.key==='ArrowUp'||e.key==='k'){if(onConvsTab){e.preventDefault();navigateConv(-1);}}
@@ -7280,6 +7974,55 @@ document.addEventListener('click',event=>{
     case 'jump-bottom':jumpMessages('bottom');break;
     case 'toggle-outline':togglePromptOutline(event);break;
     case 'jump-prompt':jumpToPrompt(Number(value));break;
+    case 'canvas-tab':setCanvasTab(value);break;
+    case 'canvas-download':downloadCanvas();break;
+    case 'canvas-close':closeCanvas();break;
+    case 'open-canvas-inline':{
+      const vis=value?document.getElementById(value):el.closest('.visual');if(!vis)break;
+      let code='';try{code=decodeURIComponent(vis.dataset.vcode||'');}catch(e){code=vis.querySelector('.vsrc pre code')?.textContent||'';}
+      openCanvas({kind:vis.dataset.vkind||'html',title:vis.dataset.vtitle||'Artifact',code,hasPreview:true,tab:'preview'});
+      break;
+    }
+    case 'open-canvas-file':{
+      const entry=FILESTORE[value];if(!entry||entry.content==null)break;
+      const ext=(entry.name.split('.').pop()||'').toLowerCase();
+      const isVis=/^(?:html?|svg)$/i.test(ext);
+      openCanvas({kind:ext==='svg'?'svg':isVis?'html':'code',title:entry.name,code:entry.content,lang:ext,ext,hasPreview:isVis,tab:isVis?'preview':'code'});
+      break;
+    }
+    case 'code-canvas':{
+      const block=el.closest('.code-block'),codeEl=block&&block.querySelector('pre code');
+      if(!codeEl)break;
+      const lang=(block.querySelector('.code-lang')?.textContent||'').trim().toLowerCase();
+      const isVis=lang==='html'||lang==='htm'||lang==='svg';
+      openCanvas({kind:lang==='svg'?'svg':isVis?'html':'code',title:(lang||'code').toUpperCase()+' · '+t('代码块'),code:codeEl.textContent||'',lang,hasPreview:isVis,tab:isVis?'preview':'code'});
+      break;
+    }
+    case 'code-wrap':{
+      const block=el.closest('.code-block');if(!block)break;
+      const wrapped=block.classList.toggle('is-wrapped');
+      el.classList.toggle('active',wrapped);el.setAttribute('aria-pressed',wrapped?'true':'false');
+      break;
+    }
+    case 'code-lines':{
+      const block=el.closest('.code-block');if(!block)break;
+      const gutter=block.querySelector('.code-gutter'),codeEl=block.querySelector('pre code');
+      if(gutter&&codeEl&&!gutter.textContent){
+        const lines=(codeEl.textContent||'').split('\n');
+        const count=lines[lines.length-1]===''&&lines.length>1?lines.length-1:lines.length;
+        gutter.textContent=Array.from({length:Math.max(1,count)},(_,i)=>i+1).join('\n');
+      }
+      const shown=block.classList.toggle('show-lines');
+      el.classList.toggle('active',shown);el.setAttribute('aria-pressed',shown?'true':'false');
+      break;
+    }
+    case 'code-collapse':{
+      const block=el.closest('.code-block');if(!block)break;
+      const collapsed=block.classList.toggle('is-collapsed');
+      el.classList.toggle('active',!collapsed);
+      el.textContent=t(collapsed?'展开':'折叠');
+      break;
+    }
     case 'pick-stopwords':document.getElementById('custom-stopwords-input').click();break;
     case 'analytics-view':setAnalyticsView(value);break;
     case 'analytics-bucket':selectAnalyticsBucket(Number(value));break;
@@ -7301,8 +8044,39 @@ document.addEventListener('click',event=>{
     case 'attachment':chooseAttachmentMedia(value);break;
     case 'branch':switchBranch(value,Number(el.dataset.uiIndex),event);break;
     case 'copy-message':copyMsg(value,el);break;
+    case 'msg-copy-md':copyMsgMarkdown(value,el);break;
+    case 'msg-toggle-steps':{
+      const wrap=el.closest('.msg-wrap');if(!wrap)break;
+      const heads=[...wrap.querySelectorAll('.step-pill,.think-header')];
+      if(!heads.length)break;
+      const shouldOpen=heads.some(h=>h.nextElementSibling&&h.nextElementSibling.style.display==='none');
+      heads.forEach(h=>{
+        const body=h.nextElementSibling;
+        if(!body)return;
+        body.style.display=shouldOpen?'':'none';
+        h.classList.toggle('open',shouldOpen);
+        if(shouldOpen)void highlightWithin(body);
+      });
+      break;
+    }
     case 'copy-code':copyCode(el,value);break;
   }
+});
+document.addEventListener('mouseover',event=>{
+  const node=event.target.closest('.project-graph .graph-node[data-gcol]');
+  if(!node)return;
+  const graph=node.closest('.project-graph');if(!graph)return;
+  const key=(node.dataset.gcol||'')+':'+(node.dataset.gidx||'');
+  graph.querySelectorAll('.project-graph-svg path').forEach(p=>{
+    const hit=p.dataset.gfrom===key||p.dataset.gto===key;
+    p.classList.toggle('is-hot',hit);
+  });
+});
+document.addEventListener('mouseout',event=>{
+  const node=event.target.closest('.project-graph .graph-node[data-gcol]');
+  if(!node||node.contains(event.relatedTarget))return;
+  const graph=node.closest('.project-graph');
+  if(graph)graph.querySelectorAll('.project-graph-svg path.is-hot').forEach(p=>p.classList.remove('is-hot'));
 });
 document.addEventListener('input',event=>{
   const el=event.target;

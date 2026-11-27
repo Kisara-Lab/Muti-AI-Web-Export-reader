@@ -217,6 +217,14 @@ function configureMarked(){
   markedConfigured=true;
   marked.setOptions({breaks:true,gfm:true});
   const renderer=new marked.Renderer();
+  const ALERT_ICONS={
+    note:'<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="8" r="6"/><path d="M8 7v4M8 5h.01"/></svg>',
+    tip:'<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M6 12.5h4M6.5 14.5h3M5.5 10.2C4.3 9.3 3.8 8 3.8 6.5a4.2 4.2 0 1 1 8.4 0c0 1.5-.5 2.8-1.7 3.7-.4.3-.7.8-.7 1.3H6.2c0-.5-.3-1-.7-1.3z"/></svg>',
+    important:'<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3.5A1.5 1.5 0 0 1 4.5 2h7A1.5 1.5 0 0 1 13 3.5v8A1.5 1.5 0 0 1 11.5 13H6l-3 2V3.5z"/><path d="M8 5.2v3.3M8 10.6h.01"/></svg>',
+    warning:'<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M7.1 2.7L1.7 12a1 1 0 0 0 .9 1.5h10.8a1 1 0 0 0 .9-1.5L8.9 2.7a1 1 0 0 0-1.8 0z"/><path d="M8 6.3v3M8 11.4h.01"/></svg>',
+    caution:'<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5.5 2h5l3.5 3.5v5L10.5 14h-5L2 10.5v-5L5.5 2z"/><path d="M8 5.4v3.4M8 11h.01"/></svg>'
+  };
+  const ALERT_LABELS={note:'Note',tip:'Tip',important:'Important',warning:'Warning',caution:'Caution'};
   renderer.html=function(html){
     const raw=html&&typeof html==='object'?html.text:html;
     return esc(raw==null?'':raw);
@@ -230,6 +238,14 @@ function configureMarked(){
     if(src)return '<img src="'+escAttr(src)+'" alt="'+escAttr(label)+'"'+(token.title?' title="'+escAttr(token.title)+'"':'')+'>';
     return '<span class="img-placeholder">🖼 '+esc(t('外部图片不会自动加载'))+' · '+importedLink(token.href,label)+'</span>';
   };
+  renderer.blockquote=function(token){
+    const body=typeof token==='string'?token:this.parser.parse(token?.tokens||[]);
+    const match=body.match(/^\s*<p>\s*\[!(NOTE|TIP|IMPORTANT|WARNING|CAUTION)\](?:[ \t]*<br\s*\/?>|[ \t]*\n|[ \t]+|(?=<\/p>))([\s\S]*)$/i);
+    if(!match)return '<blockquote>'+body+'</blockquote>\n';
+    const kind=match[1].toLowerCase();
+    const cleaned=('<p>'+match[2]).replace(/^<p>\s*<\/p>\s*/,'');
+    return '<div class="md-alert md-alert-'+kind+'"><div class="md-alert-title"><span class="md-alert-icon" aria-hidden="true">'+(ALERT_ICONS[kind]||ALERT_ICONS.note)+'</span><span>'+(ALERT_LABELS[kind]||kind)+'</span></div><div class="md-alert-body">'+cleaned+'</div></div>\n';
+  };
   renderer.code=function(code,lang){
     // marked v5+ passes a token object {text,lang,escaped}; older versions pass (code,lang) directly
     let rawCode, l;
@@ -242,17 +258,27 @@ function configureMarked(){
     }
     l=String(l).split(/\s/,1)[0];
     const safeCode=esc(rawCode);
-    if(l==='mermaid')return '<div class="visual"><div class="mermaid">'+safeCode+'</div><details class="vsrc"><summary>'+t('查看 Mermaid 源码')+'</summary><pre><code>'+safeCode+'</code></pre></details></div>';
+    if(l==='mermaid')return '<div class="visual" data-vkind="mermaid" data-vcode="'+escAttr(encodeURIComponent(rawCode))+'" data-vtitle="'+escAttr(t('流程图'))+'"><div class="vcap"><span class="vtitle">'+esc(t('流程图'))+'</span><span class="vcap-actions"><button class="vdl" type="button" data-ui-click="open-canvas-inline">'+esc(t('画布'))+'</button></span></div><div class="mermaid">'+safeCode+'</div><details class="vsrc"><summary>'+t('查看 Mermaid 源码')+'</summary><pre><code>'+safeCode+'</code></pre></details></div>';
     const id='cb_'+Math.random().toString(36).slice(2);codes.set(id,rawCode);
     const highlighted=rawCode.length<=65536&&typeof hljs!=='undefined'&&l&&hljs.getLanguage(l)
       ?hljs.highlight(rawCode,{language:l}).value
       :safeCode;
-    return '<div class="code-block">'
+    const lineCount=rawCode?rawCode.replace(/\n$/,'').split('\n').length:0;
+    const langKey=(l||'plain').toLowerCase();
+    return '<div class="code-block" data-code-lines="'+lineCount+'">'
       +'<div class="code-block-header">'
+      +'<span class="code-lang-dot" data-lang="'+escAttr(langKey)+'" aria-hidden="true"></span>'
       +'<span class="code-lang">'+esc(l)+'</span>'
-      +'<button class="copy-btn" data-ui-click="copy-code" data-ui-value="'+id+'">'+t('复制')+'</button>'
+      +'<div class="code-actions">'
+      +(lineCount?'<span class="code-line-count">'+lineCount+'L</span>':'')
+      +'<button type="button" class="code-action-btn" data-ui-click="code-wrap" aria-pressed="false" title="'+escAttr(t('自动换行'))+'">Wrap</button>'
+      +'<button type="button" class="code-action-btn" data-ui-click="code-lines" aria-pressed="false" title="'+escAttr(t('行号'))+'">#</button>'
+      +'<button type="button" class="code-action-btn" data-ui-click="code-canvas" data-ui-value="'+id+'" data-code-lang="'+escAttr(l)+'" title="'+escAttr(t('在画布中打开'))+'">Canvas</button>'
+      +(lineCount>32?'<button type="button" class="code-action-btn" data-ui-click="code-collapse" aria-expanded="true" title="'+escAttr(t('折叠代码'))+'">'+esc(t('折叠'))+'</button>':'')
+      +'<button type="button" class="copy-btn" data-ui-click="copy-code" data-ui-value="'+id+'">'+t('复制')+'</button>'
       +'</div>'
-      +'<pre><code id="'+id+'" class="'+(l?'language-'+escAttr(l):'')+'">'+highlighted+'</code></pre>'
+      +'</div>'
+      +'<div class="code-body"><div class="code-gutter" aria-hidden="true"></div><pre><code id="'+id+'" class="'+(l?'language-'+escAttr(l):'')+'">'+highlighted+'</code></pre></div>'
       +'</div>';
   };
   const baseTable=marked.Renderer.prototype.table;
