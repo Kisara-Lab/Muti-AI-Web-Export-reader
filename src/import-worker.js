@@ -128,7 +128,7 @@ function importWorkerMain(){
         }
         const entries=Object.keys(files).filter(n=>!files[n].dir&&!n.startsWith('__MACOSX/'));for(const name of entries){if(/^\/|^[A-Za-z]:/.test(name))throw new Error('Invalid export path');format.logicalPath(String(files[name].unsafeOriginalName||name).replace(/\\/g,'/').replace(/\/+/g,'/'));}
         let convs=entries.filter(n=>/(^|\/)conversations(?:-\d+)?\.json$/i.test(n)).sort((a,b)=>{const na=Number(/(\d+)\.json$/i.exec(a)?.[1]??-1),nb=Number(/(\d+)\.json$/i.exec(b)?.[1]??-1);return na-nb||a.localeCompare(b);});
-        const projects=[],memories=[],artifacts=[],users=[],logins=[],accounts=new Set(),mime=Object.create(null),resources=[],gpt=gptExportCore(),grok=typeof grokExportCore==='function'?grokExportCore():null;let legacyMemory=null,gptManifest=false;const designs=[];
+        const projects=[],memories=[],artifacts=[],users=[],logins=[],accounts=new Set(),mime=Object.create(null),resources=[],gpt=gptExportCore(),grok=typeof grokExportCore==='function'?grokExportCore():null,pplx=typeof perplexityExportCore==='function'?perplexityExportCore():null;let legacyMemory=null,gptManifest=false;const designs=[];
         if(files['export_manifest.json']){const manifest=parseJsonText(await files['export_manifest.json'].async('text')),shards=gpt.manifest(manifest,entries);if(shards){convs=shards;gptManifest=true;}}
         if(files['library_files.json']){
           const library=parseJsonText(await files['library_files.json'].async('text'));for(const item of Array.isArray(library)?library:[]){await check(current);const path=String(item.file_id||'')+'.dat';if(!files[path])continue;const declared=String(item.mime_type||''),header=await fileHeader(files[path]);const detected=detectMagicMime(header);mime[path]=detected||(/^(?:text\/plain|text\/markdown|application\/pdf|audio\/|image\/)/.test(declared)?declared==='text/plain'&&String(item.file_extension).toLowerCase()==='md'?'text/markdown':declared:'application/octet-stream');resources.push({packageId:id,path,name:String(item.file_name||path),mime:mime[path],fileId:String(item.file_id||''),altId:String(item.library_file_id||'')});}
@@ -160,12 +160,28 @@ function importWorkerMain(){
         for(const name of entries){await check(current);
           const baseName=name.split('/').pop();
           if(convs.includes(name)||auxSkip.has(name)||auxSkip.has(baseName))continue;
+          if(pplx&&/^(?:.*\/)?user-data-[^/]+\.xlsx$/i.test(name)){
+            try{
+              const wbBuf=files[name].file?await files[name].file.arrayBuffer():await files[name].async('arraybuffer');
+              const wbZip=await JSZip.loadAsync(wbBuf);
+              const workbookXml=wbZip.files['xl/workbook.xml']?await wbZip.files['xl/workbook.xml'].async('text'):'';
+              const sharedStringsXml=wbZip.files['xl/sharedStrings.xml']?await wbZip.files['xl/sharedStrings.xml'].async('text'):'';
+              const sheets=Object.create(null);
+              for(const sname of Object.keys(wbZip.files)){
+                if(/^xl\/worksheets\/sheet\d+\.xml$/i.test(sname))sheets[sname]=await wbZip.files[sname].async('text');
+              }
+              const parsedWb=pplx.parseWorkbook({workbookXml,sharedStringsXml,sheets});
+              users.push(...parsedWb.users);projects.push(...parsedWb.projects);for(const acc of parsedWb.accounts)accounts.add(acc);
+            }catch{}
+            continue;
+          }
           if(/\.md$/i.test(name)){
             const logical=name.replace(/^.*?(?=(?:areas|projects)\/)/,'');
             if(/^(?:areas\/|projects\/[^/]+\/)/.test(logical))memories.push(format.memory(logical,await files[name].async('text'),'',filename));continue;
           }
           if(!/\.json$/i.test(name))continue;
           let value;try{value=parseJsonText(await files[name].async('text'));}catch{if(/(^|\/)(?:projects\/|users\.json|login_history\.json|artifacts\/)/i.test(name))throw new Error('Invalid JSON: '+name);continue;}
+          if(pplx&&(pplx.isExport(value)||pplx.isConversation(value)||Array.isArray(value)&&value.length&&value.every(item=>pplx.isConversation(item)))){convs.push(name);continue;}
           if(grok&&grok.isBackendExport(value)){
             if(Array.isArray(value.projects))projects.push(...grok.convertProjects(value.projects));
             if(Array.isArray(value.conversations)&&value.conversations.length)convs.push(name);

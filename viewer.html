@@ -2,7 +2,7 @@
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-Vh6R/htcj1RtMzZm7GVsBu5UIK0P+dM0+OEANxmqDGs=' 'sha256-tMIvewdj4Er6it91vRKx68b9zhu5Sxm35MV7o9YOuqs=' https://cdn.jsdelivr.net https://unpkg.com https://cdnjs.cloudflare.com blob:; script-src-attr 'none'; style-src 'unsafe-inline' https://cdn.jsdelivr.net https://unpkg.com https://cdnjs.cloudflare.com; img-src blob: data: https: http:; font-src data:; connect-src blob:; worker-src blob:; frame-src blob:; object-src 'none'; base-uri 'none'; form-action 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-YNF6LWX4XIqlxfealgQBsJBOrPZdDMx2fNJPQaUp30o=' 'sha256-tMIvewdj4Er6it91vRKx68b9zhu5Sxm35MV7o9YOuqs=' https://cdn.jsdelivr.net https://unpkg.com https://cdnjs.cloudflare.com blob:; script-src-attr 'none'; style-src 'unsafe-inline' https://cdn.jsdelivr.net https://unpkg.com https://cdnjs.cloudflare.com; img-src blob: data: https: http:; font-src data:; connect-src blob:; worker-src blob:; frame-src blob:; object-src 'none'; base-uri 'none'; form-action 'none'">
 <meta name="referrer" content="no-referrer">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Multi-AI Web Export Reader — Local Claude, ChatGPT &amp; Grok Export Viewer</title>
@@ -476,7 +476,9 @@ mark.cs.active { background:var(--accent); color:#fff; }
 [data-theme=dark] .msg-wrap.gpt .msg-avatar { background:linear-gradient(135deg,#0e8c6d,#096b52); }
 .msg-wrap.grok .msg-avatar { background:linear-gradient(135deg,#1f2937,#0f172a); color:#fff; font-size:13px; }
 [data-theme=dark] .msg-wrap.grok .msg-avatar { background:linear-gradient(135deg,#334155,#1e293b); }
-.platform-bar { display:flex; align-items:center; gap:5px; margin-top:6px; }
+.msg-wrap.perplexity .msg-avatar { background:linear-gradient(135deg,#0e7490,#155e75); color:#fff; font-size:13px; }
+[data-theme=dark] .msg-wrap.perplexity .msg-avatar { background:linear-gradient(135deg,#0891b2,#0e7490); }
+.platform-bar { display:flex; align-items:center; gap:5px; margin-top:6px; flex-wrap:wrap; }
 .platform-btn { flex:1; padding:3px 7px; background:none; border:1px solid var(--border); border-radius:5px; color:var(--text3); font-size:11px; cursor:pointer; transition:all .15s; text-align:center; white-space:nowrap; }
 .platform-btn:hover { border-color:var(--border2); color:var(--text2); }
 .platform-btn.active { background:var(--accent); border-color:var(--accent); color:#fff; }
@@ -559,13 +561,14 @@ mark.cs.active { background:var(--accent); color:#fff; }
 .welcome-action-btn.primary { border-color:var(--accent); background:color-mix(in srgb,var(--accent) 12%,var(--bg2)); }
 .welcome-action-btn b { font-size:12.5px; color:var(--text); }
 .welcome-action-btn span { font-size:11px; color:var(--text3); line-height:1.45; }
-.platform-guide-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:10px; width:740px; max-width:94vw; margin-top:12px; text-align:left; }
+.platform-guide-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:10px; width:740px; max-width:94vw; margin-top:12px; text-align:left; }
 .platform-guide-card { padding:13px 14px; border:1px solid var(--border); border-radius:10px; background:var(--bg2); display:grid; gap:6px; align-content:start; }
 .platform-guide-head { display:flex; align-items:center; gap:7px; font-size:13px; font-weight:600; color:var(--text); }
 .platform-dot { width:10px; height:10px; border-radius:50%; flex-shrink:0; }
 .platform-dot.claude { background:linear-gradient(135deg,#d4a855,#c97b3a); }
 .platform-dot.gpt { background:linear-gradient(135deg,#10a37f,#0d8a6c); }
 .platform-dot.grok { background:linear-gradient(135deg,#334155,#0f172a); }
+.platform-dot.perplexity { background:linear-gradient(135deg,#0891b2,#155e75); }
 .platform-beta-badge { margin-left:auto; font-size:10px; font-weight:700; letter-spacing:.04em; text-transform:uppercase; padding:1px 6px; border-radius:999px; background:color-mix(in srgb,#d97706 16%,var(--bg3)); color:#b45309; border:1px solid color-mix(in srgb,#d97706 40%,var(--border)); }
 [data-theme=dark] .platform-beta-badge { color:#fbbf24; }
 .platform-guide-path { font-size:11.5px; color:var(--text2); background:var(--bg3); padding:5px 8px; border-radius:6px; font-family:ui-monospace,SFMono-Regular,Consolas,monospace; }
@@ -613,6 +616,7 @@ mark.cs.active { background:var(--accent); color:#fff; }
       <button type="button" class="platform-btn" data-platform="claude" aria-pressed="false">Claude</button>
       <button type="button" class="platform-btn" data-platform="gpt" aria-pressed="false">ChatGPT</button>
       <button type="button" class="platform-btn" data-platform="grok" aria-pressed="false" title="Grok (Beta Test)">Grok β</button>
+      <button type="button" class="platform-btn" data-platform="perplexity" aria-pressed="false" title="Perplexity (Beta Test)">Perplexity β</button>
     </div>
   </div>
   <div id="tabs">
@@ -707,6 +711,14 @@ mark.cs.active { background:var(--accent); color:#fff; }
           <ul>
             <li data-i18n="支持官方导出 ZIP（含 prod-grok-backend.json 与附件目录）及独立 JSON">支持官方导出 ZIP（含 prod-grok-backend.json 与附件目录）及独立 JSON</li>
             <li data-i18n="Beta Test：当前解析可能尚不完善，部分新字段或媒体格式仍在适配中">Beta Test：当前解析可能尚不完善，部分新字段或媒体格式仍在适配中</li>
+          </ul>
+        </section>
+        <section class="platform-guide-card">
+          <div class="platform-guide-head"><span class="platform-dot perplexity"></span><span data-i18n="Perplexity 导出指引">Perplexity 导出指引</span><span class="platform-beta-badge">Beta Test</span></div>
+          <div class="platform-guide-path">Settings → Account → Export Data</div>
+          <ul>
+            <li data-i18n="支持官方导出 ZIP（含 conversations-*.json 与 user-data-*.xlsx）及独立 JSON">支持官方导出 ZIP（含 conversations-*.json 与 user-data-*.xlsx）及独立 JSON</li>
+            <li data-i18n="Beta Test：当前解析可能尚不完善，部分引文来源或新字段仍在适配中">Beta Test：当前解析可能尚不完善，部分引文来源或新字段仍在适配中</li>
           </ul>
         </section>
       </div>
@@ -908,6 +920,9 @@ Object.assign(EN,{
   'Grok (xAI) 导出指引':'Grok (xAI) Export Guide',
   '支持官方导出 ZIP（含 prod-grok-backend.json 与附件目录）及独立 JSON':'Supports official export ZIPs (prod-grok-backend.json & assets) and standalone JSON',
   'Beta Test：当前解析可能尚不完善，部分新字段或媒体格式仍在适配中':'Beta Test: parsing may be incomplete; some fields or media formats are still evolving',
+  'Perplexity 导出指引':'Perplexity Export Guide',
+  '支持官方导出 ZIP（含 conversations-*.json 与 user-data-*.xlsx）及独立 JSON':'Supports official export ZIPs (conversations-*.json & user-data-*.xlsx) and standalone JSON',
+  'Beta Test：当前解析可能尚不完善，部分引文来源或新字段仍在适配中':'Beta Test: parsing may be incomplete; some citation sources or fields are still evolving',
   '纯本地运行 · 多平台混合工作区':'Local-only · Unified Multi-AI Workspace',
   '所有解析、全文搜索、统计分析与隐私脱敏都在浏览器本机完成，不会上传对话内容。你可以先导入 Claude，再追加 ChatGPT 与 Grok，在同一列表按平台筛选并导出安全分享版。':'All parsing, full-text search, analytics, and redaction run locally in your browser. Import Claude and append ChatGPT or Grok to filter by platform and export safely.',
   'AI 助手消息':'Assistant messages',
@@ -999,7 +1014,7 @@ function attachmentMedia(att,key){const name=att.file_name||att.filename||att.na
 function chooseAttachmentMedia(key){const input=document.createElement('input');input.type='file';input.accept='image/*';input.onchange=()=>{const file=input.files?.[0];if(!file)return;const item={name:file.name,url:URL.createObjectURL(file),type:file.type||'',source:'manual'};const old=ATTACHMENT_MEDIA.get(key);if(old?.source==='manual'&&old.url)try{URL.revokeObjectURL(old.url);}catch(e){}ATTACHMENT_MEDIA.set(key,item);if(currentConv)renderMessages(currentConv.chat_messages||[]);};input.click();}
 
 function isPackageImportFiles(files){
-  return files.some(f=>/\.zip$|\.md$|\.dat$/i.test(f.name)||/^(?:manifest.*|export_manifest|library_files|user|conversations-\d+|prod-grok-backend|prod-mc-auth-mgmt-api|prod-mc-billing)\.json$/i.test(f.name)||/\/(?:memories|artifacts|dalle-generations|prod-mc-asset-server)\//.test(f.webkitRelativePath||''))||(files.length===1&&/\.json$/i.test(files[0].name)&&!/^conversations\.json$/i.test(files[0].name));
+  return files.some(f=>/\.zip$|\.md$|\.dat$|\.xlsx$/i.test(f.name)||/^(?:manifest.*|export_manifest|library_files|user|conversations-[^/]+|prod-grok-backend|prod-mc-auth-mgmt-api|prod-mc-billing)\.json$/i.test(f.name)||/\/(?:memories|artifacts|dalle-generations|prod-mc-asset-server)\//.test(f.webkitRelativePath||''))||(files.length===1&&/\.json$/i.test(files[0].name)&&!/^conversations\.json$/i.test(files[0].name));
 }
 document.getElementById('file-input').addEventListener('change',async e=>{
   const files=[...e.target.files];
@@ -1835,6 +1850,14 @@ function grokExportCore(){
     return {id,name:name||'tool',input};
   }
 
+  function parseToolCards(xml){
+    const raw=string(xml);
+    if(!raw)return [];
+    const blocks=[...raw.matchAll(/<xai:tool_usage_card\b[^>]*>[\s\S]*?<\/xai:tool_usage_card>/gi)].map(m=>m[0]);
+    const listXml=blocks.length?blocks:[raw];
+    return listXml.map(parseToolCard).filter(Boolean);
+  }
+
   function* convertSteps(entry){
     if(!isConversation(entry))return entry;
     const conv=entry.conversation,originalId=string(conv.id);
@@ -1862,8 +1885,7 @@ function grokExportCore(){
         if(header)thinkingHeaders.push(header);
         const cards=Array.isArray(tagged.tool_usage_card)?tagged.tool_usage_card:(tagged.tool_usage_card?[tagged.tool_usage_card]:[]);
         for(const cardXml of cards){
-          const parsedCard=parseToolCard(cardXml);
-          if(parsedCard){
+          for(const parsedCard of parseToolCards(cardXml)){
             if(parsedCard.id)toolNamesById.set(parsedCard.id,parsedCard.name);
             blocks.push({type:'tool_use',id:parsedCard.id||undefined,name:parsedCard.name,input:parsedCard.input});
           }
@@ -2002,6 +2024,258 @@ function grokExportCore(){
   }
 
   return {isBackendExport,isConversation,isAuthExport,parseDate,parseMessage,parseToolCard,convert,convertAsync,convertProjects,convertAuth,safeUrl};
+}
+
+function perplexityExportCore(){
+  const root='00000000-0000-4000-8000-000000000000';
+  const list=value=>Array.isArray(value)?value:[];
+  const string=value=>typeof value==='string'?value:'';
+  const bounded=value=>string(value).slice(0,8192);
+  const safeUrl=value=>{try{const url=new URL(string(value));return /^(https?:)$/.test(url.protocol)&&!url.username&&!url.password?url.href:'';}catch{return '';}};
+
+  function parseDate(value){
+    if(value==null||value==='')return '';
+    if(typeof value==='number'&&Number.isFinite(value)&&value>0){
+      const ms=value>=1e11?value:value*1000;
+      if(ms>8.64e15)return '';
+      try{return new Date(ms).toISOString();}catch{return '';}
+    }
+    const raw=string(value).trim();
+    if(!raw)return '';
+    // Normalize space-separated timestamps or naive ISO strings as UTC
+    const normalized=/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}/.test(raw)?raw.replace(' ','T')+'Z':(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d+)?$/.test(raw)?raw+'Z':raw);
+    const ms=Date.parse(normalized);
+    if(!Number.isFinite(ms))return '';
+    try{return new Date(ms).toISOString();}catch{return '';}
+  }
+
+  function isConversation(value){
+    return !!(value&&typeof value==='object'&&!Array.isArray(value)&&typeof value.context_uuid==='string'&&value.context_uuid&&Array.isArray(value.entries));
+  }
+
+  function isExport(value){
+    if(!value||typeof value!=='object'||Array.isArray(value)||!Array.isArray(value.conversations))return false;
+    return value.conversations.length>0&&value.conversations.every(isConversation);
+  }
+
+  function* convertSteps(conv){
+    if(!isConversation(conv))return conv;
+    const originalId=string(conv.context_uuid);
+    if(!originalId)throw new Error('Perplexity conversation UUID missing');
+    const prefix='perplexity:'+originalId+':',messages=[];
+    const convMode=string(conv.mode).trim();
+    let prevUuid=root;
+
+    for(let index=0;index<conv.entries.length;index++){
+      const entry=conv.entries[index];
+      if(!entry||typeof entry!=='object')continue;
+      const entryId=string(entry.entry_uuid)||('entry-'+index);
+      const createdAt=parseDate(entry.created_at)||parseDate(conv.created_at);
+      const query=string(entry.query);
+      const answer=string(entry.answer);
+      const status=string(entry.query_status).trim();
+      const engineMode=string(entry.engine_mode).trim();
+      const model=string(entry.model).trim()||(engineMode?'perplexity-'+engineMode.toLowerCase():(convMode?'perplexity-'+convMode.toLowerCase():'perplexity'));
+
+      const qUuid=prefix+entryId+':q';
+      messages.push({
+        uuid:qUuid,
+        originalId:entryId,
+        sourcePlatform:'perplexity',
+        sender:'human',
+        created_at:createdAt,
+        updated_at:createdAt,
+        parent_message_uuid:prevUuid,
+        model:'',
+        content:query?[{type:'text',text:query}]:[],
+        attachments:[]
+      });
+      prevUuid=qUuid;
+
+      const aBlocks=[];
+      const rawSources=list(entry.sources||entry.web_results||entry.citations);
+      const searchItems=[],seenUrls=new Set();
+      for(const src of rawSources){
+        const url=safeUrl(src?.url||src?.link);
+        if(url&&!seenUrls.has(url)){
+          seenUrls.add(url);
+          searchItems.push({type:'web_search_result',title:bounded(src.title||src.name||url),url});
+        }
+      }
+      if(searchItems.length)aBlocks.push({type:'web_search_tool_result',content:searchItems});
+      if(answer){
+        aBlocks.push({type:'text',text:answer});
+      }else if(status&&status.toUpperCase()!=='COMPLETED'){
+        aBlocks.push({type:'text',text:'[Status: '+status+']'});
+      }
+
+      const aUuid=prefix+entryId+':a';
+      messages.push({
+        uuid:aUuid,
+        originalId:entryId,
+        sourcePlatform:'perplexity',
+        sender:'assistant',
+        created_at:createdAt,
+        updated_at:createdAt,
+        parent_message_uuid:prevUuid,
+        model,
+        content:aBlocks,
+        attachments:[]
+      });
+      prevUuid=aUuid;
+      yield;
+    }
+
+    const title=string(conv.context_title).trim()||string(conv.entries[0]?.query).trim().slice(0,80);
+    return {
+      uuid:'perplexity:'+originalId,
+      originalId,
+      sourcePlatform:'perplexity',
+      name:title,
+      summary:'',
+      created_at:parseDate(conv.created_at),
+      updated_at:parseDate(conv.updated_at)||parseDate(conv.created_at),
+      ...(string(conv.collection_uuid)?{collectionUuid:string(conv.collection_uuid)}:{}),
+      defaultModel:convMode?'perplexity-'+convMode.toLowerCase():'',
+      importWarnings:[],
+      chat_messages:messages
+    };
+  }
+
+  function convert(conv){const it=convertSteps(conv);let step;do{step=it.next();}while(!step.done);return step.value;}
+  async function convertAsync(conv,checkpoint){const it=convertSteps(conv);let step;do{step=it.next();if(!step.done)await checkpoint();}while(!step.done);return step.value;}
+
+  function unescapeXml(text){
+    return string(text)
+      .replace(/&#x([0-9a-fA-F]+);/g,(_,hex)=>String.fromCodePoint(parseInt(hex,16)))
+      .replace(/&#(\d+);/g,(_,dec)=>String.fromCodePoint(parseInt(dec,10)))
+      .replace(/&lt;/g,'<').replace(/&gt;/g,'>').replace(/&quot;/g,'"').replace(/&apos;/g,"'").replace(/&amp;/g,'&');
+  }
+
+  function colIndex(ref){
+    const m=/^([A-Z]+)/i.exec(string(ref));
+    if(!m)return -1;
+    let n=0;
+    for(const ch of m[1].toUpperCase())n=n*26+(ch.charCodeAt(0)-64);
+    return n-1;
+  }
+
+  function parseSharedStrings(xml){
+    const out=[];
+    if(!xml)return out;
+    for(const si of string(xml).matchAll(/<si\b[^>]*>([\s\S]*?)<\/si>/gi)){
+      let buf='';
+      for(const t of si[1].matchAll(/<t\b[^>]*>([\s\S]*?)<\/t>/gi))buf+=unescapeXml(t[1]);
+      out.push(buf);
+    }
+    return out;
+  }
+
+  function parseSheetRows(xml,sharedStrings=[]){
+    const rows=[];
+    for(const rowMatch of string(xml).matchAll(/<row\b[^>]*>([\s\S]*?)<\/row>/gi)){
+      const cells=[];
+      for(const cellMatch of rowMatch[1].matchAll(/<c\b([^>]*)>([\s\S]*?)<\/c>/gi)){
+        const attrs=cellMatch[1],body=cellMatch[2];
+        const rMatch=/\br="([^"]+)"/i.exec(attrs),tMatch=/\bt="([^"]+)"/i.exec(attrs);
+        const idx=rMatch?colIndex(rMatch[1]):cells.length;
+        const type=tMatch?tMatch[1]:'';
+        let value='';
+        if(type==='inlineStr'){
+          for(const t of body.matchAll(/<t\b[^>]*>([\s\S]*?)<\/t>/gi))value+=unescapeXml(t[1]);
+        }else{
+          const vMatch=/<v\b[^>]*>([\s\S]*?)<\/v>/i.exec(body);
+          const rawVal=vMatch?unescapeXml(vMatch[1]):'';
+          if(type==='s'){
+            const si=Number(rawVal);
+            value=Number.isInteger(si)&&sharedStrings[si]!==undefined?sharedStrings[si]:rawVal;
+          }else{
+            value=rawVal;
+          }
+        }
+        if(idx>=0)cells[idx]=value;
+      }
+      if(cells.length)rows.push(cells.map(v=>v===undefined?'':v));
+    }
+    return rows;
+  }
+
+  function rowsToObjects(rows){
+    if(rows.length<2)return [];
+    const headers=rows[0].map(h=>string(h).trim());
+    const result=[];
+    for(let i=1;i<rows.length;i++){
+      const obj=Object.create(null);
+      let hasValue=false;
+      for(let j=0;j<headers.length;j++){
+        if(!headers[j])continue;
+        const val=string(rows[i][j]);
+        if(val)hasValue=true;
+        obj[headers[j]]=val;
+      }
+      if(hasValue)result.push(obj);
+    }
+    return result;
+  }
+
+  function parseWorkbook({workbookXml='',sharedStringsXml='',sheets={}}={}){
+    const shared=parseSharedStrings(sharedStringsXml);
+    const sheetNames=[];
+    for(const m of string(workbookXml).matchAll(/<sheet\b[^>]*\bname="([^"]+)"[^>]*>/gi)){
+      sheetNames.push(unescapeXml(m[1]));
+    }
+    const byName=Object.create(null);
+    const orderedKeys=Object.keys(sheets).sort((a,b)=>{
+      const na=Number(/sheet(\d+)\.xml$/i.exec(a)?.[1]??0);
+      const nb=Number(/sheet(\d+)\.xml$/i.exec(b)?.[1]??0);
+      return na-nb||a.localeCompare(b);
+    });
+    orderedKeys.forEach((key,idx)=>{
+      const name=sheetNames[idx]||key;
+      byName[name]=rowsToObjects(parseSheetRows(sheets[key],shared));
+    });
+
+    const profile=byName['User Profile']?.[0]||null;
+    const prefs=byName['User Preferences']?.[0]||null;
+    const account=byName['Account Information']?.[0]||null;
+    const collections=byName['Collections & Shared Content']||[];
+
+    const users=[],accounts=[],projects=[];
+    const rawUserId=string(profile?.USER_ID||prefs?.USER_ID||account?.USERNAME||account?.EMAIL).trim();
+    if(profile||account||prefs){
+      const accountId=rawUserId?'perplexity:'+rawUserId:'';
+      if(accountId)accounts.push(accountId);
+      const userObj={
+        ...(accountId?{uuid:accountId}:{}),
+        full_name:string(account?.NAME||profile?.USERNAME||account?.USERNAME||profile?.USER_EMAIL||account?.EMAIL),
+        email:string(profile?.USER_EMAIL||account?.EMAIL),
+        username:string(profile?.USERNAME||account?.USERNAME),
+        sourcePlatform:'perplexity',
+        ...(profile?{profile}:{}),
+        ...(prefs?{preferences:prefs}:{}),
+        ...(account?{account}:{})
+      };
+      users.push(userObj);
+    }
+
+    for(const col of collections){
+      const cid=string(col.COLLECTION_ID||col.ID).trim();
+      const title=string(col.TITLE).trim();
+      if(!cid&&!title)continue;
+      projects.push({
+        uuid:'perplexity:col:'+(cid||title),
+        name:title||('Perplexity Space '+cid),
+        description:string(col.DESCRIPTION).trim(),
+        created_at:parseDate(col.CREATED),
+        updated_at:parseDate(col.UPDATED)||parseDate(col.CREATED),
+        sourcePlatform:'perplexity',
+        docs:[]
+      });
+    }
+    return {users,accounts,projects};
+  }
+
+  return {isConversation,isExport,parseDate,convert,convertAsync,parseWorkbook};
 }
 
 // Pure, local rules. Offsets always refer to original UTF-16 source text.
@@ -2269,7 +2543,7 @@ async function markdown(conv,mode,choices,checkpoint){  // Build linear thread (
     if(!msg||typeof msg!=='object')continue;
     if(msg._divider==='linear'){md+='## ⚠️ '+t('对话分支结构异常，已按时间顺序展示全部消息')+'\n\n';continue;}
     if(msg._divider==='orphan'){md+='## 🧩 '+t('以下消息无法归入对话分支（可能是已删除分支的残留）')+' ('+msg.count+')\n\n';continue;}
-    const role='**'+(msg.sender==='human'?t('你'):msg.sender==='assistant'?(conv.sourcePlatform==='gpt'?'ChatGPT':conv.sourcePlatform==='grok'?'Grok':'Claude'):msg.sender)+'**';
+    const role='**'+(msg.sender==='human'?t('你'):msg.sender==='assistant'?(conv.sourcePlatform==='gpt'?'ChatGPT':conv.sourcePlatform==='grok'?'Grok':conv.sourcePlatform==='perplexity'?'Perplexity':'Claude'):msg.sender)+'**';
     md+=role+' · '+fmtTime(msg.created_at)+'\n\n';
     // Attachments
     for(const att of[...(msg.attachments||[]),...(msg.files||[])]){
@@ -2594,7 +2868,7 @@ function taskWorkerMain(){
       parts.push('## '+core.t('关联对话')+'\n\n');let done=0;
       for await(const record of token.records(payload.uuids)){
         const c=JSON.parse(record.raw);parts.push('### '+(c.name||core.t('无标题'))+'\n\n> UUID: '+(c.uuid||'')+'\n\n');
-        let n=0;for(const m of core.tree(c).messages){if(n++%128===0)await token.checkpoint();const roleLabel=m.sender==='human'?core.t('你'):m.sender==='assistant'?(c.sourcePlatform==='gpt'?'ChatGPT':c.sourcePlatform==='grok'?'Grok':'Claude'):m.sender;parts.push('**'+roleLabel+'** · '+core.fmtTime(m.created_at)+'\n\n');for(const b of m.content||[]){if(b?.type==='text')parts.push((b.text||'')+'\n\n');else if(b?.type==='thinking')parts.push('<details><summary>'+core.t('思考过程')+'</summary>\n\n'+(b.thinking||'')+'\n\n</details>\n\n');else if(b?.type==='tool_use')parts.push('> '+core.t('工具调用')+': `'+(b.name||'')+'`\n\n');}parts.push('---\n\n');}
+        let n=0;for(const m of core.tree(c).messages){if(n++%128===0)await token.checkpoint();const roleLabel=m.sender==='human'?core.t('你'):m.sender==='assistant'?(c.sourcePlatform==='gpt'?'ChatGPT':c.sourcePlatform==='grok'?'Grok':c.sourcePlatform==='perplexity'?'Perplexity':'Claude'):m.sender;parts.push('**'+roleLabel+'** · '+core.fmtTime(m.created_at)+'\n\n');for(const b of m.content||[]){if(b?.type==='text')parts.push((b.text||'')+'\n\n');else if(b?.type==='thinking')parts.push('<details><summary>'+core.t('思考过程')+'</summary>\n\n'+(b.thinking||'')+'\n\n</details>\n\n');else if(b?.type==='tool_use')parts.push('> '+core.t('工具调用')+': `'+(b.name||'')+'`\n\n');}parts.push('---\n\n');}
         await token.checkpoint({loaded:++done,total:payload.uuids.length});
       }
       return {blob:new Blob(parts,{type:'text/markdown;charset=utf-8'})};
@@ -2805,7 +3079,7 @@ function importWorkerMain(){
         }
         const entries=Object.keys(files).filter(n=>!files[n].dir&&!n.startsWith('__MACOSX/'));for(const name of entries){if(/^\/|^[A-Za-z]:/.test(name))throw new Error('Invalid export path');format.logicalPath(String(files[name].unsafeOriginalName||name).replace(/\\/g,'/').replace(/\/+/g,'/'));}
         let convs=entries.filter(n=>/(^|\/)conversations(?:-\d+)?\.json$/i.test(n)).sort((a,b)=>{const na=Number(/(\d+)\.json$/i.exec(a)?.[1]??-1),nb=Number(/(\d+)\.json$/i.exec(b)?.[1]??-1);return na-nb||a.localeCompare(b);});
-        const projects=[],memories=[],artifacts=[],users=[],logins=[],accounts=new Set(),mime=Object.create(null),resources=[],gpt=gptExportCore(),grok=typeof grokExportCore==='function'?grokExportCore():null;let legacyMemory=null,gptManifest=false;const designs=[];
+        const projects=[],memories=[],artifacts=[],users=[],logins=[],accounts=new Set(),mime=Object.create(null),resources=[],gpt=gptExportCore(),grok=typeof grokExportCore==='function'?grokExportCore():null,pplx=typeof perplexityExportCore==='function'?perplexityExportCore():null;let legacyMemory=null,gptManifest=false;const designs=[];
         if(files['export_manifest.json']){const manifest=parseJsonText(await files['export_manifest.json'].async('text')),shards=gpt.manifest(manifest,entries);if(shards){convs=shards;gptManifest=true;}}
         if(files['library_files.json']){
           const library=parseJsonText(await files['library_files.json'].async('text'));for(const item of Array.isArray(library)?library:[]){await check(current);const path=String(item.file_id||'')+'.dat';if(!files[path])continue;const declared=String(item.mime_type||''),header=await fileHeader(files[path]);const detected=detectMagicMime(header);mime[path]=detected||(/^(?:text\/plain|text\/markdown|application\/pdf|audio\/|image\/)/.test(declared)?declared==='text/plain'&&String(item.file_extension).toLowerCase()==='md'?'text/markdown':declared:'application/octet-stream');resources.push({packageId:id,path,name:String(item.file_name||path),mime:mime[path],fileId:String(item.file_id||''),altId:String(item.library_file_id||'')});}
@@ -2837,12 +3111,28 @@ function importWorkerMain(){
         for(const name of entries){await check(current);
           const baseName=name.split('/').pop();
           if(convs.includes(name)||auxSkip.has(name)||auxSkip.has(baseName))continue;
+          if(pplx&&/^(?:.*\/)?user-data-[^/]+\.xlsx$/i.test(name)){
+            try{
+              const wbBuf=files[name].file?await files[name].file.arrayBuffer():await files[name].async('arraybuffer');
+              const wbZip=await JSZip.loadAsync(wbBuf);
+              const workbookXml=wbZip.files['xl/workbook.xml']?await wbZip.files['xl/workbook.xml'].async('text'):'';
+              const sharedStringsXml=wbZip.files['xl/sharedStrings.xml']?await wbZip.files['xl/sharedStrings.xml'].async('text'):'';
+              const sheets=Object.create(null);
+              for(const sname of Object.keys(wbZip.files)){
+                if(/^xl\/worksheets\/sheet\d+\.xml$/i.test(sname))sheets[sname]=await wbZip.files[sname].async('text');
+              }
+              const parsedWb=pplx.parseWorkbook({workbookXml,sharedStringsXml,sheets});
+              users.push(...parsedWb.users);projects.push(...parsedWb.projects);for(const acc of parsedWb.accounts)accounts.add(acc);
+            }catch{}
+            continue;
+          }
           if(/\.md$/i.test(name)){
             const logical=name.replace(/^.*?(?=(?:areas|projects)\/)/,'');
             if(/^(?:areas\/|projects\/[^/]+\/)/.test(logical))memories.push(format.memory(logical,await files[name].async('text'),'',filename));continue;
           }
           if(!/\.json$/i.test(name))continue;
           let value;try{value=parseJsonText(await files[name].async('text'));}catch{if(/(^|\/)(?:projects\/|users\.json|login_history\.json|artifacts\/)/i.test(name))throw new Error('Invalid JSON: '+name);continue;}
+          if(pplx&&(pplx.isExport(value)||pplx.isConversation(value)||Array.isArray(value)&&value.length&&value.every(item=>pplx.isConversation(item)))){convs.push(name);continue;}
           if(grok&&grok.isBackendExport(value)){
             if(Array.isArray(value.projects))projects.push(...grok.convertProjects(value.projects));
             if(Array.isArray(value.conversations)&&value.conversations.length)convs.push(name);
@@ -2926,7 +3216,7 @@ async function ensureFeature(kind){
   const libraries=kind==='import'?['zip']:kind==='reader'?['markdown','highlight']:['markdown','highlight'];
   const sources=libraries.map(name=>Uint8Array.from(atob(WORKER_LIBRARIES[name].base64),char=>char.charCodeAt(0)));
   const main=kind==='import'?importWorkerMain:kind==='reader'?readerWorkerMain:taskWorkerMain;
-  const url=URL.createObjectURL(new Blob([...sources,'\n',exportFormatCore.toString(),'\n',gptDilCore.toString(),'\n',gptExportCore.toString(),'\n',grokExportCore.toString(),'\n',redactionRules.toString(),'\n',workerDomainCore.toString(),'\n',featureWorkerRuntime.toString(),'\n('+main.toString()+')()'],{type:'text/javascript'}));
+  const url=URL.createObjectURL(new Blob([...sources,'\n',exportFormatCore.toString(),'\n',gptDilCore.toString(),'\n',gptExportCore.toString(),'\n',grokExportCore.toString(),'\n',perplexityExportCore.toString(),'\n',redactionRules.toString(),'\n',workerDomainCore.toString(),'\n',featureWorkerRuntime.toString(),'\n('+main.toString()+')()'],{type:'text/javascript'}));
   let worker;try{worker=new Worker(url);}catch(error){URL.revokeObjectURL(url);throw error;}
   state={worker,url,id:kind+':'+(++featureSequence),generation:dataWorkerGeneration,pending:new Map(),port:null};
   state.ready=new Promise((resolve,reject)=>{state.resolveReady=resolve;state.rejectReady=reject;});state.ready.catch(()=>{});featureWorkers.set(kind,state);
@@ -3169,7 +3459,7 @@ async function openExportArtifact(index,versionId){
 function renderExportAccount(){
   exportViewVersion++;document.getElementById('messages').replaceChildren();const container=document.getElementById('conv-list');container.replaceChildren();
   const title=document.createElement('h3');title.textContent=t('账户资料');container.append(title);
-  for(const user of exportSession.users){const details=document.createElement('details'),summary=document.createElement('summary'),pre=document.createElement('pre');const platform=user.sourcePlatform==='gpt'?'ChatGPT':user.sourcePlatform==='grok'?'Grok':'Claude';summary.textContent='['+platform+'] '+(user.full_name||user.name||user.email||user.uuid||user.id||t('账户'));pre.textContent=JSON.stringify(user,null,2);details.append(summary,pre);container.append(details);}
+  for(const user of exportSession.users){const details=document.createElement('details'),summary=document.createElement('summary'),pre=document.createElement('pre');const platform=user.sourcePlatform==='gpt'?'ChatGPT':user.sourcePlatform==='grok'?'Grok':user.sourcePlatform==='perplexity'?'Perplexity':'Claude';summary.textContent='['+platform+'] '+(user.full_name||user.name||user.email||user.uuid||user.id||t('账户'));pre.textContent=JSON.stringify(user,null,2);details.append(summary,pre);container.append(details);}
   const events=[...exportSession.logins].sort((a,b)=>(Date.parse(b.timestamp)||0)-(Date.parse(a.timestamp)||0));exportPage=Math.min(exportPage,Math.max(0,Math.ceil(events.length/50)-1));
   const heading=document.createElement('h4');heading.textContent=t('登录历史')+' ('+events.length+')';container.append(heading);
   for(const event of events.slice(exportPage*50,(exportPage+1)*50)){const pre=document.createElement('pre');pre.style.cssText='white-space:pre-wrap;overflow-wrap:anywhere';pre.textContent=JSON.stringify(event,null,2);container.append(pre);}
@@ -4497,7 +4787,7 @@ function dataWorkerMain(){
       if(key==='chat_messages'&&raw[start]==='[')meta.message_count=countArrayItems(raw,start,end);
       else if(key==='account')meta.accountUuid=JSON.parse(raw.slice(start,end))?.uuid||'';
       else if(key==='_design')meta._design=JSON.parse(raw.slice(start,end));
-      else if(['sourcePlatform','originalId','defaultModel','currentNode','importWarnings','workspaceId'].includes(key))meta[key]=JSON.parse(raw.slice(start,end));
+      else if(['sourcePlatform','originalId','defaultModel','currentNode','importWarnings','workspaceId','collectionUuid'].includes(key))meta[key]=JSON.parse(raw.slice(start,end));
       else if(key==='uuid'||key==='name'||key==='summary'||key==='created_at'||key==='updated_at'){
         const value=JSON.parse(raw.slice(start,end));meta[key]=typeof value==='string'?value:'';
       }
@@ -4511,6 +4801,22 @@ function dataWorkerMain(){
     if(text[index]===']')return result;
     while(index<text.length){
       const end=valueEnd(text,index);let raw=text.slice(index,end);
+      if(typeof perplexityExportCore==='function'&&(/"context_uuid"\s*:/.test(raw)||/"conversations"\s*:/.test(raw))){
+        const pplx=perplexityExportCore(),value=JSON.parse(raw);
+        if(pplx.isExport(value)){
+          for(const entry of value.conversations){
+            const converted=JSON.stringify(await pplx.convertAsync(entry,checkpoint));
+            const meta=inspectConversation(converted);meta.sourcePlatform=meta.sourcePlatform||'perplexity';
+            if(!meta.uuid)throw new Error('Conversation UUID is missing');
+            result.push({raw:converted,meta});
+          }
+          index=skipWs(text,end);
+          if(text[index]===','){index=skipWs(text,index+1);continue;}
+          if(text[index]===']')return result;
+          throw new Error('conversations.json 格式不正确');
+        }
+        if(pplx.isConversation(value))raw=JSON.stringify(await pplx.convertAsync(value,checkpoint));
+      }
       if(typeof grokExportCore==='function'&&(/"responses"\s*:/.test(raw)||/"conversations"\s*:/.test(raw))){
         const grok=grokExportCore(),value=JSON.parse(raw);
         if(grok.isBackendExport(value)){
@@ -4566,7 +4872,7 @@ function dataWorkerMain(){
   async function cacheDeleteAll(){const db=await cacheDb();if(!db)return false;try{await new Promise((resolve,reject)=>{const request=db.transaction(CACHE_STORE,'readwrite').objectStore(CACHE_STORE).clear();request.onsuccess=()=>resolve();request.onerror=()=>reject(request.error);});return true;}finally{db.close();}}
   function ingestSummary(cacheHit=false){let totalMsgs=0,minDate='',maxDate='';for(const record of records){const meta=record.meta;if(meta._design)continue;totalMsgs+=meta.message_count;const date=meta.created_at;if(date&&(!minDate||date<minDate))minDate=date;if(date&&(!maxDate||date>maxDate))maxDate=date;}return{conversations:records.map(record=>record.meta),totalMsgs,minDate,maxDate,lazy:true,cacheHit};}
   let packageStage=null,contentRevision=0,archiveAccounts=new Set(),packageIds=new Set();
-  const accountPlatform=id=>String(id).startsWith('gpt:')?'gpt':String(id).startsWith('grok:')?'grok':'claude';
+  const accountPlatform=id=>String(id).startsWith('gpt:')?'gpt':String(id).startsWith('grok:')?'grok':String(id).startsWith('perplexity:')?'perplexity':'claude';
   const accountMismatch=incoming=>{for(const platform of new Set(incoming.map(accountPlatform))){const local=[...archiveAccounts].filter(id=>accountPlatform(id)===platform),next=incoming.filter(id=>accountPlatform(id)===platform);if(new Set(next).size>1||local.length&&next.some(id=>!archiveAccounts.has(id)))return true;}return false;};
   async function finishIngest(request,text){
     const expected=generation,stage=packageStage;let deadline=Date.now()+8;
@@ -4670,7 +4976,7 @@ function cleanupDataWorker(reason){
 }
 function ensureDataWorker(){
   if(dataWorker)return dataWorker;
-  dataWorkerUrl=URL.createObjectURL(new Blob([archiveAnalysisCore.toString(),'\n',gptDilCore.toString(),'\n',gptExportCore.toString(),'\n',grokExportCore.toString(),'\n',redactionRules.toString(),'\n',workerDomainCore.toString(),'\n('+dataWorkerMain.toString()+')()'],{type:'text/javascript'}));
+  dataWorkerUrl=URL.createObjectURL(new Blob([archiveAnalysisCore.toString(),'\n',gptDilCore.toString(),'\n',gptExportCore.toString(),'\n',grokExportCore.toString(),'\n',perplexityExportCore.toString(),'\n',redactionRules.toString(),'\n',workerDomainCore.toString(),'\n('+dataWorkerMain.toString()+')()'],{type:'text/javascript'}));
   dataWorker=new Worker(dataWorkerUrl);
   dataWorker.onmessage=event=>{
     const message=event.data||{},pending=dataWorkerPending.get(message.requestId);
@@ -5105,7 +5411,7 @@ function renderAnalyticsExploration(){
   html+='<div class="analytics-filters"><label>'+t('时间范围')+'<select id="analytics-range" data-ui-change="analytics-filter" data-ui-value="range">'+analyticsFilterOptions(['all','7','30','90','custom'],[filters.range],value=>t({all:'全部历史',7:'最近 7 天',30:'最近 30 天',90:'最近 90 天',custom:'自定义日期'}[value]))+'</select></label>';
   if(filters.range==='custom')html+='<label>'+t('开始日期')+'<input id="analytics-start" type="date" value="'+escAttr(filters.start)+'" data-ui-change="analytics-filter" data-ui-value="start"></label><label>'+t('结束日期')+'<input id="analytics-end" type="date" value="'+escAttr(filters.end)+'" data-ui-change="analytics-filter" data-ui-value="end"></label>';
   html+=select('projects','项目',options.projects.map(project=>project.uuid),value=>projectNames.get(value))+select('models','模型',options.models,value=>value||t('未提供'))+select('roles','角色',options.roles,value=>value==='human'?t('你'):value==='assistant'?t('AI 助手'):value);
-  html+=select('platforms','来源',['claude','gpt','grok'],value=>value==='gpt'?'ChatGPT':value==='grok'?'Grok':'Claude');
+  html+=select('platforms','来源',['claude','gpt','grok','perplexity'],value=>value==='gpt'?'ChatGPT':value==='grok'?'Grok':value==='perplexity'?'Perplexity':'Claude');
   html+='<button type="button" data-ui-click="analytics-clear">'+t('清除筛选')+'</button></div><div class="analytics-note">'+t('多选条件可组合；未选择表示全部。快捷范围以档案最新消息为终点。')+'</div>';
   if(!result){
     const incomplete=filters.range==='custom'&&(!filters.start||!filters.end||filters.end<filters.start);
@@ -5213,7 +5519,7 @@ function renderConvList(convs){
     const ac=currentConv&&currentConv.uuid===c.uuid?' active':'';
     const last=c.uuid===lastConversationUuid;
     const dateStr=fmtDate(c.updated_at||c.created_at);
-    const metaLabel=(c.sourcePlatform==='gpt'?'ChatGPT':c.sourcePlatform==='grok'?'Grok (Beta)':'Claude')+(dateStr?' · '+dateStr:'');
+    const metaLabel=(c.sourcePlatform==='gpt'?'ChatGPT':c.sourcePlatform==='grok'?'Grok (Beta)':c.sourcePlatform==='perplexity'?'Perplexity (Beta)':'Claude')+(dateStr?' · '+dateStr:'');
     return '<div class="conv-item'+ac+(last?' last-supper':'')+'" data-conv-uuid="'+escAttr(c.uuid)+'" role="button" tabindex="0">'
       +'<div class="conv-title">'+esc(c.name||'('+t('无标题')+')')+(last?'<span class="last-supper-badge">'+t('最后的晚餐')+'</span>':'')+'</div>'
       +'<div class="conv-meta"><span>'+metaLabel+'</span><span class="conv-count">'+(Number.isFinite(c.message_count)?c.message_count:(c.chat_messages||[]).length)+t('条')+'</span></div></div>';
@@ -6219,9 +6525,10 @@ function renderMsg(msg){
   const platform=msg.sourcePlatform||currentConv?.sourcePlatform||'claude';
   const isGpt=msg.sender!=='human'&&platform==='gpt';
   const isGrok=msg.sender!=='human'&&platform==='grok';
-  const avatarLabel=role==='human'?t('你'):isGpt?'◎':isGrok?'𝕏':'✦';
-  const nameLabel=msg.sender==='human'?t('你'):msg.sender==='assistant'?(isGpt?'ChatGPT':isGrok?'Grok':'Claude'):msg.sender;
-  return '<div class="msg-wrap '+role+(isGpt?' gpt':isGrok?' grok':'')+'"'+(Number.isInteger(msg._sourceIndex)?' data-source-index="'+msg._sourceIndex+'"':'')+'>'
+  const isPplx=msg.sender!=='human'&&platform==='perplexity';
+  const avatarLabel=role==='human'?t('你'):isGpt?'◎':isGrok?'𝕏':isPplx?'❖':'✦';
+  const nameLabel=msg.sender==='human'?t('你'):msg.sender==='assistant'?(isGpt?'ChatGPT':isGrok?'Grok':isPplx?'Perplexity':'Claude'):msg.sender;
+  return '<div class="msg-wrap '+role+(isGpt?' gpt':isGrok?' grok':isPplx?' perplexity':'')+'"'+(Number.isInteger(msg._sourceIndex)?' data-source-index="'+msg._sourceIndex+'"':'')+'>'
     +'<div class="msg-avatar">'+avatarLabel+'</div>'
     +'<div class="msg-body">'
     +'<div class="msg-meta"><span class="msg-name">'+nameLabel+'</span><span>'+time+'</span>'+brNav+copyBtn+'</div>'

@@ -115,7 +115,7 @@ test('grok format converts steps, tools, web search, attachments, branching leaf
             {
               tagged_text:{
                 header:'Inspecting workspace files',
-                tool_usage_card:'<xai:tool_usage_card><xai:tool_usage_card_id>tc-1</xai:tool_usage_card_id><xai:tool_name>WebSearch</xai:tool_name><xai:tool_args><![CDATA[{"query":"synthetic grok test"}]]></xai:tool_args></xai:tool_usage_card>'
+                tool_usage_card:'<xai:tool_usage_card><xai:tool_usage_card_id>tc-1</xai:tool_usage_card_id><xai:tool_name>WebSearch</xai:tool_name><xai:tool_args><![CDATA[{"query":"synthetic grok test"}]]></xai:tool_args></xai:tool_usage_card><xai:tool_usage_card><xai:tool_usage_card_id>tc-2</xai:tool_usage_card_id><xai:tool_name>XSearch</xai:tool_name><xai:tool_args><![CDATA[{"query":"xai"}]]></xai:tool_args></xai:tool_usage_card>'
               },
               tool_usage_results:[{tool_usage_card_id:'tc-1',result:'search ok'}],
               web_search_results:[{title:'Synthetic Result',url:'https://example.com/result',preview:'preview'}]
@@ -141,9 +141,11 @@ test('grok format converts steps, tools, web search, attachments, branching leaf
   const thinking=activeMsg.content.find(b=>b.type==='thinking');
   assert.equal(thinking.thinking,'Inspecting workspace files');
   assert.equal(thinking.duration_ms,5500);
-  const toolUse=activeMsg.content.find(b=>b.type==='tool_use');
-  assert.equal(toolUse.name,'WebSearch');
-  assert.equal(toolUse.input.query,'synthetic grok test');
+  const toolUses=activeMsg.content.filter(b=>b.type==='tool_use');
+  assert.equal(toolUses.length,2);
+  assert.equal(toolUses[0].name,'WebSearch');
+  assert.equal(toolUses[0].input.query,'synthetic grok test');
+  assert.equal(toolUses[1].name,'XSearch');
   const toolRes=activeMsg.content.find(b=>b.type==='tool_result');
   assert.equal(toolRes.tool_use_id,'tc-1');
   assert.equal(toolRes.name,'WebSearch');

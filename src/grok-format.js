@@ -147,6 +147,14 @@ function grokExportCore(){
     return {id,name:name||'tool',input};
   }
 
+  function parseToolCards(xml){
+    const raw=string(xml);
+    if(!raw)return [];
+    const blocks=[...raw.matchAll(/<xai:tool_usage_card\b[^>]*>[\s\S]*?<\/xai:tool_usage_card>/gi)].map(m=>m[0]);
+    const listXml=blocks.length?blocks:[raw];
+    return listXml.map(parseToolCard).filter(Boolean);
+  }
+
   function* convertSteps(entry){
     if(!isConversation(entry))return entry;
     const conv=entry.conversation,originalId=string(conv.id);
@@ -174,8 +182,7 @@ function grokExportCore(){
         if(header)thinkingHeaders.push(header);
         const cards=Array.isArray(tagged.tool_usage_card)?tagged.tool_usage_card:(tagged.tool_usage_card?[tagged.tool_usage_card]:[]);
         for(const cardXml of cards){
-          const parsedCard=parseToolCard(cardXml);
-          if(parsedCard){
+          for(const parsedCard of parseToolCards(cardXml)){
             if(parsedCard.id)toolNamesById.set(parsedCard.id,parsedCard.name);
             blocks.push({type:'tool_use',id:parsedCard.id||undefined,name:parsedCard.name,input:parsedCard.input});
           }
