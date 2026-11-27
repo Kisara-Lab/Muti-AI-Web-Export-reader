@@ -56,7 +56,7 @@ test('offline bundle loads all optional features without network',async({page})=
 
 test('offline checklist and partitioned ZIP import need no network',async({page})=>{
   const network=[];await page.route(/^https?:/,route=>{network.push(route.request().url());return route.abort();});await page.goto(pathToFileURL(path.join(root,'dist','offline','viewer.html')).href);
-  await page.locator('#download-page-btn').click();await expect(page.locator('.export-page')).toContainText('兼容旧版导出');
+  await page.locator('#download-page-btn').click();await expect(page.locator('.export-page')).toContainText('直接导入（Claude & ChatGPT 通用）');
   const manifest={version:'1.0',total_files:1,data_files:[{filename:'memories.zip',category:'memories',part:0,batch_index:0,export_url:'https://claude.ai/export/synthetic/download/example'}]};await page.setInputFiles('#manifest-input',{name:'manifest.json',mimeType:'application/json',buffer:Buffer.from(JSON.stringify(manifest))});await expect(page.locator('.export-package a')).toHaveAttribute('rel','noopener noreferrer');
   const archive=new JSZip();archive.file('memories/synthetic.json',JSON.stringify({memory_files:[{path:'/areas/offline.md',content:'Offline synthetic memory'}]}));await page.setInputFiles('#zip-input',{name:'memories.zip',mimeType:'application/zip',buffer:await archive.generateAsync({type:'nodebuffer'})});await page.waitForFunction(()=>exportSession.topics.length===1);await expect(page.locator('.export-status')).toContainText('已导入');
   await page.locator('.tab-btn[data-ui-value="memory"]').click();await expect(page.locator('#conv-list')).toContainText('Offline synthetic memory');expect(network).toEqual([]);

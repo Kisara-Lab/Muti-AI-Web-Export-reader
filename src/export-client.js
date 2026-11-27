@@ -12,7 +12,7 @@ function exportMediaKey(name){
   const unique=[...new Set(candidates.map(([,entry])=>entry.packageId+'/'+entry.path))];
   return unique.length===1?unique[0]:zipEntries.has(mediaKey(name))&&typeof zipEntries.get(mediaKey(name))==='string'?mediaKey(name):'';
 }
-Object.assign(EN,{'下载与导入':'Download & import','从清单到本地档案':'From manifest to local archive','选择 Claude 导出的 manifest JSON，逐项前往官方下载页，再将下载好的 ZIP 一起导入。':'Choose the manifest JSON exported by Claude, open each official download page, then import the downloaded ZIP files together.','01 · 导入清单':'01 · Choose manifest','02 · 官方下载':'02 · Download from Claude','03 · 本地阅读':'03 · Read locally','清单只用于展示文件与链接。':'The manifest lists files and download links.','在新标签页完成下载，返回这里继续。':'Download in a new tab, then return here.','批量选择 ZIP，可按任意顺序追加。':'Select ZIP files together; packages can be added in any order.','兼容旧版导出':'Older exports supported','旧版 ZIP 和导出文件夹仍可直接导入，无需下载清单；支持旧记忆和 Design。':'Import older ZIP files or export folders directly, without a manifest. Legacy memories and Design exports remain supported.','尚未选择下载清单':'No download manifest selected','选择清单查看分包列表，或直接导入已有 ZIP。':'Choose a manifest to view its packages, or import ZIP files you already have.','已导入文件':'Imported files','返回对话':'Back to conversations'});
+Object.assign(EN,{'下载与导入':'Import center','导入中心 / Claude 清单':'Import center / Claude manifest','多 AI 导出导入中心':'Multi-AI Export Import Center','支持直接导入 Claude 与 ChatGPT 的 ZIP、解压目录或独立 JSON，也支持通过 Claude 新版下载清单逐包获取并混合阅读。':'Import Claude & ChatGPT ZIPs, extracted folders, or standalone JSON directly — or use Claude’s partitioned download manifest checklist and read both platforms together.','直接导入（Claude & ChatGPT 通用）':'Direct import (Claude & ChatGPT)','无需清单，可直接多选或追加导入 Claude 与 ChatGPT 导出包，自动识别平台并混合搜索、筛选与脱敏导出。':'No manifest needed. Select or append Claude & ChatGPT archives in any order for unified search, filtering, and safe export.','Claude 新版分包下载清单':'Claude partitioned download manifest','仅适用于 Claude 新版分包导出：先导入 manifest JSON 获取官方下载链接，下载完 ZIP 后再批量追加。':'For Claude’s partitioned exports only: open manifest JSON to get official download links, then add the downloaded ZIPs together.','01 · 导入清单':'01 · Choose manifest','02 · 官方下载':'02 · Download from Claude','03 · 批量追加':'03 · Add ZIPs locally','清单只用于展示文件与链接。':'The manifest lists files and download links.','在新标签页完成下载，返回这里继续。':'Download in a new tab, then return here.','批量选择 ZIP，可按任意顺序追加（可与 ChatGPT 混合）。':'Select ZIP files in any order (can be mixed with ChatGPT archives).','尚未选择下载清单':'No Claude download manifest selected','如果你拿到的是完整的 ZIP（Claude 或 ChatGPT）或解压目录，请直接用上方按钮导入。':'If you already have Claude or ChatGPT ZIP files or folders, use the direct import buttons above.','已导入文件':'Imported files','返回对话':'Back to conversations'});
 function openDownloadPage(){
   exportViewVersion++;openConversationGeneration++;resetReaderSearch();cancelFeature('reader');
   if(currentView==='analytics')cancelAnalytics();
@@ -20,19 +20,25 @@ function openDownloadPage(){
   currentView='downloads';currentConv=null;cleanupExportVisuals();
   document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
   document.getElementById('download-page-btn').setAttribute('aria-current','page');
-  document.getElementById('chat-title').textContent=t('下载与导入');document.getElementById('chat-header-meta').textContent='';
+  document.getElementById('chat-title').textContent=t('导入中心 / Claude 清单');document.getElementById('chat-header-meta').textContent='';
   document.getElementById('chat-header').classList.remove('last-supper');document.getElementById('messages').classList.remove('last-supper-gallery');
-  for(const id of ['csearch','csearch-count','cprev','cnext','toggle-summary','quality-btn','tree-mode-btn','quality-panel','export-wrap'])document.getElementById(id).style.display='none';
+  for(const id of ['csearch','csearch-count','cprev','cnext','toggle-summary','quality-btn','tree-mode-btn','remote-resources-btn','quality-panel','export-wrap']){const el=document.getElementById(id);if(el)el.style.display='none';}
   qualityOpen=false;renderExportManifest();
 }
 function renderExportManifest(){
   if(currentView!=='downloads')return;
   const session=exportSession,host=document.getElementById('messages'),panel=document.createElement('section');panel.id='export-session-panel';panel.className='export-page';host.replaceChildren(panel);
   const make=(tag,cls,text,parent=panel)=>{const node=document.createElement(tag);node.className=cls;node.textContent=text;parent.append(node);return node;};
-  const hero=make('header','export-hero','');make('div','export-kicker','Multi-AI Web Export Reader',hero);make('h2','',t('从清单到本地档案'),hero);make('p','export-description',t('选择 Claude 导出的 manifest JSON，逐项前往官方下载页，再将下载好的 ZIP 一起导入。'),hero);
+  const hero=make('header','export-hero','');make('div','export-kicker','Multi-AI Web Export Reader',hero);make('h2','',t('多 AI 导出导入中心'),hero);make('p','export-description',t('支持直接导入 Claude 与 ChatGPT 的 ZIP、解压目录或独立 JSON，也支持通过 Claude 新版下载清单逐包获取并混合阅读。'),hero);
+  const direct=make('section','export-empty','');direct.style.marginBottom='20px';make('strong','',t('直接导入（Claude & ChatGPT 通用）'),direct);make('p','export-description',t('无需清单，可直接多选或追加导入 Claude 与 ChatGPT 导出包，自动识别平台并混合搜索、筛选与脱敏导出。'),direct);
+  const directBar=make('div','export-toolbar','',direct);for(const [action,label,primary]of [['pick-zip','🗜️ 打开导出 ZIP（Claude / ChatGPT）',true],['pick-folder','📂 打开解压目录'],['new-archive','打开新档案'],['clear-archive','清除档案']]){const button=make('button','export-button'+(primary?' primary':action==='clear-archive'?' quiet':''),t(label),directBar);button.type='button';button.dataset.uiClick=action;}
+  if(session.packages.length){make('h3','',t('已导入文件'));for(const p of session.packages)make('p','export-meta','✓ '+p.filename);}
+  if(session.errors.length){const errors=make('div','export-errors','');errors.setAttribute('role','status');for(const e of session.errors)make('p','',e,errors);}
+  make('h3','',t('Claude 新版分包下载清单')).style.marginTop='24px';
+  make('p','export-description',t('仅适用于 Claude 新版分包导出：先导入 manifest JSON 获取官方下载链接，下载完 ZIP 后再批量追加。'));
   const toolbar=make('div','export-toolbar','');
-  for(const [action,label,primary]of [['pick-manifest','导入下载清单',true],['append-packages','追加分包'],['new-archive','打开新档案'],['clear-archive','清除档案']]){const button=make('button','export-button'+(primary?' primary':action==='clear-archive'?' quiet':''),t(label),toolbar);button.type='button';button.dataset.uiClick=action;}
-  const steps=make('div','export-steps','');for(const [title,body]of [['01 · 导入清单','清单只用于展示文件与链接。'],['02 · 官方下载','在新标签页完成下载，返回这里继续。'],['03 · 本地阅读','批量选择 ZIP，可按任意顺序追加。']]){const step=make('div','export-step','',steps);make('strong','',t(title),step);make('p','export-description',t(body),step);}
+  for(const [action,label]of [['pick-manifest','导入下载清单'],['append-packages','追加分包']]){const button=make('button','export-button',t(label),toolbar);button.type='button';button.dataset.uiClick=action;}
+  const steps=make('div','export-steps','');for(const [title,body]of [['01 · 导入清单','清单只用于展示文件与链接。'],['02 · 官方下载','在新标签页完成下载，返回这里继续。'],['03 · 批量追加','批量选择 ZIP，可按任意顺序追加（可与 ChatGPT 混合）。']]){const step=make('div','export-step','',steps);make('strong','',t(title),step);make('p','export-description',t(body),step);}
   if(session.manifest){
     make('h3','',t('下载清单'));make('p','export-description',session.manifest.created_at+' · '+t('链接可能在 24 小时内或使用后提前失效。请在登录 Claude 的浏览器中下载，再批量选择 ZIP。'));
     const list=make('div','export-list','');
@@ -41,11 +47,7 @@ function renderExportManifest(){
       make('span','export-badge',exportLabel(f.category)+(f.category&&!['conversations','projects','memories','frames','light_metadata'].includes(f.category)?' · '+f.category:''),details);make('h3','',f.filename,details);make('div','export-status',t('分包')+' #'+f.part+' · '+t(loaded?'已导入':'尚未导入'),details);
       if(f.url){const link=make('a','export-button',t('打开下载页')+' ↗',row);link.href=f.url;link.target='_blank';link.rel='noopener noreferrer';link.referrerPolicy='no-referrer';}else make('span','export-status',t('链接不可用'),row);
     }
-  }else{const empty=make('div','export-empty','');make('strong','',t('尚未选择下载清单'),empty);make('p','export-description',t('选择清单查看分包列表，或直接导入已有 ZIP。'),empty);}
-  if(session.packages.length){make('h3','',t('已导入文件'));for(const p of session.packages)make('p','export-meta','✓ '+p.filename);}
-  if(session.errors.length){const errors=make('div','export-errors','');errors.setAttribute('role','status');for(const e of session.errors)make('p','',e,errors);}
-  const compatibility=make('footer','export-empty','');compatibility.style.marginTop='24px';make('strong','',t('兼容旧版导出'),compatibility);make('p','export-description',t('旧版 ZIP 和导出文件夹仍可直接导入，无需下载清单；支持旧记忆和 Design。'),compatibility);
-  const legacy=make('div','export-toolbar','',compatibility);for(const [action,label]of [['pick-folder','📂 选择导出文件夹'],['pick-zip','🗜️ 直接选择 ZIP 压缩包（免解压）']]){const button=make('button','export-button',t(label),legacy);button.dataset.uiClick=action;}
+  }else{const empty=make('div','export-empty','');make('strong','',t('尚未选择下载清单'),empty);make('p','export-description',t('如果你拿到的是完整的 ZIP（Claude 或 ChatGPT）或解压目录，请直接用上方按钮导入。'),empty);}
 }
 async function newExportArchive(){
   gptComponentStates.clear();gptDilPrograms.clear();
@@ -144,7 +146,7 @@ async function openExportArtifact(index,versionId){
 function renderExportAccount(){
   exportViewVersion++;document.getElementById('messages').replaceChildren();const container=document.getElementById('conv-list');container.replaceChildren();
   const title=document.createElement('h3');title.textContent=t('账户资料');container.append(title);
-  for(const user of exportSession.users){const details=document.createElement('details'),summary=document.createElement('summary'),pre=document.createElement('pre');summary.textContent=user.full_name||user.uuid;pre.textContent=JSON.stringify(user,null,2);details.append(summary,pre);container.append(details);}
+  for(const user of exportSession.users){const details=document.createElement('details'),summary=document.createElement('summary'),pre=document.createElement('pre');const platform=user.sourcePlatform==='gpt'?'ChatGPT':'Claude';summary.textContent='['+platform+'] '+(user.full_name||user.name||user.email||user.uuid||user.id||t('账户'));pre.textContent=JSON.stringify(user,null,2);details.append(summary,pre);container.append(details);}
   const events=[...exportSession.logins].sort((a,b)=>(Date.parse(b.timestamp)||0)-(Date.parse(a.timestamp)||0));exportPage=Math.min(exportPage,Math.max(0,Math.ceil(events.length/50)-1));
   const heading=document.createElement('h4');heading.textContent=t('登录历史')+' ('+events.length+')';container.append(heading);
   for(const event of events.slice(exportPage*50,(exportPage+1)*50)){const pre=document.createElement('pre');pre.style.cssText='white-space:pre-wrap;overflow-wrap:anywhere';pre.textContent=JSON.stringify(event,null,2);container.append(pre);}

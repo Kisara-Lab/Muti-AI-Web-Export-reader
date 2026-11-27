@@ -46,7 +46,7 @@ test('folder import and core views',async({page})=>{
   expect(await page.evaluate(async()=>{const html=await preparePdfConversation(currentConv);return /attachment-preview[\s\S]*blob:/i.test(html);})).toBe(true);
   await page.locator('#tree-mode-btn').click();await expect(page.locator('#tree-mode-btn')).toContainText(/完整|Full/);
   await page.locator('.tab-btn').nth(4).click();await page.locator('[data-analytics-view="overview"]').click();await page.waitForFunction(()=>document.querySelector('.word-cloud'));
-  await expect(page.locator('#messages')).toContainText(/你的 Claude 使用画像|Your Claude usage profile/);
+  await expect(page.locator('#messages')).toContainText(/你的 AI 使用画像|Your AI usage profile/);
   await expect(page.locator('#messages')).toContainText('project_knowledge_search');
   await expect(page.locator('#messages')).toContainText('Synthetic branching conversation');
   const custom=path.join(fixtureDir,'synthetic-stopwords.txt');await fs.writeFile(custom,'nebula\nobservatory');await page.setInputFiles('#custom-stopwords-input',custom);await page.waitForFunction(()=>analyticsCustomStopZh.length===2);
