@@ -174,7 +174,7 @@ async function markdown(conv,mode,choices,checkpoint){  // Build linear thread (
     if(!msg||typeof msg!=='object')continue;
     if(msg._divider==='linear'){md+='## ⚠️ '+t('对话分支结构异常，已按时间顺序展示全部消息')+'\n\n';continue;}
     if(msg._divider==='orphan'){md+='## 🧩 '+t('以下消息无法归入对话分支（可能是已删除分支的残留）')+' ('+msg.count+')\n\n';continue;}
-    const role='**'+(msg.sender==='human'?t('你'):msg.sender==='assistant'?(conv.sourcePlatform==='gpt'?'ChatGPT':conv.sourcePlatform==='grok'?'Grok':conv.sourcePlatform==='perplexity'?'Perplexity':'Claude'):msg.sender)+'**';
+    const role='**'+(msg.sender==='human'?t('你'):msg.sender==='assistant'?(conv.sourcePlatform==='gpt'?'ChatGPT':conv.sourcePlatform==='grok'?'Grok':conv.sourcePlatform==='perplexity'?'Perplexity':conv.sourcePlatform==='codex'?'Codex':'Claude'):msg.sender)+'**';
     md+=role+' · '+fmtTime(msg.created_at)+'\n\n';
     // Attachments
     for(const att of[...(msg.attachments||[]),...(msg.files||[])]){
