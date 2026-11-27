@@ -6,8 +6,16 @@ function gptExportCore(){
   const safeUrl=value=>{try{const url=new URL(string(value));return /^(https?:)$/.test(url.protocol)&&!url.username&&!url.password?url.href:'';}catch{return '';}};
   const escape=value=>string(value).replace(/[\\`*{}\[\]<>_!|]/g,'\\$&').replace(/[\r\n]+/g,' ');
   const link=(label,url)=>safeUrl(url)?'['+escape(label||url)+'](<'+safeUrl(url).replace(/[<>]/g,encodeURIComponent)+'>)':escape(label);
-  const timestamp=value=>typeof value==='number'&&Number.isFinite(value)&&Math.abs(value)<8640000000000?new Date(value*1000).toISOString():'';
+  const timestamp=value=>{
+    if(typeof value!=='number'||!Number.isFinite(value)||value<=0)return '';
+    const ms=value>=1e11?value:value*1000;
+    if(ms>8.64e15)return '';
+    try{return new Date(ms).toISOString();}catch{return '';}
+  };
+  const pointerId=value=>string(value).replace(/^(?:file-service|sediment):\/\//,'').trim();
   const isConversation=value=>!!(value&&typeof value==='object'&&!Array.isArray(value)&&value.mapping&&typeof value.mapping==='object'&&!Array.isArray(value.mapping));
+  const dilTagRegex=()=>typeof gptDilCore==='function'?new RegExp('(?:<(?:'+gptDilCore().tags.join('|')+')(?=[\\s/>])|\\{@body|\\{#each)'):null;
+
   function manifest(value,paths){
     const logical=value?.logical_files?.['conversations.json'];if(!logical)return null;
     const files=list(logical.files);if(!files.length||logical.shard_count!==files.length)throw new Error('Invalid GPT conversation shards');
@@ -19,27 +27,55 @@ function gptExportCore(){
     const visit=(item,depth)=>{if(++nodes>256||depth>6){exceeded=true;return '[limit]';}if(typeof item==='string')return item.slice(0,512);if(item===null||typeof item==='number'||typeof item==='boolean')return item;if(Array.isArray(item))return item.slice(0,32).map(child=>visit(child,depth+1));if(item&&typeof item==='object'){const result=Object.create(null);for(const key of Object.keys(item).slice(0,32))result[key.slice(0,64)]=visit(item[key],depth+1);return result;}return null;};
     return {text:JSON.stringify(visit(value,0),null,2).slice(0,8192),exceeded};
   }
-  function referenceIndex(references){
-    const index=new Map();for(const reference of references)for(const item of [...list(reference.items),...list(reference.sources)])for(const ref of list(item.refs))index.set('turn'+ref.turn_index+ref.ref_type+ref.ref_index,item);for(const reference of references)if(reference.type==='file'){for(const id of [reference.id,reference.input_pointer])if(typeof id==='string')index.set(id,reference);const pointer=reference.input_pointer;if(pointer&&typeof pointer==='object')index.set('turn'+pointer.message_index+'file'+pointer.file_index,reference);}return index;
+  function referenceIndex(references,metadata={}){
+    const index=new Map();
+    for(const reference of references){
+      for(const item of [...list(reference.items),...list(reference.sources)])for(const ref of list(item.refs))index.set('turn'+ref.turn_index+ref.ref_type+ref.ref_index,item);
+      if(reference.type==='file'){
+        for(const id of [reference.id,reference.input_pointer])if(typeof id==='string')index.set(id,reference);
+        const pointer=reference.input_pointer;if(pointer&&typeof pointer==='object')index.set('turn'+pointer.message_index+'file'+pointer.file_index,reference);
+      }
+    }
+    for(const group of list(metadata.search_result_groups)){
+      for(const entry of list(group?.entries)){
+        if(entry?.ref_id&&typeof entry.ref_id==='string'&&!index.has(entry.ref_id))index.set(entry.ref_id,{title:entry.title||entry.domain,url:entry.url});
+      }
+    }
+    return index;
   }
   function parseText(text,metadata={},context={}){
-    const references=list(metadata.content_references),index=referenceIndex(references),views=[],used=new Set();let output='',cursor=0,fence=null,inline=0;
+    const references=list(metadata.content_references),index=referenceIndex(references,metadata),views=[],used=new Set();let output='',cursor=0,fence=null,inline=0;
     const numbered=new Map(),sources=[],positions=[];let citationGroup=0;
-    function marker(kind,payload,raw){const start=views.length,text=markerValue(kind,payload,raw);if(typeof gptDilCore!=='function'||views.length===start)return text;positions.push({kind:'legacy',text,views:views.slice(start)});return '\u001eGPTVIEW'+(positions.length-1)+'\u001f';}
+    const legacyCitations=list(metadata.citations);
+    function addCitation(id,source){
+      if(!numbered.has(id)){numbered.set(id,numbered.size+1);sources.push({number:numbered.get(id),source});if(source.type==='file')views.push({kind:'file',title:bounded(source.name),fileId:string(source.id),description:source.page_range_start!=null?'p. '+source.page_range_start:''});}
+      return '['+numbered.get(id)+']';
+    }
+    function marker(kind,payload,raw){const start=views.length,value=markerValue(kind,payload,raw);if(typeof gptDilCore!=='function'||views.length===start)return value;positions.push({kind:'legacy',text:value,views:views.slice(start)});return '\u001eGPTVIEW'+(positions.length-1)+'\u001f';}
     function markerValue(kind,payload,raw){
       if(kind==='cite'||kind==='filecite'){
         const ids=payload.split('\ue202'),group=kind==='cite'?references.filter(reference=>reference.type==='grouped_webpages')[citationGroup]:null;
-        const suffix=id=>/^turn\d+([a-z]+\d+)$/.exec(id)?.[1];
+        const suffix=id=>/^turn\d+([a-z_]+\d+)$/i.exec(id)?.[1];
         const groupItems=list(group?.items),groupRefs=groupItems.flatMap(item=>list(item.refs).map(ref=>ref.ref_type+ref.ref_index));
         const groupValid=group&&ids.every(id=>suffix(id)&&groupRefs.includes(suffix(id)))&&groupRefs.every(ref=>ids.some(id=>suffix(id)===ref));
         if(groupValid)citationGroup++;
         return ids.map(id=>{
-        if(/^L\d+(?:-L?\d+)?$/.test(id))return ' '+id;
-        const places=references.filter(ref=>ref.type==='map').flatMap(ref=>list(ref.entities)).concat(Object.values(metadata.view_state?.widgets||{}).flatMap(widget=>list(widget?.points))),place=/business\d+$/.test(id)?places.find(point=>list(point.refs).some(ref=>ref.ref_type+ref.ref_index===suffix(id))):null;
-        const source=(groupValid?groupItems.find(item=>list(item.refs).some(ref=>ref.ref_type+ref.ref_index===suffix(id))):null)||index.get(id)||(place?{title:place.name,url:place.entity?.website_url}:null);if(!source){views.push({kind:'missing',title:'来源数据缺失 / Source data missing',details:boundedDetails({marker:raw}).text});return '[来源数据缺失 / Source data missing]';}
-        if(!numbered.has(id)){numbered.set(id,numbered.size+1);sources.push({number:numbered.get(id),source});if(source.type==='file')views.push({kind:'file',title:bounded(source.name),fileId:string(source.id),description:source.page_range_start!=null?'p. '+source.page_range_start:''});}return '['+numbered.get(id)+']';
-      }).join(' ');}
+          if(/^L\d+(?:-L?\d+)?$/.test(id))return ' '+id;
+          const places=references.filter(ref=>ref.type==='map').flatMap(ref=>list(ref.entities)).concat(Object.values(metadata.view_state?.widgets||{}).flatMap(widget=>list(widget?.points))),place=/business\d+$/.test(id)?places.find(point=>list(point.refs).some(ref=>ref.ref_type+ref.ref_index===suffix(id))):null;
+          const source=(groupValid?groupItems.find(item=>list(item.refs).some(ref=>ref.ref_type+ref.ref_index===suffix(id))):null)||index.get(id)||(place?{title:place.name,url:place.entity?.website_url}:null);
+          if(!source){views.push({kind:'missing',title:'来源数据缺失 / Source data missing',details:boundedDetails({marker:raw}).text});return '[来源数据缺失 / Source data missing]';}
+          return addCitation(id,source);
+        }).join(' ');
+      }
       const reference=references.find(ref=>ref.type===kind&&!used.has(ref));if(reference)used.add(reference);
+      if(kind==='navlist'){
+        const navItems=list(reference?.items||reference?.sources);
+        if(navItems.length){
+          const links=navItems.map(item=>link(bounded(item.title||item.name||item.url),item.url)).filter(Boolean);
+          return links.length?'\n\n'+links.map(item=>'- '+item).join('\n')+'\n\n':'';
+        }
+        return '';
+      }
       if(kind==='entity'){let value;try{value=JSON.parse(payload);}catch{}const name=reference?.name||reference?.alt||(Array.isArray(value)?value[1]:'');views.push({kind:'entity',title:bounded(name),description:bounded(reference?.notes),url:safeUrl(reference?.entity_data?.website_url)});return escape(bounded(name))||'[实体 / Entity]';}
       if(kind==='url')return reference?.alt?bounded(reference.alt):'[链接 / Link]';
       if(kind==='entity_metadata'){const entity=reference?.entity_data||{};const title=bounded(entity.name||reference?.name);const description=bounded(entity.description||entity.enriched_description);const url=safeUrl(entity.website_url);views.push({kind:'entity',title,description,url});return '\n\n'+link(title,url)+'\n\n'+escape(description)+'\n\n';}
@@ -61,11 +97,23 @@ function gptExportCore(){
       const lineStart=cursor===0||text[cursor-1]==='\n';
       if(lineStart){const match=/^ {0,3}(`{3,}|~{3,})[^\n]*(?:\n|$)/.exec(text.slice(cursor));if(match){const token=match[1];if(!fence)fence={char:token[0],length:token.length};else if(fence.char===token[0]&&token.length>=fence.length)fence=null;output+=match[0];cursor+=match[0].length;inline=0;continue;}}
       if(!fence&&text[cursor]==='`'){const match=/^`+/.exec(text.slice(cursor))[0];if(!inline)inline=match.length;else if(inline===match.length)inline=0;output+=match;cursor+=match.length;continue;}
+      if(!fence&&!inline&&(text[cursor]==='\ue203'||text[cursor]==='\ue204')){cursor++;continue;}
       if(!fence&&!inline&&text[cursor]==='\ue200'){const end=text.indexOf('\ue201',cursor+1);if(end!==-1&&end-cursor<=65536){const raw=text.slice(cursor,end+1),split=raw.indexOf('\ue202');output+=marker(raw.slice(1,split<0?-1:split),split<0?'':raw.slice(split+1,-1),raw);cursor=end+1;continue;}}
+      if(!fence&&!inline&&legacyCitations.length&&text[cursor]==='【'){
+        const end=text.indexOf('】',cursor+1);
+        if(end!==-1&&end-cursor<=128){
+          const raw=text.slice(cursor,end+1);
+          if(/†/.test(raw)){
+            const matched=legacyCitations.find(item=>(item.start_ix===cursor&&item.end_ix===end+1)||(item.metadata?.extra?.cited_message_idx!=null&&raw.includes(String(item.metadata.extra.cited_message_idx))))||legacyCitations.find(item=>item.metadata?.title||item.metadata?.url);
+            if(matched?.metadata){output+=addCitation('legacy:'+cursor,{title:matched.metadata.title||matched.metadata.name||matched.metadata.url,url:matched.metadata.url});cursor=end+1;continue;}
+          }
+        }
+      }
       output+=text[cursor++];
     }
     for(const {number,source}of sources){const title=bounded(source.title||source.name||'来源 / Source'),url=safeUrl(source.url||source.cloud_doc_url);output+='\n\n['+number+'] '+link(title,url)+(source.page_range_start!=null?' · p. '+source.page_range_start+(source.page_range_end!=null?'–'+source.page_range_end:''):'');}
-    if(typeof gptDilCore==='function'&&(positions.length||/(?:<[A-Za-z][\w-]*(?:\s|\/>|>)|\{@body|\{#each)/.test(output))){
+    const dilRe=dilTagRegex();
+    if(dilRe&&(positions.length||dilRe.test(output))){
       const dil=gptDilCore(),program=dil.parse(output,context),insert=nodes=>nodes.flatMap(node=>{if(node.kind==='markdown'){const parts=node.text.split(/\u001eGPTVIEW(\d+)\u001f/g);return parts.flatMap((text,index)=>index%2?[positions[Number(text)]]:text?[{kind:'markdown',text}]:[]);}return [{...node,...(node.children?{children:insert(node.children)}:{})}];});program.nodes=insert(program.nodes);const materialized=dil.materialize(program);
       if(positions.length||Object.keys(program.counts||{}).length||program.declarations.length||program.diagnostics.length)return {text:dil.summary(materialized.nodes,context),views:[],program};
     }
@@ -75,7 +123,7 @@ function gptExportCore(){
     const entities=Object.create(null),images=[],state=mapping[key]?.message?.metadata?.view_state?.root||{},seen=new Set();let current=key;
     const clean=(value,depth=0)=>{if(depth>8)return null;if(typeof value==='string')return value.slice(0,8192);if(value==null||typeof value==='number'||typeof value==='boolean')return value;if(Array.isArray(value))return value.slice(0,200).map(item=>clean(item,depth+1));if(typeof value==='object'){const output=Object.create(null);for(const [name,item]of Object.entries(value).slice(0,100))if(!['__proto__','constructor','prototype','entity_key'].includes(name))output[name]=clean(item,depth+1);return output;}return null;};
     while(current&&mapping[current]&&!seen.has(current)){
-      seen.add(current);const metadata=mapping[current].message?.metadata||{},references=list(metadata.content_references),indexed=referenceIndex(references);
+      seen.add(current);const metadata=mapping[current].message?.metadata||{},references=list(metadata.content_references),indexed=referenceIndex(references,metadata);
       for(const [id,item]of indexed)if(!Object.hasOwn(entities,id))entities[id]=clean(item);
       const points=references.filter(ref=>ref.type==='map').flatMap(ref=>list(ref.entities)).concat(Object.values(metadata.view_state?.widgets||{}).flatMap(widget=>list(widget?.points)));
       for(const point of points){const value=clean({...point.entity,...point});for(const ref of list(point.refs)){const id='turn'+ref.turn_index+ref.ref_type+ref.ref_index;if(!Object.hasOwn(entities,id))entities[id]=value;}for(const id of [point.input_key,point.id])if(typeof id==='string'&&/^turn\d+/.test(id)&&!Object.hasOwn(entities,id))entities[id]=value;}
@@ -84,21 +132,103 @@ function gptExportCore(){
     }
     return {entities,images:images.slice(0,100),state:clean(state)};
   }
+  function isHiddenEmptyNode(node){
+    const message=node?.message;if(!message)return true;
+    const metadata=message.metadata||{},content=message.content||{};
+    if(metadata.is_visually_hidden_from_conversation&&message.author?.role==='system')return true;
+    if(message.author?.role==='system'&&!list(metadata.attachments).length){
+      const parts=list(content.parts).filter(p=>p!=null&&(typeof p!=='string'||p.trim()!==''));
+      if((content.content_type==='text'||content.content_type==='multimodal_text')&&!parts.length)return true;
+    }
+    return false;
+  }
   function* convertSteps(value){
     if(!isConversation(value))return value;
     const originalId=string(value.id||value.conversation_id);if(!originalId)throw new Error('GPT conversation ID missing');
-    const mapping=value.mapping,keys=Object.keys(mapping),prefix='gpt:'+originalId+':',warnings=[],messages=[],parents=new Map();
-    for(const key of keys){const node=mapping[key];if(node?.message){let parent=node.parent,seen=new Set([key]);while(parent&&mapping[parent]&&!mapping[parent].message){if(seen.has(parent)){parent=null;warnings.push('消息树存在循环 / Message tree cycle');break;}seen.add(parent);parent=mapping[parent].parent;}parents.set(key,parent&&mapping[parent]?.message?prefix+parent:root);}}
-    for(const key of keys){const node=mapping[key],message=node?.message;if(!message)continue;const metadata=message.metadata||{},content=message.content||{},blocks=[];
-      if(content.content_type==='text'||content.content_type==='multimodal_text')for(const part of list(content.parts)){if(typeof part==='string'){const context=/(?:<[A-Za-z]|\{@body|\{#each|\ue200)/.test(part)?componentContext(mapping,key):{},parsed=parseText(part,metadata,context);blocks.push({type:'text',text:parsed.text,gptViews:parsed.views,...(parsed.program?{gptProgram:parsed.program}:{})});}else blocks.push({type:'text',text:'[非文本内容 / Non-text content]',gptViews:[{kind:'unknown',title:string(part?.content_type),details:boundedDetails(part).text}]});}
-      else if(content.content_type==='reasoning_recap')blocks.push({type:'thinking',thinking:string(content.content),summaries:true});
-      else if(content.content_type==='thoughts')blocks.push({type:'thinking',thinking:list(content.thoughts).map(thought=>[string(thought.summary),string(thought.content)].filter(Boolean).join('\n')).join('\n\n'),summaries:true});
-      else blocks.push({type:'text',text:'[未知内容 / Unknown content]',gptViews:[{kind:'unknown',title:bounded(content.content_type),details:boundedDetails(content).text}]});
+    const mapping=value.mapping,keys=Object.keys(mapping),prefix='gpt:'+originalId+':',warnings=[],messages=[],parents=new Map(),dilRe=dilTagRegex();
+    for(const key of keys){
+      const node=mapping[key];
+      if(!node?.message||isHiddenEmptyNode(node))continue;
+      let parent=node.parent,seen=new Set([key]);
+      if(parent===key){parent=null;warnings.push('消息树存在循环 / Message tree cycle');}
+      while(parent&&mapping[parent]&&isHiddenEmptyNode(mapping[parent])){
+        if(seen.has(parent)){parent=null;warnings.push('消息树存在循环 / Message tree cycle');break;}
+        seen.add(parent);parent=mapping[parent].parent;
+      }
+      if(!parent)parents.set(key,root);
+      else if(mapping[parent])parents.set(key,prefix+parent);
+      else parents.set(key,prefix+parent);
+    }
+    for(const key of keys){
+      const node=mapping[key],message=node?.message;if(!message||isHiddenEmptyNode(node))continue;
+      const metadata=message.metadata||{},content=message.content||{},blocks=[],extraAttachments=[];
+      const recipient=string(message.recipient),authorRole=string(message.author?.role),authorName=string(message.author?.name);
+      const durationMs=typeof metadata.finished_duration_sec==='number'&&Number.isFinite(metadata.finished_duration_sec)&&metadata.finished_duration_sec>0?Math.round(metadata.finished_duration_sec*1000):undefined;
+      if(content.content_type==='text'||content.content_type==='multimodal_text'){
+        for(const part of list(content.parts)){
+          if(part==null)continue;
+          if(typeof part==='string'){
+            const needCtx=(dilRe&&dilRe.test(part))||/\ue200/.test(part);
+            const context=needCtx?componentContext(mapping,key):{},parsed=parseText(part,metadata,context);
+            blocks.push({type:'text',text:parsed.text,gptViews:parsed.views,...(parsed.program?{gptProgram:parsed.program}:{})});
+          }else if(part.content_type==='image_asset_pointer'){
+            const id=pointerId(part.asset_pointer);
+            if(id)extraAttachments.push({file_name:id+'.png',file_type:'image/png',file_id:id,file_path:id+'.dat'});
+            const prompt=string(part.metadata?.dalle?.prompt);
+            if(prompt)blocks.push({type:'text',text:'[DALL-E] '+prompt});
+            blocks.push({type:'image',file_uuid:id});
+          }else if(part.content_type==='audio_transcription'){
+            const transcript=string(part.text);
+            if(transcript)blocks.push({type:'text',text:transcript});
+          }else if(part.content_type==='audio_asset_pointer'||part.content_type==='real_time_user_audio_video_asset_pointer'){
+            const id=pointerId(part.asset_pointer||part.audio_asset_pointer?.asset_pointer);
+            if(id)extraAttachments.push({file_name:id+'.wav',file_type:'audio/wav',file_id:id,file_path:id+'.wav'});
+          }else{
+            blocks.push({type:'text',text:'[非文本内容 / Non-text content]',gptViews:[{kind:'unknown',title:string(part?.content_type),details:boundedDetails(part).text}]});
+          }
+        }
+      }else if(content.content_type==='reasoning_recap'){
+        blocks.push({type:'thinking',thinking:string(content.content),summaries:true,...(durationMs?{duration_ms:durationMs}:{})});
+      }else if(content.content_type==='thoughts'){
+        blocks.push({type:'thinking',thinking:list(content.thoughts).map(thought=>[string(thought.summary),string(thought.content)].filter(Boolean).join('\n')).join('\n\n'),summaries:true,...(durationMs?{duration_ms:durationMs}:{})});
+      }else if(content.content_type==='code'){
+        const codeText=string(content.text),lang=string(content.language);
+        if(recipient&&recipient!=='all'){
+          let parsedInput;try{parsedInput=JSON.parse(codeText);}catch{parsedInput={code:codeText,language:lang||undefined};}
+          blocks.push({type:'tool_use',name:recipient,input:parsedInput,message:lang||''});
+        }else{
+          blocks.push({type:'text',text:'```'+(lang==='unknown'?'':lang)+'\n'+codeText+'\n```'});
+        }
+      }else if(content.content_type==='execution_output'){
+        const outText=string(content.text);
+        const aggMessages=list(metadata.aggregate_result?.messages);
+        for(const item of aggMessages)if(item?.message_type==='image'&&item.image_url){const id=pointerId(item.image_url);if(id)extraAttachments.push({file_name:id+'.png',file_type:'image/png',file_id:id,file_path:id+'.dat'});}
+        blocks.push({type:'tool_result',name:authorName||'python',content:[{type:'text',text:outText||string(metadata.aggregate_result?.final_expression_output)}]});
+      }else if(content.content_type==='tether_browsing_display'||content.content_type==='tether_quote'||content.content_type==='sonic_webpage'){
+        const body=[string(content.title),safeUrl(content.url),string(content.text||content.result||content.summary)].filter(Boolean).join('\n\n');
+        blocks.push({type:'tool_result',name:authorName||'web_search',content:[{type:'text',text:body}]});
+      }else if(content.content_type==='system_error'){
+        blocks.push({type:'text',text:'⚠️ '+(string(content.name)||'System error')+': '+string(content.text)});
+      }else if(content.content_type==='user_editable_context'||content.content_type==='model_editable_context'){
+        const prompt=[string(content.user_profile),string(content.user_instructions),string(content.model_set_context)].filter(Boolean).join('\n\n');
+        blocks.push({type:'injected_prompt_block',injection_source:content.content_type,prompt});
+      }else{
+        blocks.push({type:'text',text:'[未知内容 / Unknown content]',gptViews:[{kind:'unknown',title:bounded(content.content_type),details:boundedDetails(content).text}]});
+      }
       if(list(metadata.content_references).some(reference=>reference.type==='client_defined_widget')&&!blocks.some(block=>block.gptProgram||block.gptViews?.some(view=>view.kind==='disabled')))blocks.push({type:'text',text:'[组件数据缺失 / Component data missing]',gptViews:[{kind:'unknown',title:'历史组件 / Historical component',details:'client_defined_widget: exported data unavailable'}]});
-      messages.push({uuid:prefix+key,originalId:string(message.id),originalNodeId:key,sourcePlatform:'gpt',sender:message.author?.role==='user'?'human':string(message.author?.role)||'unknown',created_at:timestamp(message.create_time),updated_at:timestamp(message.update_time),parent_message_uuid:parents.get(key),model:string(metadata.model_slug||metadata.resolved_model_slug),contentType:string(content.content_type),content:blocks,attachments:list(metadata.attachments).map(att=>({file_name:string(att.name),file_type:string(att.mime_type),file_id:string(att.id),library_file_id:string(att.library_file_id),file_path:string(att.id)+'.dat',file_size:att.size}))});
+      const mappedAttachments=list(metadata.attachments).map(att=>({file_name:string(att.name),file_type:string(att.mime_type),file_id:string(att.id),library_file_id:string(att.library_file_id),file_path:string(att.id)+'.dat',file_size:att.size}));
+      messages.push({uuid:prefix+key,originalId:string(message.id),originalNodeId:key,sourcePlatform:'gpt',sender:authorRole==='user'?'human':authorRole||'unknown',created_at:timestamp(message.create_time),updated_at:timestamp(message.update_time),parent_message_uuid:parents.get(key),model:string(metadata.model_slug||metadata.resolved_model_slug),contentType:string(content.content_type),content:blocks,attachments:[...mappedAttachments,...extraAttachments]});
       yield;
     }
-    const path=[],seen=new Set();let current=value.current_node,valid=!!mapping[current];while(current&&mapping[current]){if(seen.has(current)){valid=false;break;}seen.add(current);if(mapping[current].message)path.unshift(prefix+current);const parent=mapping[current].parent;if(parent&&!mapping[parent])valid=false;current=parent;}
+    const path=[],seen=new Set();let current=value.current_node,valid=!!mapping[current];
+    while(current&&mapping[current]){
+      if(seen.has(current)){valid=false;break;}
+      seen.add(current);
+      if(mapping[current].message&&!isHiddenEmptyNode(mapping[current]))path.unshift(prefix+current);
+      const parent=mapping[current].parent;
+      if(parent&&!mapping[parent])valid=false;
+      current=parent;
+    }
     if(!valid||!path.length)warnings.push('当前节点缺失或无效，显示最长有效路径 / Invalid current node; showing longest valid path');
     return {uuid:'gpt:'+originalId,originalId,sourcePlatform:'gpt',name:string(value.title),summary:'',created_at:timestamp(value.create_time),updated_at:timestamp(value.update_time),defaultModel:string(value.default_model_slug),currentNode:string(value.current_node),defaultPath:valid?path:[],importWarnings:[...new Set(warnings)],chat_messages:messages};
   }

@@ -29,7 +29,9 @@ document.getElementById('platform-filter')?.addEventListener('click', event => {
     el.classList.toggle('active', active);
     el.setAttribute('aria-pressed', active ? 'true' : 'false');
   });
-  renderConvList(getSortedConvs());
+  const query = document.getElementById('search-box')?.value || '';
+  if (query.trim() && typeof filterConvs === 'function') filterConvs(query);
+  else renderConvList(getSortedConvs());
 });
 
 function gptViewTitle(view) {
@@ -231,8 +233,9 @@ function renderGptViews(block, location = '') {
 }
 
 function findGptResource(fileId) {
+  if (!fileId) return null;
   return (exportSession.resources || []).find(
-    resource => resource.packageId === currentConv?._sourcePackage && (resource.fileId === fileId || resource.path === fileId)
+    resource => resource.packageId === currentConv?._sourcePackage && (resource.fileId === fileId || resource.altId === fileId || resource.path === fileId)
   );
 }
 

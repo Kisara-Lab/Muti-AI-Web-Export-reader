@@ -58,35 +58,87 @@ function importWorkerMain(){
       }
       if(request.type==='package'){
         const file=request.payload.file;let id='',files;
+        const detectMagicMime=header=>{
+          if(!header||header.length<4)return null;
+          if([137,80,78,71,13,10,26,10].every((b,i)=>header[i]===b))return 'image/png';
+          if(header[0]===255&&header[1]===216&&header[2]===255)return 'image/jpeg';
+          if(header[0]===71&&header[1]===73&&header[2]===70&&header[3]===56)return 'image/gif';
+          if(header.length>=12&&header[0]===82&&header[1]===73&&header[2]===70&&header[3]===70){
+            if(header[8]===87&&header[9]===69&&header[10]===66&&header[11]===80)return 'image/webp';
+            if(header[8]===87&&header[9]===65&&header[10]===86&&header[11]===69)return 'audio/wav';
+          }
+          if(header[0]===37&&header[1]===80&&header[2]===68&&header[3]===70)return 'application/pdf';
+          if(header[0]===73&&header[1]===68&&header[2]===51)return 'audio/mpeg';
+          return null;
+        };
+        const parseJsonText=text=>JSON.parse(String(text||'').replace(/^\uFEFF/,''));
+        const stripWrapperRoot=rawFiles=>{
+          const names=Object.keys(rawFiles).filter(n=>!rawFiles[n].dir&&!n.startsWith('__MACOSX/'));
+          if(!names.length)return rawFiles;
+          const root=names[0].split('/')[0];
+          const reserved=['areas','projects','artifacts','memories','dalle-generations','sites'];
+          if(!root||reserved.includes(root)||!names.every(p=>p.startsWith(root+'/')))return rawFiles;
+          const normalized=Object.create(null);
+          for(const name of names){normalized[name.slice(root.length+1)]=rawFiles[name];}
+          return normalized;
+        };
         if(file){
           id=await packageFingerprint([{file}],current,request);
           if(packages.has(id))return{duplicate:true,id,filename:file.name};
-          const archive=await JSZip.loadAsync(file);files=archive.files;
+          const archive=await JSZip.loadAsync(file);
+          let rawFiles=stripWrapperRoot(archive.files);
+          const rawNames=Object.keys(rawFiles).filter(n=>!rawFiles[n].dir&&!n.startsWith('__MACOSX/'));
+          const innerZips=rawNames.filter(n=>/\.zip$/i.test(n));
+          const hasTopExport=rawNames.some(n=>/\.(?:json|md)$/i.test(n));
+          if(!hasTopExport&&innerZips.length){
+            const merged=Object.create(null);
+            for(const zipName of innerZips.slice(0,32)){
+              await check(current);
+              const sub=await JSZip.loadAsync(await rawFiles[zipName].async('arraybuffer'));
+              const subFiles=stripWrapperRoot(sub.files);
+              for(const [k,v]of Object.entries(subFiles)){if(!v.dir&&!k.startsWith('__MACOSX/')&&!merged[k])merged[k]=v;}
+            }
+            rawFiles=merged;
+          }
+          files=rawFiles;
         }else{
           const selected=request.payload.files||[],paths=selected.map(f=>f.path||f.webkitRelativePath||f.name),root=paths[0]?.split('/')[0];
-          const stripRoot=paths.every(p=>p.startsWith(root+'/'))&&!['areas','projects','artifacts','memories'].includes(root);
+          const stripRoot=paths.every(p=>p.startsWith(root+'/'))&&!['areas','projects','artifacts','memories','dalle-generations','sites'].includes(root);
           files=Object.create(null);for(const [index,item]of selected.entries()){const f=item.file||item,name=stripRoot?paths[index].slice(root.length+1):paths[index];if(files[name])throw new Error('Duplicate export path');files[name]={file:f,async:type=>type==='blob'?Promise.resolve(f):f.text()};}
           id=await packageFingerprint(Object.keys(files).sort().map(path=>({path,file:files[path].file})),current,request);
           if(packages.has(id))return{duplicate:true,id,filename:'folder'};
         }
         const entries=Object.keys(files).filter(n=>!files[n].dir&&!n.startsWith('__MACOSX/'));for(const name of entries){if(/^\/|^[A-Za-z]:/.test(name))throw new Error('Invalid export path');format.logicalPath(files[name].unsafeOriginalName||name);}
-        let convs=entries.filter(n=>/(^|\/)conversations(?:-\d+)?\.json$/i.test(n));
+        let convs=entries.filter(n=>/(^|\/)conversations(?:-\d+)?\.json$/i.test(n)).sort((a,b)=>{const na=Number(/(\d+)\.json$/i.exec(a)?.[1]??-1),nb=Number(/(\d+)\.json$/i.exec(b)?.[1]??-1);return na-nb||a.localeCompare(b);});
         const projects=[],memories=[],artifacts=[],users=[],logins=[],accounts=new Set(),mime=Object.create(null),resources=[],gpt=gptExportCore();let legacyMemory=null,gptManifest=false;const designs=[];
-        if(files['export_manifest.json']){const manifest=JSON.parse(await files['export_manifest.json'].async('text')),shards=gpt.manifest(manifest,entries);if(shards){convs=shards;gptManifest=true;}}
+        if(files['export_manifest.json']){const manifest=parseJsonText(await files['export_manifest.json'].async('text')),shards=gpt.manifest(manifest,entries);if(shards){convs=shards;gptManifest=true;}}
         if(files['library_files.json']){
-          const library=JSON.parse(await files['library_files.json'].async('text'));for(const item of Array.isArray(library)?library:[]){await check(current);const path=String(item.file_id||'')+'.dat';if(!files[path])continue;const declared=String(item.mime_type||''),header=await fileHeader(files[path]);const detected=[137,80,78,71,13,10,26,10].every((byte,index)=>header[index]===byte)?'image/png':header[0]===255&&header[1]===216&&header[2]===255?'image/jpeg':null;mime[path]=detected||(/^(?:text\/plain|text\/markdown|application\/pdf)$/.test(declared)?declared==='text/plain'&&String(item.file_extension).toLowerCase()==='md'?'text/markdown':declared:'application/octet-stream');resources.push({packageId:id,path,name:String(item.file_name||path),mime:mime[path],fileId:String(item.file_id||'')});}
+          const library=parseJsonText(await files['library_files.json'].async('text'));for(const item of Array.isArray(library)?library:[]){await check(current);const path=String(item.file_id||'')+'.dat';if(!files[path])continue;const declared=String(item.mime_type||''),header=await fileHeader(files[path]);const detected=detectMagicMime(header);mime[path]=detected||(/^(?:text\/plain|text\/markdown|application\/pdf|audio\/|image\/)/.test(declared)?declared==='text/plain'&&String(item.file_extension).toLowerCase()==='md'?'text/markdown':declared:'application/octet-stream');resources.push({packageId:id,path,name:String(item.file_name||path),mime:mime[path],fileId:String(item.file_id||''),altId:String(item.library_file_id||'')});}
+        }
+        const indexedPaths=new Set(resources.map(r=>r.path));
+        for(const name of entries){
+          if(indexedPaths.has(name))continue;
+          const mediaMatch=/^(?:dalle-generations\/|user-[^/]+\/|[^/]+\/audio\/)?(file[-_][A-Za-z0-9_-]+|[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})(?:[-_.][^/]+)?\.(png|jpe?g|gif|webp|avif|wav|mp3|pdf|txt|md)$/i.exec(name);
+          if(mediaMatch){
+            const ext=mediaMatch[2].toLowerCase();
+            const extMime=({png:'image/png',jpg:'image/jpeg',jpeg:'image/jpeg',gif:'image/gif',webp:'image/webp',avif:'image/avif',wav:'audio/wav',mp3:'audio/mpeg',pdf:'application/pdf',txt:'text/plain',md:'text/markdown'})[ext]||'application/octet-stream';
+            mime[name]=extMime;
+            const rawId=mediaMatch[1],cleanId=rawId.replace(/-sanitized$/i,'');
+            resources.push({packageId:id,path:name,name:name.split('/').pop(),mime:extMime,fileId:cleanId,altId:rawId});
+          }
         }
         const filename=file?.name||'folder';
+        const gptAuxSkip=new Set(['export_manifest.json','library_files.json','sites/export_manifest.json','ads.json','user_settings.json','sectioned_conversations.json','message_feedback.json','model_comparisons.json','shared_conversations.json','group_chats.json']);
         for(const name of entries){await check(current);
-          if(convs.includes(name)||gptManifest&&['export_manifest.json','library_files.json','sites/export_manifest.json','ads.json','user_settings.json','sectioned_conversations.json'].includes(name))continue;
+          if(convs.includes(name)||gptAuxSkip.has(name))continue;
           if(/\.md$/i.test(name)){
             const logical=name.replace(/^.*?(?=(?:areas|projects)\/)/,'');
             if(/^(?:areas\/|projects\/[^/]+\/)/.test(logical))memories.push(format.memory(logical,await files[name].async('text'),'',filename));continue;
           }
           if(!/\.json$/i.test(name))continue;
-          const value=JSON.parse(await files[name].async('text'));
+          let value;try{value=parseJsonText(await files[name].async('text'));}catch{if(/(^|\/)(?:projects\/|users\.json|login_history\.json|artifacts\/)/i.test(name))throw new Error('Invalid JSON: '+name);continue;}
           if(gpt.isConversation(value)||Array.isArray(value)&&value.length&&value.every(item=>gpt.isConversation(item))){if(gptManifest)throw new Error('GPT conversations outside declared shards');convs.push(name);continue;}
-          if(name==='user.json'&&value&&typeof value==='object'&&!Array.isArray(value)){users.push({...value,sourcePlatform:'gpt'});if(value.id)accounts.add('gpt:'+value.id);continue;}
+          if(/(^|\/)user\.json$/i.test(name)&&value&&typeof value==='object'&&!Array.isArray(value)){users.push({...value,sourcePlatform:'gpt'});if(value.id)accounts.add('gpt:'+value.id);continue;}
           if(/(^|\/)projects\/[^/]+\.json$/i.test(name)){if(!value||typeof value.uuid!=='string'||!value.uuid||typeof value.name!=='string')throw new Error('Invalid project metadata');projects.push(value);continue;}
           if(value?.memory_files){memories.push(...format.memoryFiles(value,filename));if(value.account_uuid)accounts.add(value.account_uuid);continue;}
           if(/(^|\/)memories\.json$/i.test(name)){legacyMemory=(Array.isArray(value)?value[0]:value)||null;continue;}

@@ -67,11 +67,11 @@ function gptDilCore(){
         if(source.startsWith('{@body',position)){flush();const declaration=readBrace().slice(5).trim(),match=/^const\s+(\[[^\]]+\]|[A-Za-z_$][\w$]*)\s*=\s*([\s\S]*?);?$/.exec(declaration);if(!match){diagnostics.push(diagnostic('declaration',declaration));continue;}const state=/^\[\s*([\w$]+)\s*,\s*([\w$]+)\s*\]$/.exec(match[1]),initial=state?/^DIL\.useState\(([\s\S]*)\)$/.exec(match[2]):null;if(state&&!initial){diagnostics.push(diagnostic('state',declaration));continue;}declarations.push({name:state?state[1]:match[1],setter:state?state[2]:'',value:readExpression(initial?initial[1]:match[2])});continue;}
         if(source.startsWith('{#each',position)){flush();const header=readBrace(),match=/^#each\s+([\s\S]+)\s+as\s+([\w$]+)(?:\s*,\s*([\w$]+))?$/.exec(header);if(!match)throw Error('Invalid each header');result.push({kind:'each',value:readExpression(match[1]),item:match[2],index:match[3]||'',children:children('{/each}',depth+1)});continue;}
         const start=/^<([A-Za-z][\w-]*)(?=[\s/>])/.exec(source.slice(position));
-        if(start){nodes++;flush();const name=start[1],begin=position;position+=start[0].length;const attrs=Object.create(null);let selfClosing=false;
+        if(start&&(depth>0||tags.has(start[1]))){nodes++;flush();const name=start[1],begin=position;position+=start[0].length;const attrs=Object.create(null);let selfClosing=false;
           while(position<source.length){while(/\s/.test(source[position]||'')&&position<source.length)position++;if(source.startsWith('/>',position)){position+=2;selfClosing=true;break;}if(source[position]==='>'){position++;break;}const attr=/^[\w$-]+/.exec(source.slice(position));if(!attr)throw Error('Invalid '+name+' attribute');position+=attr[0].length;while(/\s/.test(source[position]||'')&&position<source.length)position++;let value={kind:'literal',value:true};if(source[position]==='='){position++;while(/\s/.test(source[position]||'')&&position<source.length)position++;if(source[position]==='{')value=readExpression(readBrace());else if(source[position]==='"'||source[position]==="'"){const quote=source[position++],end=source.indexOf(quote,position);if(end<0)throw Error('Unclosed attribute');value={kind:'literal',value:source.slice(position,end)};position=end+1;}else{const literal=/^[A-Za-z0-9_.:%-]+/.exec(source.slice(position));if(!literal)throw Error('Expected literal attribute');value={kind:'literal',value:literal[0]};position+=literal[0].length;}}if(!forbidden.has(attr[0]))attrs[attr[0]]=value;}
           counts[name]=(counts[name]||0)+1;const nested=selfClosing?[]:children('</'+name+'>',depth+1);result.push(tags.has(name)?{kind:'element',name,attrs,children:nested}:{kind:'error',detail:'Unknown component: '+name,source:source.slice(begin,position).slice(0,8192)});if(!tags.has(name))diagnostics.push(diagnostic('tag',name));continue;
         }
-        if(source[position]==='{'&&!source.startsWith('{/',position)){const saved=position;try{const raw=readBrace();const ast=expression(raw);flush();result.push({kind:'expression',value:ast});continue;}catch{position=saved;}}
+        if((depth>0||declarations.length>0)&&source[position]==='{'&&!source.startsWith('{/',position)){const saved=position;try{const raw=readBrace();const ast=expression(raw);flush();result.push({kind:'expression',value:ast});continue;}catch{position=saved;}}
         text+=source[position++];
       }
       flush();if(closing)throw Error('Missing '+closing);return result;
@@ -100,7 +100,8 @@ function gptDilCore(){
   }
   function summary(nodes,context={}){
     const resolve=id=>context.entities?.[id]||{};
-    nodes=nodes.map(node=>node.kind==='legacy'?{kind:'markdown',text:node.text}:node);
+    const arr=value=>Array.isArray(value)?value:[];
+    nodes=arr(nodes).map(node=>node.kind==='legacy'?{kind:'markdown',text:node.text}:node);
     const plain=value=>typeof value==='string'?value:'';
     const lines=nodes.map(node=>{
       if(node.kind==='markdown')return node.text;
@@ -111,13 +112,13 @@ function gptDilCore(){
       const linked=(title,value)=>{const href=url(value);return href?'['+String(title).replace(/[\[\]\\]/g,'\\$&')+'](<'+href.replace(/[<>]/g,encodeURIComponent)+'>)':String(title);};
       switch(node.name){
         case 'Entity':return plain(attrs.value)||plain(entity.name||entity.title)||plain(attrs.ref);
-        case 'Cite':return (attrs.refs||[]).map(id=>{const item=resolve(id);return linked(item.title||item.name||id,item.url||item.website_url||item.entity?.website_url);}).join(' ');
+        case 'Cite':return arr(attrs.refs).map(id=>{const item=resolve(id);return linked(item.title||item.name||id,item.url||item.website_url||item.entity?.website_url);}).join(' ');
         case 'Link':return linked(attrs.title||entity.title||entity.name||attrs.url||attrs.ref||children,attrs.url||entity.url||entity.website_url);
         case 'Rating':return 'Rating: '+String(attrs.data?.value??attrs.data?.rating??attrs.data??entity.rating??'')+(entity.rating_scale?' / '+entity.rating_scale:'');
         case 'AsyncImage':case 'AsyncImageGroup':return (Array.isArray(attrs.query)?attrs.query:[attrs.query]).filter(value=>typeof value==='string').join('\n');
-        case 'MapWidgetV2':return plain(attrs.title)+'\n'+(attrs.points||[]).map(point=>{const resolved={...resolve(point.ref),...point};return plain(resolved.name||resolved.ref)+' '+plain(resolved.address);}).join('\n')+'\n'+(attrs.groups||[]).map(group=>plain(group.title)+'\n'+(group.locations||[]).map(location=>plain(location.notes||location.point_id)).join('\n')).join('\n');
-        case 'ReservationTimePillsRefWidget':return (entity.name||attrs.ref)+' · Historical reservation snapshot\n'+(entity.reservations||entity.reservation_providers||[]).map(item=>[item.date,item.time,item.party_size,...(item.availability_data?.times||[]),item.availability_data?.party_size,linked(item.provider_name||item.provider||'Reservation',item.provider_reservation_url||item.url||item.booking_url)].filter(value=>value!=null).join(' · ')).join('\n');
-        case 'Chart':{const content=attrs.content||{};return plain(content.meta?.title)+'\n'+plain(content.meta?.description)+'\n'+[content.xKey,...(content.series||[]).map(item=>item.label||item.dataKey)].join(' | ')+'\n'+(content.data||[]).map(row=>Object.values(row).join(' | ')).join('\n');}
+        case 'MapWidgetV2':return plain(attrs.title)+'\n'+arr(attrs.points).filter(p=>p&&typeof p==='object').map(point=>{const resolved={...resolve(point.ref),...point};return plain(resolved.name||resolved.ref)+' '+plain(resolved.address);}).join('\n')+'\n'+arr(attrs.groups).filter(g=>g&&typeof g==='object').map(group=>plain(group.title)+'\n'+arr(group.locations).filter(l=>l&&typeof l==='object').map(location=>plain(location.notes||location.point_id)).join('\n')).join('\n');
+        case 'ReservationTimePillsRefWidget':return (entity.name||attrs.ref)+' · Historical reservation snapshot\n'+arr(entity.reservations||entity.reservation_providers).filter(item=>item&&typeof item==='object').map(item=>[item.date,item.time,item.party_size,...arr(item.availability_data?.times),item.availability_data?.party_size,linked(item.provider_name||item.provider||'Reservation',item.provider_reservation_url||item.url||item.booking_url)].filter(value=>value!=null).join(' · ')).join('\n');
+        case 'Chart':{const content=attrs.content&&typeof attrs.content==='object'?attrs.content:{};return plain(content.meta?.title)+'\n'+plain(content.meta?.description)+'\n'+[content.xKey,...arr(content.series).filter(item=>item&&typeof item==='object').map(item=>item.label||item.dataKey)].join(' | ')+'\n'+arr(content.data).filter(row=>row&&typeof row==='object').map(row=>Object.values(row).join(' | ')).join('\n');}
         case 'input':return String(attrs.value??'');
         case 'radio-group':return children+'\nSelected: '+String(attrs.value??'');
         case 'checkbox':return (attrs.checked?'[x] ':'[ ] ')+children;
