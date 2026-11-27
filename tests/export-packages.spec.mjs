@@ -71,7 +71,7 @@ test('unsafe archive entry paths are rejected before touching the current archiv
 test('dedicated download page follows theme and language without interrupting reading',async({page})=>{
   await setup(page);await add(page,await zip('old-export.zip',{'conversations.json':[conv()]}),1);await page.evaluate(()=>openConv('c1'));await page.locator('#download-page-btn').click();
   await expect(page.locator('#messages .export-page')).toBeVisible();await expect(page.locator('#export-wrap')).toBeHidden();await expect(page.locator('#sidebar #export-session-panel')).toHaveCount(0);
-  const button=page.locator('.export-toolbar .primary');expect(await button.evaluate(el=>getComputedStyle(el).borderRadius)).toBe('8px');await page.locator('#lang-btn').click();await expect(button).toHaveText('🗜️ Open Export ZIP (Claude / ChatGPT)');await expect(page.locator('.export-page')).toContainText('Claude partitioned download manifest');
+  const button=page.locator('.export-toolbar .primary');expect(await button.evaluate(el=>getComputedStyle(el).borderRadius)).toBe('8px');await page.locator('#lang-btn').click();await expect(button).toHaveText('🗜️ Open Export ZIP (Claude / ChatGPT / Grok)');await expect(page.locator('.export-page')).toContainText('Claude partitioned download manifest');
   await page.locator('#theme-btn').click();await expect(page.locator('.export-page')).toBeVisible();await page.locator('.conv-item').first().click();await expect(page.locator('#messages')).toContainText('Synthetic answer');await expect(page.locator('#download-page-btn')).not.toHaveAttribute('aria-current','page');
 });
 
