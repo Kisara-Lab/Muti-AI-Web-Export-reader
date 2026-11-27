@@ -23,3 +23,12 @@ test('conversation entity lookup follows ancestors, retains current overrides an
   const node=(parent,parts,metadata={})=>({parent,message:{id:parent||'root',author:{role:'assistant'},content:{content_type:'text',parts:[parts]},metadata}}),point=(name)=>({name,refs:[{turn_index:1,ref_type:'business',ref_index:0}],entity:{name,rating:4.5}}),metadata=name=>({view_state:{widgets:{map:{points:[point(name)]}}}});
   const value={id:'tree',current_node:'answer',mapping:{root:node(null,'',metadata('Ancestor')),left:node('root','',metadata('Other branch')),answer:node('root','<Entity ref="turn1business0" value={turn1business0.name}/><Rating data={turn1business0.rating}/>',{content_references:[{type:'client_defined_widget'}]})}};let result=gpt.convert(value),blocks=result.chat_messages.at(-1).content;assert.equal(blocks.length,1);assert.match(blocks[0].text,/Ancestor/);assert.doesNotMatch(blocks[0].text,/Other branch|Component data missing/);value.mapping.answer.message.metadata=metadata('Current');result=gpt.convert(value);assert.match(result.chat_messages.at(-1).content[0].text,/Current/);
 });
+test('malformed Cite/Map/Chart attributes never throw TypeError in summary',()=>{
+  const nodes=[
+    {kind:'element',name:'Cite',attrs:{refs:'not-an-array'},children:[]},
+    {kind:'element',name:'MapWidgetV2',attrs:{title:'Map',points:'bad',groups:'bad'},children:[]},
+    {kind:'element',name:'Chart',attrs:{content:{chartType:'line',xKey:'x',series:[{dataKey:'y'}],data:[null,{x:'A',y:1}]}},children:[]}
+  ];
+  const out=core.summary(nodes,{});
+  assert.match(out,/A \| 1/);
+});

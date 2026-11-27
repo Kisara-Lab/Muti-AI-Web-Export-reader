@@ -32,3 +32,49 @@ test('components expose only visible fields, deny actions and keep remote images
 test('recaps and actual thoughts stay summaries; safe exports scan every visible component field',async()=>{
   const value=fixture();value.mapping.right.message.content={content_type:'reasoning_recap',content:'Exported summary'};const result=gpt.convert(value);assert.equal(result.chat_messages[3].content[0].thinking,'Exported summary');result.chat_messages[0].content.push({type:'text',text:'Contact sample@example.test',gptViews:[{kind:'entity',title:'sample@example.test',description:'sample@example.test',url:'https://example.test/?token=synthetic-secret'}]});const redacted=core.redactConversation(result);assert.ok(!JSON.stringify(redacted.conv).includes('sample@example.test'));assert.ok(!JSON.stringify(redacted.conv).includes('synthetic-secret'));const markdown=await core.markdown(result,'longest',{},async()=>{});assert.match(markdown,/ChatGPT/);assert.match(markdown,/Exported summary/);
 });
+test('P0/P1 regressions: TypeScript/HTML/LaTeX stay intact, ms/0 timestamps, content_types, multimodal parts, hidden system nodes, legacy citations, and defaultPath branch preservation',()=>{
+  const dilCtx={URL,TextEncoder,structuredClone};
+  const gptWithDil=vm.runInNewContext(source('gpt-dil')+'\n'+source('gpt-format')+';gptExportCore()',dilCtx);
+  const plainText='Use Array<string> with <br> and <div>hello</div> and \\frac{a}{b} = {1+2} \ue200entity\ue202["org","OpenAI"]\ue201 after';
+  const parsed=gptWithDil.parseText(plainText,{content_references:[{type:'entity',name:'OpenAI'}]});
+  assert.ok(parsed.text.includes('Array<string>'));
+  assert.ok(parsed.text.includes('\\frac{a}{b} = {1+2}'));
+  assert.ok(parsed.text.includes('after'));
+
+  const legacy=gptWithDil.parseText('Fact 【12:0†source】 and \ue200navlist\ue202{}\ue201',{citations:[{start_ix:5,end_ix:17,metadata:{title:'Legacy Doc',url:'https://example.test/legacy'}}],content_references:[{type:'navlist',items:[{title:'Nav Item',url:'https://example.test/nav'}]}]});
+  assert.match(legacy.text,/Fact \[1\]/);assert.match(legacy.text,/Legacy Doc/);assert.match(legacy.text,/Nav Item/);
+
+  const conv={
+    id:'p1-rich',title:'Rich GPT',create_time:1700000000000,update_time:0,current_node:'leafB',
+    mapping:{
+      root:{parent:null,message:{id:'sys',author:{role:'system'},create_time:0,content:{content_type:'text',parts:['']},metadata:{is_visually_hidden_from_conversation:true}}},
+      u1:{parent:'root',message:{id:'u1',author:{role:'user'},create_time:1700000001,content:{content_type:'multimodal_text',parts:[null,{content_type:'audio_transcription',text:'Spoken voice prompt'},{content_type:'image_asset_pointer',asset_pointer:'file-service://file-img1',metadata:{dalle:{prompt:'A sunny cat'}}}]},metadata:{}}},
+      codeNode:{parent:'u1',message:{id:'c1',author:{role:'assistant'},recipient:'python',create_time:1700000002,content:{content_type:'code',language:'python',text:'print(1+1)'},metadata:{}}},
+      execNode:{parent:'codeNode',message:{id:'e1',author:{role:'tool',name:'python'},create_time:1700000003,content:{content_type:'execution_output',text:'2'},metadata:{}}},
+      browseNode:{parent:'execNode',message:{id:'b1',author:{role:'tool',name:'web'},create_time:1700000004,content:{content_type:'tether_browsing_display',result:'Search body',title:'Web Hit',url:'https://example.test/hit'},metadata:{}}},
+      errNode:{parent:'browseNode',message:{id:'er1',author:{role:'assistant'},create_time:1700000005,content:{content_type:'system_error',name:'ToolError',text:'Timed out'},metadata:{}}},
+      ctxNode:{parent:'errNode',message:{id:'cx1',author:{role:'system'},create_time:1700000006,content:{content_type:'user_editable_context',user_profile:'Dev profile',user_instructions:'Be concise'},metadata:{}}},
+      a1:{parent:'ctxNode',message:{id:'a1',author:{role:'assistant'},create_time:1700000007,content:{content_type:'thoughts',thoughts:[{summary:'Plan',content:'Step 1'}]},metadata:{finished_duration_sec:12.5}}},
+      leafA:{parent:'a1',message:{id:'la',author:{role:'assistant'},create_time:1700000008,content:{content_type:'text',parts:['Branch A']},metadata:{}}},
+      leafA2:{parent:'leafA',message:{id:'la2',author:{role:'user'},create_time:1700000009,content:{content_type:'text',parts:['Followup A']},metadata:{}}},
+      leafB:{parent:'a1',message:{id:'lb',author:{role:'assistant'},create_time:1700000010,content:{content_type:'text',parts:['Branch B']},metadata:{}}},
+      altU:{parent:'root',message:{id:'altu',author:{role:'user'},create_time:1700000011,content:{content_type:'text',parts:['Alt root']},metadata:{}}}
+    }
+  };
+  const converted=gptWithDil.convert(conv);
+  assert.equal(converted.created_at,'2023-11-14T22:13:20.000Z');
+  assert.equal(converted.updated_at,'');
+  assert.ok(!converted.chat_messages.some(m=>m.originalNodeId==='root'));
+  const u1=converted.chat_messages.find(m=>m.originalNodeId==='u1');
+  assert.ok(u1.content.some(b=>b.type==='text'&&b.text==='Spoken voice prompt'));
+  assert.ok(u1.content.some(b=>b.type==='image'&&b.file_uuid==='file-img1'));
+  assert.equal(converted.chat_messages.find(m=>m.originalNodeId==='codeNode').content[0].type,'tool_use');
+  assert.equal(converted.chat_messages.find(m=>m.originalNodeId==='execNode').content[0].type,'tool_result');
+  assert.equal(converted.chat_messages.find(m=>m.originalNodeId==='browseNode').content[0].type,'tool_result');
+  assert.match(converted.chat_messages.find(m=>m.originalNodeId==='errNode').content[0].text,/Timed out/);
+  assert.equal(converted.chat_messages.find(m=>m.originalNodeId==='ctxNode').content[0].type,'injected_prompt_block');
+  assert.equal(converted.chat_messages.find(m=>m.originalNodeId==='a1').content[0].duration_ms,12500);
+  // P0-3: selecting an unrelated branch choice keeps leafB from defaultPath instead of jumping to longer leafA->leafA2
+  const treeWithOtherChoice=core.tree(converted,'longest',{['gpt:p1-rich:nonexistent']:0});
+  assert.equal(treeWithOtherChoice.messages.at(-1).originalNodeId,'leafB');
+});

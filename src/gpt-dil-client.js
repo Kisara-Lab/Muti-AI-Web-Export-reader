@@ -285,7 +285,7 @@ function buildGptProgram(key, program, state) {
       if (name === 'Cite') {
         const span = add(parent, 'span');
         span.className = 'gpt-dil-cite-group';
-        for (const id of attrs.refs || []) {
+        for (const id of Array.isArray(attrs.refs) ? attrs.refs : []) {
           const source = resolve(id);
           if (source) link(span, '[' + (source.title || source.name || id) + ']', source.url || source.website_url || source.entity?.website_url);
           else missing(span, 'Cite', id);
@@ -339,46 +339,48 @@ function buildGptProgram(key, program, state) {
         continue;
       }
       if (name === 'Chart') {
-        const chart = attrs.content || {};
-        const data = Array.isArray(chart.data) ? chart.data.slice(0, 500) : [];
-        const series = Array.isArray(chart.series) ? chart.series.slice(0, 12) : [];
+        const chart = attrs.content && typeof attrs.content === 'object' ? attrs.content : {};
+        const data = (Array.isArray(chart.data) ? chart.data.slice(0, 500) : []).filter(row => row && typeof row === 'object');
+        const series = (Array.isArray(chart.series) ? chart.series.slice(0, 12) : []).filter(item => item && typeof item === 'object');
         const card = add(parent, 'figure');
         card.className = 'gpt-dil-chart';
         add(card, 'figcaption', chart.meta?.title || t('图表'));
         if (chart.meta?.description) add(card, 'p', chart.meta.description).className = 'gpt-card-desc';
-        if (chart.chartType !== 'bar') {
-          missing(card, 'Chart', 'chartType: ' + chart.chartType);
-          continue;
-        }
-        const minimum = Number.isFinite(chart.yAxisMin) ? chart.yAxisMin : 0;
-        const values = data.flatMap(row => series.map(item => Number(row[item.dataKey]))).filter(Number.isFinite);
-        const maximum = Math.max(minimum + 1, Number(chart.yAxisMax) || Math.max(...values, 1));
-        const rowHeight = Math.max(36, series.length * 18 + 16);
-        const height = Math.max(56, data.length * rowHeight + 16);
-        const svg = svgNode('svg', { viewBox: '0 0 640 ' + height, role: 'img', 'aria-label': chart.meta?.title || 'Bar chart' });
-        svg.classList.add('gpt-dil-chart-svg');
-        const palette = ['var(--accent)', 'var(--blue)', 'var(--green)'];
-        card.append(svg);
-        data.forEach((row, index) => {
-          const top = index * rowHeight + 10;
-          svg.append(svgNode('text', { x: 4, y: top + 14, fill: 'currentColor', 'font-size': 12 }, row[chart.xKey]));
-          series.forEach((item, seriesIndex) => {
-            const value = Number(row[item.dataKey]);
-            if (!Number.isFinite(value)) return;
-            const y = top + seriesIndex * 18;
-            svg.append(svgNode('rect', { x: 165, y, width: Math.max(0, 410 * (value - minimum) / (maximum - minimum)), height: 14, rx: 3, fill: palette[seriesIndex % palette.length] }));
-            svg.append(svgNode('text', { x: 585, y: y + 11, fill: 'currentColor', 'font-size': 11 }, value));
+        if (chart.chartType === 'bar') {
+          const minimum = Number.isFinite(chart.yAxisMin) ? chart.yAxisMin : 0;
+          const values = data.flatMap(row => series.map(item => Number(row[item.dataKey]))).filter(Number.isFinite);
+          const maximum = Math.max(minimum + 1, Number(chart.yAxisMax) || Math.max(...values, 1));
+          const rowHeight = Math.max(36, series.length * 18 + 16);
+          const height = Math.max(56, data.length * rowHeight + 16);
+          const svg = svgNode('svg', { viewBox: '0 0 640 ' + height, role: 'img', 'aria-label': chart.meta?.title || 'Bar chart' });
+          svg.classList.add('gpt-dil-chart-svg');
+          const palette = ['var(--accent)', 'var(--blue)', 'var(--green)'];
+          card.append(svg);
+          data.forEach((row, index) => {
+            const top = index * rowHeight + 10;
+            svg.append(svgNode('text', { x: 4, y: top + 14, fill: 'currentColor', 'font-size': 12 }, row[chart.xKey] ?? ''));
+            series.forEach((item, seriesIndex) => {
+              const value = Number(row[item.dataKey]);
+              if (!Number.isFinite(value)) return;
+              const y = top + seriesIndex * 18;
+              svg.append(svgNode('rect', { x: 165, y, width: Math.max(0, 410 * (value - minimum) / (maximum - minimum)), height: 14, rx: 3, fill: palette[seriesIndex % palette.length] }));
+              svg.append(svgNode('text', { x: 585, y: y + 11, fill: 'currentColor', 'font-size': 11 }, value));
+            });
           });
-        });
-        add(card, 'p', minimum + ' — ' + maximum + ' · ' + series.map(item => item.label || item.dataKey).join(' / ')).className = 'gpt-card-muted';
-        const table = add(card, 'table');
-        const head = add(table, 'tr');
-        add(head, 'th', chart.xKey);
-        for (const item of series) add(head, 'th', item.label || item.dataKey);
-        for (const row of data) {
-          const tr = add(table, 'tr');
-          add(tr, 'td', row[chart.xKey]);
-          for (const item of series) add(tr, 'td', row[item.dataKey]);
+          add(card, 'p', minimum + ' — ' + maximum + ' · ' + series.map(item => item.label || item.dataKey).join(' / ')).className = 'gpt-card-muted';
+        } else {
+          missing(card, 'Chart', 'chartType: ' + chart.chartType);
+        }
+        if (data.length) {
+          const table = add(card, 'table');
+          const head = add(table, 'tr');
+          add(head, 'th', chart.xKey || '');
+          for (const item of series) add(head, 'th', item.label || item.dataKey || '');
+          for (const row of data) {
+            const tr = add(table, 'tr');
+            add(tr, 'td', row[chart.xKey] ?? '');
+            for (const item of series) add(tr, 'td', row[item.dataKey] ?? '');
+          }
         }
         continue;
       }

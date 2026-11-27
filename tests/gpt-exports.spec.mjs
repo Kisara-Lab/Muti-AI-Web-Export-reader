@@ -39,3 +39,34 @@ test('10k GPT nodes retain metadata-first windows and cancellation at 4x CPU',as
   const zip=new JSZip();zip.file('unusual.json',JSON.stringify([value]));const started=Date.now();await add(page,{name:'large-synthetic.zip',mimeType:'application/zip',buffer:await zip.generateAsync({type:'nodebuffer'})},1);expect(Date.now()-started).toBeLessThan(20000);await page.evaluate(()=>openConv('gpt:large-synthetic'));await expect(page.locator('#messages')).toContainText('Synthetic GPT needle 9999');expect(await page.locator('.msg-wrap').count()).toBeLessThanOrEqual(100);expect(await page.evaluate(()=>allConvs.every(conv=>!('chat_messages' in conv)))).toBe(true);
   await page.evaluate(async()=>{const old=readerSearch('needle');await newExportArchive();await old;});expect(await page.evaluate(()=>({count:allConvs.length,resources:exportSession.resources?.length||0}))).toEqual({count:0,resources:0});
 });
+test('wrapper-folder ZIP, nested 2026 ZIP, standalone JSON via UI, WebP .dat, and platform+search filter linkage',async({page})=>{
+  await setup(page);
+  // 1) Standalone GPT JSON directly via #zip-input UI
+  await page.setInputFiles('#zip-input',{name:'standalone-gpt.json',mimeType:'application/json',buffer:Buffer.from(JSON.stringify(conversation()))});
+  await page.waitForFunction(()=>allConvs.length===1);
+  expect(await page.evaluate(()=>allConvs[0].uuid)).toBe('gpt:synthetic-id');
+
+  // 2) Wrapper-folder ZIP with BOM JSON + corrupt auxiliary JSON + WebP .dat + nested 2026 ZIP
+  const inner=new JSZip();
+  inner.file('wrapper/export_manifest.json','\uFEFF'+JSON.stringify({version:1,logical_files:{'conversations.json':{files:['conversations-000.json'],shard_count:1}}}));
+  inner.file('wrapper/conversations-000.json',JSON.stringify([{...conversation(),id:'nested-gpt',title:'Nested GPT Match'}]));
+  inner.file('wrapper/library_files.json',JSON.stringify([{file_id:'webp_file',library_file_id:'lib_webp',file_name:'pic.webp',mime_type:'application/octet-stream'}]));
+  inner.file('wrapper/webp_file.dat',Buffer.from('RIFF\x1a\x00\x00\x00WEBPVP8L\x0d\x00\x00\x00\x2f\x00\x00\x00\x10\x07\x10\x11\x11\x88\x88\xfe\x07\x00','binary'));
+  inner.file('wrapper/broken_aux.json','{corrupt json');
+  const outer=new JSZip();
+  outer.file('User Online Activity/Conversations__chatgpt-0001.zip',await inner.generateAsync({type:'nodebuffer'}));
+  await page.setInputFiles('#zip-input',{name:'privacy-portal-2026.zip',mimeType:'application/zip',buffer:await outer.generateAsync({type:'nodebuffer'})});
+  await page.waitForFunction(()=>allConvs.some(c=>c.uuid==='gpt:nested-gpt'));
+  expect(await page.evaluate(()=>exportSession.resources.find(r=>r.fileId==='webp_file')?.mime)).toBe('image/webp');
+
+  // 3) Search box respects active #platform-filter
+  const claudeZip=new JSZip();
+  claudeZip.file('conversations.json',JSON.stringify([{uuid:'claude-match',name:'Nested Claude Match',chat_messages:[{uuid:'m1',sender:'assistant',parent_message_uuid:root,content:[{type:'text',text:'hello'}]}]}]));
+  await page.setInputFiles('#zip-input',{name:'claude-match.zip',mimeType:'application/zip',buffer:await claudeZip.generateAsync({type:'nodebuffer'})});
+  await page.waitForFunction(()=>allConvs.some(c=>c.uuid==='claude-match'));
+  await page.click('#platform-filter [data-platform="gpt"]');
+  await page.fill('#search-box','Nested');
+  await page.waitForTimeout(300);
+  await expect(page.locator('#conv-list .conv-item')).toHaveCount(1);
+  await expect(page.locator('#conv-list')).toContainText('Nested GPT Match');
+});

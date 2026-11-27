@@ -27,9 +27,9 @@ function archiveAnalysisCore(){
         for(const block of list(message?.content)){
           if(!block||typeof block!=='object')continue;const type=block.type||'',name=String(block.name||'');
           if(type==='text'){const text=String(block.text||'');textBlocks++;characters+=text.length;wordText+=' '+text;}
-          else if(type==='thinking'){const text=String(block.thinking||'');thinking++;characters+=text.length;wordText+=' '+text;const start=Date.parse(block.start_timestamp||''),stop=Date.parse(block.stop_timestamp||'');if(Number.isFinite(start)&&Number.isFinite(stop)&&stop>=start){const duration=stop-start;if(!state.longestThinking||duration>state.longestThinking.durationMs)state.longestThinking={durationMs:duration,conversationUuid:record.meta.uuid,title:record.meta.name,messageUuid:message?.uuid||''};}}
+          else if(type==='thinking'){const text=String(block.thinking||'');thinking++;characters+=text.length;wordText+=' '+text;const explicit=typeof block.duration_ms==='number'&&Number.isFinite(block.duration_ms)&&block.duration_ms>0?block.duration_ms:NaN;const start=Date.parse(block.start_timestamp||''),stop=Date.parse(block.stop_timestamp||'');const duration=Number.isFinite(explicit)?explicit:(Number.isFinite(start)&&Number.isFinite(stop)&&stop>=start?stop-start:NaN);if(Number.isFinite(duration)&&(!state.longestThinking||duration>state.longestThinking.durationMs))state.longestThinking={durationMs:duration,conversationUuid:record.meta.uuid,title:record.meta.name,messageUuid:message?.uuid||''};}
           else if(type==='image')imageBlocks++;
-          if(type==='tool_use'||type==='server_tool_use'){tools++;add(state.toolNames,name||'unknown');if(/show_widget|visualize|imagine|artifact/i.test(name))artifacts++;if(/web_search|web_fetch/i.test(name))webSearches++;}
+          if(type==='tool_use'||type==='server_tool_use'){tools++;add(state.toolNames,name||'unknown');if(/show_widget|visualize|imagine|artifact|canmore|dalle/i.test(name))artifacts++;if(/web_search|web_fetch|web\.run|browser/i.test(name))webSearches++;}
           if((type==='tool_result'||type==='web_search_tool_result')&&block.is_error){state.toolErrors++;convToolErrors++;}
         }
         if(!list(message?.content).length&&message?.text){wordText=String(message.text);characters=wordText.length;}
@@ -38,7 +38,7 @@ function archiveAnalysisCore(){
         const attachments=list(message?.attachments).length+list(message?.files).length;state.attachments+=attachments;if(!list(message?.content).length&&!message?.text&&!attachments)state.emptyMessages++;
         const date=new Date(message?.created_at||message?.updated_at||''),timestamp=date.getTime();
         if(!Number.isNaN(timestamp)){const dateKey=date.getFullYear()+'-'+String(date.getMonth()+1).padStart(2,'0')+'-'+String(date.getDate()).padStart(2,'0');add(state.activeDates,dateKey);add(state.months,dateKey.slice(0,7));state.weekdays[date.getDay()]++;state.hours[date.getHours()]++;if(date.getHours()<5)state.lateNightMessages++;timed.push({sender,uuid:message?.uuid||'',parentUuid:message?.parent_message_uuid||'',timestamp});}
-        const model=message?.model||message?.model_slug||message?.message?.model||'';if(model)add(state.models,model);await countWords(wordText);
+        const model=message?.model||message?.model_slug||message?.message?.model||(sender==='assistant'?conversation.defaultModel:'')||'';if(model)add(state.models,model);await countWords(wordText);
         if(message?.parent_message_uuid)add(childCounts,message.parent_message_uuid);
       }
       for(const count of Object.values(childCounts))if(count>1){state.branchPoints++;state.alternativeMessages+=count-1;convBranched=true;}if(convBranched)state.branchedConversations++;
