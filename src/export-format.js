@@ -42,7 +42,8 @@ function exportFormatCore(){
     let listKey=null;
     for(const line of match[1].split(/\r?\n/)){
       if(!line.trim()||line.trim().startsWith('#'))continue;
-      const item=line.match(/^\s+-\s+(.*)$/);if(item&&listKey){try{fields[listKey].push(scalar(item[1]));}catch{warning=true;}continue;}
+      const item=line.match(/^\s+-\s+(.*)$/);if(item&&listKey){try{if(!Array.isArray(fields[listKey]))fields[listKey]=[];fields[listKey].push(scalar(item[1]));}catch{warning=true;}continue;}
+      const sub=line.match(/^\s+([A-Za-z_][\w.-]*):\s*(.*)$/);if(sub&&listKey){try{fields[listKey+'.'+sub[1]]=sub[2]?scalar(sub[2]):'';}catch{warning=true;}continue;}
       const m=line.match(/^([A-Za-z_][\w-]*):\s*(.*)$/);if(!m){warning=true;continue;}
       listKey=null;try{if(!m[2]){fields[m[1]]=[];listKey=m[1];}else if(m[2].startsWith('[')){if(!m[2].endsWith(']'))throw Error();const parts=m[2].slice(1,-1).match(/"(?:\\.|[^"\\])*"|'(?:''|[^'])*'|[^,]+/g)||[];fields[m[1]]=parts.map(scalar);}else fields[m[1]]=scalar(m[2]);}catch{warning=true;}
     }

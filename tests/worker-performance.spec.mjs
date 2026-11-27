@@ -21,7 +21,7 @@ test('large synthetic export remains metadata-first under throttled CPU',async({
   try{
     await fs.writeFile(path.join(dir,'conversations.json'),JSON.stringify(largeSyntheticExport()));
     await page.goto(pathToFileURL(path.join(root,'viewer.html')).href);
-    await page.evaluate(()=>{const RealWorker=Worker;window.analyticsWorkerCreations=0;window.Worker=class extends RealWorker{constructor(url,options){super(url,options);if(url===analyticsWorkerUrl)window.analyticsWorkerCreations++;}};});
+    await page.evaluate(()=>{const RealWorker=Worker;window.analyticsWorkerCreations=0;window.analyticsProgressEvents=[];window.Worker=class extends RealWorker{constructor(url,options){super(url,options);if(url===analyticsWorkerUrl){window.analyticsWorkerCreations++;this.addEventListener('message',event=>{if(event.data?.type==='progress')window.analyticsProgressEvents.push(event.data.loaded);});}}};});
     const cdp=await page.context().newCDPSession(page);await cdp.send('Performance.enable');await cdp.send('Emulation.setCPUThrottlingRate',{rate:4});
     const started=Date.now();await page.setInputFiles('#file-input',dir);await page.waitForFunction(()=>allConvs.length===240,{timeout:120000});
     expect(Date.now()-started).toBeLessThan(20_000);
@@ -33,7 +33,6 @@ test('large synthetic export remains metadata-first under throttled CPU',async({
     const metrics=await cdp.send('Performance.getMetrics'),heap=metrics.metrics.find(metric=>metric.name==='JSHeapUsedSize')?.value||0;expect(heap).toBeLessThan(80*1024*1024);
     expect(await page.evaluate(()=>window.analyticsWorkerCreations)).toBe(0);
     await page.locator('[data-analytics-tab]').click();await page.waitForFunction(()=>analyticsWorker!==null);
-    await page.evaluate(()=>{window.analyticsProgressEvents=[];analyticsWorker.addEventListener('message',event=>{if(event.data.type==='progress')window.analyticsProgressEvents.push(event.data.loaded);});});
     await page.waitForFunction(()=>window.analyticsProgressEvents.length>=2);
     const concurrent=await page.evaluate(async()=>{
       const started=performance.now();

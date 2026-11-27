@@ -65,7 +65,7 @@ function dataWorkerMain(){
       if(key==='chat_messages'&&raw[start]==='[')meta.message_count=countArrayItems(raw,start,end);
       else if(key==='account')meta.accountUuid=JSON.parse(raw.slice(start,end))?.uuid||'';
       else if(key==='_design')meta._design=JSON.parse(raw.slice(start,end));
-      else if(['sourcePlatform','originalId','defaultModel','currentNode','importWarnings','workspaceId','collectionUuid','codexMeta'].includes(key))meta[key]=JSON.parse(raw.slice(start,end));
+      else if(['sourcePlatform','originalId','defaultModel','currentNode','importWarnings','workspaceId','collectionUuid','codexMeta','claudeCodeMeta'].includes(key))meta[key]=JSON.parse(raw.slice(start,end));
       else if(key==='uuid'||key==='name'||key==='summary'||key==='created_at'||key==='updated_at'){
         const value=JSON.parse(raw.slice(start,end));meta[key]=typeof value==='string'?value:'';
       }
