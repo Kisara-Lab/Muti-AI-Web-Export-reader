@@ -83,7 +83,7 @@ function importWorkerMain(){
         };
         const stripWrapperRoot=rawFiles=>{
           let currentFiles=normalizeEntryPaths(rawFiles);
-          const reserved=['areas','projects','artifacts','memories','dalle-generations','sites','prod-mc-asset-server'];
+          const reserved=['areas','projects','artifacts','memories','sessions','archived_sessions','dalle-generations','sites','prod-mc-asset-server'];
           for(let depth=0;depth<6;depth++){
             const names=Object.keys(currentFiles);
             if(!names.length)break;
@@ -102,7 +102,7 @@ function importWorkerMain(){
           let rawFiles=stripWrapperRoot(archive.files);
           const rawNames=Object.keys(rawFiles).filter(n=>!rawFiles[n].dir&&!n.startsWith('__MACOSX/'));
           const innerZips=rawNames.filter(n=>/\.zip$/i.test(n));
-          const hasTopExport=rawNames.some(n=>/\.(?:json|md)$/i.test(n));
+          const hasTopExport=rawNames.some(n=>/\.(?:json|jsonl|md)$/i.test(n));
           if(!hasTopExport&&innerZips.length){
             const merged=Object.create(null);
             for(const zipName of innerZips.slice(0,32)){
@@ -128,7 +128,7 @@ function importWorkerMain(){
         }
         const entries=Object.keys(files).filter(n=>!files[n].dir&&!n.startsWith('__MACOSX/'));for(const name of entries){if(/^\/|^[A-Za-z]:/.test(name))throw new Error('Invalid export path');format.logicalPath(String(files[name].unsafeOriginalName||name).replace(/\\/g,'/').replace(/\/+/g,'/'));}
         let convs=entries.filter(n=>/(^|\/)conversations(?:-\d+)?\.json$/i.test(n)).sort((a,b)=>{const na=Number(/(\d+)\.json$/i.exec(a)?.[1]??-1),nb=Number(/(\d+)\.json$/i.exec(b)?.[1]??-1);return na-nb||a.localeCompare(b);});
-        const projects=[],memories=[],artifacts=[],users=[],logins=[],accounts=new Set(),mime=Object.create(null),resources=[],gpt=gptExportCore(),grok=typeof grokExportCore==='function'?grokExportCore():null,pplx=typeof perplexityExportCore==='function'?perplexityExportCore():null;let legacyMemory=null,gptManifest=false;const designs=[];
+        const projects=[],memories=[],artifacts=[],users=[],logins=[],accounts=new Set(),mime=Object.create(null),resources=[],gpt=gptExportCore(),grok=typeof grokExportCore==='function'?grokExportCore():null,pplx=typeof perplexityExportCore==='function'?perplexityExportCore():null,codex=typeof codexExportCore==='function'?codexExportCore():null;let legacyMemory=null,gptManifest=false,sawZst=false;const designs=[],codexConvs=[],codexProjects=new Map();
         if(files['export_manifest.json']){const manifest=parseJsonText(await files['export_manifest.json'].async('text')),shards=gpt.manifest(manifest,entries);if(shards){convs=shards;gptManifest=true;}}
         if(files['library_files.json']){
           const library=parseJsonText(await files['library_files.json'].async('text'));for(const item of Array.isArray(library)?library:[]){await check(current);const path=String(item.file_id||'')+'.dat';if(!files[path])continue;const declared=String(item.mime_type||''),header=await fileHeader(files[path]);const detected=detectMagicMime(header);mime[path]=detected||(/^(?:text\/plain|text\/markdown|application\/pdf|audio\/|image\/)/.test(declared)?declared==='text/plain'&&String(item.file_extension).toLowerCase()==='md'?'text/markdown':declared:'application/octet-stream');resources.push({packageId:id,path,name:String(item.file_name||path),mime:mime[path],fileId:String(item.file_id||''),altId:String(item.library_file_id||'')});}
@@ -175,9 +175,21 @@ function importWorkerMain(){
             }catch{}
             continue;
           }
+          if(/\.jsonl\.zst$/i.test(name)){sawZst=true;continue;}
+          if(codex&&/\.jsonl$/i.test(name)){
+            try{
+              const jsonlText=await files[name].async('text');
+              const parsedCodex=await codex.parseRolloutAsync(jsonlText,{path:name},()=>check(current));
+              if(parsedCodex&&parsedCodex.conversation){
+                codexConvs.push(parsedCodex.conversation);
+                if(parsedCodex.project&&!codexProjects.has(parsedCodex.project.uuid))codexProjects.set(parsedCodex.project.uuid,parsedCodex.project);
+              }
+            }catch(error){if(error?.canceled)throw error;}
+            continue;
+          }
           if(/\.md$/i.test(name)){
-            const logical=name.replace(/^.*?(?=(?:areas|projects)\/)/,'');
-            if(/^(?:areas\/|projects\/[^/]+\/)/.test(logical))memories.push(format.memory(logical,await files[name].async('text'),'',filename));continue;
+            const logical=name.replace(/^.*?(?=(?:areas|projects|memories)\/)/,'');
+            if(/^(?:areas\/|projects\/[^/]+\/|memories\/)/.test(logical))memories.push(format.memory(logical,await files[name].async('text'),'',filename));continue;
           }
           if(!/\.json$/i.test(name))continue;
           let value;try{value=parseJsonText(await files[name].async('text'));}catch{if(/(^|\/)(?:projects\/|users\.json|login_history\.json|artifacts\/)/i.test(name))throw new Error('Invalid JSON: '+name);continue;}
@@ -204,10 +216,22 @@ function importWorkerMain(){
           }
           designs.push(...core.parseDesignExports([JSON.stringify(value)]));
         }
-        if(!convs.length&&!projects.length&&!memories.length&&!artifacts.length&&!users.length&&!logins.length&&!legacyMemory&&!designs.length)throw new Error('No supported export data in package');
+        for(const p of codexProjects.values())projects.push(p);
+        if(!convs.length&&!codexConvs.length&&!projects.length&&!memories.length&&!artifacts.length&&!users.length&&!logins.length&&!legacyMemory&&!designs.length){
+          if(sawZst)throw new Error('Codex .jsonl.zst (Zstd) compressed files are not supported yet; decompress with zstd -d first');
+          throw new Error('No supported export data in package');
+        }
         await check(current);await rpc('packageStart',{id,filename,accounts:[...accounts]});
         try{
           for(const name of convs){await check(current);await extractConversation(files[name],request,current);}
+          if(codexConvs.length){
+            for(const conv of codexConvs){
+              await check(current);await rpc('ingestStart');
+              const bytes=new TextEncoder().encode(JSON.stringify(conv));
+              for(let at=0;at<bytes.length;at+=4*1024*1024){const batch=bytes.slice(at,at+4*1024*1024);await rpc('ingestChunk',batch.buffer,[batch.buffer]);}
+              await rpc('ingestEnd');
+            }
+          }
           // Design records use the same atomic append transaction as conversations.
           if(designs.length){await rpc('ingestStart');const bytes=new TextEncoder().encode(JSON.stringify(designs));for(let at=0;at<bytes.length;at+=4*1024*1024){const batch=bytes.slice(at,at+4*1024*1024);await rpc('ingestChunk',batch.buffer,[batch.buffer]);}await rpc('ingestEnd');}
           await check(current);const parsed=await rpc('packageCommit');packages.set(id,{files,memories,mime});

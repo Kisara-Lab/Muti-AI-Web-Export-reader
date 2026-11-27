@@ -74,6 +74,7 @@ function archiveAnalysisCore(){
       const conversation=materialize(record),messages=list(conversation.chat_messages),exactCandidates=new Set(),exactFiles=new Set(),queries=[];
       const wsId=conversation.workspaceId||record.meta?.workspaceId;
       if(wsId&&stats['grok:ws:'+wsId]){map[record.meta.uuid]='grok:ws:'+wsId;evidence[record.meta.uuid]={method:'workspace',confidence:1,files:[],queries:[],keywords:[]};}
+      else if(wsId&&stats['codex:cwd:'+wsId]){map[record.meta.uuid]='codex:cwd:'+wsId;evidence[record.meta.uuid]={method:'workspace',confidence:1,files:[],queries:[],keywords:[]};}
       const colId=conversation.collectionUuid||record.meta?.collectionUuid;
       if(!map[record.meta.uuid]&&colId&&stats['perplexity:col:'+colId]){map[record.meta.uuid]='perplexity:col:'+colId;evidence[record.meta.uuid]={method:'collection',confidence:1,files:[],queries:[],keywords:[]};}
       for(let messageIndex=0;messageIndex<messages.length;messageIndex++){
