@@ -2,22 +2,11 @@
 
 # Multi-AI Web Export Reader
 
-**xAI Grok & Perplexity.ai web exports (Beta Test)**:
-- **xAI Grok**: import official single-layer export ZIPs (`prod-grok-backend.json`, `prod-mc-auth-mgmt-api.json`, and `prod-mc-asset-server` local attachments) or standalone JSON with branch paths, thinking/tool steps, inline citations, and workspace mapping.
-- **Perplexity.ai**: import official export ZIPs (`conversations-*.json` and `user-data-*.xlsx` profile/preferences/Spaces workbook) or standalone JSON alongside Claude, ChatGPT, and Grok archives.
-- **Beta Test notice**: Both Grok and Perplexity.ai parsers are currently in early beta and may be incomplete for some export variants, citation sources, fields, or media formats — redacted sample reports are welcome.
+**A local-only Multi-AI Export History Viewer — Claude · ChatGPT · Grok (Beta) · Perplexity (Beta)**
 
-**ChatGPT web exports are now supported**: import ZIPs, extracted folders or individual conversation JSON alongside Claude archives for reading, search, statistics and redacted exports. Exported web/file citations, image groups, entities, offline place plots and disabled historical upload controls are supported, with lazy `.dat` images and Markdown attachments. Packaged web pages and component actions never execute. [Support matrix and validation](docs/gpt-export.md)
+Turn official export ZIPs, extracted folders, or standalone JSON from major AI platforms into a unified local workspace for reading, cross-platform search, analytics, and privacy-safe redaction.
 
-**GPT inline component repair**: DIL layouts, entities, ratings, bar charts, routes and historical reservation times now render in their original positions. Radio choices, inputs, checklists and progress update locally; confirmation generates a copyable message. The standard viewer keeps remote images and OpenStreetMap tiles off by default with a prominent Step 1 / header toggle; the complete offline bundle uses local views only. [Coverage and validation](docs/gpt-components.md)
-
-**A local Multi-AI Export History Viewer (Claude / ChatGPT / Grok Beta / Perplexity Beta)**
-
-**Updated for Claude's new partitioned exports**: manifest checklist → official package downloads → batch ZIP import. Read both memory export formats and Artifact versions, with continued support for legacy ZIPs and folders. [Import guide](docs/new-export-import.md)
-
-> **Turn Claude's official export manifests and ZIP packages into a searchable, analyzable, privacy-safe local archive.**
-
-No installation · one file · ZIP without extraction · local-only · built for large histories
+> 🔒 **Local-only · Zero uploads · No backend**: All parsing, search, analytics, and redaction run inside your browser. Remote images and map tiles are **off by default** (toggleable in Step 1 or the header); the offline bundle works completely without network access.
 
 [![Latest release](https://img.shields.io/github/v/release/Artistkisa/claude-rescue-reader?label=release)](https://github.com/Artistkisa/claude-rescue-reader/releases/latest)
 [![Viewer Validation](https://github.com/Artistkisa/claude-rescue-reader/actions/workflows/viewer-validation.yml/badge.svg?branch=main)](https://github.com/Artistkisa/claude-rescue-reader/actions/workflows/viewer-validation.yml)
@@ -26,258 +15,69 @@ No installation · one file · ZIP without extraction · local-only · built for
 [![Offline bundle](https://github.com/Artistkisa/claude-rescue-reader/actions/workflows/release-verify.yml/badge.svg)](https://github.com/Artistkisa/claude-rescue-reader/releases/latest)
 [![License: MIT](https://img.shields.io/badge/license-MIT-yellow.svg)](LICENSE)
 
-**[⬇ Download viewer.html](https://github.com/Artistkisa/claude-rescue-reader/releases/latest/download/viewer.html)** · **[🔌 Download the offline bundle](https://github.com/Artistkisa/claude-rescue-reader/releases/latest/download/claude-rescue-reader-offline.zip)** · **[🧪 Synthetic demo ZIP](docs/demo/claude-rescue-reader-synthetic-demo.zip)** · **[🌐 中文](README.md)**
+**[⬇ Download `viewer.html`](https://github.com/Artistkisa/claude-rescue-reader/releases/latest/download/viewer.html)** · **[🔌 Download offline bundle](https://github.com/Artistkisa/claude-rescue-reader/releases/latest/download/claude-rescue-reader-offline.zip)** · **[🧪 Synthetic demo ZIP](docs/demo/claude-rescue-reader-synthetic-demo.zip)** · **[🌐 中文](README.md)**
 
-![Claude Rescue Reader showing conversations, Thinking, tool calls, and a Markdown table](docs/images/viewer-overview.png)
+![Multi-AI Web Export Reader overview](docs/images/viewer-overview.png)
 
-<sub>The screenshot is generated from the fictional “Beichen Coffee Subscription” archive; every person, brand, file, and number is synthetic.</sub>
+<sub>Screenshot generated from the fictional “Beichen Coffee Subscription” archive; every person, brand, file, and metric is synthetic.</sub>
 
 ---
 
-## Start in 30 seconds
+## Supported AI Platforms
 
-1. [Download `viewer.html` directly](https://github.com/Artistkisa/claude-rescue-reader/releases/latest/download/viewer.html) and open it in your browser.
-2. **Received a JSON manifest?** Open **Download & import** → **Import download manifest**, select `manifest-*.json`, then use **Open download page** for each package. Download the official ZIPs manually in the new tabs.
-3. Select or drop the downloaded ZIPs together — **no extraction, upload, or installation required.** Use **Add packages** for later parts of the same archive.
+Append archives from multiple platforms into the **same workspace in any order** — accounts stay isolated per platform, with unified filtering, search, and cross-platform analytics:
 
-**Have a legacy single ZIP?** Drop it directly; no manifest is needed. Extracted folders also work. Chrome, Edge, and Firefox are supported.
+| Platform | Status | Export Path | Supported Formats & Features | Docs |
+|---|---|---|---|---|
+| **Claude** | Stable | `Settings → Account → Export Data` | Partitioned `manifest-*.json` + ZIPs, legacy ZIP/folder; branches, Thinking states, tool calls, Artifact version history, Projects with 3-layer inference, global/project memories, Design, account & login history | [Partitioned Import Guide](docs/new-export-import.md) |
+| **ChatGPT** | Stable | `Settings → Data controls → Export data` | Full ZIP (sharded `conversations-*.json`, `export_manifest.json`) & standalone JSON; branch paths, citations, DIL interactive components, charts, maps, `.dat` local image/Markdown attachments, account metadata | [GPT Support Matrix](docs/gpt-export.md) · [Components](docs/gpt-components.md) |
+| **Grok (xAI)** | **Beta Test** | `accounts.x.ai → Data → Download Account Data` | Official export ZIP (`prod-grok-backend.json`, `prod-mc-auth-mgmt-api.json`, `prod-mc-asset-server` assets) & standalone JSON; `leaf_response_id` branches, thinking/tool steps, inline citations, exact Workspace links | Early beta — some evolving fields or media types may be incomplete |
+| **Perplexity.ai** | **Beta Test** | `Settings → Account → Export Data` | Official export ZIP (`conversations-*.json`, `user-data-*.xlsx`) & standalone JSON; chained Q&A turns, `user-data` profile/preferences/Spaces workbook | Early beta — official exports omit `[n]` citation URLs; some fields are evolving |
 
-### New and legacy Claude exports
+> ⚠️ **Beta Test Notice**: Both **Grok** and **Perplexity.ai** parsers are currently in early beta. Because export schemas evolve and sample coverage is limited, some specialized fields, citation URLs, media attachments, or interactive cards may be incomplete — redacted sample reports are welcome.
 
-| Files you received | How to use them |
-|---|---|
-| New `manifest-*.json` | A dedicated checklist shows categories, parts and import status. Buttons open official downloads; the viewer never fetches them automatically or treats an opened page as a completed download |
-| Multiple new ZIP packages | Append conversations, projects, memories, artifacts (`frames`) and account metadata in any order. Import without a manifest too; missing packages do not block available content |
-| Memory in an account export | Read `memory_files` from `memories/<account>.json`, preserving topics, sources and available timestamps |
-| Standalone memory ZIP | Read Markdown directories and frontmatter. Open separately or explicitly append to the current archive; differing bodies remain selectable versions |
-| Legacy ZIP / extracted folder | Continue importing `conversations.json`, `memories.json`, project files and Design through the existing entries |
+---
 
-New-format support also includes a **separate Artifact library with historical version selection**, explicitly exported Thinking states, folded injected context, and local read-only account details with paged login history. Missing models stay **Not provided**.
+## Start in 30 Seconds
 
-Download links may expire within 24 hours or earlier after use; complete official downloads in your browser. Use **Open new archive** for another archive and **Add packages** for later parts of the same one. [Full workflow and compatibility details](docs/new-export-import.md)
-
-| What you get | More than “it opens” |
-|---|---|
-| 💬 **Faithful reading** | Markdown, code, Thinking, tool calls, Artifacts, Design, attachments, and branches |
-| 🔎 **Fast retrieval** | Title/summary search, full-text search, in-conversation navigation, and project search |
-| 📊 **History insights** | Activity trends, model/tool distribution, word frequency, longest chats, profiles, and health reports |
-| 🧭 **Project reconstruction** | Memories, knowledge files, evidence, confidence, local corrections, and reference graphs |
-| 🧪 **Claude behavior audit** | Tool timelines, hidden-result probes, Thinking integrity, and answer evidence chains |
-| 🛡️ **Safe sharing** | Expanded credential detection, standard/aggressive redaction, consistent aliases, custom sensitive text, and safe PDF/Markdown; [guide](docs/redaction.md) |
-
-> 🔒 Parsing, search, analytics, and redaction all run locally in your browser. There is no backend and your conversations are never uploaded.
+1. **Open the viewer**: Download [`viewer.html`](https://github.com/Artistkisa/claude-rescue-reader/releases/latest/download/viewer.html) (or the [offline bundle](#offline-mode)) and open it in Chrome, Edge, or Firefox.
+2. **Step 1 · Confirm Privacy & Remote Resources**: Local-only mode is active by default (no external image or OpenStreetMap requests). Enable remote resources in Step 1 or the header if you want ChatGPT remote images/maps loaded.
+3. **Step 2 · Import Your Exports**:
+   - **Direct ZIP / Folder**: Click **Choose ZIP Archive** or drag & drop one or more ZIPs / extracted folders directly onto the page (**no unzipping required**, append across platforms anytime).
+   - **Claude Partitioned Manifest**: Open **Import Center / Claude Manifest**, load `manifest-*.json`, download packages from Claude, and batch-append the ZIPs.
+4. **Explore & Share Safely**: Filter by platform pill, run full-text search, switch branches, or use **Safe Export Markdown / PDF** to redact sensitive data locally before sharing.
 
 ![Complete workflow in the English UI: drop a ZIP, open a conversation, inspect the project graph, explore analytics, and preview a safe export](docs/images/workflow-demo-en.gif)
 
-## The difference at a glance
+---
 
-| Capability | Text editor | Basic export viewer | Rescue Reader |
-|---|:---:|:---:|:---:|
-| Open a large ZIP directly | ❌ | Partial | ✅ |
-| Conversation branches | ❌ | Partial | ✅ |
-| Project-association evidence | ❌ | ❌ | ✅ |
-| Global and project memory | ❌ | Partial | ✅ |
-| Thinking integrity states | ❌ | ❌ | ✅ |
-| Tool-result provenance and audit | ❌ | ❌ | ✅ |
-| Worker-backed lazy parsing | ❌ | Partial | ✅ |
-| Redaction preview before export | ❌ | ❌ | ✅ |
-| Complete offline distribution | — | Partial | ✅ |
+## Core Capabilities
 
-<sub>“Basic export viewer” describes the common feature baseline, not any named project. “Partial” means support varies by implementation or archive shape.</sub>
+### 💬 Faithful Multi-AI Reading & Branching
+- **Unified Workspace & Platform Pills**: Color-coded platform badges and live counts across the conversation list, header metadata, summary drawer, project cards, and analytics overview (`All / Claude / ChatGPT / Grok β / Perplexity β`).
+- **Rich Technical Rendering**: Full Markdown (tables, syntax-highlighted code blocks with copy button), collapsible **Thinking blocks** (duration, truncated/hidden states), **tool calls & results**, inline citations, and web search panels.
+- **Interactive & Local Media**: Longest-path or platform-recorded branch navigation (`leaf_response_id` / `current_node`); sandboxed Artifact previews (SVG, Mermaid, HTML); ChatGPT DIL interactive widgets; local `.dat` and `/content` attachment previews.
 
-## Claude's export ZIP is far more than chat text
+### 🧭 Projects, Workspaces & Memories
+- **Unified Project View**: Browse Claude Projects, Grok Workspaces, and Perplexity Spaces in one place.
+  - **Claude**: Since Claude exports omit project-conversation links, the viewer infers associations via **unique project files → knowledge search queries → project-unique memory keywords**, with local manual overrides and a reference graph.
+  - **Grok / Perplexity**: Links directly via `workspace_id` / Space workbook metadata alongside custom instructions.
+- **Memories**: Parses Claude global memories (4 sections), per-project memories (6 sections), and versioned standalone Markdown memory ZIPs.
 
-Rescue Reader surfaces records that are easy to miss in a normal transcript:
+### 📊 Analytics & 🧪 Behavior Lab
+- **Explore & Archive Overview**: Combine date range, platform, project, model, and role filters; view trends with 7/30-day moving averages, **platform conversation/message breakdowns**, word clouds, usage profiles, and drill-down tables; see [analytics semantics](docs/analytics.md).
+- **Behavior Lab**: On-demand local audit of tool-call pairing, approvals/MCP provenance, hidden structured results, Thinking integrity, and health checks (strictly reporting observable export fields without inferring server-side policies).
 
-- Claude-generated conversation summaries that may not be prominent in the web UI
-- global memory, project memory, project instructions, and knowledge files
-- Thinking states such as truncated, hidden, summarized, signed, or replaced display
-- tool approvals, MCP/integration provenance, parameters, errors, and hidden structured results
-- project-knowledge searches and the evidence they provide for project reconstruction
-- branches, orphan messages, empty records, reverse timestamps, and incomplete attachments
-- attachment paths, internal metadata, flags, and other fields worth reviewing before sharing
-
-These fields prove what is present in the exported archive; they do **not** by themselves prove account moderation, risk controls, or model downgrading.
-
-## Reconstructing relationships that exist in the export but are hard to see
-
-### Project memory → project files → related conversations
-
-Claude exports do not contain a direct conversation-to-project relationship. Instead of grouping by title alone, the viewer uses three confidence-gated evidence layers:
-
-1. **Unique project file:** the conversation references a file owned by only one project.
-2. **Project knowledge search:** `project_knowledge_search` queries match project-document content.
-3. **Project-memory keywords:** titles or exported summaries match memory terms unique to a project; ties and low-confidence results remain unassigned.
-
-Every result exposes its method, confidence, matched files/queries/memories, and a local manual correction control. The graph connects project memory, knowledge files, and conversations into an inspectable evidence chain.
-
-![Fictional project showing the memory, file, and conversation graph plus three association evidence types](docs/images/project-associations.png)
-
-<sub>This is not a pre-baked mockup: the 88% knowledge match, 98% unique-file match, and project-memory match are calculated from the synthetic export by the production matcher.</sub>
-
-### Global memory, project memory, and exported conversation summaries
-
-The viewer parses global work/personal context, current priorities, history, and structured project memories. The conversation side panel directly renders the export's existing `summary` and metadata — **it does not contact a server or ask a model to summarize again.**
-
-<table>
-<tr>
-<td width="72%"><img src="docs/images/memory-view.png" alt="Global memory, project memory, and project reference graph"></td>
-<td width="28%"><img src="docs/images/conversation-summary.png" alt="Conversation summary and metadata from a Claude export"></td>
-</tr>
-<tr>
-<td><b>Global memory + project-level memory</b></td>
-<td><b>Conversation summary from the export</b></td>
-</tr>
-</table>
-
-<details>
-<summary><b>Account restricted? That is why this project exists.</b></summary>
-
-Restricted Claude accounts can generally still request an official data export from the restriction page. Once the ZIP arrives, this viewer restores local reading, search, analysis, and export even when the original chat UI is no longer available.
-
-The account may be gone; the conversations do not have to be.
-
-</details>
+### 🛡️ Privacy-Safe Exports (Markdown / PDF / SCP Mode)
+- Scans locally for credentials/tokens, emails, phone numbers, IDs, IP/URL tokens, and contextual PII (names, addresses, organizations, social handles), offering **Standard / Aggressive** modes, consistent aliases, and custom sensitive terms.
+- Includes **SCP Dossier Mode** (`[DATA EXPUNGED]` black bars + `CONFIDENTIAL` watermark) with masked previews and match reasons; see [redaction guide](docs/redaction.md).
 
 ---
 
-## Why You Need This
+## Large-Export Performance & Architecture
 
-Claude's export file looks like this:
-
-```json
-[{"uuid": "3f8a1c2d-e947-4b6f-9d3e-72a5b8c1f0e4", "name": "Technical Research Notes", "summary": "**Conversation Overview**\n\nThis conversation focused entirely on technical research...", "chat_messages": [{"uuid":"01a2b3c4-d5e6-7f8a-9b0c-d1e2f3a4b5c6", "text":"...", "content": [{"start_timestamp":"2024-11-08T09:23:14.882341Z","stop_timestamp":"2024-11-08T09:23:17.103Z","flags":null,"type":"thinking","thinking":"Let me analyze the user's request..."}, {"type":"text","text":"...actual response...","citations":[]}], "sender":"assistant", "parent_message_uuid":"00000000-0000-4000-8000-000000000000", ...}]}]
-```
-
-150MB. One line. No newlines. All non-ASCII characters Unicode-escaped. Thinking blocks and actual responses mixed in the same `content` array. Conversation trees linked by `parent_message_uuid`. Project docs are a separate pile of JSON files. Memories are Markdown strings embedded inside JSON strings.
-
-**What happens when you open it in a text editor:**
-
-> **SHOW MORE (150MB)**
-> Rendering paused for long line for performance reasons.
-> This can be configured via `editor.stopRenderingLineAfter`.
-
-VS Code gives up and refuses to render the rest. One line. 150MB. It silenced the editor.
-
-This tool turns it into a readable conversation interface.
-
-## Use Cases
-
-- 🔒 Rescue conversation history after an account ban via Claude's official export
-- 📦 Browse and review your Claude conversation archive
-- 🔍 Search and export specific conversations
-
-## Detailed Setup
-
-### Step 1: Export Your Claude Data
-
-After a ban, logging in redirects you to [claude.ai/restricted](https://claude.ai/restricted). There's a button on the page:
-
-> **Export your data**
-> We'll package up your conversations, projects, and settings for download. This might take some time to complete.
-
-Click it, wait for the email, download, unzip. That's it — at least they made the export process humane.
-
-<details>
-<summary>The official FAQ is also worth a read (click to expand)</summary>
-
-**Q: Why was my account put on hold?**
-> We put your account on hold because of unusual activity. We can't share the specifics—that would help bad actors get around the same checks.
-
-Translation: We won't tell you why we banned you, because telling you would help bad actors. Whether you're actually a bad actor is a separate question.
-
-**Q: How long will the review take?**
-> Reviews take about 10 days.
-
-Ten days. Good luck finding a replacement in that time — you probably won't.
-
-**Q: Will my billing be affected?**
-> We cancelled your subscription and refunded your most recent payment in full.
-
-This part they actually handled well.
-
-**Q: What if I think this is a mistake?**
-> Request a review and our team will look over your account. The more specific you are about what you were working on, the better.
-
-So you need to explain to Anthropic what you were using Claude for, so they can decide if you're a bad actor. Hopefully your worldbuilding, debugging sessions, or casual conversations are self-evidently innocent.
-
-</details>
-
-Example legacy export folder (new exports are split by category; these files need not share one ZIP):
-
-```
-claude-export/
-├── conversations.json   # All conversations (with full messages)
-├── users.json           # Account info
-├── memories.json        # Claude's memories (global + per-project)
-└── projects/
-    └── <uuid>.json      # Project documents
-```
-
-### Step 2: Open the Viewer
-
-1. Download [`viewer.html`](viewer.html) and open it directly in a browser (Chrome / Edge / Firefox recommended)
-2. Choose the flow for your export:
-   - **New manifest:** open **Download & import**, import `manifest-*.json`, and open the official package pages. Select downloaded ZIPs together and use **Add packages** for later parts
-   - **Existing ZIPs:** select or drop one or more ZIPs directly (**no extraction or manifest required**)
-   - **Existing folder:** choose **📂 Select Export Folder** and select the extracted directory; legacy formats remain supported
-3. Wait for loading to complete (a few seconds for large files; ~3–5s for 150MB)
-
-> **Note:** An internet connection is required to load rendering dependencies (from jsDelivr CDN). For offline use, see [Offline Mode](#offline-mode) below.
-
-## Features
-
-### Conversation List
-- Sort by last updated / created / message count
-- Search by title and summary; enable **Full-text search** to search message content
-- Search within a conversation, highlight matches, and navigate between results
-- ↑ / ↓ or J / K keyboard navigation
-
-### Message Rendering
-- Full Markdown rendering (headings, tables, code blocks, blockquotes, etc.)
-- Code blocks with language labels + one-click copy button
-- 💭 **Thinking blocks** collapsible
-- ⚙ **Tool calls** and results collapsible
-- Switch between conversation branches created by edits or regenerated responses
-- Render rich content including artifacts, Mermaid diagrams, generated files, web search panels, attachments, and citations
-- Reattach images automatically from an imported folder or ZIP when the export only retains filenames, with manual local-image binding and PDF inclusion
-- Copy an individual message as plain text
-
-### Projects
-- View project documents (Markdown rendered, collapsible)
-- Show and copy project custom instructions, and download individual project knowledge files in their original form
-- High-confidence conversation association: unique file evidence → project knowledge search → project-unique keywords
-- Project-match explanations show matched memories, files, keywords, and confidence
-- Manually correct project assignments; confirmations stay only in local browser storage and never modify the source export
-- Project-level search, statistics, Markdown export, and a project memory → document → conversation reference graph
-- **Note:** Claude's official export does not include project-conversation ownership data. Duplicate filenames, ties, and low-confidence results remain unassigned instead of being forced into a project
-
-### Memories
-- Global memories displayed in 4 sections (work / personal / highlights / history)
-- Per-project memories displayed in 6 standard sections, collapsible
-
-### Analytics
-- **Explore** opens by default with combined date, project, model and role filters, message/active-conversation/character trends, 7/30-day moving averages and comparison with the preceding equal-length period
-- Choose all history, the last 7/30/90 archive days or custom dates. Presets end on the latest valid message; dates use the local time zone and weeks start Monday
-- Click a trend bucket for matching conversation summaries, 50 per page, or apply those conversations to the main list. Returning preserves filters, the selected interval and page
-- A dedicated Analytics Worker is created only when Analytics is first opened. Import, reading and search build no analytics index; leaving cancels unfinished work
-- **Archive overview** retains the following totals and word-frequency features across the entire archive, independently of exploration filters:
-- Summarizes conversations, messages, roles, characters, thinking blocks, tool calls, attachments, and web searches
-- Shows monthly/weekday/hourly activity, conversation depth, message and character distribution by role, content-block composition, model information (when present in the export), and longest conversations
-- Builds Chinese/English frequent-word clouds inside the Worker and summarizes searches, files, artifacts, and thinking blocks
-- Adds history-health metrics for active-day streaks, response latency, conversation span, branches/alternatives, and empty messages
-- Adds a local usage profile and record insights for peak hour, late-night activity, streak range, most-used tool, longest Thinking block, and conversations with the most tool failures
-- The Data Worker feeds raw records directly through MessageChannel, waiting for consumption acknowledgements (at most 4 conversations and a target of 512 KiB per batch; oversized records travel alone). The main thread receives controls and summaries
-- The Analytics Worker retains a compact index and at most 12 aggregate cache entries, with no second raw archive or new network dependency; see [semantics and protocol](docs/analytics.md)
-
-### Large-export performance
-- `conversations.json` is read in 4 MiB chunks and transferred to a persistent Data Worker with Transferable `ArrayBuffer`s
-- Initial import scans only the top-level array and returns titles, timestamps, summaries, and message counts; full messages are parsed only when a conversation is opened
-- Raw conversation JSON (including message text) and any built full-text index are cached in local IndexedDB using file size, modification time, and the first/last 64 KiB. This is not a full-file digest: middle-only changes with identical size and modification time can reuse stale entries; clear the cache using the sidebar button. The fingerprint does not mean that only metadata is stored
-- The cache never leaves the current browser and can be removed at any time with **Clear local parse cache** in the sidebar
-- Syntax highlighting, Mermaid, Artifact iframes, and ZIP parsing load only when their feature or viewport requires them, keeping the initial conversation list responsive
-
-#### Reproducible CPU-throttled benchmark
+- **Streaming & Lazy Parsing**: Large JSON files stream in 4 MiB chunks via Transferable `ArrayBuffer`s to a persistent Data Worker; initial load scans top-level metadata only, and messages/highlighting/Mermaid/ZIP assets load lazily on demand.
+- **Five On-Demand Workers**: Data, Import, Task, Reader, and Analytics pipelines live in [`src/`](src/) and compile into single-file [`viewer.html`](viewer.html); see [Worker pipelines](docs/worker-pipelines.md).
 
 | Synthetic `conversations.json` | CPU throttle | Initial list | Open a 100-message chat | Full-text search |
 |---:|---:|---:|---:|---:|
@@ -285,155 +85,64 @@ claude-export/
 | 150 MiB | 6× | 1.69 s | 0.90 s | 0.10 s |
 | 300 MiB | 6× | 3.19 s | 1.02 s | 0.23 s |
 
-Results are medians of three fresh-browser runs on Chromium `150.0.7871.187` with Playwright `1.62.0` (legacy hardcoded field; actual version was not recorded). CDP CPU throttling is applied before import. Each exact-size fixture is generated locally from fictional ASCII conversations with 100 alternating human/assistant messages; search uses one shared synthetic needle. No real history, title, local path, account data, or hardware model is read or published.
+<sub>Medians of 3 fresh runs on Chromium `150.0.7871.187` with Playwright `1.62.0` (legacy hardcoded field; actual version was not recorded) using synthetic ASCII fixtures generated by [`npm run benchmark:readme`](scripts/benchmark-readme-performance.mjs) ([raw report](docs/benchmarks/readme-performance.json)). Giant single-line exports stalling editors is a known pain point (e.g., [this ClaudeAI thread](https://www.reddit.com/r/ClaudeAI/comments/1oee39d/built_a_tool_to_view_claude_conversation_exports/)).</sub>
 
-Reproduce with `npm run benchmark:readme`. The [benchmark script](scripts/benchmark-readme-performance.mjs) and [raw report](docs/benchmarks/readme-performance.json) are committed beside the table. These numbers are comparative evidence, not a promise for every disk, browser, archive shape, or thermal state. Large single-line Claude exports causing editors or ordinary pages to stall are a recurring community pain point; [this ClaudeAI discussion](https://www.reddit.com/r/ClaudeAI/comments/1oee39d/built_a_tool_to_view_claude_conversation_exports/) is one public example.
-
-### Other
-- 🌙 / ☀️ Light/dark theme toggle, preference saved automatically
-- ⬇ **Export:** Export the current conversation as Markdown (Ctrl/Cmd+E) or PDF
-- PDF reuses the reader's complete message rendering, preserving code, Artifacts, thinking/tool panels, and branch-integrity warnings
-- Artifacts can be exported as PNG; computed styles are inlined for SVG, Mermaid, and static HTML, with automatic source fallback on failure
-- Claude Design exports are detected and classified separately without mixing them into regular conversations or analytics
-- Floating controls provide quick jumps to the top or bottom of the conversation
-
-## Keyboard Shortcuts
-
-| Shortcut | Action |
-|----------|--------|
-| ↑ / K    | Previous conversation |
-| ↓ / J    | Next conversation |
-| Ctrl+E   | Export current conversation as Markdown |
+---
 
 ## Offline Mode
 
-Download `claude-rescue-reader-offline.zip` from GitHub Releases, extract it, and open its `viewer.html`. Keep the `vendor/` folder beside `viewer.html`; the Markdown, ZIP, syntax-highlighting, and Mermaid dependencies are bundled and require no network access.
+Download [`claude-rescue-reader-offline.zip`](https://github.com/Artistkisa/claude-rescue-reader/releases/latest/download/claude-rescue-reader-offline.zip), extract it, and open `viewer.html` while keeping `vendor/` beside it (`marked`, `highlight.js`, `JSZip`, and `mermaid` are bundled for zero-network use).
 
-The regular `viewer.html` remains a convenient single-file build for connected environments or basic viewing. External resources hard-coded by historical Artifacts are not viewer dependencies and may still be unavailable offline.
-
-To build an offline copy from source, run these commands in the repository directory (requires Node.js 22.12.0 or later):
+Build from source (requires Node.js `>= 22.12.0`):
 
 ```bash
 npm ci
 npm run build:offline
 ```
 
-The build script rewrites dependency paths and regenerates the Content Security Policy (CSP) script hashes. Open `dist/offline/viewer.html` and keep its `vendor/` folder beside it. Use the build script to update paths and policy; editing scripts by hand invalidates the existing hashes.
+The offline build is written to `dist/offline/viewer.html`.
 
-These are the dependency files in the offline bundle's `vendor/` folder and their pinned source URLs:
+---
 
-```
-marked.umd.js          ← https://cdn.jsdelivr.net/npm/marked@18.0.11/lib/marked.umd.js
-highlight.min.js       ← https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.11.1/build/highlight.min.js
-jszip.min.js           ← https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js
-mermaid.min.js         ← https://cdn.jsdelivr.net/npm/mermaid@12.2.0/dist/mermaid.min.js
-github.min.css         ← https://cdn.jsdelivr.net/npm/highlight.js@11.11.1/styles/github.min.css
-github-dark.min.css    ← https://cdn.jsdelivr.net/npm/highlight.js@11.11.1/styles/github-dark.min.css
-```
+## Privacy, Storage & Security
 
-## Privacy & Security
+- **No telemetry or uploads**: Nothing leaves your browser. External requests occur only if you explicitly enable **Remote media** for ChatGPT images/OpenStreetMap tiles (disabled in the offline bundle).
+- **Local parse cache**: Raw conversation text and search indexes are cached in IndexedDB (`claude-rescue-reader-data-v1`) for instant reloads; **use "Clear local parse cache" in the sidebar before leaving shared devices**.
+- **Preferences**: Theme (`cv-theme`), language (`cv-lang`), and manual project overrides (`claude-rescue-reader-project-overrides-v1`) stay in `localStorage`.
+- **Sandboxed Artifacts**: HTML/SVG previews run in a network-blocked iframe sandbox and never execute inside the main viewer document.
 
-- ✅ Local analysis with no backend or telemetry; the single file loads pinned CDN dependencies on demand, while the complete offline bundle needs no network
-- ✅ Your data is never uploaded or shared
-- ⚠️ The parse cache stores conversation text and any built search index in local IndexedDB (`claude-rescue-reader-data-v1`) and persists after the browser closes. Use “Clear local parse cache” in the sidebar before leaving a shared device
-- ✅ `localStorage` retains theme (`cv-theme`), language (`cv-lang`), and manual project assignments (`claude-rescue-reader-project-overrides-v1`). Clearing the parse cache keeps these preferences; remove site data in the browser to delete them
-- ✅ Imported remote images do not load automatically; external links open only on user action. Artifact previews run in an isolated sandbox with networking blocked
-- Generated HTML/SVG files remain downloadable as source and use the Artifact sandbox for previews. HTML preview PNG export falls back to source download so its page stays outside the main document
-- ✅ Safe export shows finding type, masked preview, location, and reason without exposing the full sensitive value
-- ✅ Optional aggressive filtering also handles names, schools/organizations, detailed addresses, identity data, UIDs, social accounts, and links, with an explicit over-redaction warning
-- ✅ SCP dossier mode uses black bars and `[DATA EXPUNGED]`; PDF exports add a `CONFIDENTIAL` watermark and classified badge
-- ⚠️ The exported JSON files contain your complete conversation history — store them carefully
+---
 
-## Known Limitations
+## ⌨️ Keyboard Shortcuts
 
-- Export files do not contain image binary data; images are shown as placeholders
-- Interactive HTML Artifacts that depend on scripts or dynamically drawn Canvas content may export only their static structure as PNG; the original source remains available through the automatic fallback
-- Conversation trees show the longest path by default; branches created by edits or regeneration can be switched beside the affected message
-- Project-conversation associations are high-confidence inferences, not official data; low-confidence conversations remain unassigned to avoid false matches
-- Very large datasets (tested with: 300+ conversations / 150MB+ / single conversation with 600+ messages) may load slowly on low-memory devices
-- If an account has no projects or no memories, the corresponding tab is hidden automatically — no error is shown
+| Shortcut | Action |
+|---|---|
+| `↑` / `K` | Previous conversation |
+| `↓` / `J` | Next conversation |
+| `Ctrl+E` / `Cmd+E` | Export current conversation as Markdown |
 
-## Data Structure
+---
 
-This tool parses the Claude export format (as of 2026):
+## Development & Community
 
-| File | Contents |
-|------|----------|
-| `conversations.json` | All conversations with full message trees, `content` blocks (text/thinking/tool_use/tool_result), and attachments |
-| `memories.json` | Global memories + per-project memories, in Markdown format, organized by section |
-| `projects/<uuid>.json` | Project metadata + document content |
+After editing `src/*.js`, run `node scripts/update-viewer-policy.mjs` to sync `viewer.html`, then verify with `npm run validate`, `npm run privacy`, `npm run docs`, and `npm run test:worker-core`.
 
-**Note:** Claude's official export does not include a field indicating which project a conversation belongs to. This tool infers that relationship using a three-layer heuristic — see the Projects section for details.
+- [Contributing guide](CONTRIBUTING.md) · [Code of Conduct](CODE_OF_CONDUCT.md) · [Security policy](SECURITY.md) · [MIT License](LICENSE)
 
-## Tech Stack
-
-- Pure vanilla HTML + CSS + JavaScript; the release remains a directly openable single file with no framework dependencies
-- [marked.js](https://marked.js.org/) — Markdown rendering
-- [highlight.js](https://highlightjs.org/) — Code syntax highlighting
-- [JSZip](https://stuk.github.io/jszip/) — Direct ZIP archive loading (no unzipping)
-
-Five lazy Workers (Data, Import, Task, Reader, Analytics) and their shared algorithms live in `src/`. ZIP decompression, redacted exports, quality/behavior scans, conversation search and Markdown preparation run in workers. Long conversations use bounded windows; search includes code and Thinking, and ZIP images decompress on demand. See [Worker pipelines](docs/worker-pipelines.md). After editing these sources, run `scripts/build-single-file.ps1` to regenerate `viewer.html`; regular users do not need the build script.
-
-## Community
-
-- [Contributing guide](CONTRIBUTING.md) — setup, tests, pull-request workflow, and privacy rules
-- [Code of Conduct](CODE_OF_CONDUCT.md) — respectful collaboration and sensitive-data boundaries
-- [Security policy](SECURITY.md) — supported versions and private vulnerability reporting
-- [MIT License](LICENSE)
+---
 
 ## Changelog
 
-**v1.5** *(2026-10-21)*
-- **Support for Claude's new export format:** manifest checklists, a dedicated download page, batch ZIP imports and package appending
-- Read account-package memory and standalone Markdown memory ZIPs with source tracking and selectable versions; retain legacy `memories.json` support
-- Add Artifact libraries and historical versions, local account details and paged login history, plus Thinking and injected-context field support
-- Keep legacy ZIP, folder and Design imports, the single-file viewer and the complete offline distribution
+- **v2.0 — Multi-AI Upgrade**: Rebranded to **Multi-AI Web Export Reader**; added full **ChatGPT** support (sharded exports, DIL components, charts, maps, `.dat` attachments); added **xAI Grok (Beta)** and **Perplexity.ai (Beta)** export parsers; added unified platform registry, colored pills, live filter counts, analytics platform breakdown, and 2-step privacy onboarding.
 
-**v1.4** *(2026-07-30)*
-- Expanded image reattachment, project instructions, project-file downloads, and richer analytics insights
-- Added explainable safe-export findings with masked previews, locations, categories, and matching reasons
-- Added optional aggressive privacy filtering for names, schools/organizations, addresses, identity data, UIDs, social accounts, and links, with an explicit over-redaction warning
-- Added a `CONFIDENTIAL` watermark, classified badge, and more complete black-bar styling to SCP dossier exports
-- Expanded the privacy-safe mature-account demo ZIP and added a 20-second end-to-end workflow GIF
-- Added reproducible 50 / 150 / 300 MiB CPU-throttled benchmarks with a committed raw report
-- Unified the Claude Rescue Reader product name and replaced download-page links with direct latest-Release assets
+<details>
+<summary>Previous Releases (v1.0 – v1.5)</summary>
 
-**v1.3** *(2026-07-29)*
-- Added Claude Behavior Lab with tool-call auditing, hidden-result probing, Thinking integrity, and answer evidence-chain reporting
-- Reused the persistent Data Worker for large-history parsing, full-text search, analytics, project matching, and behavior analysis to reduce main-thread copies and stalls
-- Added project-association explanations, local manual corrections, project search/analytics/export, and a memory-reference graph
-- Added a ready-to-use offline distribution containing pinned Markdown, ZIP, syntax-highlighting, and Mermaid dependencies
-- Published both the regular single-file viewer and offline ZIP with SHA-256 checksums
+- **v1.5** *(2026-10-21)*: Claude partitioned `manifest-*.json` exports, standalone memory ZIPs, Artifact version history, and local account/login history.
+- **v1.4** *(2026-07-30)*: Expanded image reattachment, explainable safe-export findings, aggressive privacy mode, SCP PDF watermark, and 50/150/300 MiB CPU-throttled benchmarks.
+- **v1.3** *(2026-07-29)*: Behavior Lab, persistent Data Worker, project-association explanations & graph, and pre-bundled offline release.
+- **v1.2** *(2026-07-28)*: Direct ZIP & drag-and-drop import, branch switching, in-conversation search, Artifact/Mermaid rendering, and precision-first project inference.
+- **v1.1** *(2026-07-17)*: Longest-path branch fix, attachment fallbacks, dark theme, full-text search, and sort fixes.
+- **v1.0** *(2026-07-16)*: Initial release for viewing Claude export folders.
 
-**v1.2** *(2026-07-28)*
-- Added direct ZIP loading and drag-and-drop input, including wrapper folders, loose JSON files, and macOS `__MACOSX` entries
-- Added conversation branch switching, in-conversation search navigation, and plain-text copying for individual messages
-- Added rich rendering for artifacts, Mermaid diagrams, generated-file cards, and web search results
-- Fixed missing orphan messages, artifact theme rendering, SVG external-resource handling, and iframe sandboxing
-- Fixed syntax highlighting under `file://` and made raw Markdown HTML handling safe
-- Added progressive message rendering, deferred rich-content rendering, and page caching to reduce blocking on large histories
-- Moved project relationship indexing to deferred batches with failure recovery and stale-generation protection
-- Made project inference precision-first using unique file evidence, project knowledge, and project-unique keywords while rejecting ties and low-confidence matches
-
-**v1.1** *(2026-07-17)*
-- **Fix: Wrong message count** (e.g. showing 3 messages when there are actually 7)
-  Root cause: conversation tree traversal always picked the last child node, which could dead-end on an empty message branch. Fixed by recursively selecting the **longest path**, with a tiebreaker that prefers branches with actual content.
-- **Fix: Some messages showing as "(empty message)"**
-  Claude's export `files` array sometimes has an empty string for `file_name`. Now falls back to `file_type` → `file_uuid` to ensure attachment bubbles always display something.
-- **Fix: Code blocks displaying `[object Object]`**
-  marked.js v5+ changed the `renderer.code` signature from `(code, lang)` to passing a token object. `String(code)` therefore became `[object Object]`. Now handles both signatures.
-- **Fix: Clicking a conversation does nothing**
-  The `forEach(el => ...)` callback parameter `el` shadowed an outer variable of the same name, causing `el.dataset.convUuid` to read from the container element (which has no such attribute). Renamed the callback parameter to `item`.
-- **Fix: "Oldest" sort produces nearly the same result as "Newest"**
-  "Oldest" was mistakenly using descending order (`b - a`). Fixed to ascending (`a - b`).
-- Added full-text search, sort buttons, stats panel, Markdown export, keyboard navigation
-- Added dark/light theme with full color variable coverage (thinking blocks, tool call blocks, etc.)
-- Added mobile responsive layout (≤640px sidebar moves to top)
-- Project conversation association replaced with three-layer heuristic: file path → PKS query match → keyword fuzzy match
-
-**v1.0** *(2026-07-16)*
-- Initial release: load Claude export folder, render conversation list and message content
-
-## License
-
-MIT
+</details>
