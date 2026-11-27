@@ -29,7 +29,7 @@ function archiveAnalysisCore(){
           if(type==='text'){const text=String(block.text||'');textBlocks++;characters+=text.length;wordText+=' '+text;}
           else if(type==='thinking'){const text=String(block.thinking||'');thinking++;characters+=text.length;wordText+=' '+text;const explicit=typeof block.duration_ms==='number'&&Number.isFinite(block.duration_ms)&&block.duration_ms>0?block.duration_ms:NaN;const start=Date.parse(block.start_timestamp||''),stop=Date.parse(block.stop_timestamp||'');const duration=Number.isFinite(explicit)?explicit:(Number.isFinite(start)&&Number.isFinite(stop)&&stop>=start?stop-start:NaN);if(Number.isFinite(duration)&&(!state.longestThinking||duration>state.longestThinking.durationMs))state.longestThinking={durationMs:duration,conversationUuid:record.meta.uuid,title:record.meta.name,messageUuid:message?.uuid||''};}
           else if(type==='image')imageBlocks++;
-          if(type==='tool_use'||type==='server_tool_use'){tools++;add(state.toolNames,name||'unknown');if(/show_widget|visualize|imagine|artifact|canmore|dalle/i.test(name))artifacts++;if(/web_search|web_fetch|web\.run|browser/i.test(name))webSearches++;}
+          if(type==='tool_use'||type==='server_tool_use'){tools++;add(state.toolNames,name||'unknown');if(/show_widget|visualize|imagine|artifact|canmore|dalle/i.test(name))artifacts++;if(/web_search|web_fetch|web\.run|browser|websearch|xsearch/i.test(name))webSearches++;}
           if((type==='tool_result'||type==='web_search_tool_result')&&block.is_error){state.toolErrors++;convToolErrors++;}
         }
         if(!list(message?.content).length&&message?.text){wordText=String(message.text);characters=wordText.length;}
@@ -69,6 +69,8 @@ function archiveAnalysisCore(){
     for await(const record of records){
       await checkpoint();
       const conversation=materialize(record),messages=list(conversation.chat_messages),exactCandidates=new Set(),exactFiles=new Set(),queries=[];
+      const wsId=conversation.workspaceId||record.meta.workspaceId;
+      if(wsId&&stats['grok:ws:'+wsId]){map[record.meta.uuid]='grok:ws:'+wsId;evidence[record.meta.uuid]={method:'workspace',confidence:1,files:[],queries:[],keywords:[]};}
       for(let messageIndex=0;messageIndex<messages.length;messageIndex++){
         if(messageIndex%128===0)await checkpoint();
         const message=messages[messageIndex];for(const block of list(message?.content)){
@@ -78,7 +80,7 @@ function archiveAnalysisCore(){
         if(block.type==='tool_use'&&block.name==='project_knowledge_search'&&block.input?.query)queries.push(String(block.input.query).toLowerCase());
       }
       }
-      if(exactCandidates.size===1){map[record.meta.uuid]=[...exactCandidates][0];evidence[record.meta.uuid]={method:'file',confidence:.98,files:[...exactFiles],queries:[],keywords:[]};}
+      if(!map[record.meta.uuid]&&exactCandidates.size===1){map[record.meta.uuid]=[...exactCandidates][0];evidence[record.meta.uuid]={method:'file',confidence:.98,files:[...exactFiles],queries:[],keywords:[]};}
       if(!map[record.meta.uuid]&&queries.length){
         const scores={};for(const project of projects){let score=0,text=projectDocText[project.uuid]||'';for(const query of queries)for(const token of query.split(/\s+/).map(value=>value.replace(/[^\w\u4e00-\u9fff]/g,'')).filter(value=>value.length>=2&&!stopWords.has(value)))if(text.includes(token))score++;if(score)scores[project.uuid]=score;}
         const ranked=Object.entries(scores).sort((a,b)=>b[1]-a[1]),best=ranked[0],runner=ranked[1]?.[1]||0;if(best&&best[1]>=2&&best[1]>runner){map[record.meta.uuid]=best[0];evidence[record.meta.uuid]={method:'knowledge',confidence:Math.min(.94,.68+best[1]*.05+(best[1]-runner)*.04),files:[],queries:[...new Set(queries)],keywords:[]};}

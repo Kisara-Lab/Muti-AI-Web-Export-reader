@@ -72,15 +72,28 @@ function importWorkerMain(){
           return null;
         };
         const parseJsonText=text=>JSON.parse(String(text||'').replace(/^\uFEFF/,''));
-        const stripWrapperRoot=rawFiles=>{
-          const names=Object.keys(rawFiles).filter(n=>!rawFiles[n].dir&&!n.startsWith('__MACOSX/'));
-          if(!names.length)return rawFiles;
-          const root=names[0].split('/')[0];
-          const reserved=['areas','projects','artifacts','memories','dalle-generations','sites'];
-          if(!root||reserved.includes(root)||!names.every(p=>p.startsWith(root+'/')))return rawFiles;
+        const normalizeEntryPaths=rawFiles=>{
           const normalized=Object.create(null);
-          for(const name of names){normalized[name.slice(root.length+1)]=rawFiles[name];}
+          for(const [rawKey,entry]of Object.entries(rawFiles)){
+            if(entry.dir||rawKey.startsWith('__MACOSX/'))continue;
+            const cleanKey=rawKey.replace(/\\/g,'/').replace(/\/+/g,'/');
+            if(!normalized[cleanKey])normalized[cleanKey]=entry;
+          }
           return normalized;
+        };
+        const stripWrapperRoot=rawFiles=>{
+          let currentFiles=normalizeEntryPaths(rawFiles);
+          const reserved=['areas','projects','artifacts','memories','dalle-generations','sites','prod-mc-asset-server'];
+          for(let depth=0;depth<6;depth++){
+            const names=Object.keys(currentFiles);
+            if(!names.length)break;
+            const root=names[0].split('/')[0];
+            if(!root||reserved.includes(root)||!names.every(p=>p.startsWith(root+'/')))break;
+            const next=Object.create(null);
+            for(const name of names){next[name.slice(root.length+1)]=currentFiles[name];}
+            currentFiles=next;
+          }
+          return currentFiles;
         };
         if(file){
           id=await packageFingerprint([{file}],current,request);
@@ -102,15 +115,20 @@ function importWorkerMain(){
           }
           files=rawFiles;
         }else{
-          const selected=request.payload.files||[],paths=selected.map(f=>f.path||f.webkitRelativePath||f.name),root=paths[0]?.split('/')[0];
-          const stripRoot=paths.every(p=>p.startsWith(root+'/'))&&!['areas','projects','artifacts','memories','dalle-generations','sites'].includes(root);
-          files=Object.create(null);for(const [index,item]of selected.entries()){const f=item.file||item,name=stripRoot?paths[index].slice(root.length+1):paths[index];if(files[name])throw new Error('Duplicate export path');files[name]={file:f,async:type=>type==='blob'?Promise.resolve(f):f.text()};}
+          const selected=request.payload.files||[],paths=selected.map(f=>String(f.path||f.webkitRelativePath||f.name).replace(/\\/g,'/').replace(/\/+/g,'/'));
+          const rawMap=Object.create(null);
+          for(const [index,item]of selected.entries()){
+            const f=item.file||item,name=paths[index];
+            if(rawMap[name])throw new Error('Duplicate export path');
+            rawMap[name]={file:f,async:type=>type==='blob'?Promise.resolve(f):f.text()};
+          }
+          files=stripWrapperRoot(rawMap);
           id=await packageFingerprint(Object.keys(files).sort().map(path=>({path,file:files[path].file})),current,request);
           if(packages.has(id))return{duplicate:true,id,filename:'folder'};
         }
-        const entries=Object.keys(files).filter(n=>!files[n].dir&&!n.startsWith('__MACOSX/'));for(const name of entries){if(/^\/|^[A-Za-z]:/.test(name))throw new Error('Invalid export path');format.logicalPath(files[name].unsafeOriginalName||name);}
+        const entries=Object.keys(files).filter(n=>!files[n].dir&&!n.startsWith('__MACOSX/'));for(const name of entries){if(/^\/|^[A-Za-z]:/.test(name))throw new Error('Invalid export path');format.logicalPath(String(files[name].unsafeOriginalName||name).replace(/\\/g,'/').replace(/\/+/g,'/'));}
         let convs=entries.filter(n=>/(^|\/)conversations(?:-\d+)?\.json$/i.test(n)).sort((a,b)=>{const na=Number(/(\d+)\.json$/i.exec(a)?.[1]??-1),nb=Number(/(\d+)\.json$/i.exec(b)?.[1]??-1);return na-nb||a.localeCompare(b);});
-        const projects=[],memories=[],artifacts=[],users=[],logins=[],accounts=new Set(),mime=Object.create(null),resources=[],gpt=gptExportCore();let legacyMemory=null,gptManifest=false;const designs=[];
+        const projects=[],memories=[],artifacts=[],users=[],logins=[],accounts=new Set(),mime=Object.create(null),resources=[],gpt=gptExportCore(),grok=typeof grokExportCore==='function'?grokExportCore():null;let legacyMemory=null,gptManifest=false;const designs=[];
         if(files['export_manifest.json']){const manifest=parseJsonText(await files['export_manifest.json'].async('text')),shards=gpt.manifest(manifest,entries);if(shards){convs=shards;gptManifest=true;}}
         if(files['library_files.json']){
           const library=parseJsonText(await files['library_files.json'].async('text'));for(const item of Array.isArray(library)?library:[]){await check(current);const path=String(item.file_id||'')+'.dat';if(!files[path])continue;const declared=String(item.mime_type||''),header=await fileHeader(files[path]);const detected=detectMagicMime(header);mime[path]=detected||(/^(?:text\/plain|text\/markdown|application\/pdf|audio\/|image\/)/.test(declared)?declared==='text/plain'&&String(item.file_extension).toLowerCase()==='md'?'text/markdown':declared:'application/octet-stream');resources.push({packageId:id,path,name:String(item.file_name||path),mime:mime[path],fileId:String(item.file_id||''),altId:String(item.library_file_id||'')});}
@@ -118,6 +136,16 @@ function importWorkerMain(){
         const indexedPaths=new Set(resources.map(r=>r.path));
         for(const name of entries){
           if(indexedPaths.has(name))continue;
+          const grokAssetMatch=/^(?:.*\/)?prod-mc-asset-server\/([^/]+)\/content$/i.exec(name);
+          if(grokAssetMatch){
+            await check(current);
+            const assetId=grokAssetMatch[1],header=await fileHeader(files[name]);
+            const detected=detectMagicMime(header);
+            mime[name]=detected||(header.length&&!header.includes(0)?'text/plain':'application/octet-stream');
+            resources.push({packageId:id,path:name,name:assetId,mime:mime[name],fileId:assetId,altId:''});
+            indexedPaths.add(name);
+            continue;
+          }
           const mediaMatch=/^(?:dalle-generations\/|user-[^/]+\/|[^/]+\/audio\/)?(file[-_][A-Za-z0-9_-]+|[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})(?:[-_.][^/]+)?\.(png|jpe?g|gif|webp|avif|wav|mp3|pdf|txt|md)$/i.exec(name);
           if(mediaMatch){
             const ext=mediaMatch[2].toLowerCase();
@@ -128,15 +156,25 @@ function importWorkerMain(){
           }
         }
         const filename=file?.name||'folder';
-        const gptAuxSkip=new Set(['export_manifest.json','library_files.json','sites/export_manifest.json','ads.json','user_settings.json','sectioned_conversations.json','message_feedback.json','model_comparisons.json','shared_conversations.json','group_chats.json']);
+        const auxSkip=new Set(['export_manifest.json','library_files.json','sites/export_manifest.json','ads.json','user_settings.json','sectioned_conversations.json','message_feedback.json','model_comparisons.json','shared_conversations.json','group_chats.json','prod-mc-billing.json']);
         for(const name of entries){await check(current);
-          if(convs.includes(name)||gptAuxSkip.has(name))continue;
+          const baseName=name.split('/').pop();
+          if(convs.includes(name)||auxSkip.has(name)||auxSkip.has(baseName))continue;
           if(/\.md$/i.test(name)){
             const logical=name.replace(/^.*?(?=(?:areas|projects)\/)/,'');
             if(/^(?:areas\/|projects\/[^/]+\/)/.test(logical))memories.push(format.memory(logical,await files[name].async('text'),'',filename));continue;
           }
           if(!/\.json$/i.test(name))continue;
           let value;try{value=parseJsonText(await files[name].async('text'));}catch{if(/(^|\/)(?:projects\/|users\.json|login_history\.json|artifacts\/)/i.test(name))throw new Error('Invalid JSON: '+name);continue;}
+          if(grok&&grok.isBackendExport(value)){
+            if(Array.isArray(value.projects))projects.push(...grok.convertProjects(value.projects));
+            if(Array.isArray(value.conversations)&&value.conversations.length)convs.push(name);
+            continue;
+          }
+          if(grok&&(grok.isConversation(value)||Array.isArray(value)&&value.length&&value.every(item=>grok.isConversation(item)))){convs.push(name);continue;}
+          if(grok&&grok.isAuthExport(value)){
+            const auth=grok.convertAuth(value);users.push(...auth.users);logins.push(...auth.logins);for(const acc of auth.accounts)accounts.add(acc);continue;
+          }
           if(gpt.isConversation(value)||Array.isArray(value)&&value.length&&value.every(item=>gpt.isConversation(item))){if(gptManifest)throw new Error('GPT conversations outside declared shards');convs.push(name);continue;}
           if(/(^|\/)user\.json$/i.test(name)&&value&&typeof value==='object'&&!Array.isArray(value)){users.push({...value,sourcePlatform:'gpt'});if(value.id)accounts.add('gpt:'+value.id);continue;}
           if(/(^|\/)projects\/[^/]+\.json$/i.test(name)){if(!value||typeof value.uuid!=='string'||!value.uuid||typeof value.name!=='string')throw new Error('Invalid project metadata');projects.push(value);continue;}

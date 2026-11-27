@@ -2,10 +2,10 @@
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-xMi2J7ZbnzJ4HHHhXpGDXkKH5Cmng0mgf22p7RCCYDM=' 'sha256-tMIvewdj4Er6it91vRKx68b9zhu5Sxm35MV7o9YOuqs=' https://cdn.jsdelivr.net https://unpkg.com https://cdnjs.cloudflare.com blob:; script-src-attr 'none'; style-src 'unsafe-inline' https://cdn.jsdelivr.net https://unpkg.com https://cdnjs.cloudflare.com; img-src blob: data: https: http:; font-src data:; connect-src blob:; worker-src blob:; frame-src blob:; object-src 'none'; base-uri 'none'; form-action 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-Vh6R/htcj1RtMzZm7GVsBu5UIK0P+dM0+OEANxmqDGs=' 'sha256-tMIvewdj4Er6it91vRKx68b9zhu5Sxm35MV7o9YOuqs=' https://cdn.jsdelivr.net https://unpkg.com https://cdnjs.cloudflare.com blob:; script-src-attr 'none'; style-src 'unsafe-inline' https://cdn.jsdelivr.net https://unpkg.com https://cdnjs.cloudflare.com; img-src blob: data: https: http:; font-src data:; connect-src blob:; worker-src blob:; frame-src blob:; object-src 'none'; base-uri 'none'; form-action 'none'">
 <meta name="referrer" content="no-referrer">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Multi-AI Web Export Reader — Local Claude &amp; ChatGPT Export Viewer</title>
+<title>Multi-AI Web Export Reader — Local Claude, ChatGPT &amp; Grok Export Viewer</title>
 <style>
 /* ── Light theme (default, Claude-style) ── */
 :root {
@@ -474,6 +474,8 @@ mark.cs.active { background:var(--accent); color:#fff; }
 /* ── Multi-AI platform & GPT component styles ── */
 .msg-wrap.gpt .msg-avatar { background:linear-gradient(135deg,#10a37f,#0d8a6c); color:#fff; font-size:13px; }
 [data-theme=dark] .msg-wrap.gpt .msg-avatar { background:linear-gradient(135deg,#0e8c6d,#096b52); }
+.msg-wrap.grok .msg-avatar { background:linear-gradient(135deg,#1f2937,#0f172a); color:#fff; font-size:13px; }
+[data-theme=dark] .msg-wrap.grok .msg-avatar { background:linear-gradient(135deg,#334155,#1e293b); }
 .platform-bar { display:flex; align-items:center; gap:5px; margin-top:6px; }
 .platform-btn { flex:1; padding:3px 7px; background:none; border:1px solid var(--border); border-radius:5px; color:var(--text3); font-size:11px; cursor:pointer; transition:all .15s; text-align:center; white-space:nowrap; }
 .platform-btn:hover { border-color:var(--border2); color:var(--text2); }
@@ -557,16 +559,19 @@ mark.cs.active { background:var(--accent); color:#fff; }
 .welcome-action-btn.primary { border-color:var(--accent); background:color-mix(in srgb,var(--accent) 12%,var(--bg2)); }
 .welcome-action-btn b { font-size:12.5px; color:var(--text); }
 .welcome-action-btn span { font-size:11px; color:var(--text3); line-height:1.45; }
-.platform-guide-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:10px; width:620px; max-width:94vw; margin-top:12px; text-align:left; }
+.platform-guide-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:10px; width:740px; max-width:94vw; margin-top:12px; text-align:left; }
 .platform-guide-card { padding:13px 14px; border:1px solid var(--border); border-radius:10px; background:var(--bg2); display:grid; gap:6px; align-content:start; }
 .platform-guide-head { display:flex; align-items:center; gap:7px; font-size:13px; font-weight:600; color:var(--text); }
 .platform-dot { width:10px; height:10px; border-radius:50%; flex-shrink:0; }
 .platform-dot.claude { background:linear-gradient(135deg,#d4a855,#c97b3a); }
 .platform-dot.gpt { background:linear-gradient(135deg,#10a37f,#0d8a6c); }
+.platform-dot.grok { background:linear-gradient(135deg,#334155,#0f172a); }
+.platform-beta-badge { margin-left:auto; font-size:10px; font-weight:700; letter-spacing:.04em; text-transform:uppercase; padding:1px 6px; border-radius:999px; background:color-mix(in srgb,#d97706 16%,var(--bg3)); color:#b45309; border:1px solid color-mix(in srgb,#d97706 40%,var(--border)); }
+[data-theme=dark] .platform-beta-badge { color:#fbbf24; }
 .platform-guide-path { font-size:11.5px; color:var(--text2); background:var(--bg3); padding:5px 8px; border-radius:6px; font-family:ui-monospace,SFMono-Regular,Consolas,monospace; }
 .platform-guide-card ul { margin:2px 0 0; padding-left:16px; font-size:11.5px; color:var(--text3); line-height:1.6; }
-.remote-setup-card { width:620px; max-width:94vw; margin:14px 0 0; padding:14px 16px; border:1.5px solid var(--accent); border-radius:12px; background:color-mix(in srgb,var(--accent) 6%,var(--bg2)); text-align:left; }
-.welcome-note { width:620px; max-width:94vw; margin-top:12px; padding:10px 14px; border:1px solid color-mix(in srgb,var(--accent) 35%,var(--border)); border-radius:10px; color:var(--text2); font-size:12px; line-height:1.6; text-align:left; background:var(--bg2); }
+.remote-setup-card { width:740px; max-width:94vw; margin:14px 0 0; padding:14px 16px; border:1.5px solid var(--accent); border-radius:12px; background:color-mix(in srgb,var(--accent) 6%,var(--bg2)); text-align:left; }
+.welcome-note { width:740px; max-width:94vw; margin-top:12px; padding:10px 14px; border:1px solid color-mix(in srgb,var(--accent) 35%,var(--border)); border-radius:10px; color:var(--text2); font-size:12px; line-height:1.6; text-align:left; background:var(--bg2); }
 @media(max-width:640px) {
   body { flex-direction:column; height:100dvh; }
   #chat-header { flex-wrap:wrap; padding:10px 12px; gap:6px; }
@@ -578,13 +583,13 @@ mark.cs.active { background:var(--accent); color:#fff; }
 </style>
 </head>
 <body>
-<div id="drop-overlay" class="drop-overlay" aria-hidden="true"><div class="drop-card"><b data-i18n="📥 松开以导入历史">📥 松开以导入历史</b><span data-i18n="支持 Claude / ChatGPT 导出的 ZIP 或解压目录">支持 Claude / ChatGPT 导出的 ZIP 或解压目录</span></div></div>
+<div id="drop-overlay" class="drop-overlay" aria-hidden="true"><div class="drop-card"><b data-i18n="📥 松开以导入历史">📥 松开以导入历史</b><span data-i18n="支持 Claude / ChatGPT / Grok 导出的 ZIP 或解压目录">支持 Claude / ChatGPT / Grok 导出的 ZIP 或解压目录</span></div></div>
 
 <!-- Sidebar -->
 <div id="sidebar">
   <div id="sidebar-header">
     <h1>💬 <span data-i18n="Multi-AI Web Export Reader">Multi-AI Web Export Reader</span> <span id="conv-total">0</span></h1>
-    <button id="load-zip-btn" data-i18n="🗜️ 打开导出 ZIP（Claude / ChatGPT）" data-ui-click="pick-zip">🗜️ 打开导出 ZIP（Claude / ChatGPT）</button>
+    <button id="load-zip-btn" data-i18n="🗜️ 打开导出 ZIP（Claude / ChatGPT / Grok）" data-ui-click="pick-zip">🗜️ 打开导出 ZIP（Claude / ChatGPT / Grok）</button>
     <input type="file" id="zip-input" accept=".zip,application/zip,.json,application/json" multiple style="display:none;">
     <button id="load-btn" data-i18n="📂 打开解压目录" data-ui-click="pick-folder">📂 打开解压目录</button>
     <input type="file" id="file-input" webkitdirectory multiple accept=".json">
@@ -607,6 +612,7 @@ mark.cs.active { background:var(--accent); color:#fff; }
       <button type="button" class="platform-btn active" data-platform="" aria-pressed="true" data-i18n="全部平台">全部平台</button>
       <button type="button" class="platform-btn" data-platform="claude" aria-pressed="false">Claude</button>
       <button type="button" class="platform-btn" data-platform="gpt" aria-pressed="false">ChatGPT</button>
+      <button type="button" class="platform-btn" data-platform="grok" aria-pressed="false" title="Grok (Beta Test)">Grok β</button>
     </div>
   </div>
   <div id="tabs">
@@ -643,7 +649,7 @@ mark.cs.active { background:var(--accent); color:#fff; }
   <div id="messages">
     <div id="empty-state">
       <p data-i18n="Multi-AI Web Export Reader" style="font-size:20px;font-weight:700;color:var(--text);margin-bottom:4px;">Multi-AI Web Export Reader</p>
-      <p data-i18n="本地查看、混合搜索并安全导出你的 Claude 与 ChatGPT 历史对话" style="font-size:13px;color:var(--text3);">本地查看、混合搜索并安全导出你的 Claude 与 ChatGPT 历史对话</p>
+      <p data-i18n="本地查看、混合搜索并安全导出你的 Claude、ChatGPT 与 Grok 历史对话" style="font-size:13px;color:var(--text3);">本地查看、混合搜索并安全导出你的 Claude、ChatGPT 与 Grok 历史对话</p>
 
       <div class="remote-setup-card">
         <div class="remote-setup-head">
@@ -660,12 +666,12 @@ mark.cs.active { background:var(--accent); color:#fff; }
       <div class="welcome-step-card">
         <div class="welcome-step-head">
           <b data-i18n="第二步 · 导入对话导出包（支持直接拖入页面）">第二步 · 导入对话导出包（支持直接拖入页面）</b>
-          <span class="welcome-step-sub" data-i18n="可连续追加 Claude 与 ChatGPT 混合阅读">可连续追加 Claude 与 ChatGPT 混合阅读</span>
+          <span class="welcome-step-sub" data-i18n="可连续追加 Claude、ChatGPT 与 Grok 混合阅读">可连续追加 Claude、ChatGPT 与 Grok 混合阅读</span>
         </div>
         <div class="welcome-action-grid">
           <button type="button" class="welcome-action-btn primary" data-ui-click="pick-zip">
             <b data-i18n="🗜️ 选择 ZIP 压缩包">🗜️ 选择 ZIP 压缩包</b>
-            <span data-i18n="免解压，支持多选 Claude / ChatGPT 官方导出 ZIP">免解压，支持多选 Claude / ChatGPT 官方导出 ZIP</span>
+            <span data-i18n="免解压，支持多选 Claude / ChatGPT / Grok 官方导出 ZIP">免解压，支持多选 Claude / ChatGPT / Grok 官方导出 ZIP</span>
           </button>
           <button type="button" class="welcome-action-btn" data-ui-click="pick-folder">
             <b data-i18n="📂 选择解压文件夹">📂 选择解压文件夹</b>
@@ -695,11 +701,19 @@ mark.cs.active { background:var(--accent); color:#fff; }
             <li data-i18n="自动还原分支路径、引文、DIL 组件、图表、地图与 .dat 本地附件">自动还原分支路径、引文、DIL 组件、图表、地图与 .dat 本地附件</li>
           </ul>
         </section>
+        <section class="platform-guide-card">
+          <div class="platform-guide-head"><span class="platform-dot grok"></span><span data-i18n="Grok (xAI) 导出指引">Grok (xAI) 导出指引</span><span class="platform-beta-badge">Beta Test</span></div>
+          <div class="platform-guide-path">accounts.x.ai → Data → Download Account Data</div>
+          <ul>
+            <li data-i18n="支持官方导出 ZIP（含 prod-grok-backend.json 与附件目录）及独立 JSON">支持官方导出 ZIP（含 prod-grok-backend.json 与附件目录）及独立 JSON</li>
+            <li data-i18n="Beta Test：当前解析可能尚不完善，部分新字段或媒体格式仍在适配中">Beta Test：当前解析可能尚不完善，部分新字段或媒体格式仍在适配中</li>
+          </ul>
+        </section>
       </div>
 
       <div class="welcome-note">
         <b data-i18n="纯本地运行 · 多平台混合工作区">纯本地运行 · 多平台混合工作区</b><br>
-        <span data-i18n="所有解析、全文搜索、统计分析与隐私脱敏都在浏览器本机完成，不会上传对话内容。你可以先导入 Claude，再追加 ChatGPT，在同一列表按平台筛选并导出安全分享版。">所有解析、全文搜索、统计分析与隐私脱敏都在浏览器本机完成，不会上传对话内容。你可以先导入 Claude，再追加 ChatGPT，在同一列表按平台筛选并导出安全分享版。</span>
+        <span data-i18n="所有解析、全文搜索、统计分析与隐私脱敏都在浏览器本机完成，不会上传对话内容。你可以先导入 Claude，再追加 ChatGPT 与 Grok，在同一列表按平台筛选并导出安全分享版。">所有解析、全文搜索、统计分析与隐私脱敏都在浏览器本机完成，不会上传对话内容。你可以先导入 Claude，再追加 ChatGPT 与 Grok，在同一列表按平台筛选并导出安全分享版。</span>
       </div>
       <div class="welcome-features"><span class="welcome-feature" data-i18n="🖼️ 图片与附件">🖼️ 图片与附件</span><span class="welcome-feature" data-i18n="🌿 分支时间线">🌿 分支时间线</span><span class="welcome-feature" data-i18n="🔎 全文搜索">🔎 全文搜索</span><span class="welcome-feature" data-i18n="📊 统计分析">📊 统计分析</span><span class="welcome-feature" data-i18n="🩺 对话健康检查">🩺 对话健康检查</span><span class="welcome-feature" data-i18n="🔐 隐私安全导出">🔐 隐私安全导出</span></div>
     </div>
@@ -817,10 +831,10 @@ Object.assign(EN,{
   '命中消息数':'Matched messages','命中字符数':'Matched characters','最近命中时间':'Latest match','上一页':'Previous page','下一页':'Next page',
   '统计筛选':'Analytics filter','返回统计':'Back to analytics','统计范围：全档案，探索筛选不影响此视图':'Scope: the entire archive, independent of exploration filters',
   'Multi-AI Web Export Reader':'Multi-AI Web Export Reader',
-  '支持 Claude / ChatGPT 导出的 ZIP 或解压目录':'ZIP or extracted folder from Claude / ChatGPT',
-  '点击左侧按钮，选择 Claude 或 ChatGPT 导出的 ZIP / 文件夹':'Select a Claude or ChatGPT export ZIP or folder on the left.',
-  '适合 Claude 与 ChatGPT 原始导出压缩包，无需解压':'Best for original Claude & ChatGPT export ZIPs; no extraction needed',
-  '只要你已有 Claude 或 ChatGPT 导出的 ZIP 或目录，就能在本地查看、混合搜索和脱敏导出。工具不会绕过平台限制，也不会上传对话内容。':'If you have a Claude or ChatGPT export ZIP or folder, you can view, search across both, and redact-export locally. This tool never bypasses platform limits or uploads conversations.',
+  '支持 Claude / ChatGPT / Grok 导出的 ZIP 或解压目录':'ZIP or extracted folder from Claude / ChatGPT / Grok',
+  '点击左侧按钮，选择 Claude 或 ChatGPT 导出的 ZIP / 文件夹':'Select a Claude, ChatGPT, or Grok export ZIP or folder on the left.',
+  '适合 Claude 与 ChatGPT 原始导出压缩包，无需解压':'Best for original Claude, ChatGPT, and Grok export ZIPs; no extraction needed',
+  '只要你已有 Claude 或 ChatGPT 导出的 ZIP 或目录，就能在本地查看、混合搜索和脱敏导出。工具不会绕过平台限制，也不会上传对话内容。':'If you have a Claude, ChatGPT, or Grok export ZIP or folder, you can view, search across all of them, and redact-export locally. This tool never bypasses platform limits or uploads conversations.',
   '📦 支持的导出结构':'📦 Supported export structure',
   '全部平台':'All',
   '行为实验室':'Behavior Lab',
@@ -875,13 +889,13 @@ Object.assign(EN,{
   '查看导出信息':'View exported data',
   '消息树存在循环':'Message tree cycle',
   '当前节点缺失或无效，显示最长有效路径':'Invalid current node; showing longest valid path',
-  '🗜️ 打开导出 ZIP（Claude / ChatGPT）':'🗜️ Open Export ZIP (Claude / ChatGPT)',
+  '🗜️ 打开导出 ZIP（Claude / ChatGPT / Grok）':'🗜️ Open Export ZIP (Claude / ChatGPT / Grok)',
   '📥 导入中心 / Claude 清单':'📥 Import Center / Claude Manifest',
-  '本地查看、混合搜索并安全导出你的 Claude 与 ChatGPT 历史对话':'View, search across, and redact-export your Claude & ChatGPT histories locally',
+  '本地查看、混合搜索并安全导出你的 Claude、ChatGPT 与 Grok 历史对话':'View, search across, and redact-export your Claude, ChatGPT & Grok histories locally',
   '第二步 · 导入对话导出包（支持直接拖入页面）':'Step 2 · Import Export Archives (or drag & drop here)',
-  '可连续追加 Claude 与 ChatGPT 混合阅读':'Append Claude & ChatGPT archives in any order',
+  '可连续追加 Claude、ChatGPT 与 Grok 混合阅读':'Append Claude, ChatGPT & Grok archives in any order',
   '🗜️ 选择 ZIP 压缩包':'🗜️ Choose ZIP Archive',
-  '免解压，支持多选 Claude / ChatGPT 官方导出 ZIP':'No extraction needed; multi-select Claude / ChatGPT ZIPs',
+  '免解压，支持多选 Claude / ChatGPT / Grok 官方导出 ZIP':'No extraction needed; multi-select Claude / ChatGPT / Grok ZIPs',
   '📂 选择解压文件夹':'📂 Choose Extracted Folder',
   '适合已解压的导出目录或本地历史备份':'For extracted export folders or local backups',
   '适用于 Claude 新版 manifest.json 分包下载与管理':'For Claude partitioned manifest.json downloads',
@@ -891,8 +905,11 @@ Object.assign(EN,{
   'ChatGPT 导出指引':'ChatGPT Export Guide',
   '支持完整 ZIP（分片 conversations-*.json、export_manifest.json）及独立 JSON':'Supports full ZIPs (sharded conversations-*.json, export_manifest.json) and standalone JSON',
   '自动还原分支路径、引文、DIL 组件、图表、地图与 .dat 本地附件':'Restores branches, citations, DIL components, charts, maps, and .dat attachments',
+  'Grok (xAI) 导出指引':'Grok (xAI) Export Guide',
+  '支持官方导出 ZIP（含 prod-grok-backend.json 与附件目录）及独立 JSON':'Supports official export ZIPs (prod-grok-backend.json & assets) and standalone JSON',
+  'Beta Test：当前解析可能尚不完善，部分新字段或媒体格式仍在适配中':'Beta Test: parsing may be incomplete; some fields or media formats are still evolving',
   '纯本地运行 · 多平台混合工作区':'Local-only · Unified Multi-AI Workspace',
-  '所有解析、全文搜索、统计分析与隐私脱敏都在浏览器本机完成，不会上传对话内容。你可以先导入 Claude，再追加 ChatGPT，在同一列表按平台筛选并导出安全分享版。':'All parsing, full-text search, analytics, and redaction run locally in your browser. Import Claude and append ChatGPT to filter by platform and export safely.',
+  '所有解析、全文搜索、统计分析与隐私脱敏都在浏览器本机完成，不会上传对话内容。你可以先导入 Claude，再追加 ChatGPT 与 Grok，在同一列表按平台筛选并导出安全分享版。':'All parsing, full-text search, analytics, and redaction run locally in your browser. Import Claude and append ChatGPT or Grok to filter by platform and export safely.',
   'AI 助手消息':'Assistant messages',
   'AI 助手字符':'Assistant characters',
   '你的 AI 使用画像':'Your AI usage profile',
@@ -982,7 +999,7 @@ function attachmentMedia(att,key){const name=att.file_name||att.filename||att.na
 function chooseAttachmentMedia(key){const input=document.createElement('input');input.type='file';input.accept='image/*';input.onchange=()=>{const file=input.files?.[0];if(!file)return;const item={name:file.name,url:URL.createObjectURL(file),type:file.type||'',source:'manual'};const old=ATTACHMENT_MEDIA.get(key);if(old?.source==='manual'&&old.url)try{URL.revokeObjectURL(old.url);}catch(e){}ATTACHMENT_MEDIA.set(key,item);if(currentConv)renderMessages(currentConv.chat_messages||[]);};input.click();}
 
 function isPackageImportFiles(files){
-  return files.some(f=>/\.zip$|\.md$|\.dat$/i.test(f.name)||/^(?:manifest.*|export_manifest|library_files|user|conversations-\d+)\.json$/i.test(f.name)||/\/(?:memories|artifacts|dalle-generations)\//.test(f.webkitRelativePath||''))||(files.length===1&&/\.json$/i.test(files[0].name)&&!/^conversations\.json$/i.test(files[0].name));
+  return files.some(f=>/\.zip$|\.md$|\.dat$/i.test(f.name)||/^(?:manifest.*|export_manifest|library_files|user|conversations-\d+|prod-grok-backend|prod-mc-auth-mgmt-api|prod-mc-billing)\.json$/i.test(f.name)||/\/(?:memories|artifacts|dalle-generations|prod-mc-asset-server)\//.test(f.webkitRelativePath||''))||(files.length===1&&/\.json$/i.test(files[0].name)&&!/^conversations\.json$/i.test(files[0].name));
 }
 document.getElementById('file-input').addEventListener('change',async e=>{
   const files=[...e.target.files];
@@ -1669,6 +1686,324 @@ function gptExportCore(){
   return {isConversation,convert,convertAsync,manifest,parseText,safeUrl,boundedDetails};
 }
 
+function grokExportCore(){
+  const root='00000000-0000-4000-8000-000000000000';
+  const list=value=>Array.isArray(value)?value:[];
+  const string=value=>typeof value==='string'?value:'';
+  const bounded=value=>string(value).slice(0,8192);
+  const safeUrl=value=>{try{const url=new URL(string(value));return /^(https?:)$/.test(url.protocol)&&!url.username&&!url.password?url.href:'';}catch{return '';}};
+  const escape=value=>string(value).replace(/[\\`*{}\[\]<>_!|]/g,'\\$&').replace(/[\r\n]+/g,' ');
+  const link=(label,url)=>safeUrl(url)?'['+escape(label||url)+'](<'+safeUrl(url).replace(/[<>]/g,encodeURIComponent)+'>)':escape(label);
+
+  function parseDateMs(value){
+    if(value==null||value==='')return NaN;
+    if(typeof value==='number'&&Number.isFinite(value)&&value>0){
+      const ms=value>=1e11?value:value*1000;
+      return ms<=8.64e15?ms:NaN;
+    }
+    if(typeof value==='string'){
+      if(/^\d{10,16}$/.test(value.trim())){
+        const num=Number(value.trim()),ms=num>=1e11?num:num*1000;
+        return ms<=8.64e15?ms:NaN;
+      }
+      const parsed=Date.parse(value);
+      return Number.isFinite(parsed)?parsed:NaN;
+    }
+    if(typeof value==='object'){
+      if(value.$date!==undefined)return parseDateMs(value.$date);
+      if(value.$numberLong!==undefined)return parseDateMs(value.$numberLong);
+    }
+    return NaN;
+  }
+
+  function parseDate(value){
+    const ms=parseDateMs(value);
+    if(!Number.isFinite(ms))return '';
+    try{return new Date(ms).toISOString();}catch{return '';}
+  }
+
+  function isConversation(value){
+    return !!(value&&typeof value==='object'&&!Array.isArray(value)&&value.conversation&&typeof value.conversation==='object'&&typeof value.conversation.id==='string'&&value.conversation.id&&Array.isArray(value.responses));
+  }
+
+  function isBackendExport(value){
+    if(!value||typeof value!=='object'||Array.isArray(value)||!Array.isArray(value.conversations))return false;
+    if(value.conversations.length)return value.conversations.every(isConversation);
+    return Array.isArray(value.projects)||Array.isArray(value.tasks)||Array.isArray(value.media_posts);
+  }
+
+  function isAuthExport(value){
+    return !!(value&&typeof value==='object'&&!Array.isArray(value)&&value.user&&typeof value.user==='object'&&typeof value.user.userId==='string'&&value.user.userId&&Array.isArray(value.sessions));
+  }
+
+  function parseCardMap(rawCards){
+    const map=new Map();
+    for(const item of list(rawCards)){
+      let card=item;
+      if(typeof item==='string'){try{card=JSON.parse(item);}catch{continue;}}
+      if(card&&typeof card==='object'&&typeof card.id==='string'&&card.id)map.set(card.id,card);
+    }
+    return map;
+  }
+
+  function parseAttrs(raw){
+    const attrs=Object.create(null);
+    for(const match of string(raw).matchAll(/([a-zA-Z0-9_:-]+)\s*=\s*(?:"([^"]*)"|'([^']*)')/g)){
+      attrs[match[1]]=match[2]??match[3]??'';
+    }
+    return attrs;
+  }
+
+  function parseMessage(text,cardAttachmentsJson=[]){
+    const input=string(text);
+    if(!input||!input.includes('<grok:render'))return {text:input,files:[]};
+    const cards=parseCardMap(cardAttachmentsJson),numbered=new Map(),sources=[],files=[];
+    let output='',cursor=0,fence=null,inline=0;
+    const addCitation=(cardId,card,fallbackLabel)=>{
+      const key=cardId||fallbackLabel||'citation';
+      if(!numbered.has(key)){
+        numbered.set(key,numbered.size+1);
+        sources.push({number:numbered.get(key),title:bounded(card?.title||card?.url||fallbackLabel||'来源 / Source'),url:safeUrl(card?.url)});
+      }
+      return '['+numbered.get(key)+']';
+    };
+    while(cursor<input.length){
+      const lineStart=cursor===0||input[cursor-1]==='\n';
+      if(lineStart){
+        const match=/^ {0,3}(`{3,}|~{3,})[^\n]*(?:\n|$)/.exec(input.slice(cursor));
+        if(match){
+          const token=match[1];
+          if(!fence)fence={char:token[0],length:token.length};
+          else if(fence.char===token[0]&&token.length>=fence.length)fence=null;
+          output+=match[0];cursor+=match[0].length;inline=0;continue;
+        }
+      }
+      if(!fence&&input[cursor]==='`'){
+        const match=/^`+/.exec(input.slice(cursor))[0];
+        if(!inline)inline=match.length;else if(inline===match.length)inline=0;
+        output+=match;cursor+=match.length;continue;
+      }
+      if(!fence&&!inline&&input.startsWith('<grok:render',cursor)){
+        const closeTag='</grok:render>';
+        const end=input.indexOf(closeTag,cursor);
+        if(end!==-1&&end-cursor<=16384){
+          const full=input.slice(cursor,end+closeTag.length);
+          const openEnd=full.indexOf('>');
+          const attrs=openEnd>0?parseAttrs(full.slice('<grok:render'.length,openEnd)):Object.create(null);
+          const body=openEnd>0?full.slice(openEnd+1,-closeTag.length):'';
+          const args=Object.create(null);
+          for(const m of body.matchAll(/<argument\s+name=["']([^"']+)["'][^>]*>([\s\S]*?)<\/argument>/gi)){
+            args[m[1]]=m[2].trim();
+          }
+          const cardId=attrs.card_id||'',cardType=attrs.card_type||'',renderType=attrs.type||'',card=cards.get(cardId);
+          if(cardType==='citation_card'||renderType==='render_inline_citation'){
+            output+=addCitation(cardId,card,args.citation_id);
+          }else if(cardType==='rendered_file_card'||renderType==='render_file'){
+            const fileName=bounded(card?.file_name||args.file_path||cardId||'file');
+            const fileUrl=safeUrl(card?.url||card?.preview_doc_url);
+            files.push({name:fileName,mime:string(card?.mime_type),size:card?.file_size,url:fileUrl});
+            output+='\n\n📎 '+(fileUrl?link(fileName,fileUrl):escape(fileName))+(card?.mime_type?' (`'+escape(card.mime_type)+'`)':'')+'\n\n';
+          }else if(card?.url){
+            output+=addCitation(cardId,card,card.title||cardId);
+          }
+          cursor=end+closeTag.length;continue;
+        }
+      }
+      output+=input[cursor++];
+    }
+    for(const source of sources){
+      output+='\n\n['+source.number+'] '+link(source.title,source.url);
+    }
+    return {text:output,files};
+  }
+
+  function parseToolCard(xml){
+    const raw=string(xml);
+    if(!raw)return null;
+    const stripCdata=s=>string(s).replace(/^\s*<!\[CDATA\[([\s\S]*?)\]\]>\s*$/,'$1').trim();
+    const tag=name=>{
+      const m=new RegExp('<xai:'+name+'[^>]*>([\\s\\S]*?)<\\/xai:'+name+'>','i').exec(raw);
+      return m?stripCdata(m[1]):'';
+    };
+    const id=tag('tool_usage_card_id'),name=tag('tool_name'),rawArgs=tag('tool_args');
+    if(!id&&!name&&!rawArgs)return null;
+    let input={};
+    if(rawArgs){
+      try{const parsed=JSON.parse(rawArgs);input=parsed&&typeof parsed==='object'?parsed:{value:parsed};}
+      catch{input={raw:rawArgs.slice(0,8192)};}
+    }
+    return {id,name:name||'tool',input};
+  }
+
+  function* convertSteps(entry){
+    if(!isConversation(entry))return entry;
+    const conv=entry.conversation,originalId=string(conv.id);
+    if(!originalId)throw new Error('Grok conversation ID missing');
+    const prefix='grok:'+originalId+':',warnings=[],messages=[];
+    const rawResponses=list(entry.responses).map(item=>item?.response||item).filter(r=>r&&typeof r==='object'&&typeof r._id==='string'&&r._id);
+    const byId=new Map();
+    for(const r of rawResponses)byId.set(r._id,r);
+
+    const parents=new Map();
+    for(const r of rawResponses){
+      const key=r._id;
+      let parent=string(r.parent_response_id);
+      if(parent===key){parent='';warnings.push('消息树存在循环 / Message tree cycle');}
+      if(!parent)parents.set(key,root);
+      else parents.set(key,prefix+parent);
+    }
+
+    for(const r of rawResponses){
+      const blocks=[],thinkingHeaders=[],toolNamesById=new Map(),searchItems=[],seenUrls=new Set();
+      for(const step of list(r.steps)){
+        if(!step||typeof step!=='object')continue;
+        const tagged=step.tagged_text&&typeof step.tagged_text==='object'?step.tagged_text:{};
+        const header=string(tagged.header).trim();
+        if(header)thinkingHeaders.push(header);
+        const cards=Array.isArray(tagged.tool_usage_card)?tagged.tool_usage_card:(tagged.tool_usage_card?[tagged.tool_usage_card]:[]);
+        for(const cardXml of cards){
+          const parsedCard=parseToolCard(cardXml);
+          if(parsedCard){
+            if(parsedCard.id)toolNamesById.set(parsedCard.id,parsedCard.name);
+            blocks.push({type:'tool_use',id:parsedCard.id||undefined,name:parsedCard.name,input:parsedCard.input});
+          }
+        }
+        for(const res of list(step.tool_usage_results)){
+          if(!res||typeof res!=='object')continue;
+          const toolId=string(res.tool_usage_card_id);
+          const resultText=typeof res.result==='string'?res.result:JSON.stringify(res.result??'',null,2);
+          blocks.push({type:'tool_result',tool_use_id:toolId||undefined,name:toolNamesById.get(toolId)||'tool',content:[{type:'text',text:resultText.slice(0,32768)}]});
+        }
+        for(const sr of list(step.web_search_results)){
+          const url=safeUrl(sr?.url);
+          if(url&&!seenUrls.has(url)){seenUrls.add(url);searchItems.push({type:'web_search_result',title:bounded(sr.title||url),url});}
+        }
+      }
+      for(const sr of list(r.web_search_results)){
+        const url=safeUrl(sr?.url);
+        if(url&&!seenUrls.has(url)){seenUrls.add(url);searchItems.push({type:'web_search_result',title:bounded(sr.title||url),url});}
+      }
+      if(thinkingHeaders.length){
+        const tStart=parseDateMs(r.thinking_start_time),tEnd=parseDateMs(r.thinking_end_time);
+        const durationMs=Number.isFinite(tStart)&&Number.isFinite(tEnd)&&tEnd>=tStart?Math.round(tEnd-tStart):undefined;
+        blocks.unshift({type:'thinking',thinking:thinkingHeaders.join('\n\n'),summaries:true,...(durationMs?{duration_ms:durationMs}:{})});
+      }
+      if(searchItems.length){
+        blocks.push({type:'web_search_tool_result',content:searchItems});
+      }
+      const parsedMsg=parseMessage(r.message,r.card_attachments_json);
+      let bodyText=parsedMsg.text;
+      const xposts=list(r.xpost_ids).map(id=>string(id).trim()).filter(id=>/^\d{5,25}$/.test(id));
+      if(xposts.length){
+        bodyText+=(bodyText?'\n\n':'')+xposts.map(id=>'- X Post: '+link('x.com/i/web/status/'+id,'https://x.com/i/web/status/'+id)).join('\n');
+      }
+      if(bodyText){
+        blocks.push({type:'text',text:bodyText});
+      }
+      const attachments=[];
+      for(const att of list(r.file_attachments)){
+        if(typeof att==='string'&&att.trim()){
+          const id=att.trim();
+          attachments.push({file_name:id,file_type:'',file_id:id,file_path:'prod-mc-asset-server/'+id+'/content'});
+        }else if(att&&typeof att==='object'){
+          const id=string(att.file_id||att.id||att.asset_id).trim();
+          const fname=string(att.file_name||att.name||id);
+          if(id||fname)attachments.push({file_name:fname,file_type:string(att.mime_type||att.file_type),file_id:id,file_path:id?'prod-mc-asset-server/'+id+'/content':''});
+        }
+      }
+      const rawSender=string(r.sender).toLowerCase();
+      const sender=rawSender==='human'||rawSender==='user'?'human':rawSender==='assistant'||rawSender==='grok'?'assistant':rawSender||'unknown';
+      const createdAt=parseDate(r.create_time);
+      messages.push({
+        uuid:prefix+r._id,
+        originalId:r._id,
+        sourcePlatform:'grok',
+        sender,
+        created_at:createdAt,
+        updated_at:createdAt,
+        parent_message_uuid:parents.get(r._id),
+        model:string(r.model),
+        content:blocks,
+        attachments
+      });
+      yield;
+    }
+
+    const path=[],seen=new Set();
+    let current=string(conv.leaf_response_id),valid=!!(current&&byId.has(current));
+    while(current&&byId.has(current)){
+      if(seen.has(current)){valid=false;break;}
+      seen.add(current);
+      path.unshift(prefix+current);
+      const parent=string(byId.get(current).parent_response_id);
+      if(parent&&!byId.has(parent))valid=false;
+      current=parent;
+    }
+    if(conv.leaf_response_id&&(!valid||!path.length)){
+      warnings.push('当前节点缺失或无效，显示最长有效路径 / Invalid current node; showing longest valid path');
+    }
+
+    const accountUuid=string(conv.user_id)?'grok:'+string(conv.user_id):'';
+    return {
+      uuid:'grok:'+originalId,
+      originalId,
+      sourcePlatform:'grok',
+      name:string(conv.title),
+      summary:string(conv.summary),
+      created_at:parseDate(conv.create_time),
+      updated_at:parseDate(conv.modify_time)||parseDate(conv.create_time),
+      ...(accountUuid?{account:{uuid:accountUuid}}:{}),
+      ...(string(conv.workspace_id)?{workspaceId:string(conv.workspace_id)}:{}),
+      defaultModel:'',
+      currentNode:string(conv.leaf_response_id),
+      defaultPath:valid?path:[],
+      importWarnings:[...new Set(warnings)],
+      chat_messages:messages
+    };
+  }
+
+  function convert(entry){const it=convertSteps(entry);let step;do{step=it.next();}while(!step.done);return step.value;}
+  async function convertAsync(entry,checkpoint){const it=convertSteps(entry);let step;do{step=it.next();if(!step.done)await checkpoint();}while(!step.done);return step.value;}
+
+  function convertProjects(projects){
+    return list(projects).filter(p=>p&&typeof p==='object'&&typeof p.workspace_id==='string'&&p.workspace_id).map(p=>({
+      uuid:'grok:ws:'+p.workspace_id,
+      name:string(p.name)||'Grok Workspace',
+      description:string(p.preferred_model)?'Preferred model: '+string(p.preferred_model):'',
+      prompt_template:string(p.custom_personality),
+      created_at:parseDate(p.create_time),
+      updated_at:parseDate(p.last_use_time)||parseDate(p.create_time),
+      sourcePlatform:'grok',
+      docs:[]
+    }));
+  }
+
+  function convertAuth(auth){
+    if(!isAuthExport(auth))return {users:[],logins:[],accounts:[]};
+    const u=auth.user;
+    const fullName=[string(u.givenName),string(u.familyName)].filter(Boolean).join(' ');
+    const accountId='grok:'+u.userId;
+    const users=[{
+      ...u,
+      uuid:accountId,
+      full_name:fullName||string(u.email)||u.userId,
+      sourcePlatform:'grok'
+    }];
+    const logins=list(auth.sessions).filter(s=>s&&typeof s==='object').map(s=>({
+      ...s,
+      account_uuid:accountId,
+      timestamp:parseDate(s.createTime)||string(s.createTime),
+      ip_address:string(s.cfMetadata?.ipAddress),
+      city:string(s.cfMetadata?.city),
+      country:string(s.cfMetadata?.country),
+      sourcePlatform:'grok'
+    }));
+    return {users,logins,accounts:[accountId]};
+  }
+
+  return {isBackendExport,isConversation,isAuthExport,parseDate,parseMessage,parseToolCard,convert,convertAsync,convertProjects,convertAuth,safeUrl};
+}
+
 // Pure, local rules. Offsets always refer to original UTF-16 source text.
 function redactionRules(){
   const WINDOW=32768,OVERLAP=512,LIMIT=4096;
@@ -1934,7 +2269,7 @@ async function markdown(conv,mode,choices,checkpoint){  // Build linear thread (
     if(!msg||typeof msg!=='object')continue;
     if(msg._divider==='linear'){md+='## ⚠️ '+t('对话分支结构异常，已按时间顺序展示全部消息')+'\n\n';continue;}
     if(msg._divider==='orphan'){md+='## 🧩 '+t('以下消息无法归入对话分支（可能是已删除分支的残留）')+' ('+msg.count+')\n\n';continue;}
-    const role='**'+(msg.sender==='human'?t('你'):msg.sender==='assistant'?(conv.sourcePlatform==='gpt'?'ChatGPT':'Claude'):msg.sender)+'**';
+    const role='**'+(msg.sender==='human'?t('你'):msg.sender==='assistant'?(conv.sourcePlatform==='gpt'?'ChatGPT':conv.sourcePlatform==='grok'?'Grok':'Claude'):msg.sender)+'**';
     md+=role+' · '+fmtTime(msg.created_at)+'\n\n';
     // Attachments
     for(const att of[...(msg.attachments||[]),...(msg.files||[])]){
@@ -2022,7 +2357,7 @@ function configureMarked(){
 const trees=new WeakMap();
 function tree(conv,mode='longest',choices={}){
   const messages=conv.chat_messages||[];
-  if(mode!=='full'&&conv.sourcePlatform==='gpt'&&conv.defaultPath?.length){const defaults={};const groups=new Map();for(const message of messages){const parent=message.parent_message_uuid||ROOT_ID;if(!groups.has(parent))groups.set(parent,[]);groups.get(parent).push(message);}for(const siblings of groups.values())siblings.sort((a,b)=>(Date.parse(a.created_at)||0)-(Date.parse(b.created_at)||0));const preferred=new Set(conv.defaultPath);for(const [parent,siblings]of groups){const selected=siblings.findIndex(message=>preferred.has(message.uuid));if(selected>=0)defaults[parent]=selected;}choices={...defaults,...choices};}
+  if(mode!=='full'&&(conv.sourcePlatform==='gpt'||conv.sourcePlatform==='grok')&&conv.defaultPath?.length){const defaults={};const groups=new Map();for(const message of messages){const parent=message.parent_message_uuid||ROOT_ID;if(!groups.has(parent))groups.set(parent,[]);groups.get(parent).push(message);}for(const siblings of groups.values())siblings.sort((a,b)=>(Date.parse(a.created_at)||0)-(Date.parse(b.created_at)||0));const preferred=new Set(conv.defaultPath);for(const [parent,siblings]of groups){const selected=siblings.findIndex(message=>preferred.has(message.uuid));if(selected>=0)defaults[parent]=selected;}choices={...defaults,...choices};}
   let index=trees.get(messages);
   if(!index){
     const byId=new Map(),children=new Map(),roots=[],times=messages.map(m=>Date.parse(m?.created_at||'')||0);
@@ -2259,7 +2594,7 @@ function taskWorkerMain(){
       parts.push('## '+core.t('关联对话')+'\n\n');let done=0;
       for await(const record of token.records(payload.uuids)){
         const c=JSON.parse(record.raw);parts.push('### '+(c.name||core.t('无标题'))+'\n\n> UUID: '+(c.uuid||'')+'\n\n');
-        let n=0;for(const m of core.tree(c).messages){if(n++%128===0)await token.checkpoint();const roleLabel=m.sender==='human'?core.t('你'):m.sender==='assistant'?(c.sourcePlatform==='gpt'?'ChatGPT':'Claude'):m.sender;parts.push('**'+roleLabel+'** · '+core.fmtTime(m.created_at)+'\n\n');for(const b of m.content||[]){if(b?.type==='text')parts.push((b.text||'')+'\n\n');else if(b?.type==='thinking')parts.push('<details><summary>'+core.t('思考过程')+'</summary>\n\n'+(b.thinking||'')+'\n\n</details>\n\n');else if(b?.type==='tool_use')parts.push('> '+core.t('工具调用')+': `'+(b.name||'')+'`\n\n');}parts.push('---\n\n');}
+        let n=0;for(const m of core.tree(c).messages){if(n++%128===0)await token.checkpoint();const roleLabel=m.sender==='human'?core.t('你'):m.sender==='assistant'?(c.sourcePlatform==='gpt'?'ChatGPT':c.sourcePlatform==='grok'?'Grok':'Claude'):m.sender;parts.push('**'+roleLabel+'** · '+core.fmtTime(m.created_at)+'\n\n');for(const b of m.content||[]){if(b?.type==='text')parts.push((b.text||'')+'\n\n');else if(b?.type==='thinking')parts.push('<details><summary>'+core.t('思考过程')+'</summary>\n\n'+(b.thinking||'')+'\n\n</details>\n\n');else if(b?.type==='tool_use')parts.push('> '+core.t('工具调用')+': `'+(b.name||'')+'`\n\n');}parts.push('---\n\n');}
         await token.checkpoint({loaded:++done,total:payload.uuids.length});
       }
       return {blob:new Blob(parts,{type:'text/markdown;charset=utf-8'})};
@@ -2414,15 +2749,28 @@ function importWorkerMain(){
           return null;
         };
         const parseJsonText=text=>JSON.parse(String(text||'').replace(/^\uFEFF/,''));
-        const stripWrapperRoot=rawFiles=>{
-          const names=Object.keys(rawFiles).filter(n=>!rawFiles[n].dir&&!n.startsWith('__MACOSX/'));
-          if(!names.length)return rawFiles;
-          const root=names[0].split('/')[0];
-          const reserved=['areas','projects','artifacts','memories','dalle-generations','sites'];
-          if(!root||reserved.includes(root)||!names.every(p=>p.startsWith(root+'/')))return rawFiles;
+        const normalizeEntryPaths=rawFiles=>{
           const normalized=Object.create(null);
-          for(const name of names){normalized[name.slice(root.length+1)]=rawFiles[name];}
+          for(const [rawKey,entry]of Object.entries(rawFiles)){
+            if(entry.dir||rawKey.startsWith('__MACOSX/'))continue;
+            const cleanKey=rawKey.replace(/\\/g,'/').replace(/\/+/g,'/');
+            if(!normalized[cleanKey])normalized[cleanKey]=entry;
+          }
           return normalized;
+        };
+        const stripWrapperRoot=rawFiles=>{
+          let currentFiles=normalizeEntryPaths(rawFiles);
+          const reserved=['areas','projects','artifacts','memories','dalle-generations','sites','prod-mc-asset-server'];
+          for(let depth=0;depth<6;depth++){
+            const names=Object.keys(currentFiles);
+            if(!names.length)break;
+            const root=names[0].split('/')[0];
+            if(!root||reserved.includes(root)||!names.every(p=>p.startsWith(root+'/')))break;
+            const next=Object.create(null);
+            for(const name of names){next[name.slice(root.length+1)]=currentFiles[name];}
+            currentFiles=next;
+          }
+          return currentFiles;
         };
         if(file){
           id=await packageFingerprint([{file}],current,request);
@@ -2444,15 +2792,20 @@ function importWorkerMain(){
           }
           files=rawFiles;
         }else{
-          const selected=request.payload.files||[],paths=selected.map(f=>f.path||f.webkitRelativePath||f.name),root=paths[0]?.split('/')[0];
-          const stripRoot=paths.every(p=>p.startsWith(root+'/'))&&!['areas','projects','artifacts','memories','dalle-generations','sites'].includes(root);
-          files=Object.create(null);for(const [index,item]of selected.entries()){const f=item.file||item,name=stripRoot?paths[index].slice(root.length+1):paths[index];if(files[name])throw new Error('Duplicate export path');files[name]={file:f,async:type=>type==='blob'?Promise.resolve(f):f.text()};}
+          const selected=request.payload.files||[],paths=selected.map(f=>String(f.path||f.webkitRelativePath||f.name).replace(/\\/g,'/').replace(/\/+/g,'/'));
+          const rawMap=Object.create(null);
+          for(const [index,item]of selected.entries()){
+            const f=item.file||item,name=paths[index];
+            if(rawMap[name])throw new Error('Duplicate export path');
+            rawMap[name]={file:f,async:type=>type==='blob'?Promise.resolve(f):f.text()};
+          }
+          files=stripWrapperRoot(rawMap);
           id=await packageFingerprint(Object.keys(files).sort().map(path=>({path,file:files[path].file})),current,request);
           if(packages.has(id))return{duplicate:true,id,filename:'folder'};
         }
-        const entries=Object.keys(files).filter(n=>!files[n].dir&&!n.startsWith('__MACOSX/'));for(const name of entries){if(/^\/|^[A-Za-z]:/.test(name))throw new Error('Invalid export path');format.logicalPath(files[name].unsafeOriginalName||name);}
+        const entries=Object.keys(files).filter(n=>!files[n].dir&&!n.startsWith('__MACOSX/'));for(const name of entries){if(/^\/|^[A-Za-z]:/.test(name))throw new Error('Invalid export path');format.logicalPath(String(files[name].unsafeOriginalName||name).replace(/\\/g,'/').replace(/\/+/g,'/'));}
         let convs=entries.filter(n=>/(^|\/)conversations(?:-\d+)?\.json$/i.test(n)).sort((a,b)=>{const na=Number(/(\d+)\.json$/i.exec(a)?.[1]??-1),nb=Number(/(\d+)\.json$/i.exec(b)?.[1]??-1);return na-nb||a.localeCompare(b);});
-        const projects=[],memories=[],artifacts=[],users=[],logins=[],accounts=new Set(),mime=Object.create(null),resources=[],gpt=gptExportCore();let legacyMemory=null,gptManifest=false;const designs=[];
+        const projects=[],memories=[],artifacts=[],users=[],logins=[],accounts=new Set(),mime=Object.create(null),resources=[],gpt=gptExportCore(),grok=typeof grokExportCore==='function'?grokExportCore():null;let legacyMemory=null,gptManifest=false;const designs=[];
         if(files['export_manifest.json']){const manifest=parseJsonText(await files['export_manifest.json'].async('text')),shards=gpt.manifest(manifest,entries);if(shards){convs=shards;gptManifest=true;}}
         if(files['library_files.json']){
           const library=parseJsonText(await files['library_files.json'].async('text'));for(const item of Array.isArray(library)?library:[]){await check(current);const path=String(item.file_id||'')+'.dat';if(!files[path])continue;const declared=String(item.mime_type||''),header=await fileHeader(files[path]);const detected=detectMagicMime(header);mime[path]=detected||(/^(?:text\/plain|text\/markdown|application\/pdf|audio\/|image\/)/.test(declared)?declared==='text/plain'&&String(item.file_extension).toLowerCase()==='md'?'text/markdown':declared:'application/octet-stream');resources.push({packageId:id,path,name:String(item.file_name||path),mime:mime[path],fileId:String(item.file_id||''),altId:String(item.library_file_id||'')});}
@@ -2460,6 +2813,16 @@ function importWorkerMain(){
         const indexedPaths=new Set(resources.map(r=>r.path));
         for(const name of entries){
           if(indexedPaths.has(name))continue;
+          const grokAssetMatch=/^(?:.*\/)?prod-mc-asset-server\/([^/]+)\/content$/i.exec(name);
+          if(grokAssetMatch){
+            await check(current);
+            const assetId=grokAssetMatch[1],header=await fileHeader(files[name]);
+            const detected=detectMagicMime(header);
+            mime[name]=detected||(header.length&&!header.includes(0)?'text/plain':'application/octet-stream');
+            resources.push({packageId:id,path:name,name:assetId,mime:mime[name],fileId:assetId,altId:''});
+            indexedPaths.add(name);
+            continue;
+          }
           const mediaMatch=/^(?:dalle-generations\/|user-[^/]+\/|[^/]+\/audio\/)?(file[-_][A-Za-z0-9_-]+|[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})(?:[-_.][^/]+)?\.(png|jpe?g|gif|webp|avif|wav|mp3|pdf|txt|md)$/i.exec(name);
           if(mediaMatch){
             const ext=mediaMatch[2].toLowerCase();
@@ -2470,15 +2833,25 @@ function importWorkerMain(){
           }
         }
         const filename=file?.name||'folder';
-        const gptAuxSkip=new Set(['export_manifest.json','library_files.json','sites/export_manifest.json','ads.json','user_settings.json','sectioned_conversations.json','message_feedback.json','model_comparisons.json','shared_conversations.json','group_chats.json']);
+        const auxSkip=new Set(['export_manifest.json','library_files.json','sites/export_manifest.json','ads.json','user_settings.json','sectioned_conversations.json','message_feedback.json','model_comparisons.json','shared_conversations.json','group_chats.json','prod-mc-billing.json']);
         for(const name of entries){await check(current);
-          if(convs.includes(name)||gptAuxSkip.has(name))continue;
+          const baseName=name.split('/').pop();
+          if(convs.includes(name)||auxSkip.has(name)||auxSkip.has(baseName))continue;
           if(/\.md$/i.test(name)){
             const logical=name.replace(/^.*?(?=(?:areas|projects)\/)/,'');
             if(/^(?:areas\/|projects\/[^/]+\/)/.test(logical))memories.push(format.memory(logical,await files[name].async('text'),'',filename));continue;
           }
           if(!/\.json$/i.test(name))continue;
           let value;try{value=parseJsonText(await files[name].async('text'));}catch{if(/(^|\/)(?:projects\/|users\.json|login_history\.json|artifacts\/)/i.test(name))throw new Error('Invalid JSON: '+name);continue;}
+          if(grok&&grok.isBackendExport(value)){
+            if(Array.isArray(value.projects))projects.push(...grok.convertProjects(value.projects));
+            if(Array.isArray(value.conversations)&&value.conversations.length)convs.push(name);
+            continue;
+          }
+          if(grok&&(grok.isConversation(value)||Array.isArray(value)&&value.length&&value.every(item=>grok.isConversation(item)))){convs.push(name);continue;}
+          if(grok&&grok.isAuthExport(value)){
+            const auth=grok.convertAuth(value);users.push(...auth.users);logins.push(...auth.logins);for(const acc of auth.accounts)accounts.add(acc);continue;
+          }
           if(gpt.isConversation(value)||Array.isArray(value)&&value.length&&value.every(item=>gpt.isConversation(item))){if(gptManifest)throw new Error('GPT conversations outside declared shards');convs.push(name);continue;}
           if(/(^|\/)user\.json$/i.test(name)&&value&&typeof value==='object'&&!Array.isArray(value)){users.push({...value,sourcePlatform:'gpt'});if(value.id)accounts.add('gpt:'+value.id);continue;}
           if(/(^|\/)projects\/[^/]+\.json$/i.test(name)){if(!value||typeof value.uuid!=='string'||!value.uuid||typeof value.name!=='string')throw new Error('Invalid project metadata');projects.push(value);continue;}
@@ -2553,7 +2926,7 @@ async function ensureFeature(kind){
   const libraries=kind==='import'?['zip']:kind==='reader'?['markdown','highlight']:['markdown','highlight'];
   const sources=libraries.map(name=>Uint8Array.from(atob(WORKER_LIBRARIES[name].base64),char=>char.charCodeAt(0)));
   const main=kind==='import'?importWorkerMain:kind==='reader'?readerWorkerMain:taskWorkerMain;
-  const url=URL.createObjectURL(new Blob([...sources,'\n',exportFormatCore.toString(),'\n',gptDilCore.toString(),'\n',gptExportCore.toString(),'\n',redactionRules.toString(),'\n',workerDomainCore.toString(),'\n',featureWorkerRuntime.toString(),'\n('+main.toString()+')()'],{type:'text/javascript'}));
+  const url=URL.createObjectURL(new Blob([...sources,'\n',exportFormatCore.toString(),'\n',gptDilCore.toString(),'\n',gptExportCore.toString(),'\n',grokExportCore.toString(),'\n',redactionRules.toString(),'\n',workerDomainCore.toString(),'\n',featureWorkerRuntime.toString(),'\n('+main.toString()+')()'],{type:'text/javascript'}));
   let worker;try{worker=new Worker(url);}catch(error){URL.revokeObjectURL(url);throw error;}
   state={worker,url,id:kind+':'+(++featureSequence),generation:dataWorkerGeneration,pending:new Map(),port:null};
   state.ready=new Promise((resolve,reject)=>{state.resolveReady=resolve;state.rejectReady=reject;});state.ready.catch(()=>{});featureWorkers.set(kind,state);
@@ -2681,7 +3054,7 @@ function renderExportManifest(){
   const make=(tag,cls,text,parent=panel)=>{const node=document.createElement(tag);node.className=cls;node.textContent=text;parent.append(node);return node;};
   const hero=make('header','export-hero','');make('div','export-kicker','Multi-AI Web Export Reader',hero);make('h2','',t('多 AI 导出导入中心'),hero);make('p','export-description',t('支持直接导入 Claude 与 ChatGPT 的 ZIP、解压目录或独立 JSON，也支持通过 Claude 新版下载清单逐包获取并混合阅读。'),hero);
   const direct=make('section','export-empty','');direct.style.marginBottom='20px';make('strong','',t('直接导入（Claude & ChatGPT 通用）'),direct);make('p','export-description',t('无需清单，可直接多选或追加导入 Claude 与 ChatGPT 导出包，自动识别平台并混合搜索、筛选与脱敏导出。'),direct);
-  const directBar=make('div','export-toolbar','',direct);for(const [action,label,primary]of [['pick-zip','🗜️ 打开导出 ZIP（Claude / ChatGPT）',true],['pick-folder','📂 打开解压目录'],['new-archive','打开新档案'],['clear-archive','清除档案']]){const button=make('button','export-button'+(primary?' primary':action==='clear-archive'?' quiet':''),t(label),directBar);button.type='button';button.dataset.uiClick=action;}
+  const directBar=make('div','export-toolbar','',direct);for(const [action,label,primary]of [['pick-zip','🗜️ 打开导出 ZIP（Claude / ChatGPT / Grok）',true],['pick-folder','📂 打开解压目录'],['new-archive','打开新档案'],['clear-archive','清除档案']]){const button=make('button','export-button'+(primary?' primary':action==='clear-archive'?' quiet':''),t(label),directBar);button.type='button';button.dataset.uiClick=action;}
   if(session.packages.length){make('h3','',t('已导入文件'));for(const p of session.packages)make('p','export-meta','✓ '+p.filename);}
   if(session.errors.length){const errors=make('div','export-errors','');errors.setAttribute('role','status');for(const e of session.errors)make('p','',e,errors);}
   make('h3','',t('Claude 新版分包下载清单')).style.marginTop='24px';
@@ -2796,7 +3169,7 @@ async function openExportArtifact(index,versionId){
 function renderExportAccount(){
   exportViewVersion++;document.getElementById('messages').replaceChildren();const container=document.getElementById('conv-list');container.replaceChildren();
   const title=document.createElement('h3');title.textContent=t('账户资料');container.append(title);
-  for(const user of exportSession.users){const details=document.createElement('details'),summary=document.createElement('summary'),pre=document.createElement('pre');const platform=user.sourcePlatform==='gpt'?'ChatGPT':'Claude';summary.textContent='['+platform+'] '+(user.full_name||user.name||user.email||user.uuid||user.id||t('账户'));pre.textContent=JSON.stringify(user,null,2);details.append(summary,pre);container.append(details);}
+  for(const user of exportSession.users){const details=document.createElement('details'),summary=document.createElement('summary'),pre=document.createElement('pre');const platform=user.sourcePlatform==='gpt'?'ChatGPT':user.sourcePlatform==='grok'?'Grok':'Claude';summary.textContent='['+platform+'] '+(user.full_name||user.name||user.email||user.uuid||user.id||t('账户'));pre.textContent=JSON.stringify(user,null,2);details.append(summary,pre);container.append(details);}
   const events=[...exportSession.logins].sort((a,b)=>(Date.parse(b.timestamp)||0)-(Date.parse(a.timestamp)||0));exportPage=Math.min(exportPage,Math.max(0,Math.ceil(events.length/50)-1));
   const heading=document.createElement('h4');heading.textContent=t('登录历史')+' ('+events.length+')';container.append(heading);
   for(const event of events.slice(exportPage*50,(exportPage+1)*50)){const pre=document.createElement('pre');pre.style.cssText='white-space:pre-wrap;overflow-wrap:anywhere';pre.textContent=JSON.stringify(event,null,2);container.append(pre);}
@@ -3988,7 +4361,7 @@ function archiveAnalysisCore(){
           if(type==='text'){const text=String(block.text||'');textBlocks++;characters+=text.length;wordText+=' '+text;}
           else if(type==='thinking'){const text=String(block.thinking||'');thinking++;characters+=text.length;wordText+=' '+text;const explicit=typeof block.duration_ms==='number'&&Number.isFinite(block.duration_ms)&&block.duration_ms>0?block.duration_ms:NaN;const start=Date.parse(block.start_timestamp||''),stop=Date.parse(block.stop_timestamp||'');const duration=Number.isFinite(explicit)?explicit:(Number.isFinite(start)&&Number.isFinite(stop)&&stop>=start?stop-start:NaN);if(Number.isFinite(duration)&&(!state.longestThinking||duration>state.longestThinking.durationMs))state.longestThinking={durationMs:duration,conversationUuid:record.meta.uuid,title:record.meta.name,messageUuid:message?.uuid||''};}
           else if(type==='image')imageBlocks++;
-          if(type==='tool_use'||type==='server_tool_use'){tools++;add(state.toolNames,name||'unknown');if(/show_widget|visualize|imagine|artifact|canmore|dalle/i.test(name))artifacts++;if(/web_search|web_fetch|web\.run|browser/i.test(name))webSearches++;}
+          if(type==='tool_use'||type==='server_tool_use'){tools++;add(state.toolNames,name||'unknown');if(/show_widget|visualize|imagine|artifact|canmore|dalle/i.test(name))artifacts++;if(/web_search|web_fetch|web\.run|browser|websearch|xsearch/i.test(name))webSearches++;}
           if((type==='tool_result'||type==='web_search_tool_result')&&block.is_error){state.toolErrors++;convToolErrors++;}
         }
         if(!list(message?.content).length&&message?.text){wordText=String(message.text);characters=wordText.length;}
@@ -4028,6 +4401,8 @@ function archiveAnalysisCore(){
     for await(const record of records){
       await checkpoint();
       const conversation=materialize(record),messages=list(conversation.chat_messages),exactCandidates=new Set(),exactFiles=new Set(),queries=[];
+      const wsId=conversation.workspaceId||record.meta.workspaceId;
+      if(wsId&&stats['grok:ws:'+wsId]){map[record.meta.uuid]='grok:ws:'+wsId;evidence[record.meta.uuid]={method:'workspace',confidence:1,files:[],queries:[],keywords:[]};}
       for(let messageIndex=0;messageIndex<messages.length;messageIndex++){
         if(messageIndex%128===0)await checkpoint();
         const message=messages[messageIndex];for(const block of list(message?.content)){
@@ -4037,7 +4412,7 @@ function archiveAnalysisCore(){
         if(block.type==='tool_use'&&block.name==='project_knowledge_search'&&block.input?.query)queries.push(String(block.input.query).toLowerCase());
       }
       }
-      if(exactCandidates.size===1){map[record.meta.uuid]=[...exactCandidates][0];evidence[record.meta.uuid]={method:'file',confidence:.98,files:[...exactFiles],queries:[],keywords:[]};}
+      if(!map[record.meta.uuid]&&exactCandidates.size===1){map[record.meta.uuid]=[...exactCandidates][0];evidence[record.meta.uuid]={method:'file',confidence:.98,files:[...exactFiles],queries:[],keywords:[]};}
       if(!map[record.meta.uuid]&&queries.length){
         const scores={};for(const project of projects){let score=0,text=projectDocText[project.uuid]||'';for(const query of queries)for(const token of query.split(/\s+/).map(value=>value.replace(/[^\w\u4e00-\u9fff]/g,'')).filter(value=>value.length>=2&&!stopWords.has(value)))if(text.includes(token))score++;if(score)scores[project.uuid]=score;}
         const ranked=Object.entries(scores).sort((a,b)=>b[1]-a[1]),best=ranked[0],runner=ranked[1]?.[1]||0;if(best&&best[1]>=2&&best[1]>runner){map[record.meta.uuid]=best[0];evidence[record.meta.uuid]={method:'knowledge',confidence:Math.min(.94,.68+best[1]*.05+(best[1]-runner)*.04),files:[],queries:[...new Set(queries)],keywords:[]};}
@@ -4122,7 +4497,7 @@ function dataWorkerMain(){
       if(key==='chat_messages'&&raw[start]==='[')meta.message_count=countArrayItems(raw,start,end);
       else if(key==='account')meta.accountUuid=JSON.parse(raw.slice(start,end))?.uuid||'';
       else if(key==='_design')meta._design=JSON.parse(raw.slice(start,end));
-      else if(['sourcePlatform','originalId','defaultModel','currentNode','importWarnings'].includes(key))meta[key]=JSON.parse(raw.slice(start,end));
+      else if(['sourcePlatform','originalId','defaultModel','currentNode','importWarnings','workspaceId'].includes(key))meta[key]=JSON.parse(raw.slice(start,end));
       else if(key==='uuid'||key==='name'||key==='summary'||key==='created_at'||key==='updated_at'){
         const value=JSON.parse(raw.slice(start,end));meta[key]=typeof value==='string'?value:'';
       }
@@ -4136,6 +4511,22 @@ function dataWorkerMain(){
     if(text[index]===']')return result;
     while(index<text.length){
       const end=valueEnd(text,index);let raw=text.slice(index,end);
+      if(typeof grokExportCore==='function'&&(/"responses"\s*:/.test(raw)||/"conversations"\s*:/.test(raw))){
+        const grok=grokExportCore(),value=JSON.parse(raw);
+        if(grok.isBackendExport(value)){
+          for(const entry of value.conversations){
+            const converted=JSON.stringify(await grok.convertAsync(entry,checkpoint));
+            const meta=inspectConversation(converted);meta.sourcePlatform=meta.sourcePlatform||'grok';
+            if(!meta.uuid)throw new Error('Conversation UUID is missing');
+            result.push({raw:converted,meta});
+          }
+          index=skipWs(text,end);
+          if(text[index]===','){index=skipWs(text,index+1);continue;}
+          if(text[index]===']')return result;
+          throw new Error('conversations.json 格式不正确');
+        }
+        if(grok.isConversation(value))raw=JSON.stringify(await grok.convertAsync(value,checkpoint));
+      }
       if(typeof gptExportCore==='function'&&/"mapping"\s*:/.test(raw)){const value=JSON.parse(raw);if(gptExportCore().isConversation(value))raw=JSON.stringify(await gptExportCore().convertAsync(value,checkpoint));}
       const meta=inspectConversation(raw);meta.sourcePlatform=meta.sourcePlatform||'claude';
       if(!meta.uuid)throw new Error('Conversation UUID is missing');
@@ -4175,7 +4566,7 @@ function dataWorkerMain(){
   async function cacheDeleteAll(){const db=await cacheDb();if(!db)return false;try{await new Promise((resolve,reject)=>{const request=db.transaction(CACHE_STORE,'readwrite').objectStore(CACHE_STORE).clear();request.onsuccess=()=>resolve();request.onerror=()=>reject(request.error);});return true;}finally{db.close();}}
   function ingestSummary(cacheHit=false){let totalMsgs=0,minDate='',maxDate='';for(const record of records){const meta=record.meta;if(meta._design)continue;totalMsgs+=meta.message_count;const date=meta.created_at;if(date&&(!minDate||date<minDate))minDate=date;if(date&&(!maxDate||date>maxDate))maxDate=date;}return{conversations:records.map(record=>record.meta),totalMsgs,minDate,maxDate,lazy:true,cacheHit};}
   let packageStage=null,contentRevision=0,archiveAccounts=new Set(),packageIds=new Set();
-  const accountPlatform=id=>String(id).startsWith('gpt:')?'gpt':'claude';
+  const accountPlatform=id=>String(id).startsWith('gpt:')?'gpt':String(id).startsWith('grok:')?'grok':'claude';
   const accountMismatch=incoming=>{for(const platform of new Set(incoming.map(accountPlatform))){const local=[...archiveAccounts].filter(id=>accountPlatform(id)===platform),next=incoming.filter(id=>accountPlatform(id)===platform);if(new Set(next).size>1||local.length&&next.some(id=>!archiveAccounts.has(id)))return true;}return false;};
   async function finishIngest(request,text){
     const expected=generation,stage=packageStage;let deadline=Date.now()+8;
@@ -4279,7 +4670,7 @@ function cleanupDataWorker(reason){
 }
 function ensureDataWorker(){
   if(dataWorker)return dataWorker;
-  dataWorkerUrl=URL.createObjectURL(new Blob([archiveAnalysisCore.toString(),'\n',gptDilCore.toString(),'\n',gptExportCore.toString(),'\n',redactionRules.toString(),'\n',workerDomainCore.toString(),'\n('+dataWorkerMain.toString()+')()'],{type:'text/javascript'}));
+  dataWorkerUrl=URL.createObjectURL(new Blob([archiveAnalysisCore.toString(),'\n',gptDilCore.toString(),'\n',gptExportCore.toString(),'\n',grokExportCore.toString(),'\n',redactionRules.toString(),'\n',workerDomainCore.toString(),'\n('+dataWorkerMain.toString()+')()'],{type:'text/javascript'}));
   dataWorker=new Worker(dataWorkerUrl);
   dataWorker.onmessage=event=>{
     const message=event.data||{},pending=dataWorkerPending.get(message.requestId);
@@ -4714,7 +5105,7 @@ function renderAnalyticsExploration(){
   html+='<div class="analytics-filters"><label>'+t('时间范围')+'<select id="analytics-range" data-ui-change="analytics-filter" data-ui-value="range">'+analyticsFilterOptions(['all','7','30','90','custom'],[filters.range],value=>t({all:'全部历史',7:'最近 7 天',30:'最近 30 天',90:'最近 90 天',custom:'自定义日期'}[value]))+'</select></label>';
   if(filters.range==='custom')html+='<label>'+t('开始日期')+'<input id="analytics-start" type="date" value="'+escAttr(filters.start)+'" data-ui-change="analytics-filter" data-ui-value="start"></label><label>'+t('结束日期')+'<input id="analytics-end" type="date" value="'+escAttr(filters.end)+'" data-ui-change="analytics-filter" data-ui-value="end"></label>';
   html+=select('projects','项目',options.projects.map(project=>project.uuid),value=>projectNames.get(value))+select('models','模型',options.models,value=>value||t('未提供'))+select('roles','角色',options.roles,value=>value==='human'?t('你'):value==='assistant'?t('AI 助手'):value);
-  html+=select('platforms','来源',['claude','gpt'],value=>value==='gpt'?'ChatGPT':'Claude');
+  html+=select('platforms','来源',['claude','gpt','grok'],value=>value==='gpt'?'ChatGPT':value==='grok'?'Grok':'Claude');
   html+='<button type="button" data-ui-click="analytics-clear">'+t('清除筛选')+'</button></div><div class="analytics-note">'+t('多选条件可组合；未选择表示全部。快捷范围以档案最新消息为终点。')+'</div>';
   if(!result){
     const incomplete=filters.range==='custom'&&(!filters.start||!filters.end||filters.end<filters.start);
@@ -4822,7 +5213,7 @@ function renderConvList(convs){
     const ac=currentConv&&currentConv.uuid===c.uuid?' active':'';
     const last=c.uuid===lastConversationUuid;
     const dateStr=fmtDate(c.updated_at||c.created_at);
-    const metaLabel=(c.sourcePlatform==='gpt'?'ChatGPT':'Claude')+(dateStr?' · '+dateStr:'');
+    const metaLabel=(c.sourcePlatform==='gpt'?'ChatGPT':c.sourcePlatform==='grok'?'Grok (Beta)':'Claude')+(dateStr?' · '+dateStr:'');
     return '<div class="conv-item'+ac+(last?' last-supper':'')+'" data-conv-uuid="'+escAttr(c.uuid)+'" role="button" tabindex="0">'
       +'<div class="conv-title">'+esc(c.name||'('+t('无标题')+')')+(last?'<span class="last-supper-badge">'+t('最后的晚餐')+'</span>':'')+'</div>'
       +'<div class="conv-meta"><span>'+metaLabel+'</span><span class="conv-count">'+(Number.isFinite(c.message_count)?c.message_count:(c.chat_messages||[]).length)+t('条')+'</span></div></div>';
@@ -5780,7 +6171,7 @@ function renderMsg(msg){
     const att=atts[attIndex]||{};
     const name=att.file_name||att.filename||att.name||'';
     const type=att.file_type||att.media_type||'';
-    if(msg.sourcePlatform==='gpt'&&(att.file_id||att.library_file_id)){const resource=findGptResource(att.file_id)||findGptResource(att.library_file_id);if(resource){const mediaKey=resource.packageId+'/'+resource.path;if(resource.mime.startsWith('image/')&&!att._redactedMedia)inner+='<div class="attachment-block" data-zip-media="'+escAttr(mediaKey)+'"><span class="file-icon">🖼</span>'+esc(name)+'</div>';else if(!att._redactedMedia)inner+='<div class="attachment-block">'+esc(name)+' <button type="button" class="gpt-btn" data-gpt-resource="'+escAttr(resource.path)+'">'+esc(t('本地附件'))+'</button></div>';else inner+='<div class="attachment-block">'+esc(t('附件已隔离'))+'</div>';continue;}}
+    if((msg.sourcePlatform==='gpt'||msg.sourcePlatform==='grok')&&(att.file_id||att.library_file_id)){const resource=findGptResource(att.file_id)||findGptResource(att.library_file_id);if(resource){const mediaKey=resource.packageId+'/'+resource.path;if(resource.mime.startsWith('image/')&&!att._redactedMedia)inner+='<div class="attachment-block" data-zip-media="'+escAttr(mediaKey)+'"><span class="file-icon">🖼</span>'+esc(name)+'</div>';else if(!att._redactedMedia)inner+='<div class="attachment-block">'+esc(name)+' <button type="button" class="gpt-btn" data-gpt-resource="'+escAttr(resource.path)+'">'+esc(t('本地附件'))+'</button></div>';else inner+='<div class="attachment-block">'+esc(t('附件已隔离'))+'</div>';continue;}}
     if(att._redactedMedia&&isImageFileName(name,type)){inner+='<div class="attachment-block">🖼️ '+esc(t('附件图片已从安全导出中省略'))+'</div>';continue;}
     const label=name||type||(att.file_uuid?t('文件')+' ('+att.file_uuid.slice(0,8)+'…)':t('附件'));
     const mediaId='media-'+(msg.uuid||'message')+'-'+attIndex,media=isImageFileName(name,type)?attachmentMedia(att,mediaId):null;
@@ -5825,10 +6216,12 @@ function renderMsg(msg){
   const plain=content.filter(b=>b&&b.type==='text').map(b=>b.text||'').join('\n\n')||msg.text||'';
   MSGTEXT[cid]=currentConv?._readerBacked?{sourceIndex:msg._sourceIndex}:plain;
   const copyBtn=plain?'<button class="msgcopy" data-ui-click="copy-message" data-ui-value="'+cid+'" title="'+t('复制这条消息')+'">📋</button>':'';
-  const isGpt=msg.sender!=='human'&&(msg.sourcePlatform==='gpt'||currentConv?.sourcePlatform==='gpt');
-  const avatarLabel=role==='human'?t('你'):isGpt?'◎':'✦';
-  const nameLabel=msg.sender==='human'?t('你'):msg.sender==='assistant'?(isGpt?'ChatGPT':'Claude'):msg.sender;
-  return '<div class="msg-wrap '+role+(isGpt?' gpt':'')+'"'+(Number.isInteger(msg._sourceIndex)?' data-source-index="'+msg._sourceIndex+'"':'')+'>'
+  const platform=msg.sourcePlatform||currentConv?.sourcePlatform||'claude';
+  const isGpt=msg.sender!=='human'&&platform==='gpt';
+  const isGrok=msg.sender!=='human'&&platform==='grok';
+  const avatarLabel=role==='human'?t('你'):isGpt?'◎':isGrok?'𝕏':'✦';
+  const nameLabel=msg.sender==='human'?t('你'):msg.sender==='assistant'?(isGpt?'ChatGPT':isGrok?'Grok':'Claude'):msg.sender;
+  return '<div class="msg-wrap '+role+(isGpt?' gpt':isGrok?' grok':'')+'"'+(Number.isInteger(msg._sourceIndex)?' data-source-index="'+msg._sourceIndex+'"':'')+'>'
     +'<div class="msg-avatar">'+avatarLabel+'</div>'
     +'<div class="msg-body">'
     +'<div class="msg-meta"><span class="msg-name">'+nameLabel+'</span><span>'+time+'</span>'+brNav+copyBtn+'</div>'

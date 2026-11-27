@@ -2,11 +2,13 @@
 
 # Multi-AI Web Export Reader
 
+**xAI Grok web exports (Beta Test)**: import official single-layer export ZIPs (`prod-grok-backend.json`, `prod-mc-auth-mgmt-api.json`, and `prod-mc-asset-server` local attachments) or standalone JSON alongside Claude and ChatGPT archives, with support for branch paths, thinking/tool steps, inline citations, and workspace mapping. **Beta Test notice**: Grok parsing is currently in early beta and may be incomplete for some export variants, fields, or media formats — redacted sample reports are welcome.
+
 **ChatGPT web exports are now supported**: import ZIPs, extracted folders or individual conversation JSON alongside Claude archives for reading, search, statistics and redacted exports. Exported web/file citations, image groups, entities, offline place plots and disabled historical upload controls are supported, with lazy `.dat` images and Markdown attachments. Packaged web pages and component actions never execute. [Support matrix and validation](docs/gpt-export.md)
 
 **GPT inline component repair**: DIL layouts, entities, ratings, bar charts, routes and historical reservation times now render in their original positions. Radio choices, inputs, checklists and progress update locally; confirmation generates a copyable message. The standard viewer keeps remote images and OpenStreetMap tiles off by default with a prominent Step 1 / header toggle; the complete offline bundle uses local views only. [Coverage and validation](docs/gpt-components.md)
 
-**A local Multi-AI Export History Viewer (Claude & ChatGPT)**
+**A local Multi-AI Export History Viewer (Claude / ChatGPT / Grok Beta)**
 
 **Updated for Claude's new partitioned exports**: manifest checklist → official package downloads → batch ZIP import. Read both memory export formats and Artifact versions, with continued support for legacy ZIPs and folders. [Import guide](docs/new-export-import.md)
 
