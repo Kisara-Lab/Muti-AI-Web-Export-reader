@@ -8,14 +8,14 @@ Turn official export ZIPs, extracted folders, or standalone JSON from major AI p
 
 > 🔒 **Local-only · Zero uploads · No backend**: All parsing, search, analytics, and redaction run inside your browser. Remote images and map tiles are **off by default** (toggleable in Step 1 or the header); the offline bundle works completely without network access.
 
-[![Latest release](https://img.shields.io/github/v/release/Artistkisa/claude-rescue-reader?label=release)](https://github.com/Artistkisa/claude-rescue-reader/releases/latest)
-[![Viewer Validation](https://github.com/Artistkisa/claude-rescue-reader/actions/workflows/viewer-validation.yml/badge.svg?branch=main)](https://github.com/Artistkisa/claude-rescue-reader/actions/workflows/viewer-validation.yml)
-[![Browser Smoke](https://github.com/Artistkisa/claude-rescue-reader/actions/workflows/browser-smoke.yml/badge.svg?branch=main)](https://github.com/Artistkisa/claude-rescue-reader/actions/workflows/browser-smoke.yml)
-[![Privacy Guard](https://github.com/Artistkisa/claude-rescue-reader/actions/workflows/privacy-guard.yml/badge.svg?branch=main)](https://github.com/Artistkisa/claude-rescue-reader/actions/workflows/privacy-guard.yml)
-[![Offline bundle](https://github.com/Artistkisa/claude-rescue-reader/actions/workflows/release-verify.yml/badge.svg)](https://github.com/Artistkisa/claude-rescue-reader/releases/latest)
+[![Latest release](https://img.shields.io/github/v/release/Kisara-Lab/Muti-AI-Web-Export-reader?label=release)](https://github.com/Kisara-Lab/Muti-AI-Web-Export-reader/releases/latest)
+[![Viewer Validation](https://github.com/Kisara-Lab/Muti-AI-Web-Export-reader/actions/workflows/viewer-validation.yml/badge.svg?branch=main)](https://github.com/Kisara-Lab/Muti-AI-Web-Export-reader/actions/workflows/viewer-validation.yml)
+[![Browser Smoke](https://github.com/Kisara-Lab/Muti-AI-Web-Export-reader/actions/workflows/browser-smoke.yml/badge.svg?branch=main)](https://github.com/Kisara-Lab/Muti-AI-Web-Export-reader/actions/workflows/browser-smoke.yml)
+[![Privacy Guard](https://github.com/Kisara-Lab/Muti-AI-Web-Export-reader/actions/workflows/privacy-guard.yml/badge.svg?branch=main)](https://github.com/Kisara-Lab/Muti-AI-Web-Export-reader/actions/workflows/privacy-guard.yml)
+[![Offline bundle](https://github.com/Kisara-Lab/Muti-AI-Web-Export-reader/actions/workflows/release-verify.yml/badge.svg)](https://github.com/Kisara-Lab/Muti-AI-Web-Export-reader/releases/latest)
 [![License: MIT](https://img.shields.io/badge/license-MIT-yellow.svg)](LICENSE)
 
-**[⬇ Download `viewer.html`](https://github.com/Artistkisa/claude-rescue-reader/releases/latest/download/viewer.html)** · **[🔌 Download offline bundle](https://github.com/Artistkisa/claude-rescue-reader/releases/latest/download/claude-rescue-reader-offline.zip)** · **[🧪 Synthetic demo ZIP](docs/demo/claude-rescue-reader-synthetic-demo.zip)** · **[🌐 中文](README.md)**
+**[⬇ Download `viewer.html`](https://github.com/Kisara-Lab/Muti-AI-Web-Export-reader/releases/latest/download/viewer.html)** · **[🔌 Download offline bundle](https://github.com/Kisara-Lab/Muti-AI-Web-Export-reader/releases/latest/download/claude-rescue-reader-offline.zip)** · **[🧪 Synthetic demo ZIP](docs/demo/claude-rescue-reader-synthetic-demo.zip)** · **[🌐 中文](README.md)**
 
 ![Multi-AI Web Export Reader overview](docs/images/viewer-overview.png)
 
@@ -40,7 +40,7 @@ Append archives from multiple platforms into the **same workspace in any order**
 
 ## Start in 30 Seconds
 
-1. **Open the viewer**: Download [`viewer.html`](https://github.com/Artistkisa/claude-rescue-reader/releases/latest/download/viewer.html) (or the [offline bundle](#offline-mode)) and open it in Chrome, Edge, or Firefox.
+1. **Open the viewer**: Download [`viewer.html`](https://github.com/Kisara-Lab/Muti-AI-Web-Export-reader/releases/latest/download/viewer.html) (or the [offline bundle](#offline-mode)) and open it in Chrome, Edge, or Firefox.
 2. **Step 1 · Confirm Privacy & Remote Resources**: Local-only mode is active by default (no external image or OpenStreetMap requests). Enable remote resources in Step 1 or the header if you want ChatGPT remote images/maps loaded.
 3. **Step 2 · Import Your Exports**:
    - **Direct ZIP / Folder**: Click **Choose ZIP Archive** or drag & drop one or more ZIPs / extracted folders directly onto the page (**no unzipping required**, append across platforms anytime).
@@ -91,7 +91,7 @@ Append archives from multiple platforms into the **same workspace in any order**
 
 ## Offline Mode
 
-Download [`claude-rescue-reader-offline.zip`](https://github.com/Artistkisa/claude-rescue-reader/releases/latest/download/claude-rescue-reader-offline.zip), extract it, and open `viewer.html` while keeping `vendor/` beside it (`marked`, `highlight.js`, `JSZip`, and `mermaid` are bundled for zero-network use).
+Download [`claude-rescue-reader-offline.zip`](https://github.com/Kisara-Lab/Muti-AI-Web-Export-reader/releases/latest/download/claude-rescue-reader-offline.zip), extract it, and open `viewer.html` while keeping `vendor/` beside it (`marked`, `highlight.js`, `JSZip`, and `mermaid` are bundled for zero-network use).
 
 Build from source (requires Node.js `>= 22.12.0`):
 
@@ -108,7 +108,7 @@ The offline build is written to `dist/offline/viewer.html`.
 
 - **No telemetry or uploads**: Nothing leaves your browser. External requests occur only if you explicitly enable **Remote media** for ChatGPT images/OpenStreetMap tiles (disabled in the offline bundle).
 - **Local parse cache**: Raw conversation text and search indexes are cached in IndexedDB (`claude-rescue-reader-data-v1`) for instant reloads; **use "Clear local parse cache" in the sidebar before leaving shared devices**.
-- **Preferences**: Theme (`cv-theme`), language (`cv-lang`), and manual project overrides (`claude-rescue-reader-project-overrides-v1`) stay in `localStorage`.
+- **Preferences**: Theme (`cv-theme`), language (`cv-lang`), sidebar collapse state, and manual project overrides (`claude-rescue-reader-project-overrides-v1`) stay in `localStorage`.
 - **Sandboxed Artifacts**: HTML/SVG previews run in a network-blocked iframe sandbox and never execute inside the main viewer document.
 
 ---
@@ -119,6 +119,7 @@ The offline build is written to `dist/offline/viewer.html`.
 |---|---|
 | `↑` / `K` | Previous conversation |
 | `↓` / `J` | Next conversation |
+| `Ctrl+B` / `Cmd+B` | Toggle sidebar |
 | `Ctrl+E` / `Cmd+E` | Export current conversation as Markdown |
 
 ---
@@ -133,7 +134,7 @@ After editing `src/*.js`, run `node scripts/update-viewer-policy.mjs` to sync `v
 
 ## Changelog
 
-- **v2.0 — Multi-AI Upgrade**: Rebranded to **Multi-AI Web Export Reader**; added full **ChatGPT** support (sharded exports, DIL components, charts, maps, `.dat` attachments); added **xAI Grok (Beta)** and **Perplexity.ai (Beta)** export parsers; added unified platform registry, colored pills, live filter counts, analytics platform breakdown, and 2-step privacy onboarding.
+- **v2.0 — Multi-AI & UI Redesign**: Rebranded to **Multi-AI Web Export Reader**; added full **ChatGPT** support (sharded exports, DIL components, charts, maps, `.dat` attachments) plus **xAI Grok (Beta)** and **Perplexity.ai (Beta)** parsers; introduced **Warm Atelier / Obsidian** themes with built-in offline syntax highlighting, consolidated **Steps timeline**, domain source chips, collapsible sidebar, and floating **Prompt Outline**.
 
 <details>
 <summary>Previous Releases (v1.0 – v1.5)</summary>

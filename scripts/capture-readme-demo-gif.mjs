@@ -62,6 +62,9 @@ try{
 
   await caption(demoLang==='en'?'4 / 5  Explore your usage analytics':'4 / 5  浏览使用画像 · Explore analytics');
   await click(page.locator('.tab-btn[data-ui-value="analytics"]'));
+  await page.waitForFunction(()=>Boolean(analyticsExploreResult)&&Boolean(document.querySelector('[data-analytics-view="overview"]')),{timeout:15_000});
+  await page.evaluate(()=>document.getElementById('messages').scrollTo(0,0));
+  await click(page.locator('[data-analytics-view="overview"]'));
   await page.waitForFunction(()=>document.querySelector('.word-cloud'),{timeout:15_000});await pause(3000);
 
   await caption(demoLang==='en'?'5 / 5  Preview a privacy-safe export':'5 / 5  预览安全脱敏 · Preview a safe export');

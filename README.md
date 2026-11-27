@@ -8,14 +8,14 @@
 
 > 🔒 **纯本地运行 · 零上传 · 零后端**：所有解析、搜索、统计与脱敏都在当前浏览器完成。普通版默认关闭远程图片与地图请求（可在首页第一步或顶部栏一键开启）；完整离线版无需任何网络。
 
-[![Latest release](https://img.shields.io/github/v/release/Artistkisa/claude-rescue-reader?label=release)](https://github.com/Artistkisa/claude-rescue-reader/releases/latest)
-[![Viewer Validation](https://github.com/Artistkisa/claude-rescue-reader/actions/workflows/viewer-validation.yml/badge.svg?branch=main)](https://github.com/Artistkisa/claude-rescue-reader/actions/workflows/viewer-validation.yml)
-[![Browser Smoke](https://github.com/Artistkisa/claude-rescue-reader/actions/workflows/browser-smoke.yml/badge.svg?branch=main)](https://github.com/Artistkisa/claude-rescue-reader/actions/workflows/browser-smoke.yml)
-[![Privacy Guard](https://github.com/Artistkisa/claude-rescue-reader/actions/workflows/privacy-guard.yml/badge.svg?branch=main)](https://github.com/Artistkisa/claude-rescue-reader/actions/workflows/privacy-guard.yml)
-[![Offline bundle](https://github.com/Artistkisa/claude-rescue-reader/actions/workflows/release-verify.yml/badge.svg)](https://github.com/Artistkisa/claude-rescue-reader/releases/latest)
+[![Latest release](https://img.shields.io/github/v/release/Kisara-Lab/Muti-AI-Web-Export-reader?label=release)](https://github.com/Kisara-Lab/Muti-AI-Web-Export-reader/releases/latest)
+[![Viewer Validation](https://github.com/Kisara-Lab/Muti-AI-Web-Export-reader/actions/workflows/viewer-validation.yml/badge.svg?branch=main)](https://github.com/Kisara-Lab/Muti-AI-Web-Export-reader/actions/workflows/viewer-validation.yml)
+[![Browser Smoke](https://github.com/Kisara-Lab/Muti-AI-Web-Export-reader/actions/workflows/browser-smoke.yml/badge.svg?branch=main)](https://github.com/Kisara-Lab/Muti-AI-Web-Export-reader/actions/workflows/browser-smoke.yml)
+[![Privacy Guard](https://github.com/Kisara-Lab/Muti-AI-Web-Export-reader/actions/workflows/privacy-guard.yml/badge.svg?branch=main)](https://github.com/Kisara-Lab/Muti-AI-Web-Export-reader/actions/workflows/privacy-guard.yml)
+[![Offline bundle](https://github.com/Kisara-Lab/Muti-AI-Web-Export-reader/actions/workflows/release-verify.yml/badge.svg)](https://github.com/Kisara-Lab/Muti-AI-Web-Export-reader/releases/latest)
 [![License: MIT](https://img.shields.io/badge/license-MIT-yellow.svg)](LICENSE)
 
-**[⬇ 下载单文件版 `viewer.html`](https://github.com/Artistkisa/claude-rescue-reader/releases/latest/download/viewer.html)** · **[🔌 下载完整离线版](https://github.com/Artistkisa/claude-rescue-reader/releases/latest/download/claude-rescue-reader-offline.zip)** · **[🧪 合成演示 ZIP](docs/demo/claude-rescue-reader-synthetic-demo.zip)** · **[🌐 English](README.en.md)**
+**[⬇ 下载单文件版 `viewer.html`](https://github.com/Kisara-Lab/Muti-AI-Web-Export-reader/releases/latest/download/viewer.html)** · **[🔌 下载完整离线版](https://github.com/Kisara-Lab/Muti-AI-Web-Export-reader/releases/latest/download/claude-rescue-reader-offline.zip)** · **[🧪 合成演示 ZIP](docs/demo/claude-rescue-reader-synthetic-demo.zip)** · **[🌐 English](README.en.md)**
 
 ![Multi-AI Web Export Reader 界面总览](docs/images/viewer-overview.png)
 
@@ -40,7 +40,7 @@
 
 ## 30 秒上手
 
-1. **打开查看器**：下载单文件版 [`viewer.html`](https://github.com/Artistkisa/claude-rescue-reader/releases/latest/download/viewer.html)（或使用[离线包](#离线模式)），双击用 Chrome / Edge / Firefox 打开。
+1. **打开查看器**：下载单文件版 [`viewer.html`](https://github.com/Kisara-Lab/Muti-AI-Web-Export-reader/releases/latest/download/viewer.html)（或使用[离线包](#离线模式)），双击用 Chrome / Edge / Firefox 打开。
 2. **第一步 · 确认远程资源策略**：首页默认**仅本地模式**（不主动请求任何外部图片或 OpenStreetMap 地图）；如需查看 ChatGPT 导出中的远程图片/底图，可在首页或顶部栏一键开启。
 3. **第二步 · 导入或拖入导出包**：
    - **直接导入 ZIP / 文件夹**：点击「选择 ZIP 压缩包」或直接把一个或多个 ZIP / 解压目录拖入页面（**免解压**，可连续追加不同平台）。
@@ -91,7 +91,7 @@
 
 ## 离线模式
 
-下载 [`claude-rescue-reader-offline.zip`](https://github.com/Artistkisa/claude-rescue-reader/releases/latest/download/claude-rescue-reader-offline.zip) 并解压，保持 `vendor/` 与 `viewer.html` 位于同一目录即可完全断网运行（已内置 `marked`、`highlight.js`、`JSZip`、`mermaid`）。
+下载 [`claude-rescue-reader-offline.zip`](https://github.com/Kisara-Lab/Muti-AI-Web-Export-reader/releases/latest/download/claude-rescue-reader-offline.zip) 并解压，保持 `vendor/` 与 `viewer.html` 位于同一目录即可完全断网运行（已内置 `marked`、`highlight.js`、`JSZip`、`mermaid`）。
 
 从源码构建离线版（需要 Node.js `>= 22.12.0`）：
 
@@ -108,7 +108,7 @@ npm run build:offline
 
 - **无服务器通信**：不会上传对话或统计数据。仅当用户主动点击开启「远程资源」时，浏览器才会按需请求 ChatGPT 导出中的外部图片或 OpenStreetMap 底图；完整离线包已禁用所有外部资源加载。
 - **本地解析缓存**：原始对话文本与搜索索引会缓存在本机 IndexedDB（`claude-rescue-reader-data-v1`），以便刷新后秒开；**共用设备离开前请点击侧栏「清除本地解析缓存」**。
-- **界面偏好**：主题（`cv-theme`）、语言（`cv-lang`）与手动项目归属（`claude-rescue-reader-project-overrides-v1`）保存在 `localStorage`。
+- **界面偏好**：主题（`cv-theme`）、语言（`cv-lang`）、侧栏折叠状态与手动项目归属（`claude-rescue-reader-project-overrides-v1`）保存在 `localStorage`。
 - **Artifact 安全沙箱**：HTML / SVG 预览运行在禁用联网的隔离沙箱中，不会在主页面上下文执行导入脚本。
 
 ---
@@ -119,6 +119,7 @@ npm run build:offline
 |---|---|
 | `↑` / `K` | 上一条对话 |
 | `↓` / `J` | 下一条对话 |
+| `Ctrl+B` / `Cmd+B` | 收起 / 展开左侧边栏 |
 | `Ctrl+E` / `Cmd+E` | 导出当前对话为 Markdown |
 
 ---
@@ -133,7 +134,7 @@ npm run build:offline
 
 ## 更新日志
 
-- **v2.0 — Multi-AI 升级**：更名为 **Multi-AI Web Export Reader**；新增 **ChatGPT** 完整支持（分片、DIL 组件、图表、地图、`.dat` 附件）；新增 **xAI Grok (Beta)** 与 **Perplexity.ai (Beta)** 解析支持；新增统一平台注册表、彩色徽章、实时筛选计数、平台分布统计与新版双步隐私引导。
+- **v2.0 — Multi-AI 与全套阅读体验升级**：更名为 **Multi-AI Web Export Reader**；新增 **ChatGPT** 完整支持（分片、DIL 组件、图表、地图、`.dat` 附件）及 **xAI Grok (Beta)**、**Perplexity.ai (Beta)** 解析支持；推出全新 **Atelier 暖纸 / Obsidian 深色** 双主题与内置离线语法高亮、**Steps 执行时间线**聚合、域名来源胶囊、可折叠侧边栏与悬浮问题大纲。
 
 <details>
 <summary>历史版本（v1.0 – v1.5）</summary>
