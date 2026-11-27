@@ -12,7 +12,7 @@ async function setup(page){await page.goto(viewer);await page.route('https://**'
 async function add(page,files,count){await page.setInputFiles('#zip-input',files);await page.waitForFunction(n=>exportSession.packages.length===n,count);}
 test('manifest is an inert bilingual checklist with validated links and imported-package status',async({page})=>{
   await setup(page);const file={filename:'conversations-000.zip',category:'conversations',part:0,batch_index:0,export_url:'https://claude.ai/export/synthetic/download/example'};
-  await expect(page.locator('#sidebar [data-ui-click="pick-manifest"]')).toHaveCount(0);await page.locator('#download-page-btn').click();await expect(page.locator('#messages .export-page')).toBeVisible();await expect(page.locator('#export-session-panel')).toContainText('兼容旧版导出');
+  await expect(page.locator('#sidebar [data-ui-click="pick-manifest"]')).toHaveCount(0);await page.locator('#download-page-btn').click();await expect(page.locator('#messages .export-page')).toBeVisible();await expect(page.locator('#export-session-panel')).toContainText('直接导入（Claude & ChatGPT 通用）');
   await page.setInputFiles('#manifest-input',{name:'manifest.json',mimeType:'application/json',buffer:Buffer.from(JSON.stringify({version:'1.0',total_files:2,data_files:[file,{...file,filename:'unknown.zip',category:'future',batch_index:1,export_url:'https://evil.test/'}]}))});
   const link=page.locator('#export-session-panel a');await expect(link).toHaveCount(1);await expect(link).toHaveAttribute('target','_blank');await expect(link).toHaveAttribute('rel','noopener noreferrer');await expect(page.locator('#export-session-panel')).toContainText('尚未导入');
   expect(await page.evaluate(()=>featureWorkers.size)).toBe(0);await add(page,await zip(file.filename,{'conversations.json':[conv()]}),1);await expect(page.locator('#export-session-panel')).toContainText('已导入');
@@ -71,7 +71,7 @@ test('unsafe archive entry paths are rejected before touching the current archiv
 test('dedicated download page follows theme and language without interrupting reading',async({page})=>{
   await setup(page);await add(page,await zip('old-export.zip',{'conversations.json':[conv()]}),1);await page.evaluate(()=>openConv('c1'));await page.locator('#download-page-btn').click();
   await expect(page.locator('#messages .export-page')).toBeVisible();await expect(page.locator('#export-wrap')).toBeHidden();await expect(page.locator('#sidebar #export-session-panel')).toHaveCount(0);
-  const button=page.locator('.export-toolbar .primary');expect(await button.evaluate(el=>getComputedStyle(el).borderRadius)).toBe('8px');await page.locator('#lang-btn').click();await expect(button).toHaveText('Import download manifest');await expect(page.locator('.export-page')).toContainText('Older exports supported');
+  const button=page.locator('.export-toolbar .primary');expect(await button.evaluate(el=>getComputedStyle(el).borderRadius)).toBe('8px');await page.locator('#lang-btn').click();await expect(button).toHaveText('🗜️ Open Export ZIP (Claude / ChatGPT)');await expect(page.locator('.export-page')).toContainText('Claude partitioned download manifest');
   await page.locator('#theme-btn').click();await expect(page.locator('.export-page')).toBeVisible();await page.locator('.conv-item').first().click();await expect(page.locator('#messages')).toContainText('Synthetic answer');await expect(page.locator('#download-page-btn')).not.toHaveAttribute('aria-current','page');
 });
 
