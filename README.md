@@ -1,12 +1,12 @@
 [中文](README.md) | [English](README.en.md)
 
-# Claude Rescue Reader
+# Multi-AI Web Export Reader
 
-**本地 Claude 导出历史查看器**
+**本地多 AI 导出历史查看器（Claude & ChatGPT）**
 
 **新增 ChatGPT 网页历史导出支持**：可导入 ZIP、解压目录及独立对话 JSON，与 Claude 档案混合阅读、搜索、统计和脱敏导出。支持导出的网页／文件引用、图片组、实体、离线地点图和禁用的历史上传组件；按需读取 `.dat` 图片与 Markdown 附件。不会执行包内网页或组件动作。[GPT 支持范围与验证](docs/gpt-export.md)
 
-**GPT 正文组件修复**：按原位置展示 DIL 布局、餐厅实体、评分、柱状图、地图路线和历史订位时间；恢复单选、输入、复选清单与进度条。确认按钮仅在本地生成可复制消息。普通版默认加载可用远程图片与 OpenStreetMap 底图，可关闭；完整离线版使用本地展示。[组件覆盖与验证](docs/gpt-components.md)
+**GPT 正文组件修复**：按原位置展示 DIL 布局、餐厅实体、评分、柱状图、地图路线和历史订位时间；恢复单选、输入、复选清单与进度条。确认按钮仅在本地生成可复制消息。普通版默认关闭远程图片与 OpenStreetMap 底图请求，可在首页第一步或顶部栏一键开启；完整离线版仅使用本地展示。[组件覆盖与验证](docs/gpt-components.md)
 
 **已适配 Claude 新版分包导出**：下载清单 → 官方分包下载页 → 批量导入 ZIP。支持两种记忆导出入口与 Artifact 历史版本，继续兼容旧版 ZIP / 文件夹。[新版导入说明](docs/new-export-import.md)
 

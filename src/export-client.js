@@ -29,7 +29,7 @@ function renderExportManifest(){
   if(currentView!=='downloads')return;
   const session=exportSession,host=document.getElementById('messages'),panel=document.createElement('section');panel.id='export-session-panel';panel.className='export-page';host.replaceChildren(panel);
   const make=(tag,cls,text,parent=panel)=>{const node=document.createElement(tag);node.className=cls;node.textContent=text;parent.append(node);return node;};
-  const hero=make('header','export-hero','');make('div','export-kicker','Claude Rescue Reader',hero);make('h2','',t('从清单到本地档案'),hero);make('p','export-description',t('选择 Claude 导出的 manifest JSON，逐项前往官方下载页，再将下载好的 ZIP 一起导入。'),hero);
+  const hero=make('header','export-hero','');make('div','export-kicker','Multi-AI Web Export Reader',hero);make('h2','',t('从清单到本地档案'),hero);make('p','export-description',t('选择 Claude 导出的 manifest JSON，逐项前往官方下载页，再将下载好的 ZIP 一起导入。'),hero);
   const toolbar=make('div','export-toolbar','');
   for(const [action,label,primary]of [['pick-manifest','导入下载清单',true],['append-packages','追加分包'],['new-archive','打开新档案'],['clear-archive','清除档案']]){const button=make('button','export-button'+(primary?' primary':action==='clear-archive'?' quiet':''),t(label),toolbar);button.type='button';button.dataset.uiClick=action;}
   const steps=make('div','export-steps','');for(const [title,body]of [['01 · 导入清单','清单只用于展示文件与链接。'],['02 · 官方下载','在新标签页完成下载，返回这里继续。'],['03 · 本地阅读','批量选择 ZIP，可按任意顺序追加。']]){const step=make('div','export-step','',steps);make('strong','',t(title),step);make('p','export-description',t(body),step);}
