@@ -2,11 +2,13 @@
 
 # Multi-AI Web Export Reader
 
-**本地多 AI 导出历史查看器（Claude / ChatGPT / Grok Beta）**
+**本地多 AI 导出历史查看器（Claude / ChatGPT / Grok Beta / Perplexity Beta）**
 
-**新增 xAI Grok 导出支持（Beta Test）**：支持直接导入官方导出的单层 ZIP（含 `prod-grok-backend.json`、`prod-mc-auth-mgmt-api.json` 与 `prod-mc-asset-server` 本地附件）或独立 JSON，可与 Claude、ChatGPT 混合阅读、筛选与脱敏导出，支持分支路径、思考/工具步骤、内联引文与工作区关联。
+**新增 xAI Grok & Perplexity.ai 导出支持（Beta Test）**：
+- **xAI Grok**：支持直接导入官方导出的单层 ZIP（含 `prod-grok-backend.json`、`prod-mc-auth-mgmt-api.json` 与 `prod-mc-asset-server` 本地附件）或独立 JSON，支持分支路径、思考/工具步骤、内联引文与工作区关联。
+- **Perplexity.ai**：支持直接导入官方导出的 ZIP（含 `conversations-*.json` 与 `user-data-*.xlsx` 账户/偏好/Space 工作簿）或独立 JSON，可与 Claude、ChatGPT、Grok 混合阅读、筛选、统计与脱敏导出。
 
-> ⚠️ **Beta Test 提示**：Grok 导出解析目前处于早期测试阶段，受限于官方导出格式变动及样本覆盖范围，部分特殊字段、多媒体附件或交互卡片可能尚不完善，欢迎提交脱敏样本反馈。
+> ⚠️ **Beta Test 提示**：Grok 与 Perplexity.ai 导出解析目前均处于早期测试阶段，受限于官方导出格式变动及样本覆盖范围，部分特殊字段、引文来源、多媒体附件或交互卡片可能尚不完善，欢迎提交脱敏样本反馈。
 
 **新增 ChatGPT 网页历史导出支持**：可导入 ZIP、解压目录及独立对话 JSON，与 Claude 档案混合阅读、搜索、统计和脱敏导出。支持导出的网页／文件引用、图片组、实体、离线地点图和禁用的历史上传组件；按需读取 `.dat` 图片与 Markdown 附件。不会执行包内网页或组件动作。[GPT 支持范围与验证](docs/gpt-export.md)
 

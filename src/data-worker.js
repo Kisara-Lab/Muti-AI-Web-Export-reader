@@ -65,7 +65,7 @@ function dataWorkerMain(){
       if(key==='chat_messages'&&raw[start]==='[')meta.message_count=countArrayItems(raw,start,end);
       else if(key==='account')meta.accountUuid=JSON.parse(raw.slice(start,end))?.uuid||'';
       else if(key==='_design')meta._design=JSON.parse(raw.slice(start,end));
-      else if(['sourcePlatform','originalId','defaultModel','currentNode','importWarnings','workspaceId'].includes(key))meta[key]=JSON.parse(raw.slice(start,end));
+      else if(['sourcePlatform','originalId','defaultModel','currentNode','importWarnings','workspaceId','collectionUuid'].includes(key))meta[key]=JSON.parse(raw.slice(start,end));
       else if(key==='uuid'||key==='name'||key==='summary'||key==='created_at'||key==='updated_at'){
         const value=JSON.parse(raw.slice(start,end));meta[key]=typeof value==='string'?value:'';
       }
@@ -79,6 +79,22 @@ function dataWorkerMain(){
     if(text[index]===']')return result;
     while(index<text.length){
       const end=valueEnd(text,index);let raw=text.slice(index,end);
+      if(typeof perplexityExportCore==='function'&&(/"context_uuid"\s*:/.test(raw)||/"conversations"\s*:/.test(raw))){
+        const pplx=perplexityExportCore(),value=JSON.parse(raw);
+        if(pplx.isExport(value)){
+          for(const entry of value.conversations){
+            const converted=JSON.stringify(await pplx.convertAsync(entry,checkpoint));
+            const meta=inspectConversation(converted);meta.sourcePlatform=meta.sourcePlatform||'perplexity';
+            if(!meta.uuid)throw new Error('Conversation UUID is missing');
+            result.push({raw:converted,meta});
+          }
+          index=skipWs(text,end);
+          if(text[index]===','){index=skipWs(text,index+1);continue;}
+          if(text[index]===']')return result;
+          throw new Error('conversations.json 格式不正确');
+        }
+        if(pplx.isConversation(value))raw=JSON.stringify(await pplx.convertAsync(value,checkpoint));
+      }
       if(typeof grokExportCore==='function'&&(/"responses"\s*:/.test(raw)||/"conversations"\s*:/.test(raw))){
         const grok=grokExportCore(),value=JSON.parse(raw);
         if(grok.isBackendExport(value)){
@@ -134,7 +150,7 @@ function dataWorkerMain(){
   async function cacheDeleteAll(){const db=await cacheDb();if(!db)return false;try{await new Promise((resolve,reject)=>{const request=db.transaction(CACHE_STORE,'readwrite').objectStore(CACHE_STORE).clear();request.onsuccess=()=>resolve();request.onerror=()=>reject(request.error);});return true;}finally{db.close();}}
   function ingestSummary(cacheHit=false){let totalMsgs=0,minDate='',maxDate='';for(const record of records){const meta=record.meta;if(meta._design)continue;totalMsgs+=meta.message_count;const date=meta.created_at;if(date&&(!minDate||date<minDate))minDate=date;if(date&&(!maxDate||date>maxDate))maxDate=date;}return{conversations:records.map(record=>record.meta),totalMsgs,minDate,maxDate,lazy:true,cacheHit};}
   let packageStage=null,contentRevision=0,archiveAccounts=new Set(),packageIds=new Set();
-  const accountPlatform=id=>String(id).startsWith('gpt:')?'gpt':String(id).startsWith('grok:')?'grok':'claude';
+  const accountPlatform=id=>String(id).startsWith('gpt:')?'gpt':String(id).startsWith('grok:')?'grok':String(id).startsWith('perplexity:')?'perplexity':'claude';
   const accountMismatch=incoming=>{for(const platform of new Set(incoming.map(accountPlatform))){const local=[...archiveAccounts].filter(id=>accountPlatform(id)===platform),next=incoming.filter(id=>accountPlatform(id)===platform);if(new Set(next).size>1||local.length&&next.some(id=>!archiveAccounts.has(id)))return true;}return false;};
   async function finishIngest(request,text){
     const expected=generation,stage=packageStage;let deadline=Date.now()+8;
