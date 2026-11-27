@@ -223,3 +223,64 @@ test('aggressive privacy mode covers broad personal data and SCP PDF markings',a
   const {scan,redacted}=await page.evaluate(async()=>({scan:await featureRequest('task','preview',{...conversationTaskPayload(),style:'scp',strict:true}),redacted:await(await featureRequest('task','export',{...conversationTaskPayload(),safe:true,style:'scp',strict:true})).blob.text()}));expect(scan.stats['个人姓名']).toBeGreaterThan(0);expect(scan.stats['学校或单位']).toBeGreaterThan(0);expect(scan.stats['详细地址']).toBeGreaterThan(0);expect(scan.stats['用户标识']).toBeGreaterThan(0);expect(scan.stats['银行卡号']).toBeGreaterThan(0);expect(scan.stats['社交账号']).toBeGreaterThan(0);expect(scan.stats['链接']).toBeGreaterThan(0);expect(redacted).not.toContain('6222 0000 0000 1234');expect(redacted).toContain('12345678901234567');expect(redacted).not.toContain('example_user');expect(redacted).not.toContain('docs.example.invalid');
   await page.locator('#export-btn').click();await page.locator('#export-menu button').nth(3).click();const modal=page.locator('#redaction-modal');await modal.locator('[data-style="scp"]').click();await modal.locator('[data-action="strength"]').click();const popupPromise=context.waitForEvent('page');await modal.locator('[data-action="export"]').click();const popup=await popupPromise;await popup.waitForLoadState('domcontentloaded');await expect(popup.locator('body')).toContainText('CONFIDENTIAL');await expect(popup.locator('.classified-badge')).toContainText('CLASSIFIED');expect(errors).toEqual([]);
 });
+
+test('UI redesign groups Steps timeline, renders Sources chips, table-scroll, offline hljs colors, collapsible sidebar and prompt outline',async({page})=>{
+  const errors=await openViewer(page);
+  await page.route('https://**',route=>route.abort());
+  const conv={
+    uuid:'ui-redesign-conv',
+    name:'UI Redesign Showcase',
+    created_at:'2026-06-01T10:00:00Z',
+    updated_at:'2026-06-01T10:05:00Z',
+    chat_messages:[
+      {uuid:'u1',sender:'human',created_at:'2026-06-01T10:00:00Z',content:[{type:'text',text:'First human prompt about architecture'}]},
+      {uuid:'a1',parent_message_uuid:'u1',sender:'assistant',created_at:'2026-06-01T10:01:00Z',content:[
+        {type:'thinking',thinking:'Evaluating layout **options** cleanly.'},
+        {type:'tool_use',id:'t-search',name:'web_search',input:{query:'design system tokens'}},
+        {type:'tool_result',tool_use_id:'t-search',name:'web_search',content:[{type:'text',title:'Atelier Tokens',url:'https://www.example.org/tokens'}]},
+        {type:'tool_use',id:'t-bash',name:'bash_tool',message:'Inspect CSS',input:{command:'rg --files'}},
+        {type:'tool_result',tool_use_id:'t-bash',name:'bash_tool',is_error:false,content:[{type:'text',text:'viewer.html'}]},
+        {type:'text',text:'| Layer | Role |\n| --- | --- |\n| Canvas | Background |\n\n```js\nconst answer = 42;\n```'}
+      ]},
+      {uuid:'u2',parent_message_uuid:'a1',sender:'human',created_at:'2026-06-01T10:02:00Z',content:[{type:'text',text:'Second human prompt for outline'}]},
+      {uuid:'a2',parent_message_uuid:'u2',sender:'assistant',created_at:'2026-06-01T10:03:00Z',content:[{type:'text',text:'Done.'}]}
+    ]
+  };
+  await page.evaluate(payload=>routeDroppedFiles([new File([JSON.stringify([payload])],'conversations.json',{type:'application/json'})]),conv);
+  await page.waitForFunction(()=>allConvs.length===1);
+  await page.locator('.conv-item').first().click();
+  await expect(page.locator('#messages .step-group .step-pill')).toHaveCount(1);
+  await expect(page.locator('#messages .step-rail')).toBeHidden();
+  await page.locator('#messages .step-group .step-pill').click();
+  await expect(page.locator('#messages .step-rail')).toBeVisible();
+  await expect(page.locator('#messages .step-tool-card')).toHaveCount(1);
+  await page.locator('#messages .step-tool-head').click();
+  await expect(page.locator('#messages .step-tool-body')).toContainText('rg --files');
+  await page.locator('#messages .sp-hd').click();
+  await expect(page.locator('#messages .sp-chip')).toContainText('example.org');
+  await expect(page.locator('#messages .table-scroll table')).toHaveCount(1);
+  const hljsColors=await page.evaluate(()=>{
+    const pre=document.querySelector('#messages .code-block pre'),kw=document.querySelector('#messages .code-block .hljs-keyword');
+    return {base:pre?getComputedStyle(pre).color:'',kw:kw?getComputedStyle(kw).color:''};
+  });
+  expect(hljsColors.base).not.toBe('');expect(hljsColors.kw).not.toBe('');expect(hljsColors.kw).not.toBe(hljsColors.base);
+  await page.locator('#toggle-sidebar').click();
+  await expect(page.locator('#sidebar')).toHaveClass(/collapsed/);
+  await page.reload();
+  await expect(page.locator('#sidebar')).toHaveClass(/collapsed/);
+  await page.locator('#toggle-sidebar').click();
+  await expect(page.locator('#sidebar')).not.toHaveClass(/collapsed/);
+  await page.evaluate(payload=>routeDroppedFiles([new File([JSON.stringify([payload])],'conversations.json',{type:'application/json'})]),conv);
+  await page.waitForFunction(()=>allConvs.length===1);
+  await page.locator('.conv-item').first().click();
+  await expect(page.locator('#outline-btn')).toContainText('2');
+  await page.locator('#outline-btn').click();
+  await expect(page.locator('#prompt-outline')).toHaveClass(/open/);
+  await expect(page.locator('.prompt-outline-item')).toHaveCount(2);
+  await expect(page.locator('.prompt-outline-item').first()).toContainText('First human prompt');
+  const outlineBox=await page.locator('.prompt-outline-text').first().boundingBox();
+  expect(outlineBox&&outlineBox.width>40&&outlineBox.height>10).toBe(true);
+  await page.locator('.prompt-outline-item').first().click();
+  expect(errors).toEqual([]);
+});
+

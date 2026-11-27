@@ -86,7 +86,7 @@ async function renderReaderWindow(options={}){
     }
     for(const element of container.querySelectorAll('[data-large-code]')){
       const id=element.dataset.largeCode,language=element.dataset.language,code=element.textContent;
-      void queueBackgroundHighlight({code,language},()=>version===readerWindowVersion&&element.isConnected).then(response=>{if(!response.skipped&&version===readerWindowVersion&&element.isConnected)element.innerHTML=response.html;}).catch(()=>{});
+      void queueBackgroundHighlight({code,language},()=>version===readerWindowVersion&&element.isConnected&&!element.querySelector('mark.cs')).then(response=>{if(!response.skipped&&version===readerWindowVersion&&element.isConnected&&!element.querySelector('mark.cs'))element.innerHTML=response.html;}).catch(()=>{});
     }
     if(result.start>0){const button=document.createElement('button');button.className='load-earlier-btn';button.textContent='↑ '+t('加载更早消息')+' ('+result.start+')';button.onclick=()=>void renderReaderWindow({startIndex:Math.max(0,result.start-40)});nav.appendChild(button);container.prepend(nav);}
     if(result.end<result.total){const button=document.createElement('button');button.className='load-earlier-btn';button.textContent='↓ '+t('加载更新消息');button.onclick=()=>void renderReaderWindow({startIndex:result.end});container.appendChild(button);}
