@@ -4,7 +4,7 @@ on:
   push:
     tags: ['v*']
 permissions:
-  contents: read
+  contents: write
 jobs:
   artifact:
     name: Release Verify / artifact
@@ -21,8 +21,8 @@ jobs:
       - shell: pwsh
         run: ./scripts/build-single-file.ps1
       - run: npm run validate
-      - run: npm run test:smoke
       - run: npm run build:offline
+      - run: npm run test:smoke
       - run: npm run test:offline
       - name: Build release artifacts
         shell: pwsh
@@ -66,3 +66,28 @@ jobs:
           name: claude-rescue-reader-${{ github.ref_name }}
           path: dist/
           retention-days: 30
+      - name: Publish GitHub Release
+        if: startsWith(github.ref, 'refs/tags/v')
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          CHECKSUMS=$(cat dist/SHA256SUMS.txt)
+          NOTES=$(printf '## SHA-256 Checksums\n\n```\n%s\n```\n' "$CHECKSUMS")
+          if gh release view "${GITHUB_REF_NAME}" >/dev/null 2>&1; then
+            gh release upload "${GITHUB_REF_NAME}" \
+              dist/viewer.html \
+              dist/claude-rescue-reader.zip \
+              dist/claude-rescue-reader-offline.zip \
+              dist/SHA256SUMS.txt \
+              --clobber
+          else
+            gh release create "${GITHUB_REF_NAME}" \
+              dist/viewer.html \
+              dist/claude-rescue-reader.zip \
+              dist/claude-rescue-reader-offline.zip \
+              dist/SHA256SUMS.txt \
+              --title "${GITHUB_REF_NAME} — Multi-AI Web Export Reader" \
+              --notes "$NOTES" \
+              --generate-notes \
+              --verify-tag
+          fi
