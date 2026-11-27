@@ -151,17 +151,19 @@ test('Grok nested ZIP with double-slash /content assets renders, filters with Cl
   gptZip.file('user.json',JSON.stringify({id:'gpt-acc-1',name:'GPT User'}));
   await add(page,{name:'gpt.zip',mimeType:'application/zip',buffer:await gptZip.generateAsync({type:'nodebuffer'})},3);
 
-  // Platform filter works across all 3 platforms
+  // Platform filter works across all platforms with live counts & dimmed empty platform
   expect(await page.evaluate(()=>allConvs.length)).toBe(3);
+  await expect(page.locator('#platform-filter [data-platform="grok"] .platform-count')).toHaveText('1');
+  await expect(page.locator('#platform-filter [data-platform="perplexity"]')).toHaveClass(/empty/);
   await page.click('#platform-filter [data-platform="grok"]');
   await expect(page.locator('#conv-list .conv-item')).toHaveCount(1);
   await expect(page.locator('#conv-list')).toContainText('Synthetic Grok Investigation');
-  await expect(page.locator('#conv-list')).toContainText('Grok');
+  await expect(page.locator('#conv-list .platform-pill.grok')).toContainText('Grok');
 
   await page.click('#platform-filter [data-platform=""]');
   await expect(page.locator('#conv-list .conv-item')).toHaveCount(3);
 
-  // Analytics platform filter supports grok
+  // Analytics platform filter supports grok + overview renders platform distribution charts
   const stats=await page.evaluate(async()=>{
     const query=platforms=>analyticsRequest('query',{filters:{range:'all',platforms}});
     const grok=await query(['grok']),claude=await query(['claude']),gpt=await query(['gpt']),all=await query([]);
@@ -169,7 +171,14 @@ test('Grok nested ZIP with double-slash /content assets renders, filters with Cl
   });
   expect(stats).toEqual({grok:1,claude:1,gpt:1,all:3});
 
-  // Workspace project and account data loaded
+  // Workspace project displays official workspace match evidence (not "无自动证据")
+  expect(network).toEqual([]);
+  await page.click('.tab-btn[data-ui-value="projects"]');
+  await page.locator('.proj-card').first().click();
+  await expect(page.locator('#messages .match-panel')).toContainText('官方工作区字段');
+  await expect(page.locator('#messages .match-panel')).toContainText('100%');
+
+  // Account data loaded
   const sessionInfo=await page.evaluate(()=>({
     projects:allProjects.map(p=>p.name),
     users:exportSession.users.map(u=>u.sourcePlatform),
@@ -180,5 +189,4 @@ test('Grok nested ZIP with double-slash /content assets renders, filters with Cl
   expect(sessionInfo.logins).toBe(1);
 
   expect(errors).toEqual([]);
-  expect(network).toEqual([]);
 });

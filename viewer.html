@@ -2,10 +2,10 @@
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-YNF6LWX4XIqlxfealgQBsJBOrPZdDMx2fNJPQaUp30o=' 'sha256-tMIvewdj4Er6it91vRKx68b9zhu5Sxm35MV7o9YOuqs=' https://cdn.jsdelivr.net https://unpkg.com https://cdnjs.cloudflare.com blob:; script-src-attr 'none'; style-src 'unsafe-inline' https://cdn.jsdelivr.net https://unpkg.com https://cdnjs.cloudflare.com; img-src blob: data: https: http:; font-src data:; connect-src blob:; worker-src blob:; frame-src blob:; object-src 'none'; base-uri 'none'; form-action 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-bcLmsMEJ2wrqvl//khZ9ENcmdsyQ78kmY8bHdE4s4TE=' 'sha256-tMIvewdj4Er6it91vRKx68b9zhu5Sxm35MV7o9YOuqs=' https://cdn.jsdelivr.net https://unpkg.com https://cdnjs.cloudflare.com blob:; script-src-attr 'none'; style-src 'unsafe-inline' https://cdn.jsdelivr.net https://unpkg.com https://cdnjs.cloudflare.com; img-src blob: data: https: http:; font-src data:; connect-src blob:; worker-src blob:; frame-src blob:; object-src 'none'; base-uri 'none'; form-action 'none'">
 <meta name="referrer" content="no-referrer">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Multi-AI Web Export Reader — Local Claude, ChatGPT &amp; Grok Export Viewer</title>
+<title>Multi-AI Web Export Reader — Local Claude, ChatGPT, Grok &amp; Perplexity Viewer</title>
 <style>
 /* ── Light theme (default, Claude-style) ── */
 :root {
@@ -479,9 +479,23 @@ mark.cs.active { background:var(--accent); color:#fff; }
 .msg-wrap.perplexity .msg-avatar { background:linear-gradient(135deg,#0e7490,#155e75); color:#fff; font-size:13px; }
 [data-theme=dark] .msg-wrap.perplexity .msg-avatar { background:linear-gradient(135deg,#0891b2,#0e7490); }
 .platform-bar { display:flex; align-items:center; gap:5px; margin-top:6px; flex-wrap:wrap; }
-.platform-btn { flex:1; padding:3px 7px; background:none; border:1px solid var(--border); border-radius:5px; color:var(--text3); font-size:11px; cursor:pointer; transition:all .15s; text-align:center; white-space:nowrap; }
-.platform-btn:hover { border-color:var(--border2); color:var(--text2); }
-.platform-btn.active { background:var(--accent); border-color:var(--accent); color:#fff; }
+.platform-btn { flex:1; min-width:58px; display:inline-flex; align-items:center; justify-content:center; gap:4px; padding:3px 6px; background:none; border:1px solid var(--border); border-radius:5px; color:var(--text3); font-size:11px; cursor:pointer; transition:all .15s; text-align:center; white-space:nowrap; }
+.platform-btn:hover { border-color:var(--border2); color:var(--text2); opacity:1; }
+.platform-btn.empty:not(.active) { opacity:.48; }
+.platform-btn.active { background:var(--accent); border-color:var(--accent); color:#fff; opacity:1; }
+.platform-count { font-size:9.5px; padding:0 4px; border-radius:999px; background:var(--bg3); color:var(--text2); line-height:1.45; }
+.platform-btn.active .platform-count { background:rgba(255,255,255,.22); color:#fff; }
+.platform-pill { display:inline-flex; align-items:center; gap:4px; padding:1px 7px; border-radius:999px; font-size:10.5px; font-weight:600; line-height:1.5; border:1px solid var(--border); background:var(--bg3); color:var(--text2); vertical-align:middle; }
+.platform-pill .platform-dot { width:6.5px; height:6.5px; }
+.platform-pill.claude { background:color-mix(in srgb,#c97b3a 11%,var(--bg2)); border-color:color-mix(in srgb,#c97b3a 32%,var(--border)); color:#9a541d; }
+.platform-pill.gpt { background:color-mix(in srgb,#10a37f 11%,var(--bg2)); border-color:color-mix(in srgb,#10a37f 32%,var(--border)); color:#0b755a; }
+.platform-pill.grok { background:color-mix(in srgb,#334155 12%,var(--bg2)); border-color:color-mix(in srgb,#334155 34%,var(--border)); color:#1e293b; }
+.platform-pill.perplexity { background:color-mix(in srgb,#0891b2 11%,var(--bg2)); border-color:color-mix(in srgb,#0891b2 32%,var(--border)); color:#0e647a; }
+[data-theme=dark] .platform-pill.claude { color:#f0b87a; }
+[data-theme=dark] .platform-pill.gpt { color:#5eead4; }
+[data-theme=dark] .platform-pill.grok { color:#cbd5e1; }
+[data-theme=dark] .platform-pill.perplexity { color:#67e8f9; }
+.stats-platform-row { display:flex; flex-wrap:wrap; gap:4px; margin-top:5px; }
 .header-pill-btn { padding:5px 9px; background:var(--bg3); border:1px solid var(--border); border-radius:6px; color:var(--text2); font-size:11.5px; cursor:pointer; white-space:nowrap; transition:border-color .15s,color .15s,background .15s; }
 .header-pill-btn:hover:not(:disabled) { border-color:var(--accent); color:var(--text); }
 .header-pill-btn.active { border-color:var(--accent); color:var(--accent); background:color-mix(in srgb,var(--accent) 10%,var(--bg3)); }
@@ -586,13 +600,13 @@ mark.cs.active { background:var(--accent); color:#fff; }
 </style>
 </head>
 <body>
-<div id="drop-overlay" class="drop-overlay" aria-hidden="true"><div class="drop-card"><b data-i18n="📥 松开以导入历史">📥 松开以导入历史</b><span data-i18n="支持 Claude / ChatGPT / Grok 导出的 ZIP 或解压目录">支持 Claude / ChatGPT / Grok 导出的 ZIP 或解压目录</span></div></div>
+<div id="drop-overlay" class="drop-overlay" aria-hidden="true"><div class="drop-card"><b data-i18n="📥 松开以导入历史">📥 松开以导入历史</b><span data-i18n="支持 Claude / ChatGPT / Grok / Perplexity 导出的 ZIP 或解压目录">支持 Claude / ChatGPT / Grok / Perplexity 导出的 ZIP 或解压目录</span></div></div>
 
 <!-- Sidebar -->
 <div id="sidebar">
   <div id="sidebar-header">
     <h1>💬 <span data-i18n="Multi-AI Web Export Reader">Multi-AI Web Export Reader</span> <span id="conv-total">0</span></h1>
-    <button id="load-zip-btn" data-i18n="🗜️ 打开导出 ZIP（Claude / ChatGPT / Grok）" data-ui-click="pick-zip">🗜️ 打开导出 ZIP（Claude / ChatGPT / Grok）</button>
+    <button id="load-zip-btn" data-i18n="🗜️ 打开导出 ZIP（多平台）" data-ui-click="pick-zip">🗜️ 打开导出 ZIP（多平台）</button>
     <input type="file" id="zip-input" accept=".zip,application/zip,.json,application/json" multiple style="display:none;">
     <button id="load-btn" data-i18n="📂 打开解压目录" data-ui-click="pick-folder">📂 打开解压目录</button>
     <input type="file" id="file-input" webkitdirectory multiple accept=".json">
@@ -653,7 +667,7 @@ mark.cs.active { background:var(--accent); color:#fff; }
   <div id="messages">
     <div id="empty-state">
       <p data-i18n="Multi-AI Web Export Reader" style="font-size:20px;font-weight:700;color:var(--text);margin-bottom:4px;">Multi-AI Web Export Reader</p>
-      <p data-i18n="本地查看、混合搜索并安全导出你的 Claude、ChatGPT 与 Grok 历史对话" style="font-size:13px;color:var(--text3);">本地查看、混合搜索并安全导出你的 Claude、ChatGPT 与 Grok 历史对话</p>
+      <p data-i18n="本地查看、混合搜索并安全导出你的 Claude、ChatGPT、Grok 与 Perplexity 历史对话" style="font-size:13px;color:var(--text3);">本地查看、混合搜索并安全导出你的 Claude、ChatGPT、Grok 与 Perplexity 历史对话</p>
 
       <div class="remote-setup-card">
         <div class="remote-setup-head">
@@ -670,12 +684,12 @@ mark.cs.active { background:var(--accent); color:#fff; }
       <div class="welcome-step-card">
         <div class="welcome-step-head">
           <b data-i18n="第二步 · 导入对话导出包（支持直接拖入页面）">第二步 · 导入对话导出包（支持直接拖入页面）</b>
-          <span class="welcome-step-sub" data-i18n="可连续追加 Claude、ChatGPT 与 Grok 混合阅读">可连续追加 Claude、ChatGPT 与 Grok 混合阅读</span>
+          <span class="welcome-step-sub" data-i18n="可连续追加 Claude、ChatGPT、Grok 与 Perplexity 混合阅读">可连续追加 Claude、ChatGPT、Grok 与 Perplexity 混合阅读</span>
         </div>
         <div class="welcome-action-grid">
           <button type="button" class="welcome-action-btn primary" data-ui-click="pick-zip">
             <b data-i18n="🗜️ 选择 ZIP 压缩包">🗜️ 选择 ZIP 压缩包</b>
-            <span data-i18n="免解压，支持多选 Claude / ChatGPT / Grok 官方导出 ZIP">免解压，支持多选 Claude / ChatGPT / Grok 官方导出 ZIP</span>
+            <span data-i18n="免解压，支持多选 Claude / ChatGPT / Grok / Perplexity 官方导出 ZIP">免解压，支持多选 Claude / ChatGPT / Grok / Perplexity 官方导出 ZIP</span>
           </button>
           <button type="button" class="welcome-action-btn" data-ui-click="pick-folder">
             <b data-i18n="📂 选择解压文件夹">📂 选择解压文件夹</b>
@@ -725,7 +739,7 @@ mark.cs.active { background:var(--accent); color:#fff; }
 
       <div class="welcome-note">
         <b data-i18n="纯本地运行 · 多平台混合工作区">纯本地运行 · 多平台混合工作区</b><br>
-        <span data-i18n="所有解析、全文搜索、统计分析与隐私脱敏都在浏览器本机完成，不会上传对话内容。你可以先导入 Claude，再追加 ChatGPT 与 Grok，在同一列表按平台筛选并导出安全分享版。">所有解析、全文搜索、统计分析与隐私脱敏都在浏览器本机完成，不会上传对话内容。你可以先导入 Claude，再追加 ChatGPT 与 Grok，在同一列表按平台筛选并导出安全分享版。</span>
+        <span data-i18n="所有解析、全文搜索、统计分析与隐私脱敏都在浏览器本机完成，不会上传对话内容。你可以按任意顺序导入 Claude、ChatGPT、Grok 与 Perplexity，在同一工作区按平台筛选并导出安全分享版。">所有解析、全文搜索、统计分析与隐私脱敏都在浏览器本机完成，不会上传对话内容。你可以按任意顺序导入 Claude、ChatGPT、Grok 与 Perplexity，在同一工作区按平台筛选并导出安全分享版。</span>
       </div>
       <div class="welcome-features"><span class="welcome-feature" data-i18n="🖼️ 图片与附件">🖼️ 图片与附件</span><span class="welcome-feature" data-i18n="🌿 分支时间线">🌿 分支时间线</span><span class="welcome-feature" data-i18n="🔎 全文搜索">🔎 全文搜索</span><span class="welcome-feature" data-i18n="📊 统计分析">📊 统计分析</span><span class="welcome-feature" data-i18n="🩺 对话健康检查">🩺 对话健康检查</span><span class="welcome-feature" data-i18n="🔐 隐私安全导出">🔐 隐私安全导出</span></div>
     </div>
@@ -843,10 +857,10 @@ Object.assign(EN,{
   '命中消息数':'Matched messages','命中字符数':'Matched characters','最近命中时间':'Latest match','上一页':'Previous page','下一页':'Next page',
   '统计筛选':'Analytics filter','返回统计':'Back to analytics','统计范围：全档案，探索筛选不影响此视图':'Scope: the entire archive, independent of exploration filters',
   'Multi-AI Web Export Reader':'Multi-AI Web Export Reader',
-  '支持 Claude / ChatGPT / Grok 导出的 ZIP 或解压目录':'ZIP or extracted folder from Claude / ChatGPT / Grok',
-  '点击左侧按钮，选择 Claude 或 ChatGPT 导出的 ZIP / 文件夹':'Select a Claude, ChatGPT, or Grok export ZIP or folder on the left.',
-  '适合 Claude 与 ChatGPT 原始导出压缩包，无需解压':'Best for original Claude, ChatGPT, and Grok export ZIPs; no extraction needed',
-  '只要你已有 Claude 或 ChatGPT 导出的 ZIP 或目录，就能在本地查看、混合搜索和脱敏导出。工具不会绕过平台限制，也不会上传对话内容。':'If you have a Claude, ChatGPT, or Grok export ZIP or folder, you can view, search across all of them, and redact-export locally. This tool never bypasses platform limits or uploads conversations.',
+  '支持 Claude / ChatGPT / Grok / Perplexity 导出的 ZIP 或解压目录':'ZIP or extracted folder from Claude / ChatGPT / Grok / Perplexity',
+  '点击左侧按钮，选择 Claude 或 ChatGPT 导出的 ZIP / 文件夹':'Select an export ZIP or folder on the left.',
+  '适合 Claude 与 ChatGPT 原始导出压缩包，无需解压':'Best for original AI export ZIPs; no extraction needed',
+  '只要你已有 Claude 或 ChatGPT 导出的 ZIP 或目录，就能在本地查看、混合搜索和脱敏导出。工具不会绕过平台限制，也不会上传对话内容。':'If you have an export ZIP or folder, you can view, search across platforms, and redact-export locally. This tool never bypasses platform limits or uploads conversations.',
   '📦 支持的导出结构':'📦 Supported export structure',
   '全部平台':'All',
   '行为实验室':'Behavior Lab',
@@ -901,13 +915,13 @@ Object.assign(EN,{
   '查看导出信息':'View exported data',
   '消息树存在循环':'Message tree cycle',
   '当前节点缺失或无效，显示最长有效路径':'Invalid current node; showing longest valid path',
-  '🗜️ 打开导出 ZIP（Claude / ChatGPT / Grok）':'🗜️ Open Export ZIP (Claude / ChatGPT / Grok)',
+  '🗜️ 打开导出 ZIP（多平台）':'🗜️ Open Export ZIP (Multi-AI)',
   '📥 导入中心 / Claude 清单':'📥 Import Center / Claude Manifest',
-  '本地查看、混合搜索并安全导出你的 Claude、ChatGPT 与 Grok 历史对话':'View, search across, and redact-export your Claude, ChatGPT & Grok histories locally',
+  '本地查看、混合搜索并安全导出你的 Claude、ChatGPT、Grok 与 Perplexity 历史对话':'View, search across, and redact-export your Claude, ChatGPT, Grok & Perplexity histories locally',
   '第二步 · 导入对话导出包（支持直接拖入页面）':'Step 2 · Import Export Archives (or drag & drop here)',
-  '可连续追加 Claude、ChatGPT 与 Grok 混合阅读':'Append Claude, ChatGPT & Grok archives in any order',
+  '可连续追加 Claude、ChatGPT、Grok 与 Perplexity 混合阅读':'Append Claude, ChatGPT, Grok & Perplexity archives in any order',
   '🗜️ 选择 ZIP 压缩包':'🗜️ Choose ZIP Archive',
-  '免解压，支持多选 Claude / ChatGPT / Grok 官方导出 ZIP':'No extraction needed; multi-select Claude / ChatGPT / Grok ZIPs',
+  '免解压，支持多选 Claude / ChatGPT / Grok / Perplexity 官方导出 ZIP':'No extraction needed; multi-select Claude / ChatGPT / Grok / Perplexity ZIPs',
   '📂 选择解压文件夹':'📂 Choose Extracted Folder',
   '适合已解压的导出目录或本地历史备份':'For extracted export folders or local backups',
   '适用于 Claude 新版 manifest.json 分包下载与管理':'For Claude partitioned manifest.json downloads',
@@ -924,13 +938,50 @@ Object.assign(EN,{
   '支持官方导出 ZIP（含 conversations-*.json 与 user-data-*.xlsx）及独立 JSON':'Supports official export ZIPs (conversations-*.json & user-data-*.xlsx) and standalone JSON',
   'Beta Test：当前解析可能尚不完善，部分引文来源或新字段仍在适配中':'Beta Test: parsing may be incomplete; some citation sources or fields are still evolving',
   '纯本地运行 · 多平台混合工作区':'Local-only · Unified Multi-AI Workspace',
-  '所有解析、全文搜索、统计分析与隐私脱敏都在浏览器本机完成，不会上传对话内容。你可以先导入 Claude，再追加 ChatGPT 与 Grok，在同一列表按平台筛选并导出安全分享版。':'All parsing, full-text search, analytics, and redaction run locally in your browser. Import Claude and append ChatGPT or Grok to filter by platform and export safely.',
+  '所有解析、全文搜索、统计分析与隐私脱敏都在浏览器本机完成，不会上传对话内容。你可以按任意顺序导入 Claude、ChatGPT、Grok 与 Perplexity，在同一工作区按平台筛选并导出安全分享版。':'All parsing, full-text search, analytics, and redaction run locally in your browser. Import Claude, ChatGPT, Grok, and Perplexity in any order to filter by platform and export safely.',
   'AI 助手消息':'Assistant messages',
   'AI 助手字符':'Assistant characters',
   '你的 AI 使用画像':'Your AI usage profile',
   '按需在本地分析工具调用、思考过程与回答证据链。':'Analyze tool calls, thinking blocks, and response evidence locally on demand.',
-  '不上传对话内容':'No conversation content uploaded'
+  '不上传对话内容':'No conversation content uploaded',
+  '官方工作区字段':'Official workspace ID',
+  '官方 Space 字段':'Official Space ID',
+  '平台对话分布':'Conversations by platform',
+  '平台消息分布':'Messages by platform',
+  'Grok 工作区通过导出中的 workspace_id 字段精确关联对话。':'Grok Workspaces link conversations directly via the exported workspace_id field.',
+  'Perplexity Space 来自 user-data 工作簿；如需补充关联可在下方手动修正。':'Perplexity Spaces come from the user-data workbook; adjust links manually below if needed.'
 });
+const PLATFORMS={
+  claude:{id:'claude',name:'Claude',avatar:'✦',beta:false},
+  gpt:{id:'gpt',name:'ChatGPT',avatar:'◎',beta:false},
+  grok:{id:'grok',name:'Grok',avatar:'𝕏',beta:true},
+  perplexity:{id:'perplexity',name:'Perplexity',avatar:'❖',beta:true}
+};
+const PLATFORM_ORDER=['claude','gpt','grok','perplexity'];
+function platformMeta(id){return PLATFORMS[id]||PLATFORMS.claude;}
+function renderPlatformPill(id,{showBeta=true,compact=false,count=null}={}){
+  const p=platformMeta(id);
+  const label=p.name+(showBeta&&p.beta?(compact?' β':' (Beta)'):'')+(count!==null?' '+count:'');
+  return '<span class="platform-pill '+escAttr(p.id)+'"><span class="platform-dot '+escAttr(p.id)+'"></span>'+esc(label)+'</span>';
+}
+function syncPlatformFilterCounts(){
+  const bar=document.getElementById('platform-filter');if(!bar)return;
+  const counts={};let total=0;
+  for(const conv of (typeof allConvs!=='undefined'&&Array.isArray(allConvs)?allConvs:[])){
+    const key=conv.sourcePlatform||'claude';counts[key]=(counts[key]||0)+1;total++;
+  }
+  bar.querySelectorAll('[data-platform]').forEach(btn=>{
+    const key=btn.dataset.platform||'';
+    if(!key){
+      btn.innerHTML=esc(t('全部平台'))+(total?'<span class="platform-count">'+total+'</span>':'');
+      btn.classList.remove('empty');
+    }else{
+      const p=platformMeta(key),c=counts[key]||0;
+      btn.innerHTML=esc(p.name+(p.beta?' β':''))+(total?'<span class="platform-count">'+c+'</span>':'');
+      btn.classList.toggle('empty',total>0&&c===0);
+    }
+  });
+}
 function t(key,vars){
   let value=currentLang==='en'?(EN[key]||key):(ZH[key]||key);
   if(vars)for(const[k,v]of Object.entries(vars))value=value.replaceAll('{'+k+'}',v);
@@ -950,6 +1001,7 @@ function applyLanguage(lang){
   if(langBtn){langBtn.textContent=currentLang==='en'?'🌐 中文':'🌐 EN';langBtn.title=currentLang==='en'?'切换到中文界面':'Switch to English UI';}
   document.getElementById('export-btn').textContent='⬇ '+t('导出');
   document.getElementById('toggle-summary').textContent=t('摘要')+(summaryVisible?' ◀':' ▶');
+  syncPlatformFilterCounts();
   if(typeof syncRemoteResourceControls==='function')syncRemoteResourceControls();
 }
 function toggleLanguage(){
@@ -1129,18 +1181,24 @@ async function ingestData(convSource,projTexts,memText,designTexts,btn){
   const totalMsgs=Number.isFinite(parsed.totalMsgs)?parsed.totalMsgs:allConvs.reduce((s,c)=>s+(c.message_count||0),0);
   const dates=parsed.minDate&&parsed.maxDate?[parsed.minDate,parsed.maxDate]:allConvs.map(c=>c.created_at).filter(Boolean).sort();
   loadedSummary={totalMsgs,minDate:dates[0]||'',maxDate:dates[dates.length-1]||''};
+  syncPlatformFilterCounts();
   renderLoadedSummary();
   if(currentView==='analytics'){renderAnalyticsSide();renderAnalyticsPage();}
 }
 function renderLoadedSummary(){
-  if(!loadedSummary)return;
+  if(!loadedSummary||(!allConvs.length&&!allProjects.length&&!allDesigns.length)){
+    const sb=document.getElementById('stats-bar');if(sb)sb.style.display='none';return;
+  }
   const span=loadedSummary.minDate&&loadedSummary.maxDate?fmtDateOnly(loadedSummary.minDate)+' — '+fmtDateOnly(loadedSummary.maxDate):'';
+  const counts={};for(const c of allConvs){const k=c.sourcePlatform||'claude';counts[k]=(counts[k]||0)+1;}
+  const pills=PLATFORM_ORDER.filter(k=>counts[k]>0).map(k=>renderPlatformPill(k,{compact:true,count:counts[k]})).join('');
   const sb=document.getElementById('stats-bar');
   sb.style.display='';
   sb.innerHTML='📊 <b>'+allConvs.length+'</b>'+t('条对话')+' · <b>'+loadedSummary.totalMsgs.toLocaleString(currentLang==='en'?'en-US':'zh-CN')+'</b>'+t('条消息')
     +(allProjects.length?' · 📁 <b>'+allProjects.length+'</b>'+t('个项目'):'')
     +(allDesigns.length?' · ✒️ <b>'+allDesigns.length+'</b>'+t('条 Design 对话'):'')
-    +(span?'<br>📅 '+esc(span):'');
+    +(span?'<br>📅 '+esc(span):'')
+    +(pills?'<div class="stats-platform-row">'+pills+'</div>':'');
 }
 
 function switchTab(tab,btn){
@@ -3325,7 +3383,7 @@ function exportMediaKey(name){
   const unique=[...new Set(candidates.map(([,entry])=>entry.packageId+'/'+entry.path))];
   return unique.length===1?unique[0]:zipEntries.has(mediaKey(name))&&typeof zipEntries.get(mediaKey(name))==='string'?mediaKey(name):'';
 }
-Object.assign(EN,{'下载与导入':'Import center','导入中心 / Claude 清单':'Import center / Claude manifest','多 AI 导出导入中心':'Multi-AI Export Import Center','支持直接导入 Claude 与 ChatGPT 的 ZIP、解压目录或独立 JSON，也支持通过 Claude 新版下载清单逐包获取并混合阅读。':'Import Claude & ChatGPT ZIPs, extracted folders, or standalone JSON directly — or use Claude’s partitioned download manifest checklist and read both platforms together.','直接导入（Claude & ChatGPT 通用）':'Direct import (Claude & ChatGPT)','无需清单，可直接多选或追加导入 Claude 与 ChatGPT 导出包，自动识别平台并混合搜索、筛选与脱敏导出。':'No manifest needed. Select or append Claude & ChatGPT archives in any order for unified search, filtering, and safe export.','Claude 新版分包下载清单':'Claude partitioned download manifest','仅适用于 Claude 新版分包导出：先导入 manifest JSON 获取官方下载链接，下载完 ZIP 后再批量追加。':'For Claude’s partitioned exports only: open manifest JSON to get official download links, then add the downloaded ZIPs together.','01 · 导入清单':'01 · Choose manifest','02 · 官方下载':'02 · Download from Claude','03 · 批量追加':'03 · Add ZIPs locally','清单只用于展示文件与链接。':'The manifest lists files and download links.','在新标签页完成下载，返回这里继续。':'Download in a new tab, then return here.','批量选择 ZIP，可按任意顺序追加（可与 ChatGPT 混合）。':'Select ZIP files in any order (can be mixed with ChatGPT archives).','尚未选择下载清单':'No Claude download manifest selected','如果你拿到的是完整的 ZIP（Claude 或 ChatGPT）或解压目录，请直接用上方按钮导入。':'If you already have Claude or ChatGPT ZIP files or folders, use the direct import buttons above.','已导入文件':'Imported files','返回对话':'Back to conversations'});
+Object.assign(EN,{'下载与导入':'Import center','导入中心 / Claude 清单':'Import center / Claude manifest','多 AI 导出导入中心':'Multi-AI Export Import Center','支持直接导入 Claude、ChatGPT、Grok 与 Perplexity 的 ZIP、解压目录或独立 JSON，也支持通过 Claude 新版下载清单逐包获取并混合阅读。':'Import Claude, ChatGPT, Grok, and Perplexity ZIPs, extracted folders, or standalone JSON directly — or use Claude’s partitioned download manifest checklist and read all platforms together.','直接导入（多平台通用）':'Direct import (all supported platforms)','无需清单，可直接多选或追加导入 Claude、ChatGPT、Grok 与 Perplexity 导出包，自动识别平台并混合搜索、筛选与脱敏导出。':'No manifest needed. Select or append Claude, ChatGPT, Grok, and Perplexity archives in any order for unified search, filtering, and safe export.','Claude 新版分包下载清单':'Claude partitioned download manifest','仅适用于 Claude 新版分包导出：先导入 manifest JSON 获取官方下载链接，下载完 ZIP 后再批量追加。':'For Claude’s partitioned exports only: open manifest JSON to get official download links, then add the downloaded ZIPs together.','01 · 导入清单':'01 · Choose manifest','02 · 官方下载':'02 · Download from Claude','03 · 批量追加':'03 · Add ZIPs locally','清单只用于展示文件与链接。':'The manifest lists files and download links.','在新标签页完成下载，返回这里继续。':'Download in a new tab, then return here.','批量选择 ZIP，可按任意顺序追加（可与其他平台混合）。':'Select ZIP files in any order (can be mixed with other AI platforms).','尚未选择下载清单':'No Claude download manifest selected','如果你拿到的是完整的 ZIP（Claude / ChatGPT / Grok / Perplexity）或解压目录，请直接用上方按钮导入。':'If you already have full ZIP files (Claude / ChatGPT / Grok / Perplexity) or extracted folders, use the direct import buttons above.','已导入文件':'Imported files','返回对话':'Back to conversations'});
 function openDownloadPage(){
   exportViewVersion++;openConversationGeneration++;resetReaderSearch();cancelFeature('reader');
   if(currentView==='analytics')cancelAnalytics();
@@ -3342,16 +3400,16 @@ function renderExportManifest(){
   if(currentView!=='downloads')return;
   const session=exportSession,host=document.getElementById('messages'),panel=document.createElement('section');panel.id='export-session-panel';panel.className='export-page';host.replaceChildren(panel);
   const make=(tag,cls,text,parent=panel)=>{const node=document.createElement(tag);node.className=cls;node.textContent=text;parent.append(node);return node;};
-  const hero=make('header','export-hero','');make('div','export-kicker','Multi-AI Web Export Reader',hero);make('h2','',t('多 AI 导出导入中心'),hero);make('p','export-description',t('支持直接导入 Claude 与 ChatGPT 的 ZIP、解压目录或独立 JSON，也支持通过 Claude 新版下载清单逐包获取并混合阅读。'),hero);
-  const direct=make('section','export-empty','');direct.style.marginBottom='20px';make('strong','',t('直接导入（Claude & ChatGPT 通用）'),direct);make('p','export-description',t('无需清单，可直接多选或追加导入 Claude 与 ChatGPT 导出包，自动识别平台并混合搜索、筛选与脱敏导出。'),direct);
-  const directBar=make('div','export-toolbar','',direct);for(const [action,label,primary]of [['pick-zip','🗜️ 打开导出 ZIP（Claude / ChatGPT / Grok）',true],['pick-folder','📂 打开解压目录'],['new-archive','打开新档案'],['clear-archive','清除档案']]){const button=make('button','export-button'+(primary?' primary':action==='clear-archive'?' quiet':''),t(label),directBar);button.type='button';button.dataset.uiClick=action;}
+  const hero=make('header','export-hero','');make('div','export-kicker','Multi-AI Web Export Reader',hero);make('h2','',t('多 AI 导出导入中心'),hero);make('p','export-description',t('支持直接导入 Claude、ChatGPT、Grok 与 Perplexity 的 ZIP、解压目录或独立 JSON，也支持通过 Claude 新版下载清单逐包获取并混合阅读。'),hero);
+  const direct=make('section','export-empty','');direct.style.marginBottom='20px';make('strong','',t('直接导入（多平台通用）'),direct);make('p','export-description',t('无需清单，可直接多选或追加导入 Claude、ChatGPT、Grok 与 Perplexity 导出包，自动识别平台并混合搜索、筛选与脱敏导出。'),direct);
+  const directBar=make('div','export-toolbar','',direct);for(const [action,label,primary]of [['pick-zip','🗜️ 打开导出 ZIP（多平台）',true],['pick-folder','📂 打开解压目录'],['new-archive','打开新档案'],['clear-archive','清除档案']]){const button=make('button','export-button'+(primary?' primary':action==='clear-archive'?' quiet':''),t(label),directBar);button.type='button';button.dataset.uiClick=action;}
   if(session.packages.length){make('h3','',t('已导入文件'));for(const p of session.packages)make('p','export-meta','✓ '+p.filename);}
   if(session.errors.length){const errors=make('div','export-errors','');errors.setAttribute('role','status');for(const e of session.errors)make('p','',e,errors);}
   make('h3','',t('Claude 新版分包下载清单')).style.marginTop='24px';
   make('p','export-description',t('仅适用于 Claude 新版分包导出：先导入 manifest JSON 获取官方下载链接，下载完 ZIP 后再批量追加。'));
   const toolbar=make('div','export-toolbar','');
   for(const [action,label]of [['pick-manifest','导入下载清单'],['append-packages','追加分包']]){const button=make('button','export-button',t(label),toolbar);button.type='button';button.dataset.uiClick=action;}
-  const steps=make('div','export-steps','');for(const [title,body]of [['01 · 导入清单','清单只用于展示文件与链接。'],['02 · 官方下载','在新标签页完成下载，返回这里继续。'],['03 · 批量追加','批量选择 ZIP，可按任意顺序追加（可与 ChatGPT 混合）。']]){const step=make('div','export-step','',steps);make('strong','',t(title),step);make('p','export-description',t(body),step);}
+  const steps=make('div','export-steps','');for(const [title,body]of [['01 · 导入清单','清单只用于展示文件与链接。'],['02 · 官方下载','在新标签页完成下载，返回这里继续。'],['03 · 批量追加','批量选择 ZIP，可按任意顺序追加（可与其他平台混合）。']]){const step=make('div','export-step','',steps);make('strong','',t(title),step);make('p','export-description',t(body),step);}
   if(session.manifest){
     make('h3','',t('下载清单'));make('p','export-description',session.manifest.created_at+' · '+t('链接可能在 24 小时内或使用后提前失效。请在登录 Claude 的浏览器中下载，再批量选择 ZIP。'));
     const list=make('div','export-list','');
@@ -3360,7 +3418,7 @@ function renderExportManifest(){
       make('span','export-badge',exportLabel(f.category)+(f.category&&!['conversations','projects','memories','frames','light_metadata'].includes(f.category)?' · '+f.category:''),details);make('h3','',f.filename,details);make('div','export-status',t('分包')+' #'+f.part+' · '+t(loaded?'已导入':'尚未导入'),details);
       if(f.url){const link=make('a','export-button',t('打开下载页')+' ↗',row);link.href=f.url;link.target='_blank';link.rel='noopener noreferrer';link.referrerPolicy='no-referrer';}else make('span','export-status',t('链接不可用'),row);
     }
-  }else{const empty=make('div','export-empty','');make('strong','',t('尚未选择下载清单'),empty);make('p','export-description',t('如果你拿到的是完整的 ZIP（Claude 或 ChatGPT）或解压目录，请直接用上方按钮导入。'),empty);}
+  }else{const empty=make('div','export-empty','');make('strong','',t('尚未选择下载清单'),empty);make('p','export-description',t('如果你拿到的是完整的 ZIP（Claude / ChatGPT / Grok / Perplexity）或解压目录，请直接用上方按钮导入。'),empty);}
 }
 async function newExportArchive(){
   gptComponentStates.clear();gptDilPrograms.clear();
@@ -3382,7 +3440,7 @@ function invalidateExportViews(){
   document.getElementById('messages').replaceChildren();
 }
 function refreshExportArchive(){
-  document.getElementById('conv-total').textContent=allConvs.length;renderConvList(getSortedConvs());renderLoadedSummary();
+  document.getElementById('conv-total').textContent=allConvs.length;if(typeof syncPlatformFilterCounts==='function')syncPlatformFilterCounts();renderConvList(getSortedConvs());renderLoadedSummary();
   for(const [tab,visible]of [['projects',allProjects.length],['memory',memoryData||exportSession.topics.length],['design',allDesigns.length],['artifacts',exportSession.artifacts.length],['account',exportSession.users.length||exportSession.logins.length]]){const button=document.querySelector('.tab-btn[data-ui-value="'+tab+'"]');if(button)button.style.display=visible?'':'none';}
   if(currentView==='downloads')renderExportManifest();else if(currentView==='memory')renderMemoryTab();else if(currentView==='projects')renderProjectList();else if(currentView==='artifacts')renderExportArtifacts();else if(currentView==='account')renderExportAccount();else if(currentView==='analytics'){renderAnalyticsSide();renderAnalyticsPage();}
 }
@@ -3459,7 +3517,7 @@ async function openExportArtifact(index,versionId){
 function renderExportAccount(){
   exportViewVersion++;document.getElementById('messages').replaceChildren();const container=document.getElementById('conv-list');container.replaceChildren();
   const title=document.createElement('h3');title.textContent=t('账户资料');container.append(title);
-  for(const user of exportSession.users){const details=document.createElement('details'),summary=document.createElement('summary'),pre=document.createElement('pre');const platform=user.sourcePlatform==='gpt'?'ChatGPT':user.sourcePlatform==='grok'?'Grok':user.sourcePlatform==='perplexity'?'Perplexity':'Claude';summary.textContent='['+platform+'] '+(user.full_name||user.name||user.email||user.uuid||user.id||t('账户'));pre.textContent=JSON.stringify(user,null,2);details.append(summary,pre);container.append(details);}
+  for(const user of exportSession.users){const details=document.createElement('details'),summary=document.createElement('summary'),pre=document.createElement('pre');const platform=typeof platformMeta==='function'?platformMeta(user.sourcePlatform).name:(user.sourcePlatform==='gpt'?'ChatGPT':user.sourcePlatform==='grok'?'Grok':user.sourcePlatform==='perplexity'?'Perplexity':'Claude');summary.textContent='['+platform+'] '+(user.full_name||user.name||user.email||user.uuid||user.id||t('账户'));pre.textContent=JSON.stringify(user,null,2);details.append(summary,pre);container.append(details);}
   const events=[...exportSession.logins].sort((a,b)=>(Date.parse(b.timestamp)||0)-(Date.parse(a.timestamp)||0));exportPage=Math.min(exportPage,Math.max(0,Math.ceil(events.length/50)-1));
   const heading=document.createElement('h4');heading.textContent=t('登录历史')+' ('+events.length+')';container.append(heading);
   for(const event of events.slice(exportPage*50,(exportPage+1)*50)){const pre=document.createElement('pre');pre.style.cssText='white-space:pre-wrap;overflow-wrap:anywhere';pre.textContent=JSON.stringify(event,null,2);container.append(pre);}
@@ -4623,7 +4681,7 @@ let analyticsWorker=null,analyticsWorkerUrl='',analyticsResult=null,analyticsPro
 function archiveAnalysisCore(){
   const list=value=>Array.isArray(value)?value:[];
   async function calculateAnalytics(records,materialize,customStopZh=[],checkpoint=async()=>{}){
-    const state={conversations:0,messages:0,human:0,assistant:0,humanCharacters:0,assistantCharacters:0,characters:0,thinking:0,tools:0,toolErrors:0,attachments:0,textBlocks:0,imageBlocks:0,artifacts:0,webSearches:0,emptyMessages:0,branchPoints:0,alternativeMessages:0,branchedConversations:0,conversationDurationMs:0,months:{},activeDates:{},weekdays:Array(7).fill(0),hours:Array(24).fill(0),models:{},toolNames:{},depths:{},wordsZh:{},wordsEn:{},responseLatencies:[],longest:[],lateNightMessages:0,longestThinking:null,mostToolErrors:null};
+    const state={conversations:0,messages:0,human:0,assistant:0,humanCharacters:0,assistantCharacters:0,characters:0,thinking:0,tools:0,toolErrors:0,attachments:0,textBlocks:0,imageBlocks:0,artifacts:0,webSearches:0,emptyMessages:0,branchPoints:0,alternativeMessages:0,branchedConversations:0,conversationDurationMs:0,months:{},activeDates:{},weekdays:Array(7).fill(0),hours:Array(24).fill(0),models:{},platforms:{},toolNames:{},depths:{},wordsZh:{},wordsEn:{},responseLatencies:[],longest:[],lateNightMessages:0,longestThinking:null,mostToolErrors:null};
     const add=(object,key,n=1)=>{object[key]=(object[key]||0)+n;};
     const stopEn=new Set('a an and are as at be been but by can could did do does for from had has have he her hers him his how i if in into is it its may me might more most my no not of on or our ours she should so some than that the their theirs them then there these they this those to too us was we were what when where which who why will with would you your yours'.split(' '));
     const stopZh=new Set(('的 了 和 是 在 我 有 就 不 人 都 一 一个 上 也 很 到 说 要 去 你 会 着 没有 看 好 自己 这 那 里 为 以 及 与 或 而 被 把 对 从 等 中 能 可以 进行 使用 需要 如果 这个 这些 我们 你们 他们 因为 所以 然后 而且 但是 还是 已经 可能 现在 之后 之前 其中 通过 对于 关于 根据 按照 什么 怎么 为什么 哪个 哪些 哪里 这里 那里 这样 那样 这么 那么 不是 不能 无法 不会 不同 一些 一种 本身 目前 当前 直接 完全 真正 真实 所有 全部 整个 完整 相关 具体 一般 通常 主要 核心 内容 问题 文章 说明 数据 文件 图片 标题 结构 技术 逻辑 工具 系统 服务 设计 代码 网站 产品 项目 章节 分类 部分 方面 东西 事情 你的 我的 他的 她的 它的 我们的 你们的 他们的 各种 某些 任何 其他 还有 因此 例如 吧 呢 啊 哦 嗯 呀 嘿 哈 哈哈 诶 哎 唉 这类 这次 这点 这个问题 这种情况 就是 那个 那些 知道 的是 存在 或者 开始 几个 这种 出来 只是 只是说 还有点 一下 一下子 一直 一定 一样 一起 一共 多个 少数 许多 多少 时候 以后 以前 现在的 之后的 起来 下来 上来 回来 过去').split(/\s+/));
@@ -4640,11 +4698,14 @@ function archiveAnalysisCore(){
     for await(const record of records){
       await checkpoint();
       const conversation=materialize(record),messages=list(conversation.chat_messages);state.conversations++;
+      const plat=conversation.sourcePlatform||record.meta?.sourcePlatform||'claude';
+      if(!state.platforms[plat])state.platforms[plat]={conversations:0,messages:0,characters:0};
+      state.platforms[plat].conversations++;
       let convChars=0,convBranched=false,convToolErrors=0;const childCounts={},timed=[];
       for(let messageIndex=0;messageIndex<messages.length;messageIndex++){
         if(messageIndex%128===0)await checkpoint({done:state.conversations-1,messageIndex,totalMessages:messages.length});
         const message=messages[messageIndex];
-        state.messages++;const sender=message?.sender||'assistant';if(sender==='human')state.human++;else if(sender==='assistant')state.assistant++;
+        state.messages++;state.platforms[plat].messages++;const sender=message?.sender||'assistant';if(sender==='human')state.human++;else if(sender==='assistant')state.assistant++;
         let characters=0,thinking=0,tools=0,textBlocks=0,imageBlocks=0,artifacts=0,webSearches=0,wordText='';
         for(const block of list(message?.content)){
           if(!block||typeof block!=='object')continue;const type=block.type||'',name=String(block.name||'');
@@ -4656,7 +4717,7 @@ function archiveAnalysisCore(){
         }
         if(!list(message?.content).length&&message?.text){wordText=String(message.text);characters=wordText.length;}
         if(sender==='human')state.humanCharacters+=characters;else if(sender==='assistant')state.assistantCharacters+=characters;
-        state.characters+=characters;convChars+=characters;state.thinking+=thinking;state.tools+=tools;state.textBlocks+=textBlocks;state.imageBlocks+=imageBlocks;state.artifacts+=artifacts;state.webSearches+=webSearches;
+        state.characters+=characters;state.platforms[plat].characters+=characters;convChars+=characters;state.thinking+=thinking;state.tools+=tools;state.textBlocks+=textBlocks;state.imageBlocks+=imageBlocks;state.artifacts+=artifacts;state.webSearches+=webSearches;
         const attachments=list(message?.attachments).length+list(message?.files).length;state.attachments+=attachments;if(!list(message?.content).length&&!message?.text&&!attachments)state.emptyMessages++;
         const date=new Date(message?.created_at||message?.updated_at||''),timestamp=date.getTime();
         if(!Number.isNaN(timestamp)){const dateKey=date.getFullYear()+'-'+String(date.getMonth()+1).padStart(2,'0')+'-'+String(date.getDate()).padStart(2,'0');add(state.activeDates,dateKey);add(state.months,dateKey.slice(0,7));state.weekdays[date.getDay()]++;state.hours[date.getHours()]++;if(date.getHours()<5)state.lateNightMessages++;timed.push({sender,uuid:message?.uuid||'',parentUuid:message?.parent_message_uuid||'',timestamp});}
@@ -4691,8 +4752,10 @@ function archiveAnalysisCore(){
     for await(const record of records){
       await checkpoint();
       const conversation=materialize(record),messages=list(conversation.chat_messages),exactCandidates=new Set(),exactFiles=new Set(),queries=[];
-      const wsId=conversation.workspaceId||record.meta.workspaceId;
+      const wsId=conversation.workspaceId||record.meta?.workspaceId;
       if(wsId&&stats['grok:ws:'+wsId]){map[record.meta.uuid]='grok:ws:'+wsId;evidence[record.meta.uuid]={method:'workspace',confidence:1,files:[],queries:[],keywords:[]};}
+      const colId=conversation.collectionUuid||record.meta?.collectionUuid;
+      if(!map[record.meta.uuid]&&colId&&stats['perplexity:col:'+colId]){map[record.meta.uuid]='perplexity:col:'+colId;evidence[record.meta.uuid]={method:'collection',confidence:1,files:[],queries:[],keywords:[]};}
       for(let messageIndex=0;messageIndex<messages.length;messageIndex++){
         if(messageIndex%128===0)await checkpoint();
         const message=messages[messageIndex];for(const block of list(message?.content)){
@@ -5487,6 +5550,12 @@ function renderAnalyticsDashboard(s){
     +insight('⚙️','最依赖的工具',tool?tool[0]:t('暂无可用记录'),tool?nf(tool[1])+' '+t('工具调用'):'')
     +insight('🧠','Thinking 最长回答',s.longestThinking?.title||t('暂无可用记录'),s.longestThinking?analyticsDuration(s.longestThinking.durationMs):'')
     +insight('🧯','工具失败最多的对话',s.mostToolErrors?.title||t('暂无可用记录'),s.mostToolErrors?nf(s.mostToolErrors.errors)+' errors':'')+'</div></div>';
+  const platEntries=Object.entries(s.platforms||{}).sort((a,b)=>(b[1]?.conversations||0)-(a[1]?.conversations||0));
+  if(platEntries.length){
+    const platConvs=platEntries.map(([k,v])=>[platformMeta(k).name,v?.conversations||0]);
+    const platMsgs=platEntries.map(([k,v])=>[platformMeta(k).name,v?.messages||0]);
+    h+='<div class="chart-layout"><div class="chart-card"><div class="chart-title">🌐 '+t('平台对话分布')+'</div>'+analyticsBars(platConvs,k=>k,8)+'</div><div class="chart-card"><div class="chart-title">💬 '+t('平台消息分布')+'</div>'+analyticsBars(platMsgs,k=>k,8)+'</div></div>';
+  }
   h+='<div class="chart-layout"><div class="chart-card"><div class="chart-title">📅 '+t('每月活跃度')+'</div>'+analyticsBars(months,k=>k)+'</div><div class="chart-card"><div class="chart-title">🕐 '+t('一天中的活跃时间')+'</div>'+analyticsBars(hours,k=>k,24)+'</div></div>';
   h+='<div class="chart-layout"><div class="chart-card"><div class="chart-title">🗓️ '+t('星期活跃度')+'</div>'+analyticsBars(weekdays,k=>k,7)+'</div><div class="chart-card"><div class="chart-title">🌊 '+t('对话深度分布')+'</div>'+analyticsBars(depths,k=>k,6)+'</div></div>';
   h+='<div class="chart-layout"><div class="chart-card"><div class="chart-title">'+(models.length?'🧠 '+t('模型使用'):'👥 '+t('角色消息分布'))+'</div>'+analyticsBars(models.length?models:roles,k=>k,10)+'</div><div class="chart-card"><div class="chart-title">🧱 '+t('内容块构成')+'</div>'+analyticsBars(blocks,k=>k,10)+'</div></div>';
@@ -5519,10 +5588,10 @@ function renderConvList(convs){
     const ac=currentConv&&currentConv.uuid===c.uuid?' active':'';
     const last=c.uuid===lastConversationUuid;
     const dateStr=fmtDate(c.updated_at||c.created_at);
-    const metaLabel=(c.sourcePlatform==='gpt'?'ChatGPT':c.sourcePlatform==='grok'?'Grok (Beta)':c.sourcePlatform==='perplexity'?'Perplexity (Beta)':'Claude')+(dateStr?' · '+dateStr:'');
+    const metaHtml=renderPlatformPill(c.sourcePlatform)+(dateStr?' <span>· '+esc(dateStr)+'</span>':'');
     return '<div class="conv-item'+ac+(last?' last-supper':'')+'" data-conv-uuid="'+escAttr(c.uuid)+'" role="button" tabindex="0">'
       +'<div class="conv-title">'+esc(c.name||'('+t('无标题')+')')+(last?'<span class="last-supper-badge">'+t('最后的晚餐')+'</span>':'')+'</div>'
-      +'<div class="conv-meta"><span>'+metaLabel+'</span><span class="conv-count">'+(Number.isFinite(c.message_count)?c.message_count:(c.chat_messages||[]).length)+t('条')+'</span></div></div>';
+      +'<div class="conv-meta"><span>'+metaHtml+'</span><span class="conv-count">'+(Number.isFinite(c.message_count)?c.message_count:(c.chat_messages||[]).length)+t('条')+'</span></div></div>';
   }).join('');
   el.querySelectorAll('[data-conv-uuid]').forEach(item=>item.addEventListener('click',()=>openConv(item.dataset.convUuid)));
 }
@@ -5578,7 +5647,7 @@ function renderProjectList(){
   const el=document.getElementById('conv-list');
   if(!allProjects.length){el.innerHTML='<div style="padding:20px;text-align:center;color:var(--text3)">'+t('暂无项目')+'</div>';return;}
   el.innerHTML=allProjects.map(p=>'<div class="proj-card" data-proj-uuid="'+escAttr(p.uuid)+'" role="button" tabindex="0">'
-    +'<div class="proj-card-name">'+esc(p.name||t('无名称'))+'</div>'
+    +'<div class="proj-card-name" style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;">'+renderPlatformPill(p.sourcePlatform||'claude',{compact:true})+'<span>'+esc(p.name||t('无名称'))+'</span></div>'
     +'<div class="proj-card-desc">'+esc((p.description||'').slice(0,80)||t('无描述'))+'</div></div>').join('');
   el.querySelectorAll('[data-proj-uuid]').forEach(item=>item.addEventListener('click',()=>openProject(item.dataset.projUuid)));
 }
@@ -5797,7 +5866,7 @@ async function openConv(uuid,sourceView){
   document.getElementById('chat-header').classList.toggle('last-supper',isLast);
   document.getElementById('messages').classList.toggle('last-supper-gallery',isLast);
   const msgs=currentConv.chat_messages||[],messageCount=currentConv.message_count??msgs.length;
-  document.getElementById('chat-header-meta').textContent=fmtDate(currentConv.created_at)+' · '+messageCount+t('条消息');
+  document.getElementById('chat-header-meta').innerHTML=renderPlatformPill(currentConv.sourcePlatform,{compact:true})+' · '+esc(fmtDate(currentConv.created_at)+' · '+messageCount+t('条消息'));
   await renderMessages(msgs);if(requestGeneration!==openConversationGeneration)return;
   document.getElementById('export-wrap').style.display='';
   document.getElementById('quality-btn').style.display='';
@@ -5811,7 +5880,8 @@ async function openConv(uuid,sourceView){
   updateQuickNav();
   const st=document.getElementById('summary-text');
   st.innerHTML=currentConv.summary?(currentConv._summaryHtml||(typeof marked!=='undefined'?marked.parse(currentConv.summary):esc(currentConv.summary))):'<span style="color:var(--text3)">'+t('无摘要')+'</span>';
-  document.getElementById('meta-box').innerHTML=metaRow(t('创建时间'),fmtDate(currentConv.created_at))+metaRow(t('更新时间'),fmtDate(currentConv.updated_at))+metaRow(t('消息数'),messageCount)+metaRow('UUID',currentConv.uuid.slice(0,18)+'…');
+  const pInfo=platformMeta(currentConv.sourcePlatform);
+  document.getElementById('meta-box').innerHTML=metaRow(t('来源'),pInfo.name+(pInfo.beta?' (Beta)':''))+(currentConv.defaultModel?metaRow(t('模型'),currentConv.defaultModel):'')+metaRow(t('创建时间'),fmtDate(currentConv.created_at))+metaRow(t('更新时间'),fmtDate(currentConv.updated_at))+metaRow(t('消息数'),messageCount)+metaRow('UUID',currentConv.uuid.slice(0,18)+'…');
 }
 function metaRow(k,v){return '<div class="meta-row"><span class="meta-key">'+esc(String(k))+'</span><span class="meta-val">'+esc(String(v))+'</span></div>';}
 
@@ -5910,9 +5980,18 @@ async function filterProjectConversations(projectUuid,value){
   if(q&&allConvs.some(c=>c._workerBacked)){try{matches=new Set((await dataWorkerRequest('search',{query:q})).uuids||[]);}catch(error){console.error('project search',error);}if(generation!==projectSearchGeneration)return;}
   const byUuid=new Map(allConvs.map(c=>[c.uuid,c]));document.querySelectorAll('[data-project-conv]').forEach(el=>{if(el.dataset.projectUuid!==projectUuid)return;const visible=!q||(matches?matches.has(el.dataset.projectConv):projectConvText(byUuid.get(el.dataset.projectConv)).includes(q));el.style.display=visible?'':'none';});
 }
+function projectMatchMethodLabel(e,manual){
+  if(manual)return t('用户手动确认');
+  if(e?.method==='workspace')return t('官方工作区字段');
+  if(e?.method==='collection')return t('官方 Space 字段');
+  if(e?.method==='file')return t('唯一项目文件');
+  if(e?.method==='knowledge')return t('项目知识搜索');
+  if(e?.method==='keyword')return t('项目记忆关键词');
+  return t('无自动证据');
+}
 function projectMatchExplanation(c){
   const manual=Object.prototype.hasOwnProperty.call(projectOverrides,c.uuid),e=convProjectEvidence[c.uuid]||{};
-  const method=manual?t('用户手动确认'):e.method==='file'?t('唯一项目文件'):e.method==='knowledge'?t('项目知识搜索'):e.method==='keyword'?t('项目记忆关键词'):t('无自动证据');
+  const method=projectMatchMethodLabel(e,manual);
   const confidence=manual?1:Number(e.confidence||0);
   const row=(label,items)=>items&&items.length?'<div><b>'+t(label)+'</b>：'+items.map(x=>'<code>'+esc(String(x))+'</code>').join('、')+'</div>':'';
   return '<div class="match-panel"><div><b>'+t('匹配方式')+'</b>：'+method+'　<span class="match-confidence">'+Math.round(confidence*100)+'%</span></div>'
@@ -5937,7 +6016,7 @@ function renderProjectGraph(p,convs){
   const memory=memoryData?.project_memories?.[p.uuid]||'';
   const memoryNodes=getProjectKeywords(p).slice(0,8);
   const docs=(p.docs||[]).slice(0,12);
-  return '<div class="project-graph"><div class="graph-column"><b>🧠 '+t('项目记忆')+'</b>'+(memoryNodes.length?memoryNodes.map(x=>'<div class="graph-node">'+esc(x)+'</div>').join(''):'<div class="graph-node">'+esc(memory?t('项目记忆'):t('无内容'))+'</div>')+'</div><div class="graph-arrow">→</div><div class="graph-column"><b>📄 '+t('项目文档')+'</b>'+docs.map(d=>'<div class="graph-node">'+esc(d.filename||t('未命名'))+'</div>').join('')+'</div><div class="graph-arrow">→</div><div class="graph-column"><b>💬 '+t('关联对话')+'</b>'+convs.slice(0,20).map(c=>{const e=convProjectEvidence[c.uuid]||{},manual=Object.prototype.hasOwnProperty.call(projectOverrides,c.uuid),label=manual?t('用户手动确认'):e.method==='file'?t('唯一项目文件'):e.method==='knowledge'?t('项目知识搜索'):e.method==='keyword'?t('项目记忆关键词'):t('无自动证据');return '<div class="graph-node">'+esc(c.name||t('无标题'))+'<br><small>'+label+'</small></div>';}).join('')+'</div></div>';
+  return '<div class="project-graph"><div class="graph-column"><b>🧠 '+t('项目记忆')+'</b>'+(memoryNodes.length?memoryNodes.map(x=>'<div class="graph-node">'+esc(x)+'</div>').join(''):'<div class="graph-node">'+esc(memory?t('项目记忆'):t('无内容'))+'</div>')+'</div><div class="graph-arrow">→</div><div class="graph-column"><b>📄 '+t('项目文档')+'</b>'+docs.map(d=>'<div class="graph-node">'+esc(d.filename||t('未命名'))+'</div>').join('')+'</div><div class="graph-arrow">→</div><div class="graph-column"><b>💬 '+t('关联对话')+'</b>'+convs.slice(0,20).map(c=>{const e=convProjectEvidence[c.uuid]||{},manual=Object.prototype.hasOwnProperty.call(projectOverrides,c.uuid),label=projectMatchMethodLabel(e,manual);return '<div class="graph-node">'+esc(c.name||t('无标题'))+'<br><small>'+label+'</small></div>';}).join('')+'</div></div>';
 }
 
 async function openProject(uuid){
@@ -5969,16 +6048,19 @@ async function openProject(uuid){
     if(!active||active.dataset.projUuid!==uuid)return;
   }
 
+  const projPlatform=p.sourcePlatform||'claude';
   const relatedConvs=findProjectConvs(p);
   const stats=projectStats(relatedConvs,p.uuid);
-  document.getElementById('chat-header-meta').textContent=(p.docs||[]).length+t('个文档')+' · '+relatedConvs.length+t('条关联对话');
+  document.getElementById('chat-header-meta').innerHTML=renderPlatformPill(projPlatform,{compact:true})+' · '+esc((p.docs||[]).length+t('个文档')+' · '+relatedConvs.length+t('条关联对话'));
 
   const el=document.getElementById('messages');
   let h='<div style="max-width:860px;margin:0 auto;padding:24px;">';
 
   h+='<div class="project-tools"><input type="search" placeholder="'+escAttr(t('搜索当前项目对话'))+'" data-ui-input="project-search" data-ui-value="'+escAttr(p.uuid)+'"><button data-ui-click="project-export" data-ui-value="'+escAttr(p.uuid)+'">⬇ '+t('导出项目')+'</button></div>';
   h+='<div class="project-stat-grid"><div class="project-stat"><b>'+stats.conversations+'</b>'+t('条对话')+'</div><div class="project-stat"><b>'+stats.messages+'</b>'+t('条消息')+'</div><div class="project-stat"><b>'+stats.chars.toLocaleString()+'</b>'+t('字')+'</div><div class="project-stat"><b style="font-size:12px">'+esc(stats.range)+'</b>'+t('时间范围')+'</div></div>';
-  h+='<div style="font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px;">🕸 '+t('项目记忆与对话引用关系图')+'</div>'+renderProjectGraph(p,relatedConvs);
+  if(projPlatform==='claude'){
+    h+='<div style="font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px;">🕸 '+t('项目记忆与对话引用关系图')+'</div>'+renderProjectGraph(p,relatedConvs);
+  }
 
   // Description
   if(p.description){
@@ -6007,14 +6089,19 @@ async function openProject(uuid){
 
   // Related conversations section
   h+='<div style="font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px;">💬 '+t('关联对话')+' ('+relatedConvs.length+')</div>';
-  h+='<div style="font-size:11.5px;color:var(--text3);background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:8px 12px;margin-bottom:12px;line-height:1.6;">'
-    +'⚠️ <b style="color:var(--text2);">'+t('局限性说明')+'</b>: '+t('Claude 官方导出文件中不包含对话与项目的归属关系。')+' '
-    +t('本查看器通过以下三种方式推断：① 工具调用中的项目文件路径（精确）；② 知识搜索查询词与项目文档的匹配（较准确）；③ 项目记忆关键词匹配（模糊）。')+' '
-    +'<b style="color:var(--text2);">'+t('结果仅供参考')+'</b>. '+t('可能存在遗漏或误判。')
-    +'</div>';
+  if(projPlatform==='claude'){
+    h+='<div style="font-size:11.5px;color:var(--text3);background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:8px 12px;margin-bottom:12px;line-height:1.6;">'
+      +'⚠️ <b style="color:var(--text2);">'+t('局限性说明')+'</b>: '+t('Claude 官方导出文件中不包含对话与项目的归属关系。')+' '
+      +t('本查看器通过以下三种方式推断：① 工具调用中的项目文件路径（精确）；② 知识搜索查询词与项目文档的匹配（较准确）；③ 项目记忆关键词匹配（模糊）。')+' '
+      +'<b style="color:var(--text2);">'+t('结果仅供参考')+'</b>. '+t('可能存在遗漏或误判。')
+      +'</div>';
+  }else{
+    const noteText=projPlatform==='grok'?t('Grok 工作区通过导出中的 workspace_id 字段精确关联对话。'):t('Perplexity Space 来自 user-data 工作簿；如需补充关联可在下方手动修正。');
+    h+='<div style="font-size:11.5px;color:var(--text3);background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:8px 12px;margin-bottom:12px;line-height:1.6;">ℹ️ '+esc(noteText)+'</div>';
+  }
   if(relatedConvs.length){
     h+=relatedConvs.map(c=>'<div class="conv-item" data-project-conv="'+escAttr(c.uuid)+'" data-project-uuid="'+escAttr(p.uuid)+'" role="button" tabindex="0" style="border:1px solid var(--border);border-radius:10px;margin-bottom:8px;padding:10px 14px;">'
-      +'<div class="conv-title">'+esc(c.name||'('+t('无标题')+')')+'</div>'
+      +'<div class="conv-title">'+renderPlatformPill(c.sourcePlatform,{compact:true})+' '+esc(c.name||'('+t('无标题')+')')+'</div>'
       +'<div class="conv-meta"><span>'+fmtDate(c.updated_at)+'</span><span class="conv-count">'+(Number.isFinite(c.message_count)?c.message_count:(c.chat_messages||[]).length)+t('条')+'</span></div>'
       +projectMatchExplanation(c)+'<button type="button" data-ui-click="open-conversation" data-ui-value="'+escAttr(c.uuid)+'">'+t('打开对话')+'</button></div>').join('');
   } else {
@@ -6522,13 +6609,11 @@ function renderMsg(msg){
   const plain=content.filter(b=>b&&b.type==='text').map(b=>b.text||'').join('\n\n')||msg.text||'';
   MSGTEXT[cid]=currentConv?._readerBacked?{sourceIndex:msg._sourceIndex}:plain;
   const copyBtn=plain?'<button class="msgcopy" data-ui-click="copy-message" data-ui-value="'+cid+'" title="'+t('复制这条消息')+'">📋</button>':'';
-  const platform=msg.sourcePlatform||currentConv?.sourcePlatform||'claude';
-  const isGpt=msg.sender!=='human'&&platform==='gpt';
-  const isGrok=msg.sender!=='human'&&platform==='grok';
-  const isPplx=msg.sender!=='human'&&platform==='perplexity';
-  const avatarLabel=role==='human'?t('你'):isGpt?'◎':isGrok?'𝕏':isPplx?'❖':'✦';
-  const nameLabel=msg.sender==='human'?t('你'):msg.sender==='assistant'?(isGpt?'ChatGPT':isGrok?'Grok':isPplx?'Perplexity':'Claude'):msg.sender;
-  return '<div class="msg-wrap '+role+(isGpt?' gpt':isGrok?' grok':isPplx?' perplexity':'')+'"'+(Number.isInteger(msg._sourceIndex)?' data-source-index="'+msg._sourceIndex+'"':'')+'>'
+  const pMeta=platformMeta(msg.sourcePlatform||currentConv?.sourcePlatform||'claude');
+  const isAssistantLike=msg.sender!=='human';
+  const avatarLabel=role==='human'?t('你'):pMeta.avatar;
+  const nameLabel=msg.sender==='human'?t('你'):msg.sender==='assistant'?pMeta.name:msg.sender;
+  return '<div class="msg-wrap '+role+(isAssistantLike&&pMeta.id!=='claude'?' '+pMeta.id:'')+'"'+(Number.isInteger(msg._sourceIndex)?' data-source-index="'+msg._sourceIndex+'"':'')+'>'
     +'<div class="msg-avatar">'+avatarLabel+'</div>'
     +'<div class="msg-body">'
     +'<div class="msg-meta"><span class="msg-name">'+nameLabel+'</span><span>'+time+'</span>'+brNav+copyBtn+'</div>'
