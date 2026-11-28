@@ -2,7 +2,7 @@
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-pewkPJYq6M8btCQImOx8ND8ykoaf8MfhMbw4Tz2px7A=' 'sha256-tMIvewdj4Er6it91vRKx68b9zhu5Sxm35MV7o9YOuqs=' https://cdn.jsdelivr.net https://unpkg.com https://cdnjs.cloudflare.com blob:; script-src-attr 'none'; style-src 'unsafe-inline' https://cdn.jsdelivr.net https://unpkg.com https://cdnjs.cloudflare.com; img-src blob: data: https: http:; font-src data:; connect-src blob:; worker-src blob:; frame-src blob:; object-src 'none'; base-uri 'none'; form-action 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-x0cmv8WrfrJzPjMBPtO+D/jwnVCNSZ0kgayUjCdOvLk=' 'sha256-tMIvewdj4Er6it91vRKx68b9zhu5Sxm35MV7o9YOuqs=' https://cdn.jsdelivr.net https://unpkg.com https://cdnjs.cloudflare.com blob:; script-src-attr 'none'; style-src 'unsafe-inline' https://cdn.jsdelivr.net https://unpkg.com https://cdnjs.cloudflare.com; img-src blob: data: https: http:; font-src data:; connect-src blob:; worker-src blob:; frame-src blob:; object-src 'none'; base-uri 'none'; form-action 'none'">
 <meta name="referrer" content="no-referrer">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Multi-AI Web Export Reader — Local Claude, ChatGPT, Grok &amp; Perplexity Viewer</title>
@@ -559,7 +559,38 @@ mark.cs.active { background:var(--accent); color:#fff; }
 .quality-list { margin-top:10px; display:grid; gap:5px; font-size:12px; color:var(--text2); }
 .quality-list .warn { color:var(--orange); }
 .quality-list .bad { color:var(--red); }
-.behavior-page{max-width:1180px;margin:0 auto;padding:24px 28px 48px}.behavior-hero{display:flex;justify-content:space-between;gap:18px;align-items:flex-end;margin-bottom:18px}.behavior-heading{margin:4px 0;font-size:24px}.behavior-sub{color:var(--text3);font-size:12px;line-height:1.6}.behavior-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-bottom:12px}.behavior-card{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:15px}.behavior-card h3{font-size:13px;margin-bottom:7px;color:var(--text)}.behavior-card p{color:var(--text3);font-size:11.5px;line-height:1.6}.behavior-value{color:var(--accent);font-size:25px;font-weight:750;margin:3px 0 5px}.behavior-list{display:grid;gap:6px;margin-top:10px}.behavior-row{display:flex;justify-content:space-between;gap:10px;padding:8px 9px;background:var(--bg3);border-radius:7px;font-size:11.5px}.behavior-row span:last-child{color:var(--text3);text-align:right}.behavior-note{padding:10px 12px;border:1px solid var(--border);border-radius:9px;color:var(--text3);font-size:11px;line-height:1.6;margin-top:12px}@media(max-width:900px){.behavior-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.behavior-page{padding:18px 14px 36px}}
+.behavior-page{max-width:1180px;margin:0 auto;padding:24px 28px 48px}.behavior-hero{display:flex;justify-content:space-between;gap:18px;align-items:flex-end;margin-bottom:18px}.behavior-heading{margin:4px 0;font-size:24px}.behavior-sub{color:var(--text3);font-size:12px;line-height:1.6}.behavior-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-bottom:12px}.behavior-grid-2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-bottom:12px}.behavior-card{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:15px;box-shadow:var(--specular),var(--shadow)}.behavior-card h3{font-size:13px;margin-bottom:7px;color:var(--text);display:flex;align-items:center;justify-content:space-between;gap:8px}.behavior-card p{color:var(--text3);font-size:11.5px;line-height:1.6}.behavior-value{color:var(--accent);font-size:25px;font-weight:750;margin:3px 0 5px}.behavior-list{display:grid;gap:6px;margin-top:10px}.behavior-row{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:8px 9px;background:var(--bg3);border-radius:7px;font-size:11.5px}.behavior-row span:last-child{color:var(--text2);text-align:right;font-variant-numeric:tabular-nums;font-weight:600}.behavior-note{padding:10px 12px;border:1px solid var(--border);border-radius:9px;color:var(--text3);font-size:11px;line-height:1.6;margin-top:12px}
+.behavior-cc-section{margin-top:22px;padding-top:18px;border-top:1px solid var(--border)}
+.behavior-cc-head{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:flex-end;gap:12px;margin-bottom:14px;padding:14px 16px;border:1px solid color-mix(in srgb,#d97706 28%,var(--border));border-radius:14px;background:linear-gradient(135deg,color-mix(in srgb,#d97706 8%,var(--bg2)),var(--bg2));box-shadow:var(--specular),var(--shadow)}
+.behavior-cc-title{display:flex;align-items:center;gap:8px;font-size:16px;font-weight:750;color:var(--text);margin:3px 0 4px}
+.behavior-cc-alpha{display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:999px;font-size:10.5px;font-weight:700;background:rgba(217,119,6,.13);color:#b45309;border:1px solid rgba(217,119,6,.28)}
+[data-theme=dark] .behavior-cc-alpha{background:rgba(245,158,11,.16);color:#fbbf24;border-color:rgba(245,158,11,.32)}
+.behavior-cc-card{position:relative;overflow:hidden}
+.behavior-cc-card .behavior-badge{font-size:10.5px;font-weight:650;padding:2px 7px;border-radius:999px;background:var(--bg3);color:var(--text3);border:1px solid var(--border);white-space:nowrap}
+.behavior-badge.is-warn{background:color-mix(in srgb,var(--orange) 12%,var(--bg3));color:var(--orange);border-color:color-mix(in srgb,var(--orange) 28%,var(--border))}
+.behavior-badge.is-high{background:color-mix(in srgb,var(--red) 12%,var(--bg3));color:var(--red);border-color:color-mix(in srgb,var(--red) 28%,var(--border))}
+.behavior-badge.is-ok{background:color-mix(in srgb,var(--green) 12%,var(--bg3));color:var(--green);border-color:color-mix(in srgb,var(--green) 28%,var(--border))}
+.behavior-pills{display:flex;flex-wrap:wrap;gap:5px;margin-top:9px}
+.behavior-pill{display:inline-flex;align-items:center;gap:5px;padding:3px 8px;border-radius:6px;background:var(--bg3);border:1px solid var(--border);color:var(--text2);font-family:ui-monospace,SFMono-Regular,Consolas,monospace;font-size:10.5px;line-height:1.4}
+.behavior-pill b{color:var(--text);font-weight:700}
+.behavior-pill.is-warn{border-color:color-mix(in srgb,var(--orange) 35%,var(--border));color:var(--orange)}
+.behavior-pill.is-high{border-color:color-mix(in srgb,var(--red) 35%,var(--border));color:var(--red)}
+.behavior-meter-wrap{margin-top:10px}
+.behavior-meter-label{display:flex;justify-content:space-between;font-size:11px;color:var(--text2);margin-bottom:4px;font-variant-numeric:tabular-nums}
+.behavior-meter-track{height:7px;border-radius:99px;background:var(--bg3);overflow:hidden;border:1px solid var(--border)}
+.behavior-meter-fill{height:100%;border-radius:99px;background:linear-gradient(90deg,#16794b,#22c55e)}
+.behavior-meter-fill.is-warn{background:linear-gradient(90deg,#d97706,#f59e0b)}
+.behavior-event-list{display:grid;gap:6px;margin-top:10px;max-height:260px;overflow-y:auto;padding-right:2px}
+.behavior-event-btn{display:flex;align-items:center;justify-content:space-between;gap:10px;width:100%;max-width:100%;overflow:hidden;text-align:left;padding:8px 10px;border:1px solid var(--border);border-radius:8px;background:var(--bg3);color:var(--text);cursor:pointer;font:inherit;font-size:11.5px;transition:border-color .15s,background .15s}
+.behavior-event-btn:hover{border-color:var(--accent);background:var(--bg2)}
+.behavior-event-left{display:flex;align-items:center;gap:8px;flex:1;min-width:0;overflow:hidden}
+.behavior-sev-dot{width:7px;height:7px;border-radius:50%;flex:none;background:var(--blue)}
+.behavior-sev-dot.warn{background:var(--orange)}.behavior-sev-dot.high{background:var(--red)}
+.behavior-event-meta{display:flex;flex-direction:column;flex:1;min-width:0;overflow:hidden}
+.behavior-event-title{font-weight:650;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.behavior-event-detail{font-size:10.5px;color:var(--text3);font-family:ui-monospace,SFMono-Regular,Consolas,monospace;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.behavior-event-right{flex:none;font-size:10.5px;color:var(--accent);font-weight:600;white-space:nowrap}
+@media(max-width:900px){.behavior-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.behavior-grid-2{grid-template-columns:1fr}.behavior-page{padding:18px 14px 36px}}
 .welcome-actions { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:8px; width:520px; max-width:90vw; margin-top:16px; }
 .welcome-action { padding:12px 14px; border:1px solid var(--border); border-radius:10px; background:var(--bg2); text-align:left; }
 .welcome-action b { display:block; color:var(--text); font-size:13px; margin-bottom:4px; }
@@ -1475,7 +1506,57 @@ Object.assign(EN,{
   '代码块':'Code Block',
   '切换浅色主题':'Light theme',
   '切换深色主题':'Dark theme',
-  '更换目录':'Switch folder'
+  '更换目录':'Switch folder',
+  'Claude Code α 专项观测台':'Claude Code α Observability',
+  '基于本地 .jsonl 运行时遥测、stop_reason、分类器与成本记录的直接观测（非文本猜测）。':'Direct observability from local .jsonl wire telemetry, stop_reason, classifier, and cost-state records.',
+  'API 遥测请求':'API Telemetry Requests',
+  '硬拒答 / Safeguards':'Refusals & Safeguards',
+  '模型 Fallback / 无备选':'Fallbacks & No-Fallback',
+  '安全拦截与分类器':'Security Interceptors',
+  '📡 遥测信号与 API 配置':'📡 Telemetry & API Wire Config',
+  '还原被主时间线跳过的底层遥测记录、Thinking/Effort 参数与实验特性开关。':'Audits background telemetry records, thinking/effort wire settings, and active feature beta flags.',
+  'API 请求 / 查询来源':'api-request / querySource',
+  '消息块与形状缓存':'api-request-blob / shape',
+  'ATiS Latch / 文件快照':'atis-latch / file-history',
+  'Effort 与 Thinking 配置':'Effort & Thinking Config',
+  'Cache 控制断点':'cacheControl Breakpoints',
+  '运行期提醒注入':'Runtime Attachment Reminders',
+  '🛑 拒答链与中止归因':'🛑 Refusals & Safeguard Stops',
+  '精确区分协议层 stop_reason 拒答、Safeguards 中止提示、合成错误与用户打断。':'Distinguishes wire stop_reason refusals, safeguard notices, synthetic wrappers, and user interrupts.',
+  '协议硬拒答 (stop_reason=refusal)':'Wire Refusal (stop_reason=refusal)',
+  'Safeguards 中止提示':'Safeguard Stop Notices',
+  '合成错误包装 (<synthetic>)':'Synthetic Error (<synthetic>)',
+  '无备选拒绝 (no_fallback)':'Refusal (No Fallback)',
+  'API 异常 / 用户打断':'API Errors / User Interrupts',
+  '🔀 模型 Fallback 与重试延迟':'🔀 Model Fallback & Retry Overhead',
+  '追踪请求模型与实际执行模型差异、fallback-credit 激活与 API 重试耗时占比。':'Tracks requested vs actual model swaps, fallback-credit betas, and API retry overhead.',
+  '模型切换次数 (requested → actual)':'Model Swaps (requested → actual)',
+  'Fallback Credit Beta 请求':'fallback-credit Beta Requests',
+  'API 总耗时 / 无重试耗时':'API Duration / No-Retry',
+  '重试额外延迟':'Retry Overhead',
+  '工具执行总耗时':'Total Tool Duration',
+  '🛡️ 安全拦截器与权限护栏':'🛡️ Security Interceptors & Guardrails',
+  '汇总服务端安全分类器介入、Auto Mode 策略拒批、PreToolUse Hook 拦截与模式切换。':'Aggregates server safety classifiers, Auto Mode denials, Hook blocks, and permission mode transitions.',
+  '服务端分类器介入 (触发拒答)':'Server Classifier Calls (Refused)',
+  'Auto Mode 分类器拒批':'Auto Mode Classifier Denials',
+  'Hook 拦截 / 阻止继续':'Hook Blocks / Prevented',
+  '手动拒绝工具调用':'Manual Tool Denials',
+  '权限与运行模式轨迹':'Modes & Permission Modes',
+  '⚡ Cache 效率、成本与上下文压缩':'⚡ Cache Efficiency, Cost & Compaction',
+  '衡量 Prompt Cache 复用率、会话累计花费、代码变更行数及上下文压缩压力。':'Measures Prompt Cache reuse, cumulative session cost, code churn, and context compaction pressure.',
+  'Prompt Cache 命中率':'Prompt Cache Hit Rate',
+  '累计费用 / 代码增删':'Total Cost / Code Churn',
+  '上下文压缩 / 微压缩':'Compaction / Microcompact',
+  '压缩前平均 / 峰值 Token':'Avg / Peak Pre-Compact Tokens',
+  '回合中插队提示 (queued)':'Mid-turn Queued Prompts',
+  '📜 关键拦截与 Fallback 事件':'📜 Key Intercept & Fallback Events',
+  '按严重度排列 Claude Code 会话中的拒答、Fallback 与分类器拦截记录，点击直达原文。':'Highest-signal refusals, fallbacks, and classifier blocks across Claude Code sessions. Click to inspect.',
+  '打开会话':'Open session',
+  '暂无异常拦截或 Fallback 事件':'No refusal, fallback, or interceptor events recorded',
+  '暂未检测到具体切换对':'No model swap observed',
+  '正常':'Clean',
+  '需关注':'Watch',
+  '触发拦截':'Alert'
 });
 const UI_ICONS={
   spark:'<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2l1.3 3.7L13 7l-3.7 1.3L8 12l-1.3-3.7L3 7l3.7-1.3z"/></svg>',
@@ -3945,9 +4026,28 @@ function claudeCodeExportCore(){
     const seenToolResultIds=new Set();
     const seenHumanNorms=new Set();
     const seenPlanNorms=new Set();
+    const seenFallbackMsgIds=new Set();
     let lastInjectedKey='';
     let currentTurn=null;
     let pendingPreUserBlocks=[];
+
+    const telemetry={
+      recordTypes:{},
+      attachmentTypes:{},
+      apiRequests:{total:0,querySources:{},efforts:{},thinkingConfigs:{},betas:{},cacheControlBreakpoints:0,fallbackCreditRequests:0},
+      refusals:{stopRefusalIds:new Set(),syntheticErrors:0,safeguardNotices:0,noFallback:0,apiErrors:0,userInterrupts:0,categories:{}},
+      fallbacks:{modelSwaps:{},modelSwapCount:0,noFallbackCount:0},
+      interceptors:{serverClassifierIds:new Set(),serverClassifierRefusalIds:new Set(),autoModeDenials:0,autoModeRules:{},hookBlocks:0,stopHooksPrevented:0,hookErrors:0,manualDenials:0,autoModeConfig:null,modes:[],permissionModes:[]},
+      compaction:{boundaries:0,microBoundaries:0,preTokensSum:0,preTokensMax:0,preTokensCount:0,queuedPrompts:0},
+      costTiming:{apiDurationMs:0,apiNoRetryMs:0,toolDurationMs:0,totalDurationMs:0},
+      events:[]
+    };
+    const bump=(map,key,by=1)=>{if(!key)return;map[key]=(map[key]||0)+by;};
+    const pushMode=(arr,val)=>{const v=trim(val);if(v&&arr[arr.length-1]!==v)arr.push(v);};
+    const addTelemetryEvent=(kind,severity,detail,tsValue)=>{
+      if(telemetry.events.length>=24)return;
+      telemetry.events.push({kind,severity,detail:string(detail).slice(0,140),ts:tsValue||''});
+    };
 
     const noteTs=iso=>{
       if(!iso)return;
@@ -4041,6 +4141,7 @@ function claudeCodeExportCore(){
       const rtype=string(obj.type);
       const ts=parseDate(obj.timestamp);
       if(ts)noteTs(ts);
+      if(rtype)bump(telemetry.recordTypes,rtype);
 
       if(obj.sessionId&&!sessionId)sessionId=string(obj.sessionId);
       if(obj.cwd&&!cwd)cwd=string(obj.cwd);
@@ -4076,17 +4177,53 @@ function claudeCodeExportCore(){
           totalDurationMs:typeof obj.totalDuration==='number'?obj.totalDuration:null,
           modelUsage:obj.modelUsage&&typeof obj.modelUsage==='object'?obj.modelUsage:null
         };
+        if(typeof obj.totalAPIDuration==='number'&&Number.isFinite(obj.totalAPIDuration))telemetry.costTiming.apiDurationMs=obj.totalAPIDuration;
+        if(typeof obj.totalAPIDurationWithoutRetries==='number'&&Number.isFinite(obj.totalAPIDurationWithoutRetries))telemetry.costTiming.apiNoRetryMs=obj.totalAPIDurationWithoutRetries;
+        if(typeof obj.totalToolDuration==='number'&&Number.isFinite(obj.totalToolDuration))telemetry.costTiming.toolDurationMs=obj.totalToolDuration;
+        if(typeof obj.totalDuration==='number'&&Number.isFinite(obj.totalDuration))telemetry.costTiming.totalDurationMs=obj.totalDuration;
         continue;
       }
       if(rtype==='mode'){
         const nextMode=string(obj.mode);
+        pushMode(telemetry.interceptors.modes,nextMode);
         if(nextMode&&nextMode!==latestMode){
           const hadMode=!!latestMode;
           latestMode=nextMode;
           if(hadMode||nextMode!=='normal'){
             queueInjected('cc:mode:'+nextMode,'Mode switched to: '+nextMode);
+            addTelemetryEvent('mode_switch','info',nextMode,ts);
           }
         }
+        continue;
+      }
+      if(rtype==='permission-mode'){
+        const pmode=string(obj.permissionMode||obj.mode);
+        pushMode(telemetry.interceptors.permissionModes,pmode);
+        if(pmode&&pmode!=='default'&&pmode!=='normal')addTelemetryEvent('permission_mode','info',pmode,ts);
+        continue;
+      }
+      if(rtype==='api-request'){
+        telemetry.apiRequests.total++;
+        if(trim(obj.querySource))bump(telemetry.apiRequests.querySources,trim(obj.querySource));
+        const p=obj.params&&typeof obj.params==='object'?obj.params:null;
+        if(p){
+          if(trim(p.output_config?.effort))bump(telemetry.apiRequests.efforts,trim(p.output_config.effort));
+          if(p.thinking&&typeof p.thinking==='object'){
+            const tk=[string(p.thinking.type),string(p.thinking.display)].filter(Boolean).join('/');
+            if(tk)bump(telemetry.apiRequests.thinkingConfigs,tk);
+          }
+          if(Array.isArray(p.betas)){
+            let hasFallbackCredit=false;
+            for(const b of p.betas){
+              const bs=trim(b);
+              if(!bs)continue;
+              bump(telemetry.apiRequests.betas,bs);
+              if(/^fallback-credit/i.test(bs))hasFallbackCredit=true;
+            }
+            if(hasFallbackCredit)telemetry.apiRequests.fallbackCreditRequests++;
+          }
+        }
+        if(Array.isArray(obj.cacheControl))telemetry.apiRequests.cacheControlBreakpoints+=obj.cacheControl.length;
         continue;
       }
 
@@ -4094,26 +4231,70 @@ function claudeCodeExportCore(){
 
       if(rtype==='system'){
         const stype=string(obj.subtype);
-        if(stype==='compact_boundary'){
-          compactedCount++;
+        if(stype==='compact_boundary'||stype==='microcompact_boundary'){
+          if(stype==='microcompact_boundary')telemetry.compaction.microBoundaries++;
+          else{compactedCount++;telemetry.compaction.boundaries++;}
           const trigger=obj.compactMetadata?.trigger||'auto';
-          const preTokens=obj.compactMetadata?.preTokens;
-          const label='Context compacted ('+trigger+(preTokens?', pre-tokens: '+preTokens:'')+')';
+          const preTokens=Number(obj.compactMetadata?.preTokens);
+          if(Number.isFinite(preTokens)&&preTokens>0){
+            telemetry.compaction.preTokensSum+=preTokens;
+            telemetry.compaction.preTokensMax=Math.max(telemetry.compaction.preTokensMax,preTokens);
+            telemetry.compaction.preTokensCount++;
+          }
+          const label='Context compacted ('+trigger+(Number.isFinite(preTokens)&&preTokens>0?', pre-tokens: '+preTokens:'')+')';
           queueInjected('cc:compacted',label);
+          addTelemetryEvent('compaction','info',trigger+(Number.isFinite(preTokens)&&preTokens>0?' ('+preTokens+' tok)':''),ts);
           continue;
         }
         if(stype==='turn_duration'){
           // Optional subtle duration metadata; skip injecting clutter unless needed
           continue;
         }
-        if(stype==='model_refusal_no_fallback'||stype==='api_error'||obj.level==='warning'||obj.level==='error'){
+        if(stype==='model_refusal_no_fallback'){
+          telemetry.refusals.noFallback++;
+          telemetry.fallbacks.noFallbackCount++;
+          const cat=trim(obj.apiRefusalCategory)||'unspecified';
+          bump(telemetry.refusals.categories,cat);
+          const origModel=trim(obj.originalModel)||'unknown';
+          addTelemetryEvent('no_fallback','high',origModel+' ['+cat+']',ts);
           const t=ensureTurn(ts);
-          const msgText=trim(obj.content||obj.error?.message||obj.apiRefusalExplanation)||(stype==='model_refusal_no_fallback'?'Model refusal (no fallback)':'System alert');
+          const msgText=trim(obj.content||obj.error?.message||obj.apiRefusalExplanation)||'Model refusal (no fallback)';
+          t.blocks.push({type:'text',text:'_[Turn aborted: '+msgText+']_'});
+          continue;
+        }
+        if(stype==='model_fallback'){
+          const fromM=trim(obj.originalModel||obj.fromModel);
+          const toM=trim(obj.fallbackModel||obj.targetModel||obj.newModel);
+          const pair=fromM&&toM?(fromM+' → '+toM):(toM||'model_fallback');
+          bump(telemetry.fallbacks.modelSwaps,pair);
+          telemetry.fallbacks.modelSwapCount++;
+          addTelemetryEvent('fallback','warn',pair,ts);
+          const infoText=trim(obj.content);
+          if(infoText)queueInjected('cc:system:model_fallback',infoText);
+          continue;
+        }
+        if(stype==='stop_hook_summary'){
+          const prevented=!!obj.preventedContinuation;
+          const errLen=Array.isArray(obj.hookErrors)?obj.hookErrors.length:0;
+          if(prevented){telemetry.interceptors.stopHooksPrevented++;telemetry.interceptors.hookBlocks++;}
+          if(errLen)telemetry.interceptors.hookErrors+=errLen;
+          if(prevented||errLen)addTelemetryEvent('hook_block',prevented?'warn':'info',(prevented?'preventedContinuation':'hookError')+(obj.hookCount?' ('+obj.hookCount+' hooks)':''),ts);
+          continue;
+        }
+        if(stype==='api_error'||obj.level==='warning'||obj.level==='error'){
+          telemetry.refusals.apiErrors++;
+          addTelemetryEvent('api_error','warn',trim(obj.error?.error?.type||obj.error?.type||stype||'api_error'),ts);
+          const t=ensureTurn(ts);
+          const msgText=trim(obj.content||obj.error?.message||obj.apiRefusalExplanation)||'System alert';
           t.blocks.push({type:'text',text:'_[Turn aborted: '+msgText+']_'});
           continue;
         }
         if(stype==='informational'||stype==='local_command'){
           const infoText=trim(obj.content);
+          if(stype==='informational'&&/safeguards stopped/i.test(infoText)){
+            telemetry.refusals.safeguardNotices++;
+            addTelemetryEvent('safeguard_stop','warn',infoText.slice(0,90),ts);
+          }
           if(infoText)queueInjected('cc:system:'+stype,infoText);
           continue;
         }
@@ -4124,6 +4305,16 @@ function claudeCodeExportCore(){
         const att=obj.attachment;
         if(!att||typeof att!=='object')continue;
         const atype=string(att.type);
+        if(atype)bump(telemetry.attachmentTypes,atype);
+        if(atype==='auto_mode'){
+          telemetry.interceptors.autoModeConfig={
+            consentFlow:!!att.autoModeConsentFlow,
+            bashFirst:!!att.bashFirst,
+            bashFirstSteer:string(att.bashFirstSteer),
+            steerOnly:!!att.steerOnly,
+            bypass:!!att.bypass
+          };
+        }
         if(atype==='model'&&trim(att.identity))defaultModel=trim(att.identity);
         if(SKIP_ATTACHMENT_TYPES.has(atype))continue;
 
@@ -4134,6 +4325,7 @@ function claudeCodeExportCore(){
           if(att.commandMode==='prompt'||att.humanTurn===true){
             const norm=normDedupe(cleaned);
             if(norm&&!seenHumanNorms.has(norm)){
+              telemetry.compaction.queuedPrompts++;
               flushTurn();
               if(!firstPromptCandidate&&cleaned)firstPromptCandidate=cleaned.split(/\r?\n/)[0].slice(0,90);
               for(const c of contextChunks)pendingPreUserBlocks.push({type:'injected_prompt_block',injection_source:'cc:context:'+c.tag,prompt:c.text});
@@ -4197,6 +4389,8 @@ function claudeCodeExportCore(){
           }
           if(cleaned){
             if(/^\[Request interrupted by user/i.test(cleaned)){
+              telemetry.refusals.userInterrupts++;
+              addTelemetryEvent('interrupt','info',cleaned.replace(/^\[|\]$/g,''),ts);
               const t=ensureTurn(ts);
               t.blocks.push({type:'text',text:'_[Turn aborted: '+cleaned.replace(/^\[|\]$/g,'')+']_'});
             }else if(obj.isCompactSummary===true){
@@ -4236,6 +4430,21 @@ function claudeCodeExportCore(){
 
               const formatted=formatToolResultOutput(item.content,rawTur,warnings,toolName);
               const isErr=!!(item.is_error||formatted.isError);
+              if(isErr||typeof rawTur==='string'){
+                const errSignal=[typeof rawTur==='string'?rawTur:'',formatted.text].filter(Boolean).join('\n');
+                if(/denied by the Claude Code auto mode classifier/i.test(errSignal)){
+                  telemetry.interceptors.autoModeDenials++;
+                  const rm=/\[([^\]]{2,40})\]/.exec(errSignal);
+                  const ruleName=rm?rm[1]:'AutoMode';
+                  bump(telemetry.interceptors.autoModeRules,ruleName);
+                  addTelemetryEvent('auto_mode_deny','warn',(toolName||'tool')+(rm?' ['+ruleName+']':''),ts);
+                }else if(/\b(?:PreToolUse|PostToolUse)\s+hook\b|Execution stopped by .*hook/i.test(errSignal)){
+                  telemetry.interceptors.hookBlocks++;
+                  addTelemetryEvent('hook_block','warn',(toolName||'tool')+' hook blocked',ts);
+                }else if(/doesn't want to proceed|User rejected|Permission for this action was denied/i.test(errSignal)){
+                  telemetry.interceptors.manualDenials++;
+                }
+              }
               const t=ensureTurn(ts);
               const resBlocks=[];
               if(formatted.text)resBlocks.push({type:'text',text:formatted.text});
@@ -4306,6 +4515,12 @@ function claudeCodeExportCore(){
         const isSynthetic=rawModel==='<synthetic>'||!!obj.isApiErrorMessage;
         if(rawModel&&rawModel!=='<synthetic>')defaultModel=rawModel;
 
+        if(trim(obj.serverClassifierRequest)){
+          const cid=trim(obj.serverClassifierRequest);
+          telemetry.interceptors.serverClassifierIds.add(cid);
+          if(msg.stop_reason==='refusal')telemetry.interceptors.serverClassifierRefusalIds.add(cid);
+        }
+
         const t=ensureTurn(ts,rawModel!=='<synthetic>'?rawModel:'');
 
         if(msgId){
@@ -4319,11 +4534,34 @@ function claudeCodeExportCore(){
         }
 
         if(isSynthetic){
+          if(msg.stop_reason==='refusal'||obj.refusedMessageId||obj.error){
+            telemetry.refusals.syntheticErrors++;
+            if(obj.error)bump(telemetry.refusals.categories,string(obj.error));
+          }
           const synthText=list(msg.content).filter(b=>b?.type==='text').map(b=>trim(b.text)).filter(Boolean).join('\n');
           if(synthText&&!/^No response requested\.?$/i.test(synthText)){
             t.blocks.push({type:'text',text:'_[Turn aborted: '+synthText+']_'});
           }
           continue;
+        }
+
+        if(msg.stop_reason==='refusal'){
+          const rKey=msgId||('line-'+lineIdx);
+          if(!telemetry.refusals.stopRefusalIds.has(rKey)){
+            telemetry.refusals.stopRefusalIds.add(rKey);
+            addTelemetryEvent('refusal','high',(rawModel||'assistant')+(obj.serverClassifierRequest?' + serverClassifier':''),ts);
+          }
+        }
+        const reqModel=trim(obj.requestedModel);
+        if(reqModel&&rawModel&&reqModel!==rawModel){
+          const fKey=msgId||('line-'+lineIdx);
+          if(!seenFallbackMsgIds.has(fKey)){
+            seenFallbackMsgIds.add(fKey);
+            const swapPair=reqModel+' → '+rawModel;
+            bump(telemetry.fallbacks.modelSwaps,swapPair);
+            telemetry.fallbacks.modelSwapCount++;
+            addTelemetryEvent('fallback','warn',swapPair,ts);
+          }
         }
 
         for(const b of list(msg.content)){
@@ -4467,6 +4705,41 @@ function claudeCodeExportCore(){
           totalDurationMs:latestCostState.totalDurationMs
         }:{}),
         ...(countedUsage?{usage:{input_tokens:inputTokens,output_tokens:outputTokens,cache_read_input_tokens:cacheReadTokens,cache_creation_input_tokens:cacheCreateTokens,total_tokens:totalTokens}}:{})
+      },
+      claudeCodeTelemetry:{
+        recordTypes:telemetry.recordTypes,
+        attachmentTypes:telemetry.attachmentTypes,
+        apiRequests:telemetry.apiRequests,
+        refusals:{
+          stopRefusal:telemetry.refusals.stopRefusalIds.size,
+          syntheticErrors:telemetry.refusals.syntheticErrors,
+          safeguardNotices:telemetry.refusals.safeguardNotices,
+          noFallback:telemetry.refusals.noFallback,
+          apiErrors:telemetry.refusals.apiErrors,
+          userInterrupts:telemetry.refusals.userInterrupts,
+          categories:telemetry.refusals.categories
+        },
+        fallbacks:telemetry.fallbacks,
+        interceptors:{
+          serverClassifierRequests:telemetry.interceptors.serverClassifierIds.size,
+          serverClassifierRefusals:telemetry.interceptors.serverClassifierRefusalIds.size,
+          autoModeDenials:telemetry.interceptors.autoModeDenials,
+          autoModeRules:telemetry.interceptors.autoModeRules,
+          hookBlocks:telemetry.interceptors.hookBlocks,
+          stopHooksPrevented:telemetry.interceptors.stopHooksPrevented,
+          hookErrors:telemetry.interceptors.hookErrors,
+          manualDenials:telemetry.interceptors.manualDenials,
+          ...(telemetry.interceptors.autoModeConfig?{autoModeConfig:telemetry.interceptors.autoModeConfig}:{}),
+          modes:telemetry.interceptors.modes,
+          permissionModes:telemetry.interceptors.permissionModes
+        },
+        compaction:telemetry.compaction,
+        costTiming:{
+          ...telemetry.costTiming,
+          retryOverheadMs:(telemetry.costTiming.apiDurationMs>0&&telemetry.costTiming.apiNoRetryMs>=0&&telemetry.costTiming.apiDurationMs>=telemetry.costTiming.apiNoRetryMs)
+            ?(telemetry.costTiming.apiDurationMs-telemetry.costTiming.apiNoRetryMs):0
+        },
+        events:telemetry.events
       },
       importWarnings:warnings,
       chat_messages:messages
@@ -4653,7 +4926,7 @@ const IDENTIFIER_KEY=/^(?:device[_ -]?id|user[_ -]?id|visitor[_ -]?id|session[_ 
 const CONTEXT_SECRET_RE=/((?:(?:cohere)[ \t]+(?:api[ \t]+)?key|device[_ -]?id|user[_ -]?id|visitor[_ -]?id|fingerprint|session[_ -]?id|storage[_ -]?key|access[_ -]?token|refresh[_ -]?token|auth[_ -]?token|id[_ -]?token|client[_ -]?secret|api[_ -]?key|access[_ -]?key|private[_ -]?key|aws[_ -]?secret[_ -]?access[_ -]?key|db[_ -]?password|password|passwd|pwd|passphrase|token|secret|did|密码|口令|密钥)\s*["']?\s*[:=：]\s*)(?:"([^"\r\n]+)"|'([^'\r\n]+)'|([^\s,"'，。；;<>\]}]+))/gi;
 const QUERY_SECRET_RE=/([?&#](?:token|access_token|refresh_token|id_token|auth|authorization|api[_-]?key|key|sid|session|device_id|did|t|sig|signature|x-amz-signature|x-amz-credential|x-amz-security-token|x-goog-signature|x-goog-credential)=)([^\s&#"'<>）)\]}]+)/gi;
 const STRICT_CONTEXT_RE=/((?:姓名|名字|联系人|老师|教师|教授|班主任|校长|学校|学院|大学|中学|小学|幼儿园|公司|单位|部门|微信|wechat|qq|微博|抖音|uid|用户[_ -]?id|account[_ -]?id|open[_ -]?id|social[_ -]?id|身份证(?:号)?|护照(?:号)?|passport(?:[ \t]+(?:no|number))?|ssn|住址|地址|家庭住址|工作地址|full[_ -]?name|phone|telephone|mobile|address)\s*[：:=]\s*["']?)([^\s,"'，。；;]{2,80})/gi;
-const REDACTION_METADATA=new Set(['tool_input','input','metadata','file_path','path']);
+const REDACTION_METADATA=new Set(['tool_input','input','metadata','file_path','path','claudeCodeTelemetry']);
 const REDACTION_PATH_KEYS=new Set('conversation name title summary chat_messages content text thinking prompt injection_source summaries attachments files file_name filename file_type file_size media_type url uri data value metadata tool_input input path file_path account uuid parent_message_uuid sender type structured_content display_content output created_at updated_at start_timestamp stop_timestamp tool_use_id id model thinking_hidden truncated signature _design _sourcePackage'.split(' '));
 function redactionOptions(options={}){
   const terms=Array.isArray(options.customTerms)?options.customTerms:String(options.customTerms||'').split(/\r?\n/);
@@ -4742,11 +5015,39 @@ function redactConversation(conv,style='standard',strict=false,options={}){const
   }
   async function behavior(records,checkpoint){
     const out={conversations:0,messages:0,tools:0,toolResults:0,paired:0,unpairedUse:0,unpairedResult:0,errors:0,approvals:0,mcp:0,structured:0,hiddenResults:0,thinking:0,thinkingHidden:0,thinkingTruncated:0,thinkingCutoff:0,thinkingSummary:0,thinkingSigned:0,thinkingDurationMs:0,quality:{refusal:0,fallback:0,latency:0,empty:0,truncated:0},examples:[]};
+    const cc={sessions:0,subagentSessions:0,agentTypes:{},models:{},telemetry:{recordTypes:{},attachmentTypes:{},apiRequests:0,querySources:{},efforts:{},thinkingConfigs:{},betas:{},cacheControlBreakpoints:0},refusals:{stopRefusal:0,syntheticErrors:0,safeguardNotices:0,noFallback:0,apiErrors:0,userInterrupts:0,categories:{}},fallbacks:{modelSwaps:{},modelSwapCount:0,fallbackCreditRequests:0,noFallbackCount:0},interceptors:{serverClassifierRequests:0,serverClassifierRefusals:0,autoModeDenials:0,autoModeRules:{},hookBlocks:0,stopHooksPrevented:0,hookErrors:0,manualDenials:0,autoModeProfiles:{},modes:{},permissionModes:{}},efficiency:{totalCostUSD:0,costSessions:0,inputTokens:0,outputTokens:0,cacheReadTokens:0,cacheCreateTokens:0,linesAdded:0,linesRemoved:0,apiDurationMs:0,apiNoRetryMs:0,retryOverheadMs:0,toolDurationMs:0,totalDurationMs:0},compaction:{boundaries:0,microBoundaries:0,preTokensSum:0,preTokensMax:0,preTokensCount:0,queuedPrompts:0},events:[]};
+    const mergeMap=(target,src)=>{if(!src||typeof src!=='object')return;for(const [k,v]of Object.entries(src))if(typeof v==='number'&&Number.isFinite(v))target[k]=(target[k]||0)+v;};
     const stable=value=>{if(Array.isArray(value))return value.map(stable);if(value&&typeof value==='object'){const result={};for(const key of Object.keys(value).sort())result[key]=stable(value[key]);return result;}return value;},different=(a,b)=>JSON.stringify(stable(a))!==JSON.stringify(stable(b));
     const uses=new Map(),results=new Map(),refusal=/(?:我(?:不能|无法|不可以|不会)(?:帮助|协助|提供|执行|生成|完成)|抱歉[^。！？\n]{0,40}(?:不能|无法)|\b(?:can't|cannot|won't|unable to)\s+(?:help|assist|provide|comply|create|generate|do that)\b)/iu,fallback=/(?:当前模型|这个模型|能力受限|降级模式|只能提供[^。！？\n]{0,18}(?:概括|一般性信息|高层次建议))|\b(?:as an ai|language model|model limitation|not available in this mode)\b/iu;
-    for await(const record of records){out.conversations++;const conversation=JSON.parse(record.raw),messages=list(conversation.chat_messages);out.messages+=messages.length;let previous=null,processed=0;for(const message of messages){if(processed++%128===0)await checkpoint();const text=messageText(message).trim(),time=Date.parse(message.created_at||message.updated_at||'')||0;if(!text&&message.sender!=='system'&&!list(message.content).some(block=>/tool|thinking|result|image|injected/i.test(String(block?.type||''))))out.quality.empty++;if(message.sender==='assistant'){if(refusal.test(text))out.quality.refusal++;if(fallback.test(text))out.quality.fallback++;if(/(?:\.\.\.|…|回答未完|to be continued)$/i.test(text))out.quality.truncated++;if(previous?.sender==='human'&&previous.time&&time&&time-previous.time>30*60*1000)out.quality.latency++;}previous={sender:message.sender,time};
+    for await(const record of records){out.conversations++;const conversation=JSON.parse(record.raw),messages=list(conversation.chat_messages);out.messages+=messages.length;
+      if(conversation.sourcePlatform==='claude_code'){
+        cc.sessions++;const meta=conversation.claudeCodeMeta||{},tel=conversation.claudeCodeTelemetry||{};
+        if(meta.isSubagent){cc.subagentSessions++;const at=String(meta.agentType||meta.agentNickname||'subagent');cc.agentTypes[at]=(cc.agentTypes[at]||0)+1;}
+        if(conversation.defaultModel){const dm=String(conversation.defaultModel);cc.models[dm]=(cc.models[dm]||0)+1;}
+        if(typeof meta.totalCostUSD==='number'&&Number.isFinite(meta.totalCostUSD)){cc.efficiency.totalCostUSD+=meta.totalCostUSD;cc.efficiency.costSessions++;}
+        if(typeof meta.totalLinesAdded==='number')cc.efficiency.linesAdded+=meta.totalLinesAdded;
+        if(typeof meta.totalLinesRemoved==='number')cc.efficiency.linesRemoved+=meta.totalLinesRemoved;
+        if(meta.usage){cc.efficiency.inputTokens+=Number(meta.usage.input_tokens||0);cc.efficiency.outputTokens+=Number(meta.usage.output_tokens||0);cc.efficiency.cacheReadTokens+=Number(meta.usage.cache_read_input_tokens||0);cc.efficiency.cacheCreateTokens+=Number(meta.usage.cache_creation_input_tokens||0);}
+        mergeMap(cc.telemetry.recordTypes,tel.recordTypes);mergeMap(cc.telemetry.attachmentTypes,tel.attachmentTypes);
+        if(tel.apiRequests){cc.telemetry.apiRequests+=Number(tel.apiRequests.total||0);cc.telemetry.cacheControlBreakpoints+=Number(tel.apiRequests.cacheControlBreakpoints||0);cc.fallbacks.fallbackCreditRequests+=Number(tel.apiRequests.fallbackCreditRequests||0);mergeMap(cc.telemetry.querySources,tel.apiRequests.querySources);mergeMap(cc.telemetry.efforts,tel.apiRequests.efforts);mergeMap(cc.telemetry.thinkingConfigs,tel.apiRequests.thinkingConfigs);mergeMap(cc.telemetry.betas,tel.apiRequests.betas);}
+        if(tel.refusals){cc.refusals.stopRefusal+=Number(tel.refusals.stopRefusal||0);cc.refusals.syntheticErrors+=Number(tel.refusals.syntheticErrors||0);cc.refusals.safeguardNotices+=Number(tel.refusals.safeguardNotices||0);cc.refusals.noFallback+=Number(tel.refusals.noFallback||0);cc.refusals.apiErrors+=Number(tel.refusals.apiErrors||0);cc.refusals.userInterrupts+=Number(tel.refusals.userInterrupts||0);mergeMap(cc.refusals.categories,tel.refusals.categories);}
+        if(tel.fallbacks){cc.fallbacks.modelSwapCount+=Number(tel.fallbacks.modelSwapCount||0);cc.fallbacks.noFallbackCount+=Number(tel.fallbacks.noFallbackCount||0);mergeMap(cc.fallbacks.modelSwaps,tel.fallbacks.modelSwaps);}
+        if(tel.interceptors){cc.interceptors.serverClassifierRequests+=Number(tel.interceptors.serverClassifierRequests||0);cc.interceptors.serverClassifierRefusals+=Number(tel.interceptors.serverClassifierRefusals||0);cc.interceptors.autoModeDenials+=Number(tel.interceptors.autoModeDenials||0);cc.interceptors.hookBlocks+=Number(tel.interceptors.hookBlocks||0);cc.interceptors.stopHooksPrevented+=Number(tel.interceptors.stopHooksPrevented||0);cc.interceptors.hookErrors+=Number(tel.interceptors.hookErrors||0);cc.interceptors.manualDenials+=Number(tel.interceptors.manualDenials||0);mergeMap(cc.interceptors.autoModeRules,tel.interceptors.autoModeRules);
+          for(const m of list(tel.interceptors.modes))cc.interceptors.modes[m]=(cc.interceptors.modes[m]||0)+1;
+          for(const pm of list(tel.interceptors.permissionModes))cc.interceptors.permissionModes[pm]=(cc.interceptors.permissionModes[pm]||0)+1;
+          if(tel.interceptors.autoModeConfig){const ac=tel.interceptors.autoModeConfig,pKey=[ac.bashFirst?'bashFirst':'',ac.bashFirstSteer?'steer:'+ac.bashFirstSteer:'',ac.steerOnly?'steerOnly':'',ac.bypass?'bypass':''].filter(Boolean).join(', ')||'default';cc.interceptors.autoModeProfiles[pKey]=(cc.interceptors.autoModeProfiles[pKey]||0)+1;}
+        }
+        if(tel.compaction){cc.compaction.boundaries+=Number(tel.compaction.boundaries||0);cc.compaction.microBoundaries+=Number(tel.compaction.microBoundaries||0);cc.compaction.preTokensSum+=Number(tel.compaction.preTokensSum||0);cc.compaction.preTokensMax=Math.max(cc.compaction.preTokensMax,Number(tel.compaction.preTokensMax||0));cc.compaction.preTokensCount+=Number(tel.compaction.preTokensCount||0);cc.compaction.queuedPrompts+=Number(tel.compaction.queuedPrompts||0);}
+        if(tel.costTiming){cc.efficiency.apiDurationMs+=Number(tel.costTiming.apiDurationMs||0);cc.efficiency.apiNoRetryMs+=Number(tel.costTiming.apiNoRetryMs||0);cc.efficiency.retryOverheadMs+=Number(tel.costTiming.retryOverheadMs||0);cc.efficiency.toolDurationMs+=Number(tel.costTiming.toolDurationMs||0);cc.efficiency.totalDurationMs+=Number(tel.costTiming.totalDurationMs||0);}
+        for(const ev of list(tel.events))cc.events.push({uuid:conversation.uuid,title:conversation.name||'',...ev});
+      }
+      let previous=null,processed=0;for(const message of messages){if(processed++%128===0)await checkpoint();const text=messageText(message).trim(),time=Date.parse(message.created_at||message.updated_at||'')||0;if(!text&&message.sender!=='system'&&!list(message.content).some(block=>/tool|thinking|result|image|injected/i.test(String(block?.type||''))))out.quality.empty++;if(message.sender==='assistant'){if(refusal.test(text))out.quality.refusal++;if(fallback.test(text))out.quality.fallback++;if(/(?:\.\.\.|…|回答未完|to be continued)$/i.test(text))out.quality.truncated++;if(previous?.sender==='human'&&previous.time&&time&&time-previous.time>30*60*1000)out.quality.latency++;}previous={sender:message.sender,time};
         for(const block of list(message.content)){if(!block||typeof block!=='object')continue;const type=String(block.type||'');if(type==='tool_use'||type==='server_tool_use'){out.tools++;const id=block.id||block.tool_use_id;if(id)uses.set(id,true);if(block.approval_key||block.approval_key_legacy||block.approval_options)out.approvals++;if(block.is_mcp_app||block.mcp_server_url||block.integration_name)out.mcp++;if(out.examples.length<8)out.examples.push({name:block.name||block.tool_identifier||'unknown',status:'调用'});}else if(type==='tool_result'||type==='web_search_tool_result'||type==='web_search_result'){out.toolResults++;const id=block.tool_use_id||block.id;if(id)results.set(id,true);if(block.is_error)out.errors++;if(block.structured_content||block.meta)out.structured++;const hasDisplay=block.display_content!==undefined&&block.display_content!==null,hasContent=block.content!==undefined&&block.content!==null;if((hasDisplay&&hasContent&&different(block.display_content,block.content))||(!hasDisplay&&(block.structured_content||block.meta)))out.hiddenResults++;}else if(type==='thinking'){out.thinking++;if(block.hidden||block.thinking_hidden)out.thinkingHidden++;if(block.truncated||block.cut_off)out.thinkingTruncated++;if(block.cut_off)out.thinkingCutoff++;if(block.summaries||block.alternative_display_type)out.thinkingSummary++;if(block.signature)out.thinkingSigned++;if(typeof block.duration_ms==='number'&&Number.isFinite(block.duration_ms)&&block.duration_ms>0)out.thinkingDurationMs+=block.duration_ms;else{const start=Date.parse(block.start_timestamp),stop=Date.parse(block.stop_timestamp);if(start&&stop&&stop>=start)out.thinkingDurationMs+=stop-start;}}}
       }}
+    const sevRank={high:3,warn:2,info:1};
+    cc.events.sort((a,b)=>(sevRank[b.severity]||0)-(sevRank[a.severity]||0)||String(b.ts||'').localeCompare(String(a.ts||'')));
+    if(cc.events.length>40)cc.events.length=40;
+    if(cc.sessions>0)out.claudeCode=cc;
     for(const id of uses.keys())if(results.has(id))out.paired++;else out.unpairedUse++;for(const id of results.keys())if(!uses.has(id))out.unpairedResult++;return out;
   }
 
@@ -7812,9 +8113,113 @@ async function startBehaviorLab(){
   behaviorPromise=behaviorPromise.then(r=>{if(generation!==dataWorkerGeneration)throw abortFeature();behaviorResult=r;behaviorPromise=null;return r;}).catch(e=>{behaviorPromise=null;throw e;});return behaviorPromise;
 }
 function behaviorMetric(icon,value,label){if(label==='Tool 配对率'&&!behaviorResult?.tools)value='—';return '<div class="metric-card"><div class="metric-icon">'+icon+'</div><div class="metric-value">'+esc(String(value))+'</div><div class="metric-label">'+label+'</div></div>';}
+function renderClaudeCodeBehaviorSection(cc){
+  if(!cc||!cc.sessions)return '';
+  const nf=n=>Number(n||0).toLocaleString(currentLang==='en'?'en-US':'zh-CN');
+  const fmtDur=ms=>ms>0&&ms<1000?(Math.round(ms)+'ms'):analyticsDuration(ms||0);
+  const tel=cc.telemetry||{},ref=cc.refusals||{},fb=cc.fallbacks||{},ic=cc.interceptors||{},eff=cc.efficiency||{},cmp=cc.compaction||{};
+  const rt=tel.recordTypes||{},at=tel.attachmentTypes||{};
+  const totalRefusals=(ref.stopRefusal||0)+(ref.safeguardNotices||0)+(ref.noFallback||0);
+  const totalFallbacks=(fb.modelSwapCount||0)+(fb.noFallbackCount||0);
+  const totalInterceptors=(ic.serverClassifierRequests||0)+(ic.autoModeDenials||0)+(ic.hookBlocks||0);
+  const cacheDenom=(eff.inputTokens||0)+(eff.cacheCreateTokens||0)+(eff.cacheReadTokens||0);
+  const cacheRate=cacheDenom>0?Math.round((eff.cacheReadTokens||0)/cacheDenom*100):0;
+  const retryPct=eff.apiDurationMs>0?Math.round((eff.retryOverheadMs||0)/eff.apiDurationMs*100):0;
+  const avgPreTokens=cmp.preTokensCount>0?Math.round(cmp.preTokensSum/cmp.preTokensCount):0;
+  const topMap=(map,limit=8)=>Object.entries(map||{}).sort((a,b)=>b[1]-a[1]).slice(0,limit);
+  const pillsHtml=(entries,cls='')=>entries.map(([k,v])=>'<span class="behavior-pill'+cls+'"><span>'+esc(k)+'</span><b>'+nf(v)+'</b></span>').join('');
+  const badge=(count,warnText='需关注',okText='正常',highText='触发拦截',isHigh=false)=>{
+    if(count<=0)return '<span class="behavior-badge is-ok">'+esc(t(okText))+'</span>';
+    return '<span class="behavior-badge '+(isHigh?'is-high':'is-warn')+'">'+esc(t(isHigh?highText:warnText))+' · '+nf(count)+'</span>';
+  };
+  const reminderCount=(at.total_tokens_reminder||0)+(at.batching_reminder_sent||0)+(at.silent_turn_reminder||0)+(at.prompt_snapshot||0);
+  const qsList=topMap(tel.querySources,4).map(([k,v])=>k+': '+v).join(', ')||'—';
+  const cfgList=[...topMap(tel.efforts,3).map(([k,v])=>'effort='+k+' ('+v+')'),...topMap(tel.thinkingConfigs,3).map(([k,v])=>k+' ('+v+')')].join(' · ')||'—';
+  const modeList=[...topMap(ic.modes,4).map(([k,v])=>'mode:'+k+' ('+v+')'),...topMap(ic.permissionModes,4).map(([k,v])=>'perm:'+k+' ('+v+')')].join(' · ')||'—';
+  const betaEntries=topMap(tel.betas,8).map(([k,v])=>[k.replace(/(?:-\d{4}-\d{2}-\d{2}|-\d{8})$/,''),v]);
+  const swapEntries=topMap(fb.modelSwaps,6);
+  const ruleEntries=topMap(ic.autoModeRules,6);
+  const catEntries=topMap(ref.categories,6);
+  const eventLabels={
+    refusal:t('协议硬拒答 (stop_reason=refusal)'),
+    safeguard_stop:t('Safeguards 中止提示'),
+    no_fallback:t('无备选拒绝 (no_fallback)'),
+    fallback:t('模型切换 / Fallback'),
+    auto_mode_deny:t('Auto Mode 分类器拒批'),
+    hook_block:t('Hook 拦截'),
+    api_error:'API Error',
+    compaction:t('上下文压缩'),
+    interrupt:'User Interrupt',
+    mode_switch:'Mode Switch',
+    permission_mode:'Permission Mode'
+  };
+  const eventsHtml=(cc.events||[]).length
+    ?'<div class="behavior-event-list">'+cc.events.slice(0,24).map(ev=>'<button type="button" class="behavior-event-btn" data-ui-click="behavior-open" data-ui-value="'+escAttr(ev.uuid)+'"><span class="behavior-event-left"><span class="behavior-sev-dot '+escAttr(ev.severity||'info')+'"></span><span class="behavior-event-meta"><span class="behavior-event-title">'+esc(eventLabels[ev.kind]||ev.kind)+' · '+esc(ev.title||ev.uuid)+'</span><span class="behavior-event-detail">'+esc(ev.detail||'')+(ev.ts?' · '+esc(fmtDate(ev.ts)):'')+'</span></span></span><span class="behavior-event-right">'+esc(t('打开会话'))+' ›</span></button>').join('')+'</div>'
+    :'<div class="behavior-list"><div class="behavior-row"><span>'+esc(t('暂无异常拦截或 Fallback 事件'))+'</span><span>—</span></div></div>';
+
+  let out='<section class="behavior-cc-section" data-behavior-cc="true">';
+  out+='<div class="behavior-cc-head"><div><div class="analytics-kicker">CLAUDE CODE α TELEMETRY</div><div class="behavior-cc-title"><span>'+esc(t('Claude Code α 专项观测台'))+'</span><span class="behavior-cc-alpha">Alpha · '+nf(cc.sessions)+' '+esc(t('条对话'))+(cc.subagentSessions?' · '+nf(cc.subagentSessions)+' Subagents':'')+'</span></div><div class="behavior-sub">'+esc(t('基于本地 .jsonl 运行时遥测、stop_reason、分类器与成本记录的直接观测（非文本猜测）。'))+'</div></div><div class="behavior-pills" style="margin-top:0">'+pillsHtml(topMap(cc.models,4))+'</div></div>';
+
+  out+='<div class="behavior-grid">'
+    +behaviorMetric('📡',nf(tel.apiRequests||0),t('API 遥测请求'))
+    +behaviorMetric('🛑',nf(totalRefusals),t('硬拒答 / Safeguards'))
+    +behaviorMetric('🔀',nf(totalFallbacks),t('模型 Fallback / 无备选'))
+    +behaviorMetric('🛡️',nf(totalInterceptors),t('安全拦截与分类器'))
+    +'</div>';
+
+  out+='<div class="behavior-grid-2">';
+  out+='<section class="behavior-card behavior-cc-card"><h3><span>'+esc(t('📡 遥测信号与 API 配置'))+'</span><span class="behavior-badge">'+nf(Object.values(rt).reduce((a,b)=>a+b,0))+' JSONL lines</span></h3><p>'+esc(t('还原被主时间线跳过的底层遥测记录、Thinking/Effort 参数与实验特性开关。'))+'</p><div class="behavior-list">'
+    +'<div class="behavior-row"><span>'+esc(t('API 请求 / 查询来源'))+'</span><span>'+nf(tel.apiRequests||0)+' ('+esc(qsList)+')</span></div>'
+    +'<div class="behavior-row"><span>'+esc(t('消息块与形状缓存'))+'</span><span>'+nf(rt['api-request-blob']||0)+' / '+nf(rt['api-request-shape']||0)+'</span></div>'
+    +'<div class="behavior-row"><span>'+esc(t('ATiS Latch / 文件快照'))+'</span><span>'+nf(rt['atis-latch']||0)+' / '+nf((rt['file-history-snapshot']||0)+(rt['file-history-delta']||0))+'</span></div>'
+    +'<div class="behavior-row"><span>'+esc(t('Effort 与 Thinking 配置'))+'</span><span>'+esc(cfgList)+'</span></div>'
+    +'<div class="behavior-row"><span>'+esc(t('Cache 控制断点'))+'</span><span>'+nf(tel.cacheControlBreakpoints||0)+'</span></div>'
+    +'<div class="behavior-row"><span>'+esc(t('运行期提醒注入'))+'</span><span>'+nf(reminderCount)+'</span></div>'
+    +'</div>'+(betaEntries.length?'<div class="behavior-pills">'+pillsHtml(betaEntries)+'</div>':'')+'</section>';
+
+  out+='<section class="behavior-card behavior-cc-card"><h3><span>'+esc(t('🛑 拒答链与中止归因'))+'</span>'+badge(totalRefusals,'触发拦截','正常','触发拦截',totalRefusals>0)+'</h3><p>'+esc(t('精确区分协议层 stop_reason 拒答、Safeguards 中止提示、合成错误与用户打断。'))+'</p><div class="behavior-list">'
+    +'<div class="behavior-row"><span>'+esc(t('协议硬拒答 (stop_reason=refusal)'))+'</span><span>'+nf(ref.stopRefusal||0)+'</span></div>'
+    +'<div class="behavior-row"><span>'+esc(t('Safeguards 中止提示'))+'</span><span>'+nf(ref.safeguardNotices||0)+'</span></div>'
+    +'<div class="behavior-row"><span>'+esc(t('合成错误包装 (<synthetic>)'))+'</span><span>'+nf(ref.syntheticErrors||0)+'</span></div>'
+    +'<div class="behavior-row"><span>'+esc(t('无备选拒绝 (no_fallback)'))+'</span><span>'+nf(ref.noFallback||0)+'</span></div>'
+    +'<div class="behavior-row"><span>'+esc(t('API 异常 / 用户打断'))+'</span><span>'+nf(ref.apiErrors||0)+' / '+nf(ref.userInterrupts||0)+'</span></div>'
+    +'</div>'+(catEntries.length?'<div class="behavior-pills">'+pillsHtml(catEntries,' is-high')+'</div>':'')+'</section>';
+
+  out+='<section class="behavior-card behavior-cc-card"><h3><span>'+esc(t('🔀 模型 Fallback 与重试延迟'))+'</span>'+badge(totalFallbacks+(eff.retryOverheadMs>0?1:0),'需关注','正常','触发拦截',fb.noFallbackCount>0)+'</h3><p>'+esc(t('追踪请求模型与实际执行模型差异、fallback-credit 激活与 API 重试耗时占比。'))+'</p><div class="behavior-list">'
+    +'<div class="behavior-row"><span>'+esc(t('模型切换次数 (requested → actual)'))+'</span><span>'+nf(fb.modelSwapCount||0)+'</span></div>'
+    +'<div class="behavior-row"><span>'+esc(t('Fallback Credit Beta 请求'))+'</span><span>'+nf(fb.fallbackCreditRequests||0)+'</span></div>'
+    +'<div class="behavior-row"><span>'+esc(t('API 总耗时 / 无重试耗时'))+'</span><span>'+esc(fmtDur(eff.apiDurationMs||0))+' / '+esc(fmtDur(eff.apiNoRetryMs||0))+'</span></div>'
+    +'<div class="behavior-row"><span>'+esc(t('重试额外延迟'))+'</span><span>'+esc(fmtDur(eff.retryOverheadMs||0))+(eff.apiDurationMs>0?' ('+retryPct+'%)':'')+'</span></div>'
+    +'<div class="behavior-row"><span>'+esc(t('工具执行总耗时'))+'</span><span>'+esc(fmtDur(eff.toolDurationMs||0))+'</span></div>'
+    +'</div>'+(swapEntries.length?'<div class="behavior-pills">'+pillsHtml(swapEntries,' is-warn')+'</div>':'<div class="behavior-pills"><span class="behavior-pill">'+esc(t('暂未检测到具体切换对'))+'</span></div>')+'</section>';
+
+  out+='<section class="behavior-card behavior-cc-card"><h3><span>'+esc(t('🛡️ 安全拦截器与权限护栏'))+'</span>'+badge((ic.autoModeDenials||0)+(ic.hookBlocks||0)+(ic.serverClassifierRefusals||0),'需关注','正常','触发拦截',(ic.serverClassifierRefusals||0)>0)+'</h3><p>'+esc(t('汇总服务端安全分类器介入、Auto Mode 策略拒批、PreToolUse Hook 拦截与模式切换。'))+'</p><div class="behavior-list">'
+    +'<div class="behavior-row"><span>'+esc(t('服务端分类器介入 (触发拒答)'))+'</span><span>'+nf(ic.serverClassifierRequests||0)+' ('+nf(ic.serverClassifierRefusals||0)+')</span></div>'
+    +'<div class="behavior-row"><span>'+esc(t('Auto Mode 分类器拒批'))+'</span><span>'+nf(ic.autoModeDenials||0)+'</span></div>'
+    +'<div class="behavior-row"><span>'+esc(t('Hook 拦截 / 阻止继续'))+'</span><span>'+nf(ic.hookBlocks||0)+' / '+nf(ic.stopHooksPrevented||0)+'</span></div>'
+    +'<div class="behavior-row"><span>'+esc(t('手动拒绝工具调用'))+'</span><span>'+nf(ic.manualDenials||0)+'</span></div>'
+    +'<div class="behavior-row"><span>'+esc(t('权限与运行模式轨迹'))+'</span><span>'+esc(modeList)+'</span></div>'
+    +'</div>'+(ruleEntries.length||Object.keys(ic.autoModeProfiles||{}).length?'<div class="behavior-pills">'+pillsHtml(ruleEntries,' is-warn')+pillsHtml(topMap(ic.autoModeProfiles,3))+'</div>':'')+'</section>';
+
+  out+='<section class="behavior-card behavior-cc-card"><h3><span>'+esc(t('⚡ Cache 效率、成本与上下文压缩'))+'</span><span class="behavior-badge '+(cacheRate>=50?'is-ok':'is-warn')+'">Cache '+cacheRate+'%</span></h3><p>'+esc(t('衡量 Prompt Cache 复用率、会话累计花费、代码变更行数及上下文压缩压力。'))+'</p>'
+    +'<div class="behavior-meter-wrap"><div class="behavior-meter-label"><span>'+esc(t('Prompt Cache 命中率'))+'</span><span>'+cacheRate+'% ('+nf(eff.cacheReadTokens||0)+' / '+nf(cacheDenom)+')</span></div><div class="behavior-meter-track"><div class="behavior-meter-fill'+(cacheRate<30?' is-warn':'')+'" style="width:'+Math.max(2,Math.min(100,cacheRate))+'%"></div></div></div>'
+    +'<div class="behavior-list">'
+    +'<div class="behavior-row"><span>'+esc(t('累计费用 / 代码增删'))+'</span><span>$'+(eff.totalCostUSD||0).toFixed(4)+' · +'+nf(eff.linesAdded||0)+' / -'+nf(eff.linesRemoved||0)+'</span></div>'
+    +'<div class="behavior-row"><span>'+esc(t('上下文压缩 / 微压缩'))+'</span><span>'+nf(cmp.boundaries||0)+' / '+nf(cmp.microBoundaries||0)+'</span></div>'
+    +'<div class="behavior-row"><span>'+esc(t('压缩前平均 / 峰值 Token'))+'</span><span>'+nf(avgPreTokens)+' / '+nf(cmp.preTokensMax||0)+'</span></div>'
+    +'<div class="behavior-row"><span>'+esc(t('回合中插队提示 (queued)'))+'</span><span>'+nf(cmp.queuedPrompts||0)+'</span></div>'
+    +'</div></section>';
+
+  out+='<section class="behavior-card behavior-cc-card"><h3><span>'+esc(t('📜 关键拦截与 Fallback 事件'))+'</span><span class="behavior-badge">'+nf((cc.events||[]).length)+'</span></h3><p>'+esc(t('按严重度排列 Claude Code 会话中的拒答、Fallback 与分类器拦截记录，点击直达原文。'))+'</p>'+eventsHtml+'</section>';
+
+  out+='</div></section>';
+  return out;
+}
 function renderBehaviorPage(){currentView='behavior';document.getElementById('chat-title').textContent='🧪 '+t('行为实验室');document.getElementById('chat-title').style.color='';document.getElementById('chat-header-meta').textContent='本地按需分析';document.getElementById('toggle-summary').style.display='none';document.getElementById('export-wrap').style.display='none';['csearch','csearch-count','cprev','cnext','quality-btn','tree-mode-btn','remote-resources-btn'].forEach(id=>{const e=document.getElementById(id);if(e)e.style.display='none';});if(!allConvs.length){document.getElementById('messages').innerHTML='<div class="analytics-progress">请先加载导出档案</div>';return;}if(!behaviorResult){document.getElementById('messages').innerHTML='<div class="analytics-progress"><div style="font-size:22px">🧪</div><b>正在分析工具、Thinking 与回答证据链…</b><div class="analytics-note">分析在本机执行，不会上传内容。</div></div>';void startBehaviorLab().then(()=>{if(currentView==='behavior')renderBehaviorPage();}).catch(e=>{if(e.name==='AbortError'||currentView!=='behavior')return;document.getElementById('messages').innerHTML='<div class="analytics-progress">分析失败：'+esc(e.message)+'</div>';const retry=document.createElement('button');retry.textContent=t('重试');retry.onclick=()=>renderBehaviorPage();document.getElementById('messages').appendChild(retry);});return;}const r=behaviorResult,q=r.quality||{},pair=r.tools?Math.round(r.paired/r.tools*100):100;let h='<div class="behavior-page"><div class="behavior-hero"><div><div class="analytics-kicker">AI OBSERVABILITY</div><h2 class="behavior-heading">'+t('行为实验室')+'</h2><div class="behavior-sub">不只显示 AI 说了什么，还原它调用了什么、哪些结果被隐藏，以及回答的证据链是否完整。</div></div></div><div class="behavior-grid">'+behaviorMetric('⚙️',r.tools,'工具调用')+behaviorMetric('🔗',pair+'%','Tool 配对率')+behaviorMetric('🧠',r.thinking,'Thinking 块')+behaviorMetric('⚠️',(q.refusal||0)+(q.fallback||0),'疑似拒答/降级')+'</div>';
   h+='<div class="behavior-grid"><section class="behavior-card"><h3>⚙️ 工具调用时间线</h3><p>按原始导出记录审计工具调用、审批与 MCP 来源。</p><div class="behavior-list"><div class="behavior-row"><span>调用 / 结果</span><span>'+r.tools+' / '+r.toolResults+'</span></div><div class="behavior-row"><span>需要审批</span><span>'+r.approvals+'</span></div><div class="behavior-row"><span>MCP / 外部集成</span><span>'+r.mcp+'</span></div><div class="behavior-row"><span>错误结果</span><span>'+r.errors+'</span></div><div class="behavior-row"><span>未配对调用</span><span>'+r.unpairedUse+'</span></div></div></section><section class="behavior-card"><h3>🔎 隐藏结果探针</h3><p>发现结构化结果、元数据与前端展示内容之间的差异。</p><div class="behavior-list"><div class="behavior-row"><span>结构化结果</span><span>'+r.structured+'</span></div><div class="behavior-row"><span>疑似未展示结果</span><span>'+r.hiddenResults+'</span></div><div class="behavior-row"><span>孤立 tool_result</span><span>'+r.unpairedResult+'</span></div></div></section><section class="behavior-card"><h3>🧠 Thinking 完整性</h3><p>只报告导出中明确存在的状态标记，不推断后台风控。</p><div class="behavior-list"><div class="behavior-row"><span>隐藏 / 替代展示</span><span>'+r.thinkingHidden+' / '+r.thinkingSummary+'</span></div><div class="behavior-row"><span>截断 / cut_off</span><span>'+r.thinkingTruncated+' / '+r.thinkingCutoff+'</span></div><div class="behavior-row"><span>签名标记</span><span>'+r.thinkingSigned+'</span></div><div class="behavior-row"><span>累计 Thinking 时长</span><span>'+analyticsDuration(r.thinkingDurationMs)+'</span></div></div></section><section class="behavior-card"><h3>🩺 对话健康与证据链</h3><p>结合健康扫描结果，区分文本现象与工具层异常。</p><div class="behavior-list"><div class="behavior-row"><span>疑似文本拒答</span><span>'+ (q.refusal||0)+'</span></div><div class="behavior-row"><span>疑似能力降级</span><span>'+ (q.fallback||0)+'</span></div><div class="behavior-row"><span>工具错误</span><span>'+r.errors+'</span></div><div class="behavior-row"><span>回复延迟异常</span><span>'+ (q.latency||0)+'</span></div><div class="behavior-row"><span>空 / 截断回答</span><span>'+((q.empty||0)+(q.truncated||0))+'</span></div></div></section></div>';
-  if(r.examples.length)h+='<div class="behavior-card"><h3>最近发现的工具调用</h3><div class="behavior-list">'+r.examples.map(x=>'<div class="behavior-row"><span>'+esc(x.name)+'</span><span>'+x.status+'</span></div>').join('')+'</div></div>';h+='<div class="behavior-note">⚠️ “疑似拒答”“疑似降级”和 Thinking 状态只代表导出文件中可观察到的文本或字段，不能证明后台进行了风控、模型切换或账号降级。</div></div>';document.getElementById('messages').innerHTML=h;}
+  if(r.examples.length)h+='<div class="behavior-card"><h3>最近发现的工具调用</h3><div class="behavior-list">'+r.examples.map(x=>'<div class="behavior-row"><span>'+esc(x.name)+'</span><span>'+x.status+'</span></div>').join('')+'</div></div>';
+  if(r.claudeCode)h+=renderClaudeCodeBehaviorSection(r.claudeCode);
+  h+='<div class="behavior-note">⚠️ “疑似拒答”“疑似降级”和 Thinking 状态只代表导出文件中可观察到的文本或字段，不能证明后台进行了风控、模型切换或账号降级。</div></div>';document.getElementById('messages').innerHTML=h;}
 function renderConvList(convs){
   if(analyticsListFilter)convs=convs.filter(conversation=>analyticsListFilter.has(conversation.uuid));
   const el=document.getElementById('conv-list');
@@ -9927,6 +10332,7 @@ document.addEventListener('click',event=>{
     case 'clear-cache':void clearLocalDataCache(el);break;
     case 'sort':setSort(value);break;
     case 'tab':switchTab(value,el);break;
+    case 'behavior-open':openAnalyticsConversation(value);break;
     case 'toggle-sidebar':toggleSidebar();break;
     case 'summary':toggleSummary();break;
     case 'search-prev':cNav(-1);break;

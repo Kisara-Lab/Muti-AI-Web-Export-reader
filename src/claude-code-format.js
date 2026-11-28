@@ -318,9 +318,28 @@ function claudeCodeExportCore(){
     const seenToolResultIds=new Set();
     const seenHumanNorms=new Set();
     const seenPlanNorms=new Set();
+    const seenFallbackMsgIds=new Set();
     let lastInjectedKey='';
     let currentTurn=null;
     let pendingPreUserBlocks=[];
+
+    const telemetry={
+      recordTypes:{},
+      attachmentTypes:{},
+      apiRequests:{total:0,querySources:{},efforts:{},thinkingConfigs:{},betas:{},cacheControlBreakpoints:0,fallbackCreditRequests:0},
+      refusals:{stopRefusalIds:new Set(),syntheticErrors:0,safeguardNotices:0,noFallback:0,apiErrors:0,userInterrupts:0,categories:{}},
+      fallbacks:{modelSwaps:{},modelSwapCount:0,noFallbackCount:0},
+      interceptors:{serverClassifierIds:new Set(),serverClassifierRefusalIds:new Set(),autoModeDenials:0,autoModeRules:{},hookBlocks:0,stopHooksPrevented:0,hookErrors:0,manualDenials:0,autoModeConfig:null,modes:[],permissionModes:[]},
+      compaction:{boundaries:0,microBoundaries:0,preTokensSum:0,preTokensMax:0,preTokensCount:0,queuedPrompts:0},
+      costTiming:{apiDurationMs:0,apiNoRetryMs:0,toolDurationMs:0,totalDurationMs:0},
+      events:[]
+    };
+    const bump=(map,key,by=1)=>{if(!key)return;map[key]=(map[key]||0)+by;};
+    const pushMode=(arr,val)=>{const v=trim(val);if(v&&arr[arr.length-1]!==v)arr.push(v);};
+    const addTelemetryEvent=(kind,severity,detail,tsValue)=>{
+      if(telemetry.events.length>=24)return;
+      telemetry.events.push({kind,severity,detail:string(detail).slice(0,140),ts:tsValue||''});
+    };
 
     const noteTs=iso=>{
       if(!iso)return;
@@ -414,6 +433,7 @@ function claudeCodeExportCore(){
       const rtype=string(obj.type);
       const ts=parseDate(obj.timestamp);
       if(ts)noteTs(ts);
+      if(rtype)bump(telemetry.recordTypes,rtype);
 
       if(obj.sessionId&&!sessionId)sessionId=string(obj.sessionId);
       if(obj.cwd&&!cwd)cwd=string(obj.cwd);
@@ -449,17 +469,53 @@ function claudeCodeExportCore(){
           totalDurationMs:typeof obj.totalDuration==='number'?obj.totalDuration:null,
           modelUsage:obj.modelUsage&&typeof obj.modelUsage==='object'?obj.modelUsage:null
         };
+        if(typeof obj.totalAPIDuration==='number'&&Number.isFinite(obj.totalAPIDuration))telemetry.costTiming.apiDurationMs=obj.totalAPIDuration;
+        if(typeof obj.totalAPIDurationWithoutRetries==='number'&&Number.isFinite(obj.totalAPIDurationWithoutRetries))telemetry.costTiming.apiNoRetryMs=obj.totalAPIDurationWithoutRetries;
+        if(typeof obj.totalToolDuration==='number'&&Number.isFinite(obj.totalToolDuration))telemetry.costTiming.toolDurationMs=obj.totalToolDuration;
+        if(typeof obj.totalDuration==='number'&&Number.isFinite(obj.totalDuration))telemetry.costTiming.totalDurationMs=obj.totalDuration;
         continue;
       }
       if(rtype==='mode'){
         const nextMode=string(obj.mode);
+        pushMode(telemetry.interceptors.modes,nextMode);
         if(nextMode&&nextMode!==latestMode){
           const hadMode=!!latestMode;
           latestMode=nextMode;
           if(hadMode||nextMode!=='normal'){
             queueInjected('cc:mode:'+nextMode,'Mode switched to: '+nextMode);
+            addTelemetryEvent('mode_switch','info',nextMode,ts);
           }
         }
+        continue;
+      }
+      if(rtype==='permission-mode'){
+        const pmode=string(obj.permissionMode||obj.mode);
+        pushMode(telemetry.interceptors.permissionModes,pmode);
+        if(pmode&&pmode!=='default'&&pmode!=='normal')addTelemetryEvent('permission_mode','info',pmode,ts);
+        continue;
+      }
+      if(rtype==='api-request'){
+        telemetry.apiRequests.total++;
+        if(trim(obj.querySource))bump(telemetry.apiRequests.querySources,trim(obj.querySource));
+        const p=obj.params&&typeof obj.params==='object'?obj.params:null;
+        if(p){
+          if(trim(p.output_config?.effort))bump(telemetry.apiRequests.efforts,trim(p.output_config.effort));
+          if(p.thinking&&typeof p.thinking==='object'){
+            const tk=[string(p.thinking.type),string(p.thinking.display)].filter(Boolean).join('/');
+            if(tk)bump(telemetry.apiRequests.thinkingConfigs,tk);
+          }
+          if(Array.isArray(p.betas)){
+            let hasFallbackCredit=false;
+            for(const b of p.betas){
+              const bs=trim(b);
+              if(!bs)continue;
+              bump(telemetry.apiRequests.betas,bs);
+              if(/^fallback-credit/i.test(bs))hasFallbackCredit=true;
+            }
+            if(hasFallbackCredit)telemetry.apiRequests.fallbackCreditRequests++;
+          }
+        }
+        if(Array.isArray(obj.cacheControl))telemetry.apiRequests.cacheControlBreakpoints+=obj.cacheControl.length;
         continue;
       }
 
@@ -467,26 +523,70 @@ function claudeCodeExportCore(){
 
       if(rtype==='system'){
         const stype=string(obj.subtype);
-        if(stype==='compact_boundary'){
-          compactedCount++;
+        if(stype==='compact_boundary'||stype==='microcompact_boundary'){
+          if(stype==='microcompact_boundary')telemetry.compaction.microBoundaries++;
+          else{compactedCount++;telemetry.compaction.boundaries++;}
           const trigger=obj.compactMetadata?.trigger||'auto';
-          const preTokens=obj.compactMetadata?.preTokens;
-          const label='Context compacted ('+trigger+(preTokens?', pre-tokens: '+preTokens:'')+')';
+          const preTokens=Number(obj.compactMetadata?.preTokens);
+          if(Number.isFinite(preTokens)&&preTokens>0){
+            telemetry.compaction.preTokensSum+=preTokens;
+            telemetry.compaction.preTokensMax=Math.max(telemetry.compaction.preTokensMax,preTokens);
+            telemetry.compaction.preTokensCount++;
+          }
+          const label='Context compacted ('+trigger+(Number.isFinite(preTokens)&&preTokens>0?', pre-tokens: '+preTokens:'')+')';
           queueInjected('cc:compacted',label);
+          addTelemetryEvent('compaction','info',trigger+(Number.isFinite(preTokens)&&preTokens>0?' ('+preTokens+' tok)':''),ts);
           continue;
         }
         if(stype==='turn_duration'){
           // Optional subtle duration metadata; skip injecting clutter unless needed
           continue;
         }
-        if(stype==='model_refusal_no_fallback'||stype==='api_error'||obj.level==='warning'||obj.level==='error'){
+        if(stype==='model_refusal_no_fallback'){
+          telemetry.refusals.noFallback++;
+          telemetry.fallbacks.noFallbackCount++;
+          const cat=trim(obj.apiRefusalCategory)||'unspecified';
+          bump(telemetry.refusals.categories,cat);
+          const origModel=trim(obj.originalModel)||'unknown';
+          addTelemetryEvent('no_fallback','high',origModel+' ['+cat+']',ts);
           const t=ensureTurn(ts);
-          const msgText=trim(obj.content||obj.error?.message||obj.apiRefusalExplanation)||(stype==='model_refusal_no_fallback'?'Model refusal (no fallback)':'System alert');
+          const msgText=trim(obj.content||obj.error?.message||obj.apiRefusalExplanation)||'Model refusal (no fallback)';
+          t.blocks.push({type:'text',text:'_[Turn aborted: '+msgText+']_'});
+          continue;
+        }
+        if(stype==='model_fallback'){
+          const fromM=trim(obj.originalModel||obj.fromModel);
+          const toM=trim(obj.fallbackModel||obj.targetModel||obj.newModel);
+          const pair=fromM&&toM?(fromM+' → '+toM):(toM||'model_fallback');
+          bump(telemetry.fallbacks.modelSwaps,pair);
+          telemetry.fallbacks.modelSwapCount++;
+          addTelemetryEvent('fallback','warn',pair,ts);
+          const infoText=trim(obj.content);
+          if(infoText)queueInjected('cc:system:model_fallback',infoText);
+          continue;
+        }
+        if(stype==='stop_hook_summary'){
+          const prevented=!!obj.preventedContinuation;
+          const errLen=Array.isArray(obj.hookErrors)?obj.hookErrors.length:0;
+          if(prevented){telemetry.interceptors.stopHooksPrevented++;telemetry.interceptors.hookBlocks++;}
+          if(errLen)telemetry.interceptors.hookErrors+=errLen;
+          if(prevented||errLen)addTelemetryEvent('hook_block',prevented?'warn':'info',(prevented?'preventedContinuation':'hookError')+(obj.hookCount?' ('+obj.hookCount+' hooks)':''),ts);
+          continue;
+        }
+        if(stype==='api_error'||obj.level==='warning'||obj.level==='error'){
+          telemetry.refusals.apiErrors++;
+          addTelemetryEvent('api_error','warn',trim(obj.error?.error?.type||obj.error?.type||stype||'api_error'),ts);
+          const t=ensureTurn(ts);
+          const msgText=trim(obj.content||obj.error?.message||obj.apiRefusalExplanation)||'System alert';
           t.blocks.push({type:'text',text:'_[Turn aborted: '+msgText+']_'});
           continue;
         }
         if(stype==='informational'||stype==='local_command'){
           const infoText=trim(obj.content);
+          if(stype==='informational'&&/safeguards stopped/i.test(infoText)){
+            telemetry.refusals.safeguardNotices++;
+            addTelemetryEvent('safeguard_stop','warn',infoText.slice(0,90),ts);
+          }
           if(infoText)queueInjected('cc:system:'+stype,infoText);
           continue;
         }
@@ -497,6 +597,16 @@ function claudeCodeExportCore(){
         const att=obj.attachment;
         if(!att||typeof att!=='object')continue;
         const atype=string(att.type);
+        if(atype)bump(telemetry.attachmentTypes,atype);
+        if(atype==='auto_mode'){
+          telemetry.interceptors.autoModeConfig={
+            consentFlow:!!att.autoModeConsentFlow,
+            bashFirst:!!att.bashFirst,
+            bashFirstSteer:string(att.bashFirstSteer),
+            steerOnly:!!att.steerOnly,
+            bypass:!!att.bypass
+          };
+        }
         if(atype==='model'&&trim(att.identity))defaultModel=trim(att.identity);
         if(SKIP_ATTACHMENT_TYPES.has(atype))continue;
 
@@ -507,6 +617,7 @@ function claudeCodeExportCore(){
           if(att.commandMode==='prompt'||att.humanTurn===true){
             const norm=normDedupe(cleaned);
             if(norm&&!seenHumanNorms.has(norm)){
+              telemetry.compaction.queuedPrompts++;
               flushTurn();
               if(!firstPromptCandidate&&cleaned)firstPromptCandidate=cleaned.split(/\r?\n/)[0].slice(0,90);
               for(const c of contextChunks)pendingPreUserBlocks.push({type:'injected_prompt_block',injection_source:'cc:context:'+c.tag,prompt:c.text});
@@ -570,6 +681,8 @@ function claudeCodeExportCore(){
           }
           if(cleaned){
             if(/^\[Request interrupted by user/i.test(cleaned)){
+              telemetry.refusals.userInterrupts++;
+              addTelemetryEvent('interrupt','info',cleaned.replace(/^\[|\]$/g,''),ts);
               const t=ensureTurn(ts);
               t.blocks.push({type:'text',text:'_[Turn aborted: '+cleaned.replace(/^\[|\]$/g,'')+']_'});
             }else if(obj.isCompactSummary===true){
@@ -609,6 +722,21 @@ function claudeCodeExportCore(){
 
               const formatted=formatToolResultOutput(item.content,rawTur,warnings,toolName);
               const isErr=!!(item.is_error||formatted.isError);
+              if(isErr||typeof rawTur==='string'){
+                const errSignal=[typeof rawTur==='string'?rawTur:'',formatted.text].filter(Boolean).join('\n');
+                if(/denied by the Claude Code auto mode classifier/i.test(errSignal)){
+                  telemetry.interceptors.autoModeDenials++;
+                  const rm=/\[([^\]]{2,40})\]/.exec(errSignal);
+                  const ruleName=rm?rm[1]:'AutoMode';
+                  bump(telemetry.interceptors.autoModeRules,ruleName);
+                  addTelemetryEvent('auto_mode_deny','warn',(toolName||'tool')+(rm?' ['+ruleName+']':''),ts);
+                }else if(/\b(?:PreToolUse|PostToolUse)\s+hook\b|Execution stopped by .*hook/i.test(errSignal)){
+                  telemetry.interceptors.hookBlocks++;
+                  addTelemetryEvent('hook_block','warn',(toolName||'tool')+' hook blocked',ts);
+                }else if(/doesn't want to proceed|User rejected|Permission for this action was denied/i.test(errSignal)){
+                  telemetry.interceptors.manualDenials++;
+                }
+              }
               const t=ensureTurn(ts);
               const resBlocks=[];
               if(formatted.text)resBlocks.push({type:'text',text:formatted.text});
@@ -679,6 +807,12 @@ function claudeCodeExportCore(){
         const isSynthetic=rawModel==='<synthetic>'||!!obj.isApiErrorMessage;
         if(rawModel&&rawModel!=='<synthetic>')defaultModel=rawModel;
 
+        if(trim(obj.serverClassifierRequest)){
+          const cid=trim(obj.serverClassifierRequest);
+          telemetry.interceptors.serverClassifierIds.add(cid);
+          if(msg.stop_reason==='refusal')telemetry.interceptors.serverClassifierRefusalIds.add(cid);
+        }
+
         const t=ensureTurn(ts,rawModel!=='<synthetic>'?rawModel:'');
 
         if(msgId){
@@ -692,11 +826,34 @@ function claudeCodeExportCore(){
         }
 
         if(isSynthetic){
+          if(msg.stop_reason==='refusal'||obj.refusedMessageId||obj.error){
+            telemetry.refusals.syntheticErrors++;
+            if(obj.error)bump(telemetry.refusals.categories,string(obj.error));
+          }
           const synthText=list(msg.content).filter(b=>b?.type==='text').map(b=>trim(b.text)).filter(Boolean).join('\n');
           if(synthText&&!/^No response requested\.?$/i.test(synthText)){
             t.blocks.push({type:'text',text:'_[Turn aborted: '+synthText+']_'});
           }
           continue;
+        }
+
+        if(msg.stop_reason==='refusal'){
+          const rKey=msgId||('line-'+lineIdx);
+          if(!telemetry.refusals.stopRefusalIds.has(rKey)){
+            telemetry.refusals.stopRefusalIds.add(rKey);
+            addTelemetryEvent('refusal','high',(rawModel||'assistant')+(obj.serverClassifierRequest?' + serverClassifier':''),ts);
+          }
+        }
+        const reqModel=trim(obj.requestedModel);
+        if(reqModel&&rawModel&&reqModel!==rawModel){
+          const fKey=msgId||('line-'+lineIdx);
+          if(!seenFallbackMsgIds.has(fKey)){
+            seenFallbackMsgIds.add(fKey);
+            const swapPair=reqModel+' → '+rawModel;
+            bump(telemetry.fallbacks.modelSwaps,swapPair);
+            telemetry.fallbacks.modelSwapCount++;
+            addTelemetryEvent('fallback','warn',swapPair,ts);
+          }
         }
 
         for(const b of list(msg.content)){
@@ -840,6 +997,41 @@ function claudeCodeExportCore(){
           totalDurationMs:latestCostState.totalDurationMs
         }:{}),
         ...(countedUsage?{usage:{input_tokens:inputTokens,output_tokens:outputTokens,cache_read_input_tokens:cacheReadTokens,cache_creation_input_tokens:cacheCreateTokens,total_tokens:totalTokens}}:{})
+      },
+      claudeCodeTelemetry:{
+        recordTypes:telemetry.recordTypes,
+        attachmentTypes:telemetry.attachmentTypes,
+        apiRequests:telemetry.apiRequests,
+        refusals:{
+          stopRefusal:telemetry.refusals.stopRefusalIds.size,
+          syntheticErrors:telemetry.refusals.syntheticErrors,
+          safeguardNotices:telemetry.refusals.safeguardNotices,
+          noFallback:telemetry.refusals.noFallback,
+          apiErrors:telemetry.refusals.apiErrors,
+          userInterrupts:telemetry.refusals.userInterrupts,
+          categories:telemetry.refusals.categories
+        },
+        fallbacks:telemetry.fallbacks,
+        interceptors:{
+          serverClassifierRequests:telemetry.interceptors.serverClassifierIds.size,
+          serverClassifierRefusals:telemetry.interceptors.serverClassifierRefusalIds.size,
+          autoModeDenials:telemetry.interceptors.autoModeDenials,
+          autoModeRules:telemetry.interceptors.autoModeRules,
+          hookBlocks:telemetry.interceptors.hookBlocks,
+          stopHooksPrevented:telemetry.interceptors.stopHooksPrevented,
+          hookErrors:telemetry.interceptors.hookErrors,
+          manualDenials:telemetry.interceptors.manualDenials,
+          ...(telemetry.interceptors.autoModeConfig?{autoModeConfig:telemetry.interceptors.autoModeConfig}:{}),
+          modes:telemetry.interceptors.modes,
+          permissionModes:telemetry.interceptors.permissionModes
+        },
+        compaction:telemetry.compaction,
+        costTiming:{
+          ...telemetry.costTiming,
+          retryOverheadMs:(telemetry.costTiming.apiDurationMs>0&&telemetry.costTiming.apiNoRetryMs>=0&&telemetry.costTiming.apiDurationMs>=telemetry.costTiming.apiNoRetryMs)
+            ?(telemetry.costTiming.apiDurationMs-telemetry.costTiming.apiNoRetryMs):0
+        },
+        events:telemetry.events
       },
       importWarnings:warnings,
       chat_messages:messages

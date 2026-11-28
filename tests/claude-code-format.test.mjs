@@ -117,3 +117,60 @@ test('claude code format links subagent transcripts with .meta.json sidecar meta
   assert.equal(parsed.conversation.claudeCodeMeta.parentThreadId,'11111111-2222-3333-4444-555555555555');
   assert.ok(parsed.conversation.name.startsWith('[code-reviewer] '));
 });
+
+test('claude code telemetry captures api-request, refusals, fallback swaps, classifier interceptors, and retry overhead cleanly',async()=>{
+  const cc=loadClaudeCode();
+  const core=loadWorkerCore();
+  const lines=[
+    {type:'permission-mode',permissionMode:'auto',sessionId:'cc-obs-1'},
+    {type:'attachment',sessionId:'cc-obs-1',timestamp:'2026-06-02T10:00:00Z',attachment:{type:'auto_mode',autoModeConsentFlow:false,bashFirst:true,bashFirstSteer:'relaxed',steerOnly:true,bypass:false}},
+    {type:'api-request-shape',sessionId:'cc-obs-1',shapeHash:'h1',shape:{system:[],tools:[]}},
+    {type:'api-request-blob',sessionId:'cc-obs-1',hash:'b1',message:{}},
+    {type:'api-request',sessionId:'cc-obs-1',id:'req-1',timestamp:'2026-06-02T10:00:01Z',querySource:'sdk',cacheControl:[{path:['system',0]}],params:{model:'claude-opus-5-5',output_config:{effort:'medium'},thinking:{type:'adaptive',display:'updates'},betas:['claude-code-20250219','fallback-credit-2026-06-01']}},
+    {type:'user',sessionId:'cc-obs-1',uuid:'u-1',parentUuid:null,cwd:'/work/obs',timestamp:'2026-06-02T10:00:01Z',message:{role:'user',content:'Run audit tool'}},
+    {type:'assistant',sessionId:'cc-obs-1',uuid:'a-1',parentUuid:'u-1',serverClassifierRequest:'cls-uuid-1',requestedModel:'claude-opus-5-5',timestamp:'2026-06-02T10:00:02Z',message:{id:'msg_cls1',model:'claude-opus-5-5',stop_reason:'tool_use',usage:{input_tokens:200,output_tokens:20},content:[{type:'tool_use',id:'tu-1',name:'Bash',input:{command:'curl https://x'}}]}},
+    {type:'user',sessionId:'cc-obs-1',uuid:'u-2',parentUuid:'a-1',timestamp:'2026-06-02T10:00:03Z',message:{role:'user',content:[{type:'tool_result',tool_use_id:'tu-1',is_error:true,content:'Permission denied'}]},toolUseResult:'Error: Permission for this action was denied by the Claude Code auto mode classifier [Data Exfiltration].'},
+    {type:'assistant',sessionId:'cc-obs-1',uuid:'a-2',parentUuid:'u-2',serverClassifierRequest:'cls-uuid-2',requestedModel:'claude-opus-5-5',timestamp:'2026-06-02T10:00:04Z',message:{id:'msg_ref1',model:'claude-opus-5-5',stop_reason:'refusal',usage:{input_tokens:300,output_tokens:10},content:[{type:'text',text:'Cannot proceed'}]}},
+    {type:'system',subtype:'informational',level:'notice',sessionId:'cc-obs-1',timestamp:'2026-06-02T10:00:05Z',content:"Opus 5.5's safeguards stopped the response above — continuing once with that noted"},
+    {type:'assistant',sessionId:'cc-obs-1',uuid:'a-3',parentUuid:'a-2',requestedModel:'claude-opus-5-5',timestamp:'2026-06-02T10:00:06Z',message:{id:'msg_fb1',model:'claude-opus-4-8',stop_reason:'end_turn',usage:{input_tokens:300,cache_read_input_tokens:700,output_tokens:50},content:[{type:'text',text:'Fallback reply completed'}]}},
+    {type:'system',subtype:'model_refusal_no_fallback',level:'warning',sessionId:'cc-obs-1',originalModel:'claude-opus-5-5',apiRefusalCategory:'cyber',timestamp:'2026-06-02T10:00:07Z',content:''},
+    {type:'assistant',sessionId:'cc-obs-1',uuid:'a-4',parentUuid:'a-3',isApiErrorMessage:true,error:'invalid_request',refusedMessageId:'msg_ref1',timestamp:'2026-06-02T10:00:08Z',message:{id:'msg_syn1',model:'<synthetic>',stop_reason:'refusal',content:[{type:'text',text:'API Error: invalid_request'}]}},
+    {type:'system',subtype:'stop_hook_summary',sessionId:'cc-obs-1',hookCount:1,preventedContinuation:true,hookErrors:[],timestamp:'2026-06-02T10:00:09Z'},
+    {type:'system',subtype:'compact_boundary',sessionId:'cc-obs-1',compactMetadata:{trigger:'auto',preTokens:42000},timestamp:'2026-06-02T10:00:10Z'},
+    {type:'cost-state',sessionId:'cc-obs-1',totalCostUSD:0.5,totalAPIDuration:5200,totalAPIDurationWithoutRetries:4000,totalToolDuration:900,totalDuration:6500,totalLinesAdded:10,totalLinesRemoved:2,modelUsage:{'claude-opus-5-5':{inputTokens:500,outputTokens:80,cacheReadInputTokens:700,cacheCreationInputTokens:0}}}
+  ].map(o=>JSON.stringify(o)).join('\n');
+
+  const {conversation}=cc.parseTranscriptText(lines,{path:'cc-obs-1.jsonl'});
+  const tel=conversation.claudeCodeTelemetry;
+  assert.equal(tel.apiRequests.total,1);
+  assert.equal(tel.apiRequests.fallbackCreditRequests,1);
+  assert.equal(tel.apiRequests.cacheControlBreakpoints,1);
+  assert.equal(tel.refusals.stopRefusal,1);
+  assert.equal(tel.refusals.syntheticErrors,1);
+  assert.equal(tel.refusals.safeguardNotices,1);
+  assert.equal(tel.refusals.noFallback,1);
+  assert.equal(tel.fallbacks.modelSwapCount,1);
+  assert.equal(tel.fallbacks.modelSwaps['claude-opus-5-5 → claude-opus-4-8'],1);
+  assert.equal(tel.interceptors.serverClassifierRequests,2);
+  assert.equal(tel.interceptors.serverClassifierRefusals,1);
+  assert.equal(tel.interceptors.autoModeDenials,1);
+  assert.equal(tel.interceptors.autoModeRules['Data Exfiltration'],1);
+  assert.equal(tel.interceptors.hookBlocks,1);
+  assert.equal(tel.interceptors.stopHooksPrevented,1);
+  assert.equal(tel.compaction.boundaries,1);
+  assert.equal(tel.compaction.preTokensMax,42000);
+  assert.equal(tel.costTiming.retryOverheadMs,1200);
+
+  async function* oneRecord(){yield{raw:JSON.stringify(conversation),meta:{uuid:conversation.uuid}};}
+  const behavior=await core.behavior(oneRecord(),async()=>{});
+  assert.equal(behavior.claudeCode.sessions,1);
+  assert.equal(behavior.claudeCode.telemetry.apiRequests,1);
+  assert.equal(behavior.claudeCode.refusals.stopRefusal,1);
+  assert.equal(behavior.claudeCode.fallbacks.modelSwapCount,1);
+  assert.equal(behavior.claudeCode.efficiency.retryOverheadMs,1200);
+  assert.ok(behavior.claudeCode.events.length>=4);
+
+  const {conv:safeConv}=await core.redactAsync(conversation,'standard',false,async()=>{},false,{});
+  assert.equal(safeConv.claudeCodeTelemetry,'[REDACTED:metadata]');
+});
+
