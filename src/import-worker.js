@@ -83,7 +83,7 @@ function importWorkerMain(){
         };
         const stripWrapperRoot=rawFiles=>{
           let currentFiles=normalizeEntryPaths(rawFiles);
-          const reserved=['areas','projects','artifacts','memories','memory','sessions','archived_sessions','dalle-generations','sites','prod-mc-asset-server','brain','annotations','conversations','tmp','antigravity','antigravity-cli','antigravity-ide','jetski'];
+          const reserved=['areas','projects','artifacts','memories','memory','sessions','archived_sessions','dalle-generations','sites','prod-mc-asset-server','brain','annotations','conversations','tmp','antigravity','antigravity-cli','antigravity-ide','jetski','.kimi','.kimi-code','kimi','subagents','plans','user-history','logs','agents'];
           for(let depth=0;depth<6;depth++){
             const names=Object.keys(currentFiles);
             if(!names.length)break;
@@ -128,8 +128,9 @@ function importWorkerMain(){
         }
         const entries=Object.keys(files).filter(n=>!files[n].dir&&!n.startsWith('__MACOSX/'));for(const name of entries){if(/^\/|^[A-Za-z]:/.test(name))throw new Error('Invalid export path');format.logicalPath(String(files[name].unsafeOriginalName||name).replace(/\\/g,'/').replace(/\/+/g,'/'));}
         let convs=entries.filter(n=>/(^|\/)conversations(?:-\d+)?\.json$/i.test(n)).sort((a,b)=>{const na=Number(/(\d+)\.json$/i.exec(a)?.[1]??-1),nb=Number(/(\d+)\.json$/i.exec(b)?.[1]??-1);return na-nb||a.localeCompare(b);});
-        const projects=[],memories=[],artifacts=[],users=[],logins=[],accounts=new Set(),mime=Object.create(null),resources=[],gpt=gptExportCore(),grok=typeof grokExportCore==='function'?grokExportCore():null,pplx=typeof perplexityExportCore==='function'?perplexityExportCore():null,codex=typeof codexExportCore==='function'?codexExportCore():null,claudeCode=typeof claudeCodeExportCore==='function'?claudeCodeExportCore():null,antigravity=typeof antigravityExportCore==='function'?antigravityExportCore():null,geminiCli=typeof geminiCliExportCore==='function'?geminiCliExportCore():null;let legacyMemory=null,gptManifest=false,sawZst=false,agPbSkipped=0;const designs=[],codexConvs=[],codexProjects=new Map(),ccMetaByPath=new Map(),agPbtxtTitles=new Map(),agHistoryMap=new Map(),agBundles=new Map(),geminiSlugCwd=new Map(),geminiDirRoot=new Map();
+        const projects=[],memories=[],artifacts=[],users=[],logins=[],accounts=new Set(),mime=Object.create(null),resources=[],gpt=gptExportCore(),grok=typeof grokExportCore==='function'?grokExportCore():null,pplx=typeof perplexityExportCore==='function'?perplexityExportCore():null,codex=typeof codexExportCore==='function'?codexExportCore():null,claudeCode=typeof claudeCodeExportCore==='function'?claudeCodeExportCore():null,antigravity=typeof antigravityExportCore==='function'?antigravityExportCore():null,geminiCli=typeof geminiCliExportCore==='function'?geminiCliExportCore():null,kimiCli=typeof kimiCliExportCore==='function'?kimiCliExportCore():null;let legacyMemory=null,gptManifest=false,sawZst=false,agPbSkipped=0,kimiCredsSkipped=0;const designs=[],codexConvs=[],codexProjects=new Map(),ccMetaByPath=new Map(),agPbtxtTitles=new Map(),agHistoryMap=new Map(),agBundles=new Map(),geminiSlugCwd=new Map(),geminiDirRoot=new Map(),kimiWorkDirMap=new Map(),kimiPlans=new Map(),kimiBundles=new Map();let kimiFallbackWorkDir='',kimiConfigSafe={},kimiLogParsed=null;
         const getAgBundle=cid=>{if(!agBundles.has(cid))agBundles.set(cid,{conversationId:cid,fullTexts:[],compactTexts:[],fullPath:'',compactPath:'',artifacts:new Map(),urls:new Map(),images:[],resolved:new Map(),metadata:new Map()});return agBundles.get(cid);};
+        const getKimiBundle=(key,workDirHash='',sessionId='',agentId='')=>{if(!kimiBundles.has(key))kimiBundles.set(key,{key,workDirHash,sessionId,agentId,path:'',contextText:'',rotatedContexts:[],wireText:'',stateObj:null,workDir:''});return kimiBundles.get(key);};
         const brainIdFromPath=p=>{
           const m=/(?:^|\/)brain\/(?:.*?\/)?([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}|[0-9a-f]{8}-[0-9a-f-]{12,})\/([^]*)$/i.exec(p);
           if(m)return {cid:m[1],rel:m[2]};
@@ -139,6 +140,16 @@ function importWorkerMain(){
         for(const name of entries){
           if(/\.meta\.json$/i.test(name)){
             try{ccMetaByPath.set(name.replace(/\.meta\.json$/i,''),parseJsonText(await files[name].async('text')));}catch{}
+          }else if(kimiCli&&/(?:^|\/)kimi\.json$/i.test(name)){
+            try{const kw=kimiCli.indexWorkDirs(await files[name].async('text'));for(const [h,wd]of kw.byHash)kimiWorkDirMap.set(h,wd);if(!kimiFallbackWorkDir&&kw.workDirs[0]?.path)kimiFallbackWorkDir=kw.workDirs[0].path;}catch{}
+          }else if(kimiCli&&/(?:^|\/)config\.toml$/i.test(name)){
+            try{kimiConfigSafe={...kimiConfigSafe,...kimiCli.parseKimiTomlSafe(await files[name].async('text'))};}catch{}
+          }else if(kimiCli&&/(?:^|\/)(?:logs\/)?kimi(?:-code)?\.log$/i.test(name)){
+            try{kimiLogParsed=kimiCli.parseKimiLog(await files[name].async('text'));}catch{}
+          }else if(kimiCli&&/(?:^|\/)plans\/([^/]+)\.md$/i.test(name)){
+            try{const slug=name.split('/').pop().replace(/\.md$/i,'');kimiPlans.set(slug,await files[name].async('text'));}catch{}
+          }else if(/(?:^|\/)(?:credentials|mcp-oauth)\/[^/]+$/i.test(name)){
+            kimiCredsSkipped++;
           }else if(antigravity&&/(?:^|\/)annotations\/([^/]+)\.pbtxt$/i.test(name)){
             const cid=name.split('/').pop().replace(/\.pbtxt$/i,'');
             try{const ttl=antigravity.parsePbtxtTitle(await files[name].async('text'));if(ttl)agPbtxtTitles.set(cid,ttl);}catch{}
@@ -195,10 +206,10 @@ function importWorkerMain(){
           }
         }
         const filename=file?.name||'folder';
-        const auxSkip=new Set(['export_manifest.json','library_files.json','sites/export_manifest.json','ads.json','user_settings.json','sectioned_conversations.json','message_feedback.json','model_comparisons.json','shared_conversations.json','group_chats.json','prod-mc-billing.json','sessions-index.json','projects.json','history.jsonl','logs.json']);
+        const auxSkip=new Set(['export_manifest.json','library_files.json','sites/export_manifest.json','ads.json','user_settings.json','sectioned_conversations.json','message_feedback.json','model_comparisons.json','shared_conversations.json','group_chats.json','prod-mc-billing.json','sessions-index.json','projects.json','history.jsonl','logs.json','kimi.json','mcp.json']);
         for(const name of entries){await check(current);
           const baseName=name.split('/').pop();
-          if(convs.includes(name)||auxSkip.has(name)||auxSkip.has(baseName)||/\.meta\.json$/i.test(name)||/(?:^|\/)(?:annotations\/[^/]+\.pbtxt|(?:conversations|implicit)\/[^/]+\.pb|\.project_root)$/i.test(name))continue;
+          if(convs.includes(name)||auxSkip.has(name)||auxSkip.has(baseName)||/\.meta\.json$/i.test(name)||/(?:\.kimi(?:-code)?\/(?:credentials|mcp-oauth|user-history|logs|plans)\/[^]*|(?:^|\/)(?:annotations\/[^/]+\.pbtxt|(?:conversations|implicit)\/[^/]+\.pb|\.project_root|(?:credentials|mcp-oauth|user-history)\/[^]*|logs\/[^/]*\.log|plans\/[^/]+\.md|device_id|config\.toml))$/i.test(name))continue;
           const agPart=antigravity?brainIdFromPath(name):null;
           if(agPart){
             const b=getAgBundle(agPart.cid),rel=agPart.rel;
@@ -235,6 +246,25 @@ function importWorkerMain(){
             }
             if(/^\.system_generated\//.test(rel))continue;
           }
+          const kimiSessM=kimiCli&&!/(?:^|\/)\.(?:claude|codex|gemini)\//i.test(name)?/(?:^|\/)(?:imported_sessions\/|sessions\/([^/]+)\/)?(?:session_)?([^/]+)\/(?:(subagents|agents)\/([^/]+)\/)?(context(?:_(\d+))?\.jsonl|wire\.jsonl|state\.json|meta\.json|prompt\.txt|output)$/i.exec(name):null;
+          if(kimiSessM&&(kimiSessM[1]||kimiSessM[3]||/\.kimi(?:-code)?\//i.test(name)||kimiSessM[5].toLowerCase()==='state.json'||kimiSessM[5].toLowerCase()==='wire.jsonl'||/^context(?:_\d+)?\.jsonl$/i.test(kimiSessM[5]))){
+            const wdHash=kimiSessM[1]||'',rawSid=kimiSessM[2],subKind=kimiSessM[3]||'',subId=kimiSessM[4]&&kimiSessM[4]!=='main'?kimiSessM[4]:'';
+            const fileName=kimiSessM[5].toLowerCase();
+            if(fileName==='meta.json'||fileName==='prompt.txt'||fileName==='output')continue;
+            const bKey=wdHash+'/'+rawSid+(subId?('/'+subId):'');
+            const kb=getKimiBundle(bKey,wdHash,rawSid,subId);
+            if(!kb.path||fileName==='context.jsonl'||fileName==='wire.jsonl')kb.path=name;
+            if(fileName==='state.json'){
+              try{kb.stateObj=parseJsonText(await files[name].async('text'));if(kb.stateObj?.workDir||kb.stateObj?.work_dir)kb.workDir=kb.stateObj.workDir||kb.stateObj.work_dir;}catch{}
+            }else if(fileName==='context.jsonl'){
+              kb.contextText=await files[name].async('text');
+            }else if(/^context_\d+\.jsonl$/i.test(fileName)){
+              kb.rotatedContexts.push({name:fileName,text:await files[name].async('text')});
+            }else if(fileName==='wire.jsonl'){
+              kb.wireText=await files[name].async('text');
+            }
+            continue;
+          }
           if(pplx&&/^(?:.*\/)?user-data-[^/]+\.xlsx$/i.test(name)){
             try{
               const wbBuf=files[name].file?await files[name].file.arrayBuffer():await files[name].async('arraybuffer');
@@ -251,7 +281,7 @@ function importWorkerMain(){
             continue;
           }
           if(/\.jsonl\.zst$/i.test(name)){sawZst=true;continue;}
-          if((claudeCode||codex||antigravity||geminiCli)&&/\.jsonl$/i.test(name)){
+          if((claudeCode||codex||antigravity||geminiCli||kimiCli)&&/\.jsonl$/i.test(name)){
             try{
               const jsonlText=await files[name].async('text');
               let handled=false;
@@ -260,6 +290,14 @@ function importWorkerMain(){
                 if(parsedAg&&parsedAg.conversation){
                   codexConvs.push(parsedAg.conversation);
                   if(parsedAg.project&&!codexProjects.has(parsedAg.project.uuid))codexProjects.set(parsedAg.project.uuid,parsedAg.project);
+                }
+                handled=true;
+              }
+              if(!handled&&kimiCli&&(kimiCli.isKimiContextJsonlText(jsonlText)||kimiCli.isKimiWireJsonlText(jsonlText))){
+                const parsedKm=await kimiCli.parseSessionAsync(jsonlText,{path:name,configSafe:kimiConfigSafe,workDir:kimiFallbackWorkDir},()=>check(current));
+                if(parsedKm&&parsedKm.conversation){
+                  codexConvs.push(parsedKm.conversation);
+                  if(parsedKm.project&&!codexProjects.has(parsedKm.project.uuid))codexProjects.set(parsedKm.project.uuid,parsedKm.project);
                 }
                 handled=true;
               }
@@ -297,6 +335,7 @@ function importWorkerMain(){
             const logical=name.replace(/^.*?(?=(?:areas|projects|memories|memory)\/)/,'');
             if(/^(?:areas\/|projects\/[^/]+\/|memories\/|memory\/)/.test(logical)){memories.push(format.memory(logical,await files[name].async('text'),'',filename));continue;}
             if(/^GEMINI\.md$/i.test(baseName)){memories.push(format.memory('gemini/'+name,await files[name].async('text'),'GEMINI.md ('+name+')',filename));continue;}
+            if(/^(?:AGENTS|kimi(?:\.work)?)\.md$/i.test(baseName)){memories.push(format.memory('kimi/'+name,await files[name].async('text'),'Kimi Memory ('+name+')',filename));continue;}
             continue;
           }
           if(!/\.json$/i.test(name))continue;
@@ -360,6 +399,39 @@ function importWorkerMain(){
               }
               codexConvs.push(finalAg.conversation);
               if(finalAg.project&&!codexProjects.has(finalAg.project.uuid))codexProjects.set(finalAg.project.uuid,finalAg.project);
+            }
+          }
+        }
+        if(kimiCli&&kimiBundles.size){
+          for(const kb of kimiBundles.values()){
+            await check(current);
+            const wdEntry=kb.workDirHash?(kimiWorkDirMap.get(kb.workDirHash)||null):null;
+            const resolvedWorkDir=kb.workDir||wdEntry?.path||kimiFallbackWorkDir||'';
+            const planSlug=kb.stateObj?.plan_slug||'';
+            const planDoc=planSlug?(kimiPlans.get(planSlug)||''):'';
+            const logEntry=kimiLogParsed?.sessions?.get(kb.sessionId)||(kimiLogParsed?.globalWarnings?.length?{sessionId:kb.sessionId,createdAt:'',warnings:kimiLogParsed.globalWarnings,loadedTools:[],skillsCount:0}:null);
+            const parsedKm=await kimiCli.parseSessionAsync({
+              contextText:kb.contextText,
+              rotatedContexts:kb.rotatedContexts,
+              wireText:kb.wireText,
+              stateObj:kb.stateObj,
+              planDoc
+            },{
+              path:kb.path,
+              workDirHash:kb.workDirHash,
+              sessionId:kb.sessionId,
+              agentId:kb.agentId,
+              workDir:resolvedWorkDir,
+              configSafe:kimiConfigSafe,
+              logInfo:logEntry
+            },()=>check(current));
+            if(parsedKm&&parsedKm.conversation){
+              if(kimiCredsSkipped>0){
+                parsedKm.conversation.importWarnings=parsedKm.conversation.importWarnings||[];
+                if(!parsedKm.conversation.importWarnings.includes('kimi_credentials_skipped:'+kimiCredsSkipped))parsedKm.conversation.importWarnings.push('kimi_credentials_skipped:'+kimiCredsSkipped);
+              }
+              codexConvs.push(parsedKm.conversation);
+              if(parsedKm.project&&!codexProjects.has(parsedKm.project.uuid))codexProjects.set(parsedKm.project.uuid,parsedKm.project);
             }
           }
         }
