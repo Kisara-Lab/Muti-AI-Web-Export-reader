@@ -2,7 +2,7 @@
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-x0cmv8WrfrJzPjMBPtO+D/jwnVCNSZ0kgayUjCdOvLk=' 'sha256-tMIvewdj4Er6it91vRKx68b9zhu5Sxm35MV7o9YOuqs=' https://cdn.jsdelivr.net https://unpkg.com https://cdnjs.cloudflare.com blob:; script-src-attr 'none'; style-src 'unsafe-inline' https://cdn.jsdelivr.net https://unpkg.com https://cdnjs.cloudflare.com; img-src blob: data: https: http:; font-src data:; connect-src blob:; worker-src blob:; frame-src blob:; object-src 'none'; base-uri 'none'; form-action 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-SrTiyR5Je3+ArrWFCjf20Uq+CNGtoNUPPGAfejdYYeM=' 'sha256-tMIvewdj4Er6it91vRKx68b9zhu5Sxm35MV7o9YOuqs=' https://cdn.jsdelivr.net https://unpkg.com https://cdnjs.cloudflare.com blob:; script-src-attr 'none'; style-src 'unsafe-inline' https://cdn.jsdelivr.net https://unpkg.com https://cdnjs.cloudflare.com; img-src blob: data: https: http:; font-src data:; connect-src blob:; worker-src blob:; frame-src blob:; object-src 'none'; base-uri 'none'; form-action 'none'">
 <meta name="referrer" content="no-referrer">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Multi-AI Web Export Reader — Local Claude, ChatGPT, Grok &amp; Perplexity Viewer</title>
@@ -125,6 +125,7 @@ body { background: var(--bg); color: var(--text); font-family: -apple-system,Bli
 .conv-meta { font-size: 11px; color: var(--text3); margin-top: 4px; display: flex; justify-content: space-between; align-items: center; gap: 6px; }
 .conv-meta-left { display: inline-flex; align-items: center; gap: 5px; flex-wrap: wrap; min-width: 0; }
 .conv-item.is-subagent { margin-left: 12px; border-left: 2.5px solid #6366f1; background: color-mix(in srgb, #6366f1 4%, var(--bg2)); }
+[data-theme=dark] .conv-item.is-subagent { background: color-mix(in srgb, #6366f1 10%, #141720); }
 .subagent-pill { display: inline-flex; align-items: center; gap: 3px; padding: 1px 6px; border-radius: 999px; font-size: 10px; font-weight: 600; background: color-mix(in srgb, #6366f1 12%, var(--bg3)); color: #4338ca; border: 1px solid color-mix(in srgb, #6366f1 30%, var(--border)); }
 [data-theme=dark] .subagent-pill { color: #a5b4fc; }
 .conv-count { background: var(--bg4); padding: 1px 6px; border-radius: 999px; font-variant-numeric: tabular-nums; flex-shrink: 0; }
@@ -644,6 +645,10 @@ mark.cs.active { background:var(--accent); color:#fff; }
 [data-theme=dark] .msg-wrap.codex .msg-avatar { background:linear-gradient(135deg,#6366f1,#4338ca); }
 .msg-wrap.claude_code .msg-avatar { background:linear-gradient(135deg,#d97757,#b45309); color:#fff; font-size:13px; }
 [data-theme=dark] .msg-wrap.claude_code .msg-avatar { background:linear-gradient(135deg,#ea8c68,#d97757); }
+.msg-wrap.antigravity .msg-avatar { background:linear-gradient(135deg,#4285f4,#7c3aed 58%,#ec4899); color:#fff; font-size:13px; box-shadow:0 2px 10px rgba(124,58,237,.28); }
+[data-theme=dark] .msg-wrap.antigravity .msg-avatar { background:linear-gradient(135deg,#60a5fa,#8b5cf6 58%,#f472b6); }
+.msg-wrap.gemini_cli .msg-avatar { background:linear-gradient(135deg,#0ea5e9,#2563eb); color:#fff; font-size:13px; }
+[data-theme=dark] .msg-wrap.gemini_cli .msg-avatar { background:linear-gradient(135deg,#38bdf8,#3b82f6); }
 .platform-bar { display:flex; align-items:center; gap:5px; margin-top:7px; flex-wrap:wrap; }
 .platform-btn { flex:0 1 auto; display:inline-flex; align-items:center; justify-content:center; gap:4px; padding:3px 8px; background:var(--bg3); border:1px solid var(--border); border-radius:999px; color:var(--text3); font-size:11px; font-weight:500; cursor:pointer; transition:all .15s; text-align:center; white-space:nowrap; }
 .platform-btn:hover { border-color:var(--border2); color:var(--text2); background:var(--bg2); opacity:1; }
@@ -659,12 +664,16 @@ mark.cs.active { background:var(--accent); color:#fff; }
 .platform-pill.perplexity { background:color-mix(in srgb,#0891b2 11%,var(--bg2)); border-color:color-mix(in srgb,#0891b2 32%,var(--border)); color:#0e647a; }
 .platform-pill.codex { background:color-mix(in srgb,#6366f1 12%,var(--bg2)); border-color:color-mix(in srgb,#6366f1 34%,var(--border)); color:#4338ca; }
 .platform-pill.claude_code { background:color-mix(in srgb,#d97757 12%,var(--bg2)); border-color:color-mix(in srgb,#d97757 34%,var(--border)); color:#b45309; }
+.platform-pill.antigravity { background:color-mix(in srgb,#7c3aed 12%,var(--bg2)); border-color:color-mix(in srgb,#7c3aed 34%,var(--border)); color:#5b21b6; }
+.platform-pill.gemini_cli { background:color-mix(in srgb,#0ea5e9 12%,var(--bg2)); border-color:color-mix(in srgb,#0ea5e9 34%,var(--border)); color:#0369a1; }
 [data-theme=dark] .platform-pill.claude { color:#f0b87a; }
 [data-theme=dark] .platform-pill.gpt { color:#5eead4; }
 [data-theme=dark] .platform-pill.grok { color:#cbd5e1; }
 [data-theme=dark] .platform-pill.perplexity { color:#67e8f9; }
 [data-theme=dark] .platform-pill.codex { color:#a5b4fc; }
 [data-theme=dark] .platform-pill.claude_code { color:#fdba74; }
+[data-theme=dark] .platform-pill.antigravity { color:#c4b5fd; }
+[data-theme=dark] .platform-pill.gemini_cli { color:#7dd3fc; }
 .stats-platform-row { display:flex; flex-wrap:wrap; gap:4px; margin-top:5px; }
 .header-pill-btn { padding:5px 9px; background:var(--bg3); border:1px solid var(--border); border-radius:8px; color:var(--text2); font-size:11.5px; cursor:pointer; white-space:nowrap; display:inline-flex; align-items:center; gap:5px; transition:border-color .15s,color .15s,background .15s; }
 .header-pill-btn:hover:not(:disabled) { border-color:var(--accent); color:var(--text); background:var(--bg2); }
@@ -673,6 +682,8 @@ mark.cs.active { background:var(--accent); color:#fff; }
 .import-notice { margin:8px 0 14px; padding:9px 12px; border-left:3px solid var(--orange); border-radius:8px; background:var(--bg3); color:var(--text2); font-size:12px; line-height:1.5; }
 .import-notice.codex-alpha-notice { border-left-color:#e11d48; background:color-mix(in srgb,#6366f1 7%,var(--bg3)); }
 .import-notice.claude-code-alpha-notice { border-left-color:#e11d48; background:color-mix(in srgb,#d97757 8%,var(--bg3)); }
+.import-notice.ag-alpha-notice { border-left-color:#7c3aed; background:linear-gradient(90deg,color-mix(in srgb,#4285f4 8%,var(--bg3)),color-mix(in srgb,#ec4899 6%,var(--bg3))); }
+.import-notice.gemini-alpha-notice { border-left-color:#0ea5e9; background:color-mix(in srgb,#0ea5e9 8%,var(--bg3)); }
 .gpt-components { display:grid; gap:10px; margin-top:10px; }
 .gpt-card { display:grid; gap:8px; padding:12px 14px; background:var(--bg3); border:1px solid var(--border); border-radius:var(--radius-sm); font-size:12.5px; color:var(--text); box-shadow: var(--specular); }
 .gpt-card-head { display:flex; align-items:center; justify-content:space-between; gap:8px; flex-wrap:wrap; }
@@ -763,6 +774,8 @@ mark.cs.active { background:var(--accent); color:#fff; }
 .platform-guide-card.perplexity { border-top-color: #0891b2; }
 .platform-guide-card.codex { border-top-color: #6366f1; }
 .platform-guide-card.claude_code { border-top-color: #d97757; }
+.platform-guide-card.antigravity { border-top-color: #7c3aed; }
+.platform-guide-card.gemini_cli { border-top-color: #0ea5e9; }
 .platform-guide-head { display:flex; align-items:center; gap:7px; font-size:12.5px; font-weight:600; color:var(--text); }
 .platform-dot { width:9px; height:9px; border-radius:50%; flex-shrink:0; }
 .platform-dot.claude { background:linear-gradient(135deg,#d4a855,#c97b3a); }
@@ -771,6 +784,97 @@ mark.cs.active { background:var(--accent); color:#fff; }
 .platform-dot.perplexity { background:linear-gradient(135deg,#0891b2,#155e75); }
 .platform-dot.codex { background:linear-gradient(135deg,#6366f1,#4338ca); }
 .platform-dot.claude_code { background:linear-gradient(135deg,#d97757,#b45309); }
+.platform-dot.antigravity { background:linear-gradient(135deg,#4285f4,#7c3aed 55%,#ec4899); }
+.platform-dot.gemini_cli { background:linear-gradient(135deg,#38bdf8,#2563eb); }
+
+/* ── Antigravity Native Replication (Brain Workspace, Task Checklist, Carousel, URL Cards, Unified Diff) ── */
+.ag-artifact-strip { display:flex; align-items:center; flex-wrap:wrap; gap:7px; margin:6px 0 14px; padding:9px 12px; border:1px solid color-mix(in srgb,#7c3aed 26%,var(--border)); border-radius:12px; background:linear-gradient(115deg,color-mix(in srgb,#4285f4 7%,var(--bg2)),color-mix(in srgb,#ec4899 5%,var(--bg2))); box-shadow:var(--specular),var(--shadow); }
+.ag-strip-kicker { display:inline-flex; align-items:center; gap:5px; font-size:10.5px; font-weight:750; letter-spacing:.05em; text-transform:uppercase; color:#5b21b6; margin-right:4px; }
+[data-theme=dark] .ag-strip-kicker { color:#c4b5fd; }
+.ag-art-pill { display:inline-flex; align-items:center; gap:5px; padding:4px 10px; border-radius:999px; border:1px solid var(--border); background:var(--bg2); color:var(--text); font:inherit; font-size:11.5px; font-weight:550; cursor:pointer; transition:border-color .15s,transform .1s; text-decoration:none; }
+.ag-art-pill:hover { border-color:#7c3aed; background:var(--bg3); transform:translateY(-1px); text-decoration:none; }
+[data-theme=dark] .ag-art-pill { background:var(--bg3); border-color:color-mix(in srgb,#8b5cf6 28%,var(--border)); color:var(--text); }
+.ag-art-pill-meta { font-size:10px; padding:0 5px; border-radius:999px; background:color-mix(in srgb,#7c3aed 12%,var(--bg3)); color:#6d28d9; font-weight:650; font-variant-numeric:tabular-nums; }
+[data-theme=dark] .ag-art-pill-meta { color:#c4b5fd; }
+.ag-url-strip { display:grid; grid-template-columns:repeat(auto-fill,minmax(230px,1fr)); gap:8px; margin:8px 0 14px; }
+.ag-url-card { display:flex; flex-direction:column; gap:3px; padding:9px 12px; border-radius:11px; border:1px solid var(--border); background:var(--bg2); color:inherit; text-decoration:none; box-shadow:var(--specular),var(--shadow); transition:border-color .15s,transform .12s; min-width:0; }
+.ag-url-card:hover { border-color:#4285f4; transform:translateY(-1px); text-decoration:none; }
+.ag-url-host { font-size:10.5px; font-weight:650; color:var(--blue); display:flex; align-items:center; gap:5px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.ag-url-title { font-size:12.5px; font-weight:650; color:var(--text); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.ag-url-desc { font-size:11px; color:var(--text3); line-height:1.4; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
+.ag-task-card { margin:10px 0 14px; border:1px solid color-mix(in srgb,#4285f4 28%,var(--border)); border-top:2.5px solid #4285f4; border-radius:13px; background:var(--bg2); box-shadow:var(--specular),var(--shadow); overflow:hidden; }
+.ag-task-head { padding:8px 12px; background:linear-gradient(90deg,color-mix(in srgb,#4285f4 10%,var(--bg3)),color-mix(in srgb,#10b981 6%,var(--bg3))); border-bottom:1px solid var(--border); display:flex; align-items:center; gap:8px; cursor:pointer; user-select:none; }
+.ag-task-head:not(.open) { border-bottom:0; }
+.ag-mode-badge { font-size:9.5px; font-weight:750; letter-spacing:.05em; padding:1px 7px; border-radius:999px; border:1px solid transparent; text-transform:uppercase; }
+.ag-mode-badge.planning { background:color-mix(in srgb,#7c3aed 14%,var(--bg2)); color:#5b21b6; border-color:color-mix(in srgb,#7c3aed 32%,var(--border)); }
+.ag-mode-badge.execution { background:color-mix(in srgb,#f59e0b 14%,var(--bg2)); color:#b45309; border-color:color-mix(in srgb,#f59e0b 32%,var(--border)); }
+.ag-mode-badge.verification { background:color-mix(in srgb,#10b981 14%,var(--bg2)); color:#047857; border-color:color-mix(in srgb,#10b981 32%,var(--border)); }
+[data-theme=dark] .ag-mode-badge.planning { color:#c4b5fd; }
+[data-theme=dark] .ag-mode-badge.execution { color:#fcd34d; }
+[data-theme=dark] .ag-mode-badge.verification { color:#6ee7b7; }
+.ag-task-progress { width:72px; height:6px; border-radius:99px; background:var(--bg4); overflow:hidden; flex-shrink:0; }
+.ag-task-progress > i { display:block; height:100%; border-radius:99px; background:linear-gradient(90deg,#4285f4,#10b981); }
+.ag-task-body { padding:11px 14px; font-size:13px; line-height:1.62; background:var(--bg); }
+.ag-check { display:inline-flex; align-items:center; justify-content:center; width:15px; height:15px; border-radius:50%; margin-right:6px; font-size:10px; font-weight:750; vertical-align:-2px; flex-shrink:0; }
+.ag-check.todo { border:1.6px solid var(--text3); color:transparent; }
+.ag-check.doing { border:1.6px solid #0ea5e9; background:color-mix(in srgb,#0ea5e9 18%,transparent); color:#0284c7; animation:agPulse 1.8s ease-in-out infinite; }
+.ag-check.done { border:1.6px solid #10b981; background:#10b981; color:#fff; }
+@keyframes agPulse { 0%,100% { box-shadow:0 0 0 0 rgba(14,165,233,.35); } 50% { box-shadow:0 0 0 4px rgba(14,165,233,0); } }
+.ag-op-badge { display:inline-block; font-size:10px; font-weight:750; letter-spacing:.04em; padding:0 6px; border-radius:5px; margin-right:5px; vertical-align:1px; font-family:ui-monospace,SFMono-Regular,Consolas,monospace; }
+.ag-op-badge.is-new { background:color-mix(in srgb,#16a34a 14%,var(--bg2)); color:#15803d; border:1px solid color-mix(in srgb,#16a34a 32%,var(--border)); }
+.ag-op-badge.is-modify { background:color-mix(in srgb,#3b82f6 14%,var(--bg2)); color:#1d4ed8; border:1px solid color-mix(in srgb,#3b82f6 32%,var(--border)); }
+.ag-op-badge.is-delete { background:color-mix(in srgb,#dc2626 14%,var(--bg2)); color:#b91c1c; border:1px solid color-mix(in srgb,#dc2626 32%,var(--border)); }
+[data-theme=dark] .ag-op-badge.is-new { color:#86efac; }
+[data-theme=dark] .ag-op-badge.is-modify { color:#93c5fd; }
+[data-theme=dark] .ag-op-badge.is-delete { color:#fca5a5; }
+.ag-carousel { margin:10px 0 14px; border:1px solid var(--border); border-radius:12px; background:var(--bg2); overflow:hidden; box-shadow:var(--specular),var(--shadow); }
+.ag-carousel-bar { display:flex; align-items:center; justify-content:space-between; gap:8px; padding:7px 11px; background:var(--bg3); border-bottom:1px solid var(--border); font-size:11.5px; color:var(--text2); }
+.ag-carousel-nav { display:inline-flex; align-items:center; gap:5px; }
+.ag-carousel-slide { display:none; padding:12px 14px; }
+.ag-carousel-slide.active { display:block; }
+.ag-carousel-slide img { max-width:100%; border-radius:8px; border:1px solid var(--border); display:block; margin:4px auto; }
+.ag-carousel-dots { display:flex; align-items:center; gap:5px; }
+.ag-carousel-dot { width:7px; height:7px; border-radius:50%; border:0; background:var(--border2); cursor:pointer; padding:0; }
+.ag-carousel-dot.active { background:var(--accent); transform:scale(1.25); }
+.ag-canvas-versions { display:none; align-items:center; gap:8px; padding:7px 12px; background:var(--bg3); border-bottom:1px solid var(--border); font-size:11.5px; color:var(--text2); }
+.ag-canvas-versions select { padding:3px 8px; border-radius:6px; border:1px solid var(--border2); background:var(--bg2); color:var(--text); font:inherit; font-size:11.5px; }
+.ag-diff-view { margin:0; padding:8px 0; background:var(--code-bg); border:1px solid var(--border); border-radius:8px; overflow:auto; max-height:280px; font-family:ui-monospace,SFMono-Regular,Consolas,monospace; font-size:11.5px; line-height:1.52; }
+.ag-diff-code { display:block; background:transparent !important; border:0 !important; padding:0 !important; font:inherit; color:inherit; }
+.ag-diff-line { padding:0 11px; white-space:pre; }
+.ag-diff-line.add { background:color-mix(in srgb,#22c55e 14%,transparent); color:#15803d; }
+.ag-diff-line.del { background:color-mix(in srgb,#ef4444 13%,transparent); color:#b91c1c; }
+.ag-diff-line.hunk { background:color-mix(in srgb,#3b82f6 10%,transparent); color:var(--blue); font-weight:600; }
+[data-theme=dark] .ag-diff-line.add { color:#86efac; }
+[data-theme=dark] .ag-diff-line.del { color:#fca5a5; }
+.ag-art-pill.active { border-color:#7c3aed; background:color-mix(in srgb,#7c3aed 12%,var(--bg2)); box-shadow:0 0 0 2px color-mix(in srgb,#7c3aed 18%,transparent); }
+.ag-phase-trail { display:inline-flex; align-items:center; gap:3px; margin-left:auto; padding:2px 6px; border-radius:999px; background:color-mix(in srgb,var(--bg3) 85%,transparent); border:1px solid var(--border); }
+.ag-phase-step { font-size:9.5px; font-weight:700; letter-spacing:.04em; color:var(--text3); padding:1px 5px; border-radius:999px; }
+.ag-phase-step.seen { color:var(--text2); }
+.ag-phase-step.active.planning { background:color-mix(in srgb,#7c3aed 16%,var(--bg2)); color:#6d28d9; }
+.ag-phase-step.active.execution { background:color-mix(in srgb,#f59e0b 16%,var(--bg2)); color:#b45309; }
+.ag-phase-step.active.verification { background:color-mix(in srgb,#10b981 16%,var(--bg2)); color:#047857; }
+[data-theme=dark] .ag-phase-step.active.planning { color:#c4b5fd; }
+[data-theme=dark] .ag-phase-step.active.execution { color:#fcd34d; }
+[data-theme=dark] .ag-phase-step.active.verification { color:#6ee7b7; }
+.ag-file-chip { display:inline-flex; align-items:center; gap:4px; padding:1px 7px; margin:0 1px; border-radius:6px; border:1px solid var(--border); background:var(--bg3); font-family:ui-monospace,SFMono-Regular,Consolas,monospace; font-size:11.5px; color:var(--text); vertical-align:baseline; }
+.ag-file-chip-line { color:var(--accent); font-weight:650; font-size:10.5px; }
+.ag-step-card { display:flex; flex-direction:column; gap:6px; padding:8px 10px; border-radius:9px; border:1px solid var(--border); background:var(--bg2); }
+.ag-step-card-top { display:flex; align-items:center; flex-wrap:wrap; gap:7px; }
+.ag-step-title { font-size:12.5px; font-weight:650; color:var(--text); }
+.ag-step-meta { font-size:11.5px; color:var(--text2); line-height:1.5; }
+.ag-review-files { display:flex; flex-wrap:wrap; gap:6px; margin-top:2px; }
+.ag-term-bar { display:flex; align-items:center; gap:8px; padding:6px 10px; border-radius:8px; background:var(--code-bg); border:1px solid var(--border); font-family:ui-monospace,SFMono-Regular,Consolas,monospace; font-size:11.5px; color:var(--text); overflow-x:auto; }
+.ag-term-prompt { color:#10b981; font-weight:700; flex-shrink:0; }
+.ag-term-cmd { white-space:pre-wrap; word-break:break-all; }
+.ag-diff-wrap { border:1px solid var(--border); border-radius:9px; overflow:hidden; background:var(--code-bg); }
+.ag-diff-head { display:flex; align-items:center; gap:8px; padding:5px 10px; background:var(--bg3); border-bottom:1px solid var(--border); font-size:11px; color:var(--text2); }
+.ag-diff-file { font-family:ui-monospace,SFMono-Regular,Consolas,monospace; font-weight:600; color:var(--text); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.ag-diff-stat-add { margin-left:auto; color:#15803d; font-weight:700; font-family:ui-monospace,monospace; }
+.ag-diff-stat-del { color:#b91c1c; font-weight:700; font-family:ui-monospace,monospace; }
+[data-theme=dark] .ag-diff-stat-add { color:#86efac; }
+[data-theme=dark] .ag-diff-stat-del { color:#fca5a5; }
+.ag-diff-wrap .ag-diff-view { border:0; border-radius:0; }
+.step-think-subject { font-size:12px; font-weight:650; color:var(--text); margin-bottom:4px; }
 .platform-beta-badge { margin-left:auto; font-size:9.5px; font-weight:700; letter-spacing:.04em; text-transform:uppercase; padding:1px 6px; border-radius:999px; background:color-mix(in srgb,#d97706 14%,var(--bg3)); color:#b45309; border:1px solid color-mix(in srgb,#d97706 36%,var(--border)); }
 [data-theme=dark] .platform-beta-badge { color:#fbbf24; }
 .platform-alpha-badge { margin-left:auto; font-size:9.5px; font-weight:700; letter-spacing:.04em; padding:1px 7px; border-radius:999px; background:color-mix(in srgb,#e11d48 12%,var(--bg3)); color:#be123c; border:1px solid color-mix(in srgb,#e11d48 34%,var(--border)); }
@@ -999,6 +1103,8 @@ button.step-agent-head:hover { background: color-mix(in srgb, #6366f1 8%, var(--
       <button type="button" class="platform-btn" data-platform="perplexity" aria-pressed="false" title="Perplexity (Beta Test)">Perplexity β</button>
       <button type="button" class="platform-btn" data-platform="codex" aria-pressed="false" title="Codex (Alpha Test · 最缺少实测)">Codex α</button>
       <button type="button" class="platform-btn" data-platform="claude_code" aria-pressed="false" title="Claude Code (Alpha Test · 最缺少实测)">Claude Code α</button>
+      <button type="button" class="platform-btn" data-platform="antigravity" aria-pressed="false" title="Antigravity (Alpha Test · 最缺少实测)">Antigravity α</button>
+      <button type="button" class="platform-btn" data-platform="gemini_cli" aria-pressed="false" title="Gemini CLI (Alpha Test · 最缺少实测)">Gemini CLI α</button>
     </div>
   </div>
   <div id="tabs">
@@ -1054,21 +1160,21 @@ button.step-agent-head:hover { background: color-mix(in srgb, #6366f1 8%, var(--
             </svg>
           </div>
           <p class="empty-hero-title" data-i18n="Multi-AI Web Export Reader">Multi-AI Web Export Reader</p>
-          <p class="empty-hero-sub" data-i18n="本地查看、混合搜索并安全导出你的 Claude、ChatGPT、Grok、Perplexity、Codex (Alpha) 与 Claude Code (Alpha) 历史对话">本地查看、混合搜索并安全导出你的 Claude、ChatGPT、Grok、Perplexity、Codex (Alpha) 与 Claude Code (Alpha) 历史对话</p>
+          <p class="empty-hero-sub" data-i18n="本地查看、混合搜索并安全导出你的 Claude、ChatGPT、Grok、Perplexity、Codex、Claude Code、Antigravity 与 Gemini CLI 历史对话">本地查看、混合搜索并安全导出你的 Claude、ChatGPT、Grok、Perplexity、Codex、Claude Code、Antigravity 与 Gemini CLI 历史对话</p>
 
           <div class="welcome-step-card">
             <div class="welcome-step-head">
               <b><span class="ui-icon" aria-hidden="true"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v8.5M4.5 7L8 10.5 11.5 7"/><path d="M2.5 11.5v1.5a1 1 0 0 0 1 1h9a1 1 0 0 0 1-1v-1.5"/></svg></span><span data-i18n="导入对话导出包（支持直接拖入页面）">导入对话导出包（支持直接拖入页面）</span></b>
-              <span class="welcome-step-sub" data-i18n="可连续追加 Claude、ChatGPT、Grok、Perplexity、Codex 与 Claude Code 混合阅读">可连续追加 Claude、ChatGPT、Grok、Perplexity、Codex 与 Claude Code 混合阅读</span>
+              <span class="welcome-step-sub" data-i18n="可连续追加 Claude、ChatGPT、Grok、Perplexity、Codex、Claude Code、Antigravity 与 Gemini CLI 混合阅读">可连续追加 Claude、ChatGPT、Grok、Perplexity、Codex、Claude Code、Antigravity 与 Gemini CLI 混合阅读</span>
             </div>
             <div class="welcome-action-grid">
               <button type="button" class="welcome-action-btn primary" data-ui-click="pick-zip">
                 <b><span class="ui-icon" aria-hidden="true"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 4.2A1.7 1.7 0 0 1 4.7 2.5h6.6A1.7 1.7 0 0 1 13 4.2v7.6a1.7 1.7 0 0 1-1.7 1.7H4.7A1.7 1.7 0 0 1 3 11.8z"/><path d="M8 2.5v5.8M6.3 6.7L8 8.4l1.7-1.7"/></svg></span><span data-i18n="选择 ZIP 压缩包">选择 ZIP 压缩包</span></b>
-                <span data-i18n="免解压，支持多选 Claude / ChatGPT / Grok / Perplexity ZIP 或 Codex / Claude Code .jsonl">免解压，支持多选 Claude / ChatGPT / Grok / Perplexity ZIP 或 Codex / Claude Code .jsonl</span>
+                <span data-i18n="免解压，支持多选各平台导出 ZIP、session-*.jsonl/.json 或 Antigravity / Codex / Claude Code 日志">免解压，支持多选各平台导出 ZIP、session-*.jsonl/.json 或 Antigravity / Codex / Claude Code 日志</span>
               </button>
               <button type="button" class="welcome-action-btn" data-ui-click="pick-folder">
                 <b><span class="ui-icon" aria-hidden="true"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.55" stroke-linecap="round" stroke-linejoin="round"><path d="M2 4.3A1.3 1.3 0 0 1 3.3 3h3l1.4 1.5h5A1.3 1.3 0 0 1 14 5.8v6a1.3 1.3 0 0 1-1.3 1.3H3.3A1.3 1.3 0 0 1 2 11.8z"/></svg></span><span data-i18n="选择解压文件夹">选择解压文件夹</span></b>
-                <span data-i18n="适合已解压的导出目录、~/.codex/sessions、~/.claude/projects 或本地备份">适合已解压的导出目录、~/.codex/sessions、~/.claude/projects 或本地备份</span>
+                <span data-i18n="适合导出目录、~/.gemini (Antigravity / Gemini CLI)、~/.codex/sessions 或 ~/.claude/projects">适合导出目录、~/.gemini (Antigravity / Gemini CLI)、~/.codex/sessions 或 ~/.claude/projects</span>
               </button>
               <button type="button" class="welcome-action-btn" data-ui-click="download-page">
                 <b><span class="ui-icon" aria-hidden="true"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.55" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 10.5v2a1 1 0 0 0 1 1h9a1 1 0 0 0 1-1v-2"/><path d="M8 2.5v7.5M5.3 7.5L8 10.2l2.7-2.7"/></svg></span><span data-i18n="导入中心 / Claude 清单">导入中心 / Claude 清单</span></b>
@@ -1140,11 +1246,27 @@ button.step-agent-head:hover { background: color-mix(in srgb, #6366f1 8%, var(--
                 <li data-i18n="Alpha Test（最缺少实测）：自动聚合 cwd、还原 Diff、统计花费与加密思考标记">Alpha Test（最缺少实测）：自动聚合 cwd、还原 Diff、统计花费与加密思考标记</li>
               </ul>
             </section>
+            <section class="platform-guide-card antigravity">
+              <div class="platform-guide-head"><span class="platform-dot antigravity"></span><span data-i18n="Antigravity 会话与工件指引">Antigravity 会话与工件指引</span><span class="platform-alpha-badge" data-i18n="Alpha Test · 最缺少实测">Alpha Test · 最缺少实测</span></div>
+              <div class="platform-guide-path">~/.gemini/antigravity*/brain/**/transcript_full.jsonl</div>
+              <ul>
+                <li data-i18n="融合 transcript_full.jsonl、task.md / implementation_plan.md / walkthrough.md、.resolved 快照与 .url.json 书签">融合 transcript_full.jsonl、task.md / implementation_plan.md / walkthrough.md、.resolved 快照与 .url.json 书签</li>
+                <li data-i18n="自动跳过加密 .pb 并原生复刻 Task 进度卡、Carousel 轮播与 Steps 2.0 时间线">自动跳过加密 .pb 并原生复刻 Task 进度卡、Carousel 轮播与 Steps 2.0 时间线</li>
+              </ul>
+            </section>
+            <section class="platform-guide-card gemini_cli">
+              <div class="platform-guide-head"><span class="platform-dot gemini_cli"></span><span data-i18n="Google Gemini CLI 会话指引">Google Gemini CLI 会话指引</span><span class="platform-alpha-badge" data-i18n="Alpha Test · 最缺少实测">Alpha Test · 最缺少实测</span></div>
+              <div class="platform-guide-path">~/.gemini/tmp/**/chats/session-*.jsonl</div>
+              <ul>
+                <li data-i18n="支持 session-*.jsonl(.json) 状态回放 ($set/$patch/$rewindTo)、FileDiff、子代理与 GEMINI.md 记忆">支持 session-*.jsonl(.json) 状态回放 ($set/$patch/$rewindTo)、FileDiff、子代理与 GEMINI.md 记忆</li>
+                <li data-i18n="自动关联 projects.json / .project_root 工作区并在行为实验室分析 5 维 Token">自动关联 projects.json / .project_root 工作区并在行为实验室分析 5 维 Token</li>
+              </ul>
+            </section>
           </div>
 
           <div class="welcome-note">
             <b data-i18n="纯本地运行 · 多平台混合工作区">纯本地运行 · 多平台混合工作区</b> —
-            <span data-i18n="所有解析、全文搜索、统计分析与隐私脱敏都在浏览器本机完成，不会上传对话内容。你可以按任意顺序导入 Claude、ChatGPT、Grok、Perplexity、Codex 与 Claude Code，在同一工作区按平台筛选并导出安全分享版。">所有解析、全文搜索、统计分析与隐私脱敏都在浏览器本机完成，不会上传对话内容。你可以按任意顺序导入 Claude、ChatGPT、Grok、Perplexity、Codex 与 Claude Code，在同一工作区按平台筛选并导出安全分享版。</span>
+            <span data-i18n="所有解析、全文搜索、统计分析与隐私脱敏都在浏览器本机完成，不会上传对话内容。你可以按任意顺序导入 Claude、ChatGPT、Grok、Perplexity、Codex、Claude Code、Antigravity 与 Gemini CLI，在同一工作区按平台筛选并导出安全分享版。">所有解析、全文搜索、统计分析与隐私脱敏都在浏览器本机完成，不会上传对话内容。你可以按任意顺序导入 Claude、ChatGPT、Grok、Perplexity、Codex、Claude Code、Antigravity 与 Gemini CLI，在同一工作区按平台筛选并导出安全分享版。</span>
           </div>
           <div class="welcome-features">
             <span class="welcome-feature" data-i18n="图片与附件">图片与附件</span>
@@ -1184,6 +1306,11 @@ button.step-agent-head:hover { background: color-mix(in srgb, #6366f1 8%, var(--
           <button type="button" class="hdr-btn" id="canvas-download-btn" data-ui-click="canvas-download" style="font-size:11px;padding:4px 8px;" data-i18n="下载">下载</button>
           <button type="button" class="hdr-icon-btn" id="canvas-close-btn" data-ui-click="canvas-close" data-i18n-title="关闭画布" title="关闭画布"><span class="ui-icon" aria-hidden="true"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M4 4l8 8M12 4l-8 8"/></svg></span></button>
         </div>
+      </div>
+      <div class="ag-canvas-versions" id="canvas-version-bar">
+        <span data-i18n="快照版本">快照版本</span>
+        <select id="canvas-version-select" data-ui-change="canvas-version" aria-label="Snapshot version"></select>
+        <button type="button" class="fbtn" id="canvas-diff-toggle" data-ui-click="canvas-diff-toggle" style="display:none;margin-left:auto;" data-i18n="对比当前">对比当前</button>
       </div>
       <div class="canvas-body" id="canvas-body"></div>
     </aside>
@@ -1556,7 +1683,37 @@ Object.assign(EN,{
   '暂未检测到具体切换对':'No model swap observed',
   '正常':'Clean',
   '需关注':'Watch',
-  '触发拦截':'Alert'
+  '触发拦截':'Alert',
+  '本地查看、混合搜索并安全导出你的 Claude、ChatGPT、Grok、Perplexity、Codex、Claude Code、Antigravity 与 Gemini CLI 历史对话':'Locally view, search, and safely export your Claude, ChatGPT, Grok, Perplexity, Codex, Claude Code, Antigravity & Gemini CLI conversations',
+  '可连续追加 Claude、ChatGPT、Grok、Perplexity、Codex、Claude Code、Antigravity 与 Gemini CLI 混合阅读':'Append Claude, ChatGPT, Grok, Perplexity, Codex, Claude Code, Antigravity & Gemini CLI archives in any order',
+  '免解压，支持多选各平台导出 ZIP、session-*.jsonl/.json 或 Antigravity / Codex / Claude Code 日志':'Select ZIP archives, session-*.jsonl/.json, or Antigravity / Codex / Claude Code transcripts',
+  '适合导出目录、~/.gemini (Antigravity / Gemini CLI)、~/.codex/sessions 或 ~/.claude/projects':'Great for extracted exports, ~/.gemini (Antigravity / Gemini CLI), ~/.codex/sessions, or ~/.claude/projects',
+  'Antigravity 会话与工件指引':'Antigravity Session & Brain Guide',
+  '融合 transcript_full.jsonl、task.md / implementation_plan.md / walkthrough.md、.resolved 快照与 .url.json 书签':'Fuses transcript_full.jsonl, task.md / implementation_plan.md / walkthrough.md, .resolved snapshots & .url.json',
+  '自动跳过加密 .pb 并原生复刻 Task 进度卡、Carousel 轮播与 Steps 2.0 时间线':'Safely skips encrypted .pb files & renders native Task checklists, Carousels & Steps 2.0',
+  'Google Gemini CLI 会话指引':'Google Gemini CLI Session Guide',
+  '支持 session-*.jsonl(.json) 状态回放 ($set/$patch/$rewindTo)、FileDiff、子代理与 GEMINI.md 记忆':'Supports session-*.jsonl(.json) replay ($set/$patch/$rewindTo), FileDiffs, subagents & GEMINI.md',
+  '自动关联 projects.json / .project_root 工作区并在行为实验室分析 5 维 Token':'Links projects.json / .project_root workspaces & analyzes 5-bucket tokens in Behavior Lab',
+  '所有解析、全文搜索、统计分析与隐私脱敏都在浏览器本机完成，不会上传对话内容。你可以按任意顺序导入 Claude、ChatGPT、Grok、Perplexity、Codex、Claude Code、Antigravity 与 Gemini CLI，在同一工作区按平台筛选并导出安全分享版。':'All parsing, full-text search, analytics, and privacy redaction run locally in your browser. Mix Claude, ChatGPT, Grok, Perplexity, Codex, Claude Code, Antigravity, and Gemini CLI archives in one workspace.',
+  '快照版本':'Snapshot',
+  '当前版本':'Current',
+  '人工审阅':'Review',
+  '画布对比 Diff':'Canvas Diff',
+  '跳转到子代理对话':'Open subagent',
+  '已完成任务':'Tasks completed',
+  '已从截断日志读取':'Truncated log',
+  'Antigravity Brain 工作区':'Antigravity Brain Workspace',
+  'Antigravity α 专项观测台':'Antigravity α Agent Telemetry',
+  'Gemini CLI α 专项观测台':'Gemini CLI α Telemetry',
+  '上一张':'Prev',
+  '下一张':'Next',
+  '对比当前':'Diff vs Current',
+  '退出对比':'Exit Diff',
+  '人工审阅门':'Review Gate',
+  '审阅对象':'Paths to Review',
+  '等待确认':'BlockedOnUser',
+  '任务摘要':'Task Summary',
+  '任务状态':'Task Status'
 });
 const UI_ICONS={
   spark:'<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2l1.3 3.7L13 7l-3.7 1.3L8 12l-1.3-3.7L3 7l3.7-1.3z"/></svg>',
@@ -1602,7 +1759,9 @@ const PLATFORM_SVGS={
   grok:'<svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="9" cy="9" r="5.8" opacity=".4"/><path d="M4.5 13.5L13.5 4.5M5.5 5.2l7 7.6"/></svg>',
   perplexity:'<svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.55" stroke-linejoin="round"><path d="M9 2v14M3.5 5.5L9 9l5.5-3.5M3.5 12.5L9 9l5.5 3.5M4.5 4h9v10h-9z"/></svg>',
   codex:'<svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round"><rect x="2.2" y="2.8" width="13.6" height="12.4" rx="3"/><path d="M5 6.4L8.2 9 5 11.6M9.6 12h3.4"/></svg>',
-  claude_code:'<svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round"><rect x="2.2" y="2.8" width="13.6" height="12.4" rx="3"/><path d="M5 6.6L7.6 9 5 11.4M9.4 11.6h3.5"/><path d="M12.2 4.6v2.6M10.9 5.9h2.6" stroke-width="1.4"/></svg>'
+  claude_code:'<svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round"><rect x="2.2" y="2.8" width="13.6" height="12.4" rx="3"/><path d="M5 6.6L7.6 9 5 11.4M9.4 11.6h3.5"/><path d="M12.2 4.6v2.6M10.9 5.9h2.6" stroke-width="1.4"/></svg>',
+  antigravity:'<svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.55" stroke-linecap="round" stroke-linejoin="round"><path d="M9 2.2l1.8 4.9L15.7 9l-4.9 1.9L9 15.8l-1.8-4.9L2.3 9l4.9-1.9z" fill="currentColor" fill-opacity=".24"/><circle cx="14" cy="4" r="1.1" fill="currentColor" stroke="none"/></svg>',
+  gemini_cli:'<svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="2.2" y="2.8" width="13.6" height="12.4" rx="3"/><path d="M6.4 6.6L7.5 9l2.4 1.1-2.4 1.1-1.1 2.4-1.1-2.4-2.4-1.1 2.4-1.1z" transform="translate(2.5,-0.5) scale(0.75)" fill="currentColor" stroke="none"/><path d="M10 11.8h3.3"/></svg>'
 };
 const PLATFORMS={
   claude:{id:'claude',name:'Claude',avatar:'✦',beta:false},
@@ -1610,9 +1769,11 @@ const PLATFORMS={
   grok:{id:'grok',name:'Grok',avatar:'𝕏',beta:true},
   perplexity:{id:'perplexity',name:'Perplexity',avatar:'❖',beta:true},
   codex:{id:'codex',name:'Codex',avatar:'❯',alpha:true,beta:false},
-  claude_code:{id:'claude_code',name:'Claude Code',avatar:'❯_',alpha:true,beta:false}
+  claude_code:{id:'claude_code',name:'Claude Code',avatar:'❯_',alpha:true,beta:false},
+  antigravity:{id:'antigravity',name:'Antigravity',avatar:'✧',alpha:true,beta:false},
+  gemini_cli:{id:'gemini_cli',name:'Gemini CLI',avatar:'✦_',alpha:true,beta:false}
 };
-const PLATFORM_ORDER=['claude','gpt','grok','perplexity','codex','claude_code'];
+const PLATFORM_ORDER=['claude','gpt','grok','perplexity','codex','claude_code','antigravity','gemini_cli'];
 function platformMeta(id){return PLATFORMS[id]||PLATFORMS.claude;}
 function renderAvatarHtml(role,pMeta,avatarLabel){
   const svg=role==='human'?UI_ICONS.user:(PLATFORM_SVGS[pMeta.id]||PLATFORM_SVGS.claude);
@@ -1726,7 +1887,7 @@ function attachmentMedia(att,key){const name=att.file_name||att.filename||att.na
 function chooseAttachmentMedia(key){const input=document.createElement('input');input.type='file';input.accept='image/*';input.onchange=()=>{const file=input.files?.[0];if(!file)return;const item={name:file.name,url:URL.createObjectURL(file),type:file.type||'',source:'manual'};const old=ATTACHMENT_MEDIA.get(key);if(old?.source==='manual'&&old.url)try{URL.revokeObjectURL(old.url);}catch(e){}ATTACHMENT_MEDIA.set(key,item);if(currentConv)renderMessages(currentConv.chat_messages||[]);};input.click();}
 
 function isPackageImportFiles(files){
-  return files.some(f=>/\.zip$|\.jsonl(?:\.zst)?$|\.md$|\.dat$|\.xlsx$/i.test(f.name)||/^(?:manifest.*|export_manifest|library_files|user|conversations-[^/]+|prod-grok-backend|prod-mc-auth-mgmt-api|prod-mc-billing)\.json$/i.test(f.name)||/(?:^|\/)(?:memories|memory|artifacts|dalle-generations|prod-mc-asset-server|sessions|archived_sessions|subagents)\//.test(f.webkitRelativePath||''))||(files.length===1&&/\.json$/i.test(files[0].name)&&!/^conversations\.json$/i.test(files[0].name));
+  return files.some(f=>/\.zip$|\.jsonl(?:\.zst)?$|\.md(?:\.resolved(?:\.\d+)?)?$|\.dat$|\.xlsx$|\.pbtxt$|\.pb$/i.test(f.name)||/^(?:manifest.*|export_manifest|library_files|user|conversations-[^/]+|projects|prod-grok-backend|prod-mc-auth-mgmt-api|prod-mc-billing|\.project_root|.*\.metadata|.*\.url)\.json$/i.test(f.name)||f.name==='.project_root'||/(?:^|\/)(?:memories|memory|artifacts|dalle-generations|prod-mc-asset-server|sessions|archived_sessions|subagents|brain|annotations|conversations|chats|tmp|\.system_generated)\//.test(f.webkitRelativePath||''))||(files.length===1&&/\.json$/i.test(files[0].name)&&!/^conversations\.json$/i.test(files[0].name));
 }
 document.getElementById('file-input').addEventListener('change',async e=>{
   const files=[...e.target.files];
@@ -4772,6 +4933,1431 @@ function claudeCodeExportCore(){
   };
 }
 
+function antigravityExportCore(){
+  const root='00000000-0000-4000-8000-000000000000';
+  const MAX_OUTPUT_CHARS=262144; // 256 KB per-tool-output guard
+  const list=value=>Array.isArray(value)?value:[];
+  const string=value=>typeof value==='string'?value:'';
+  const trim=value=>string(value).trim();
+
+  const KNOWN_STEP_TYPES=new Set([
+    'USER_INPUT','PLANNER_RESPONSE','GENERIC','SYSTEM_MESSAGE','EPHEMERAL_MESSAGE',
+    'ERROR_MESSAGE','CONVERSATION_HISTORY','CHECKPOINT','USER_SETTINGS_CHANGE',
+    'RUN_COMMAND','VIEW_FILE','LIST_DIRECTORY','GREP_SEARCH','SEARCH_WEB','CODE_ACTION',
+    'WRITE_TO_FILE','REPLACE_FILE_CONTENT','MULTI_REPLACE_FILE_CONTENT',
+    'FIND_BY_NAME','VIEW_FILE_OUTLINE','VIEW_CODE_ITEM','COMMAND_STATUS',
+    'SEND_COMMAND_INPUT','TASK_BOUNDARY','NOTIFY_USER','ASK_QUESTION',
+    'INVOKE_SUBAGENT','SEND_MESSAGE','MANAGE_SUBAGENTS','GENERATE_IMAGE',
+    'READ_URL_CONTENT','READ_BROWSER_PAGE'
+  ]);
+
+  const TOOL_RESULT_TYPES=new Set([
+    'RUN_COMMAND','VIEW_FILE','LIST_DIRECTORY','GREP_SEARCH','SEARCH_WEB',
+    'CODE_ACTION','WRITE_TO_FILE','REPLACE_FILE_CONTENT','MULTI_REPLACE_FILE_CONTENT',
+    'FIND_BY_NAME','VIEW_FILE_OUTLINE','VIEW_CODE_ITEM','COMMAND_STATUS',
+    'SEND_COMMAND_INPUT','TASK_BOUNDARY','NOTIFY_USER','ASK_QUESTION',
+    'INVOKE_SUBAGENT','SEND_MESSAGE','MANAGE_SUBAGENTS','GENERATE_IMAGE',
+    'READ_URL_CONTENT','READ_BROWSER_PAGE'
+  ]);
+
+  function parseDate(value){
+    if(value==null||value==='')return '';
+    if(typeof value==='number'&&Number.isFinite(value)&&value>0){
+      const ms=value>=1e11?value:value*1000;
+      if(ms<=8.64e15)try{return new Date(ms).toISOString();}catch{}
+      return '';
+    }
+    const raw=trim(value);
+    if(!raw)return '';
+    if(/^\d{10,16}$/.test(raw)){
+      const num=Number(raw),ms=num>=1e11?num:num*1000;
+      if(ms<=8.64e15)try{return new Date(ms).toISOString();}catch{}
+    }
+    const ms=Date.parse(raw);
+    if(!Number.isFinite(ms))return '';
+    try{return new Date(ms).toISOString();}catch{return '';}
+  }
+
+  function hashKey(value){
+    const s=String(value||'');
+    let h1=0x811c9dc5,h2=0x9e3779b9;
+    for(let i=0;i<s.length;i++){
+      const c=s.charCodeAt(i);
+      h1^=c;h1=Math.imul(h1,0x01000193);
+      h2^=c;h2=Math.imul(h2,0x85ebca6b);
+    }
+    return (h1>>>0).toString(16).padStart(8,'0')+(h2>>>0).toString(16).padStart(8,'0');
+  }
+
+  function normalizeCwd(value){
+    return trim(value).replace(/\\/g,'/').replace(/\/+$/,'');
+  }
+
+  function sanitizeToolArgs(value){
+    if(!value||typeof value!=='object'||Array.isArray(value))return value;
+    const out={};
+    for(const [k,v]of Object.entries(value)){
+      if(typeof v==='string'){
+        const tv=v.trim();
+        if((tv.startsWith('"')&&tv.endsWith('"'))||(tv.startsWith('{')&&tv.endsWith('}'))||(tv.startsWith('[')&&tv.endsWith(']'))||tv==='true'||tv==='false'||/^-?\d+(?:\.\d+)?$/.test(tv)){
+          try{out[k]=JSON.parse(tv);}catch{out[k]=v;}
+        }else out[k]=v;
+      }else if(v&&typeof v==='object'&&!Array.isArray(v)){
+        out[k]=sanitizeToolArgs(v);
+      }else out[k]=v;
+    }
+    return out;
+  }
+
+  function boundedText(value,warnings,label){
+    const text=String(value??'');
+    if(text.length<=MAX_OUTPUT_CHARS)return text;
+    if(warnings&&!warnings.includes('oversized_tool_output'))warnings.push('oversized_tool_output');
+    const head=text.slice(0,Math.floor(MAX_OUTPUT_CHARS*0.75));
+    const tail=text.slice(-Math.floor(MAX_OUTPUT_CHARS*0.15));
+    return head+'\n\n... ['+(label||'output')+' truncated: '+(text.length-head.length-tail.length)+' chars omitted] ...\n\n'+tail;
+  }
+
+  function buildSimpleDiffFromStrings(filePath,oldStr,newStr){
+    if(typeof oldStr!=='string'&&typeof newStr!=='string')return '';
+    const oldLines=(typeof oldStr==='string'?oldStr:'').split('\n').slice(0,220);
+    const newLines=(typeof newStr==='string'?newStr:'').split('\n').slice(0,220);
+    const lines=[];
+    const cleanPath=String(filePath||'').replace(/^\/+/,'');
+    if(cleanPath)lines.push('--- a/'+cleanPath,'+++ b/'+cleanPath);
+    lines.push('@@ -1,'+oldLines.length+' +1,'+newLines.length+' @@');
+    for(const l of oldLines)lines.push('-'+l);
+    for(const l of newLines)lines.push('+'+l);
+    return lines.join('\n');
+  }
+
+  function projectFromCwd(cwd){
+    const norm=normalizeCwd(cwd);
+    if(!norm)return null;
+    const parts=norm.split('/').filter(Boolean);
+    const base=parts[parts.length-1]||norm;
+    const wsId=hashKey(norm);
+    return {
+      wsId,
+      cwd:norm,
+      project:{
+        uuid:'ag:cwd:'+wsId,
+        name:base+' (Antigravity)',
+        description:'Antigravity Workspace: '+norm,
+        docs:[],
+        is_starter_project:false,
+        sourcePlatform:'antigravity'
+      }
+    };
+  }
+
+  function isAntigravityTranscriptText(text){
+    const raw=String(text||'').replace(/^\uFEFF/,'');
+    const lines=raw.split(/\r?\n/);
+    let checked=0,agHits=0;
+    for(const line of lines){
+      const s=line.trim();
+      if(!s)continue;
+      checked++;
+      if(checked>40)break;
+      try{
+        const obj=JSON.parse(s);
+        if(!obj||typeof obj!=='object'||Array.isArray(obj))continue;
+        if(Number.isInteger(obj.step_index)&&typeof obj.type==='string'&&(KNOWN_STEP_TYPES.has(obj.type)||'source' in obj||'status' in obj)){
+          agHits++;
+        }
+      }catch{}
+    }
+    return agHits>0;
+  }
+
+  function parsePbtxtTitle(text){
+    const raw=String(text||'');
+    if(!raw.trim())return '';
+    const m=/(?:^|\n)\s*(?:title|display_name|name|conversation_title)\s*:\s*"((?:[^"\\]|\\.)*)"/i.exec(raw);
+    if(!m)return '';
+    try{return JSON.parse('"'+m[1]+'"').trim();}catch{return m[1].trim();}
+  }
+
+  function inspectHistoryJsonl(text){
+    const byId=new Map();
+    const raw=String(text||'').replace(/^\uFEFF/,'');
+    for(const line of raw.split(/\r?\n/)){
+      const s=line.trim();
+      if(!s)continue;
+      try{
+        const obj=JSON.parse(s);
+        if(!obj||typeof obj!=='object'||Array.isArray(obj))continue;
+        const cid=trim(obj.conversationId||obj.conversation_id||obj.sessionId||obj.id);
+        if(!cid)continue;
+        const prev=byId.get(cid)||{conversationId:cid,display:'',workspace:'',timestamp:''};
+        const disp=trim(obj.display||obj.title);
+        const ws=trim(obj.workspace||obj.cwd);
+        const ts=parseDate(obj.timestamp||obj.created_at);
+        if(disp&&!prev.display)prev.display=disp;
+        if(ws&&!prev.workspace)prev.workspace=ws;
+        if(ts&&(!prev.timestamp||ts>prev.timestamp))prev.timestamp=ts;
+        byId.set(cid,prev);
+      }catch{}
+    }
+    return byId;
+  }
+
+  function unwrapUserInputContent(rawContent){
+    const text=string(rawContent);
+    const extracted=[];
+    let userText='';
+    const reqRe=/<USER_REQUEST>\s*([\s\S]*?)\s*<\/USER_REQUEST>/gi;
+    const reqMatches=[];
+    let m;
+    while((m=reqRe.exec(text))!==null){
+      if(trim(m[1]))reqMatches.push(trim(m[1]));
+    }
+    let remainder=text.replace(/<USER_REQUEST>[\s\S]*?<\/USER_REQUEST>/gi,'').trim();
+    const tagDefs=[
+      {tag:'ADDITIONAL_METADATA',src:'ag:metadata'},
+      {tag:'USER_SETTINGS_CHANGE',src:'ag:settings'},
+      {tag:'PLAN',src:'ag:plan_context'},
+      {tag:'SKILLS',src:'ag:skills'},
+      {tag:'EPHEMERAL_MESSAGE',src:'ag:ephemeral'},
+      {tag:'SYSTEM_MESSAGE',src:'ag:system'}
+    ];
+    let detectedModel='';
+    let detectedWorkspace='';
+    for(const def of tagDefs){
+      const re=new RegExp('<'+def.tag+'>([\\s\\S]*?)<\\/'+def.tag+'>','gi');
+      remainder=remainder.replace(re,(_,inner)=>{
+        const cleaned=trim(inner);
+        if(cleaned){
+          extracted.push({type:'injected_prompt_block',prompt:cleaned,injection_source:def.src});
+          if(def.tag==='USER_SETTINGS_CHANGE'){
+            const mm=/Model\s*Selection\s*[:=]\s*([^\r\n<]+)/i.exec(cleaned);
+            if(mm)detectedModel=trim(mm[1]);
+          }
+          if(def.tag==='ADDITIONAL_METADATA'){
+            const wm=/(?:Active\s+Workspaces|Workspace|cwd)\s*[:=]\s*([^\r\n<,]+)/i.exec(cleaned);
+            if(wm&&/^\/|^[A-Za-z]:[\\/]/.test(trim(wm[1])))detectedWorkspace=trim(wm[1]);
+          }
+        }
+        return '';
+      });
+    }
+    remainder=trim(remainder);
+    if(reqMatches.length){
+      userText=reqMatches.join('\n\n');
+      if(remainder)extracted.push({type:'injected_prompt_block',prompt:remainder,injection_source:'ag:envelope'});
+    }else{
+      userText=remainder||trim(text);
+    }
+    return {userText,injectedBlocks:extracted,detectedModel,detectedWorkspace};
+  }
+
+  function isSubagentToolCall(name){
+    return /^(?:invoke_subagent|send_message|spawn_subagent|subagent)$/i.test(trim(name));
+  }
+
+  function* convertTranscriptSteps(text,opts={}){
+    const filePath=string(opts.path||'transcript_full.jsonl').replace(/\\/g,'/');
+    const convIdHint=trim(opts.conversationId)||(/brain\/(?:.*\/)?([0-9a-f]{8}-[0-9a-f-]{12,}|[A-Za-z0-9_-]{8,})\/(?:\.system_generated|[^/]+\.(?:jsonl|md))?/i.exec(filePath)?.[1]||'');
+    const sourceVariant=opts.sourceVariant||(filePath.includes('transcript_full')?'full':filePath.includes('chunks/')?'chunks':'compact');
+    const lines=String(text||'').replace(/^\uFEFF/,'').split(/\r?\n/);
+
+    const recordsByStep=new Map();
+    const fallbackRecords=[];
+    let malformedLines=0,lineIndex=0;
+    for(const rawLine of lines){
+      if(++lineIndex%200===0)yield;
+      const s=rawLine.trim();
+      if(!s)continue;
+      let obj;
+      try{obj=JSON.parse(s);}catch{malformedLines++;continue;}
+      if(!obj||typeof obj!=='object'||Array.isArray(obj))continue;
+      if(Number.isInteger(obj.step_index)){
+        const prev=recordsByStep.get(obj.step_index);
+        // Prefer untruncated record when merging compact & full copies
+        if(!prev||(Array.isArray(prev.truncated_fields)&&!Array.isArray(obj.truncated_fields))){
+          recordsByStep.set(obj.step_index,obj);
+        }
+      }else{
+        fallbackRecords.push(obj);
+      }
+    }
+
+    const steps=[...[...recordsByStep.entries()].sort((a,b)=>a[0]-b[0]).map(x=>x[1]),...fallbackRecords];
+    const warnings=[];
+    if(malformedLines>0)warnings.push('skipped_malformed_jsonl_lines:'+malformedLines);
+
+    const messages=[];
+    let prevMsgUuid=root;
+    let firstTs='',lastTs='',defaultModel=trim(opts.modelName||''),inferredCwd=normalizeCwd(opts.workspace||'');
+    let firstPromptTitle='';
+    let truncatedSteps=0,runningSteps=0,errorSteps=0;
+    let inputTokens=0,outputTokens=0,cacheReadTokens=0;
+    let plannerStreak=0,maxPlannerStreak=0;
+    let notifyGates=0,taskBoundaryCount=0,subagentSpawns=0;
+    const phases={PLANNING:0,EXECUTION:0,VERIFICATION:0,OTHER:0};
+    const modelSwitches=[];
+    const toolCounts={};
+    const toolErrorCounts={};
+    const childConversationIds=[];
+    const filesTouched=new Set();
+    const telemetryEvents=[];
+
+    // Track last assistant turn and queued tool calls awaiting trailing result step records
+    let currentTurn=null;
+    let pendingToolNodes=[];
+
+    const flushAssistantTurn=()=>{
+      if(!currentTurn)return;
+      const blocks=currentTurn.blocks;
+      if(blocks.length){
+        const id='ag-msg-'+hashKey(convIdHint+':'+messages.length+':'+currentTurn.createdAt);
+        const rawText=blocks.filter(b=>b.type==='text').map(b=>b.text).join('\n\n');
+        messages.push({
+          uuid:id,
+          sender:'assistant',
+          created_at:currentTurn.createdAt||lastTs||firstTs,
+          updated_at:currentTurn.updatedAt||currentTurn.createdAt||lastTs||firstTs,
+          parent_message_uuid:prevMsgUuid,
+          model:currentTurn.model||defaultModel||undefined,
+          content:blocks,
+          text:rawText,
+          attachments:[],
+          files:[]
+        });
+        prevMsgUuid=id;
+      }
+      currentTurn=null;
+      pendingToolNodes=[];
+    };
+
+    const ensureAssistantTurn=(ts,model)=>{
+      if(!currentTurn){
+        currentTurn={createdAt:ts||lastTs||firstTs,updatedAt:ts||lastTs||firstTs,model:model||defaultModel,blocks:[]};
+      }else{
+        if(ts)currentTurn.updatedAt=ts;
+        if(model&&!currentTurn.model)currentTurn.model=model;
+      }
+      return currentTurn;
+    };
+
+    const recordToolName=(name,isErr=false)=>{
+      const k=name||'unknown';
+      toolCounts[k]=(toolCounts[k]||0)+1;
+      if(isErr)toolErrorCounts[k]=(toolErrorCounts[k]||0)+1;
+    };
+
+    for(let i=0;i<steps.length;i++){
+      if(i%100===0)yield;
+      const step=steps[i];
+      const ts=parseDate(step.created_at||step.timestamp)||lastTs;
+      if(ts){if(!firstTs)firstTs=ts;lastTs=ts;}
+      const stype=string(step.type).toUpperCase();
+      const status=string(step.status).toUpperCase();
+      const source=string(step.source).toUpperCase();
+      const isTruncated=Array.isArray(step.truncated_fields)&&step.truncated_fields.length>0;
+      if(isTruncated)truncatedSteps++;
+      if(status==='RUNNING')runningSteps++;
+
+      // Model from step if explicitly included
+      const stepModel=trim(step.model||step.modelName||'');
+      if(stepModel){
+        if(defaultModel&&stepModel!==defaultModel&&!modelSwitches.includes(stepModel))modelSwitches.push(stepModel);
+        if(!defaultModel)defaultModel=stepModel;
+      }
+
+      if(stype==='USER_INPUT'||(source==='USER_EXPLICIT'&&stype!=='USER_SETTINGS_CHANGE')){
+        flushAssistantTurn();
+        plannerStreak=0;
+        const {userText,injectedBlocks,detectedModel,detectedWorkspace}=unwrapUserInputContent(step.content);
+        if(detectedModel){
+          if(defaultModel&&detectedModel!==defaultModel&&!modelSwitches.includes(detectedModel))modelSwitches.push(detectedModel);
+          if(!defaultModel)defaultModel=detectedModel;
+        }
+        if(detectedWorkspace&&!inferredCwd)inferredCwd=normalizeCwd(detectedWorkspace);
+        if(!firstPromptTitle&&userText){
+          firstPromptTitle=userText.split(/\r?\n/).map(x=>x.trim()).find(Boolean)||'';
+          if(firstPromptTitle.length>72)firstPromptTitle=firstPromptTitle.slice(0,72)+'…';
+        }
+        const blocks=[];
+        if(userText)blocks.push({type:'text',text:userText});
+        for(const ib of injectedBlocks)blocks.push(ib);
+        const msgId='ag-step-'+(Number.isInteger(step.step_index)?step.step_index:messages.length);
+        messages.push({
+          uuid:msgId,
+          sender:'human',
+          created_at:ts||firstTs,
+          updated_at:ts||firstTs,
+          parent_message_uuid:prevMsgUuid,
+          content:blocks.length?blocks:[{type:'text',text:''}],
+          text:userText,
+          attachments:[],
+          files:[]
+        });
+        prevMsgUuid=msgId;
+        continue;
+      }
+
+      if(stype==='USER_SETTINGS_CHANGE'){
+        const raw=trim(step.content);
+        const mm=/Model\s*Selection\s*[:=]\s*([^\r\n<]+)/i.exec(raw);
+        if(mm){
+          const nextM=trim(mm[1]);
+          if(nextM){
+            if(defaultModel&&nextM!==defaultModel&&!modelSwitches.includes(nextM))modelSwitches.push(nextM);
+            if(!defaultModel)defaultModel=nextM;
+          }
+        }
+        const t=ensureAssistantTurn(ts,stepModel);
+        if(raw)t.blocks.push({type:'injected_prompt_block',prompt:raw,injection_source:'ag:settings'});
+        continue;
+      }
+
+      if(stype==='PLANNER_RESPONSE'){
+        plannerStreak++;
+        if(plannerStreak>maxPlannerStreak)maxPlannerStreak=plannerStreak;
+        const t=ensureAssistantTurn(ts,stepModel);
+        const inTok=Number(step.input_tokens||0),outTok=Number(step.output_tokens||0),cacheTok=Number(step.cache_read_tokens||0);
+        if(Number.isFinite(inTok))inputTokens+=inTok;
+        if(Number.isFinite(outTok))outputTokens+=outTok;
+        if(Number.isFinite(cacheTok))cacheReadTokens+=cacheTok;
+
+        const think=string(step.thinking);
+        if(trim(think)){
+          t.blocks.push({
+            type:'thinking',
+            thinking:think,
+            ...(isTruncated&&step.truncated_fields.includes('thinking')?{truncated:true}:{})
+          });
+        }
+
+        const calls=list(step.tool_calls);
+        for(let ci=0;ci<calls.length;ci++){
+          const rawCall=calls[ci];
+          if(!rawCall||typeof rawCall!=='object')continue;
+          const cname=trim(rawCall.name||rawCall.tool_name||'unknown');
+          const rawArgs=sanitizeToolArgs(rawCall.args||rawCall.arguments||rawCall.input||{});
+          const callId=trim(rawCall.id)||('ag-tc-'+(Number.isInteger(step.step_index)?step.step_index:i)+'-'+ci);
+          const argsObj=(rawArgs&&typeof rawArgs==='object'&&!Array.isArray(rawArgs))?{...rawArgs}:{raw:rawArgs};
+
+          // Recover cwd / touched file paths from Antigravity tool args
+          const targetFile=trim(argsObj.TargetFile||argsObj.AbsolutePath||argsObj.DirectoryPath||argsObj.SearchDirectory||'');
+          if(targetFile&&!inferredCwd&&/^\/|^[A-Za-z]:[\\/]/.test(targetFile)){
+            const dirParts=normalizeCwd(targetFile).split('/').filter(Boolean);
+            if(dirParts.length>=3)inferredCwd='/'+dirParts.slice(0,Math.min(4,dirParts.length-(argsObj.TargetFile||argsObj.AbsolutePath?1:0))).join('/');
+          }
+          if(argsObj.TargetFile||argsObj.AbsolutePath){
+            filesTouched.add(trim(argsObj.TargetFile||argsObj.AbsolutePath));
+          }
+          if(argsObj.Cwd&&!inferredCwd){
+            inferredCwd=normalizeCwd(argsObj.Cwd);
+          }
+          if((/replace_file_content|multi_replace_file_content/i.test(cname))&&!argsObj.patch){
+            if(typeof argsObj.TargetContent==='string'||typeof argsObj.ReplacementContent==='string'){
+              const diff=buildSimpleDiffFromStrings(string(argsObj.TargetFile),argsObj.TargetContent,argsObj.ReplacementContent);
+              if(diff)argsObj.patch=diff;
+            }else if(Array.isArray(argsObj.ReplacementChunks)&&argsObj.ReplacementChunks.length){
+              const chunksDiff=argsObj.ReplacementChunks.map(ch=>buildSimpleDiffFromStrings(string(argsObj.TargetFile),ch?.TargetContent,ch?.ReplacementContent)).filter(Boolean).join('\n');
+              if(chunksDiff)argsObj.patch=chunksDiff;
+            }
+          }
+          if(/write_to_file/i.test(cname)&&typeof argsObj.CodeContent==='string'&&!argsObj.content){
+            argsObj.content=argsObj.CodeContent;
+          }
+          if(/task_boundary/i.test(cname)){
+            taskBoundaryCount++;
+            const mode=trim(argsObj.Mode).toUpperCase();
+            if(mode==='PLANNING'||mode==='EXECUTION'||mode==='VERIFICATION')phases[mode]++;
+            else phases.OTHER++;
+          }
+          if(/notify_user/i.test(cname)&&argsObj.BlockedOnUser===true)notifyGates++;
+          if(/invoke_subagent/i.test(cname)&&Array.isArray(argsObj.Subagents)){
+            subagentSpawns+=argsObj.Subagents.length;
+          }
+
+          recordToolName(cname,false);
+          const useBlock={
+            type:'tool_use',
+            id:callId,
+            name:cname,
+            input:argsObj,
+            ...(rawCall.message?{message:string(rawCall.message)}:{})
+          };
+          t.blocks.push(useBlock);
+          pendingToolNodes.push({id:callId,name:cname,args:argsObj,matched:false});
+
+          if(isSubagentToolCall(cname)){
+            const firstSub=Array.isArray(argsObj.Subagents)?argsObj.Subagents[0]:null;
+            const targetRole=trim(firstSub?.Role||firstSub?.TypeName||argsObj.Recipient||'Subagent');
+            const promptText=trim(firstSub?.Prompt||argsObj.Message||'');
+            t.blocks.push({
+              type:'injected_prompt_block',
+              prompt:promptText,
+              injection_source:'ag:subagent',
+              agentMeta:{
+                msgType:trim(cname).toUpperCase(),
+                author:'Antigravity Agent',
+                recipient:targetRole,
+                hasBody:Boolean(promptText)
+              }
+            });
+          }
+        }
+
+        const txt=string(step.content);
+        if(trim(txt)){
+          t.blocks.push({
+            type:'text',
+            text:txt,
+            ...(isTruncated&&step.truncated_fields.includes('content')?{truncated:true}:{})
+          });
+        }
+        continue;
+      }
+
+      if(TOOL_RESULT_TYPES.has(stype)||step.tool_use_id){
+        const t=ensureAssistantTurn(ts,stepModel);
+        let matched=null;
+        if(step.tool_use_id){
+          matched=pendingToolNodes.find(n=>n.id===step.tool_use_id&&!n.matched)||null;
+        }
+        if(!matched){
+          matched=pendingToolNodes.find(n=>!n.matched&&n.name.toUpperCase()===stype)||pendingToolNodes.find(n=>!n.matched)||null;
+        }
+        if(matched)matched.matched=true;
+        const callId=matched?matched.id:('ag-res-'+(Number.isInteger(step.step_index)?step.step_index:i));
+        const rname=matched?matched.name:stype.toLowerCase();
+        const isErr=status==='ERROR'||status==='FAILED'||step.is_error===true;
+        if(isErr){
+          errorSteps++;
+          recordToolName(rname,true);
+          telemetryEvents.push({
+            kind:'tool_error',
+            severity:'warn',
+            ts:ts||'',
+            label:'工具失败: '+rname,
+            detail:trim(step.error||step.content).slice(0,180)
+          });
+        }
+        const outStr=boundedText(typeof step.content==='string'?step.content:JSON.stringify(step.content??''),warnings,rname);
+        // Detect returned child subagent conversation IDs
+        const subIdMatches=outStr.matchAll(/"conversationId"\s*:\s*"([0-9a-f-]{16,})"/gi);
+        for(const sm of subIdMatches)if(sm[1]&&!childConversationIds.includes(sm[1]))childConversationIds.push(sm[1]);
+
+        const resBlock={
+          type:'tool_result',
+          tool_use_id:callId,
+          name:rname,
+          is_error:isErr,
+          content:outStr?[{type:'text',text:outStr+(isTruncated?'\n\n⚠️ [truncated in transcript.jsonl]':'')}]:[]
+        };
+        const useIdx=matched?t.blocks.findIndex(b=>b.type==='tool_use'&&b.id===matched.id):-1;
+        if(useIdx>=0)t.blocks.splice(useIdx+1,0,resBlock);
+        else t.blocks.push(resBlock);
+        continue;
+      }
+
+      if(stype==='ERROR_MESSAGE'){
+        errorSteps++;
+        const t=ensureAssistantTurn(ts,stepModel);
+        const errText=trim(step.content||step.message||JSON.stringify(step));
+        t.blocks.push({
+          type:'tool_result',
+          tool_use_id:'ag-err-'+(Number.isInteger(step.step_index)?step.step_index:i),
+          name:'error',
+          is_error:true,
+          content:[{type:'text',text:errText}]
+        });
+        telemetryEvents.push({
+          kind:'error_step',
+          severity:'high',
+          ts:ts||'',
+          label:'Antigravity 运行错误',
+          detail:errText.slice(0,200)
+        });
+        continue;
+      }
+
+      if(stype==='SYSTEM_MESSAGE'||stype==='EPHEMERAL_MESSAGE'||stype==='CHECKPOINT'||stype==='CONVERSATION_HISTORY'||stype==='GENERIC'){
+        const raw=trim(typeof step.content==='string'?step.content:JSON.stringify(step));
+        if(raw){
+          const t=ensureAssistantTurn(ts,stepModel);
+          t.blocks.push({
+            type:'injected_prompt_block',
+            prompt:raw,
+            injection_source:'ag:'+stype.toLowerCase()
+          });
+        }
+        continue;
+      }
+    }
+
+    flushAssistantTurn();
+
+    if(maxPlannerStreak>=8){
+      warnings.push('antigravity_runaway_planner_streak:'+maxPlannerStreak);
+      telemetryEvents.push({
+        kind:'runaway_loop',
+        severity:'high',
+        ts:lastTs||firstTs,
+        label:'疑似连续自激循环 ('+maxPlannerStreak+' 次连续规划步)',
+        detail:'连续出现多次无用户输入间隔的 PLANNER_RESPONSE（类似 /btw 后台循环特征）'
+      });
+    }
+    if(truncatedSteps>0){
+      warnings.push('antigravity_transcript_truncated_steps:'+truncatedSteps);
+    }
+
+    const totalTokens=inputTokens+outputTokens+cacheReadTokens;
+    const rawCwd=inferredCwd||normalizeCwd(opts.workspace||'');
+    const cwdInfo=projectFromCwd(rawCwd);
+    const idSeed=convIdHint||hashKey(filePath+'|'+firstTs);
+    const convUuid='ag:'+idSeed;
+    const resolvedTitle=trim(opts.title)||firstPromptTitle||(cwdInfo?'['+cwdInfo.project.name.replace(/ \(Antigravity\)$/,'')+'] '+idSeed.slice(0,8):'Antigravity '+idSeed.slice(0,8));
+
+    const conversation={
+      uuid:convUuid,
+      originalId:idSeed,
+      sourcePlatform:'antigravity',
+      name:resolvedTitle,
+      summary:trim(opts.summary||''),
+      created_at:firstTs||lastTs,
+      updated_at:lastTs||firstTs,
+      ...(cwdInfo?{workspaceId:cwdInfo.wsId}:{}),
+      ...(defaultModel?{defaultModel}:{}),
+      antigravityMeta:{
+        conversationId:idSeed,
+        cwd:rawCwd,
+        transcriptSource:sourceVariant,
+        totalSteps:steps.length,
+        truncatedSteps,
+        runningSteps,
+        errorSteps,
+        childConversationIds,
+        filesTouched:[...filesTouched].slice(0,40),
+        brainArtifacts:[],
+        urlBookmarks:[],
+        brainImages:[],
+        phases,
+        ...(totalTokens>0?{usage:{input_tokens:inputTokens,output_tokens:outputTokens,cache_read_input_tokens:cacheReadTokens,total_tokens:totalTokens}}:{})
+      },
+      antigravityTelemetry:{
+        transcriptSource:sourceVariant,
+        totalSteps:steps.length,
+        truncatedSteps,
+        runningSteps,
+        errorSteps,
+        maxPlannerStreak,
+        notifyGates,
+        taskBoundaryCount,
+        subagentSpawns,
+        phases,
+        modelSwitches,
+        toolCounts,
+        toolErrorCounts,
+        tokens:{input:inputTokens,output:outputTokens,cached:cacheReadTokens,total:totalTokens},
+        events:telemetryEvents
+      },
+      importWarnings:warnings,
+      chat_messages:messages
+    };
+
+    return {conversation,project:cwdInfo?cwdInfo.project:null,warnings};
+  }
+
+  function parseTaskChecklistStats(mdText){
+    const lines=String(mdText||'').split(/\r?\n/);
+    let done=0,active=0,todo=0;
+    for(const line of lines){
+      const m=/^\s*(?:[-*]|\d+\.)\s+\[([ xX\/])\]\s+/.exec(line);
+      if(!m)continue;
+      const mark=m[1];
+      if(mark==='x'||mark==='X')done++;
+      else if(mark==='/')active++;
+      else todo++;
+    }
+    return {done,active,todo,total:done+active+todo};
+  }
+
+  function mergeBrainBundle(parsedResult,bundle={}){
+    const artifacts=list(bundle.artifacts); // [{ name, path, content, metadata, versions: [{label, content}] }]
+    const urls=list(bundle.urlBookmarks); // [{ name, url, title, description, metadata }]
+    const images=list(bundle.images); // [{ name, path }]
+    const titleOverride=trim(bundle.title||'');
+    const wsOverride=normalizeCwd(bundle.workspace||'');
+    let conversation=parsedResult?.conversation||null;
+    let project=parsedResult?.project||null;
+
+    // Infer workspace from paths inside markdown artifacts if still empty
+    let artifactCwd=wsOverride;
+    if(!artifactCwd){
+      for(const art of artifacts){
+        const text=string(art.content);
+        const pm=/(?:file:\/\/)?(\/(?:workspaces?|home|Users|mnt\/[^/\s]+)\/[^\s)"'`<>]+\.(?:[a-zA-Z0-9]{1,8}))/.exec(text);
+        if(pm){
+          const cleanPath=normalizeCwd(pm[1]);
+          const parts=cleanPath.split('/').filter(Boolean);
+          if(parts.length>=3){artifactCwd='/'+parts.slice(0,Math.min(4,parts.length-1)).join('/');break;}
+        }
+      }
+    }
+
+    // Artifact-only Desktop/IDE conversation folder (no JSONL transcript present)
+    if(!conversation){
+      if(!artifacts.length&&!urls.length)return null;
+      const cid=trim(bundle.conversationId)||hashKey((artifacts[0]?.path||urls[0]?.name||'brain')+'|'+Date.now());
+      const firstH1=artifacts.map(a=>/^#\s+([^\r\n]+)/m.exec(string(a.content))?.[1]||'').find(Boolean);
+      const firstUpdated=artifacts.map(a=>parseDate(a.metadata?.updatedAt)).filter(Boolean).sort()[0]||'';
+      const lastUpdated=artifacts.map(a=>parseDate(a.metadata?.updatedAt)).filter(Boolean).sort().pop()||firstUpdated;
+      const cwdInfo=projectFromCwd(artifactCwd);
+      if(cwdInfo)project=cwdInfo.project;
+
+      const synthMsgs=[];
+      let prevUuid=root;
+      for(const art of artifacts){
+        const id='ag-brain-'+hashKey(cid+':'+art.name);
+        synthMsgs.push({
+          uuid:id,
+          sender:'assistant',
+          created_at:parseDate(art.metadata?.updatedAt)||lastUpdated||firstUpdated,
+          updated_at:parseDate(art.metadata?.updatedAt)||lastUpdated||firstUpdated,
+          parent_message_uuid:prevUuid,
+          content:[{
+            type:'text',
+            text:string(art.content),
+            agArtifact:{
+              kind:art.name==='task.md'?'task':art.name==='implementation_plan.md'?'plan':art.name==='walkthrough.md'?'walkthrough':'markdown',
+              name:art.name,
+              summary:trim(art.metadata?.summary),
+              userFacing:art.metadata?.userFacing!==false,
+              requestFeedback:Boolean(art.metadata?.requestFeedback)
+            }
+          }],
+          text:string(art.content),
+          attachments:[],
+          files:[]
+        });
+        prevUuid=id;
+      }
+      conversation={
+        uuid:'ag:'+cid,
+        originalId:cid,
+        sourcePlatform:'antigravity',
+        name:titleOverride||trim(firstH1)||'Antigravity Brain '+cid.slice(0,8),
+        summary:trim(artifacts.find(a=>a.metadata?.summary)?.metadata?.summary||''),
+        created_at:firstUpdated,
+        updated_at:lastUpdated,
+        ...(cwdInfo?{workspaceId:cwdInfo.wsId}:{}),
+        antigravityMeta:{
+          conversationId:cid,
+          cwd:artifactCwd,
+          transcriptSource:'brain_only',
+          totalSteps:0,
+          truncatedSteps:0,
+          runningSteps:0,
+          errorSteps:0,
+          childConversationIds:[],
+          filesTouched:[],
+          brainArtifacts:[],
+          urlBookmarks:[],
+          brainImages:[]
+        },
+        antigravityTelemetry:{
+          transcriptSource:'brain_only',
+          totalSteps:0,
+          truncatedSteps:0,
+          runningSteps:0,
+          errorSteps:0,
+          maxPlannerStreak:0,
+          notifyGates:0,
+          taskBoundaryCount:0,
+          subagentSpawns:0,
+          phases:{PLANNING:0,EXECUTION:0,VERIFICATION:0,OTHER:0},
+          modelSwitches:[],
+          toolCounts:{},
+          toolErrorCounts:{},
+          tokens:{input:0,output:0,cached:0,total:0},
+          events:[]
+        },
+        importWarnings:['antigravity_brain_only_no_transcript'],
+        chat_messages:synthMsgs
+      };
+    }
+
+    const meta=conversation.antigravityMeta||(conversation.antigravityMeta={});
+    if(titleOverride&&(!conversation.name||/^Antigravity\s+[0-9a-f]{6,}/i.test(conversation.name))){
+      conversation.name=titleOverride;
+    }
+    if(artifactCwd&&!meta.cwd){
+      meta.cwd=artifactCwd;
+      const cwdInfo=projectFromCwd(artifactCwd);
+      if(cwdInfo){conversation.workspaceId=cwdInfo.wsId;project=cwdInfo.project;}
+    }
+
+    const mappedArtifacts=artifacts.map(a=>{
+      const kind=a.name==='task.md'?'task':a.name==='implementation_plan.md'?'plan':a.name==='walkthrough.md'?'walkthrough':'markdown';
+      const checklist=kind==='task'?parseTaskChecklistStats(a.content):null;
+      const h1=/^#\s+([^\r\n]+)/m.exec(string(a.content))?.[1]?.trim()||'';
+      return {
+        name:a.name,
+        path:a.path||a.name,
+        kind,
+        title:h1||a.name,
+        content:string(a.content),
+        summary:trim(a.metadata?.summary),
+        updatedAt:parseDate(a.metadata?.updatedAt),
+        userFacing:a.metadata?.userFacing!==false,
+        requestFeedback:Boolean(a.metadata?.requestFeedback),
+        ...(checklist?{checklist}:{}),
+        versions:list(a.versions).map(v=>({label:string(v.label),content:string(v.content)}))
+      };
+    });
+
+    meta.brainArtifacts=mappedArtifacts;
+    meta.urlBookmarks=urls.map(u=>({
+      name:string(u.name),
+      title:trim(u.title||u.name),
+      url:trim(u.url),
+      description:trim(u.description),
+      userFacing:u.metadata?.userFacing!==false
+    })).filter(u=>u.url);
+    meta.brainImages=images.map(img=>({name:string(img.name),path:string(img.path)}));
+
+    // Also tag matching write_to_file calls in transcript so inline cards render rich Brain styling
+    if(conversation.chat_messages.length&&mappedArtifacts.length){
+      const byName=new Map(mappedArtifacts.map(a=>[a.name.toLowerCase(),a]));
+      let attachedSummary=false;
+      for(const msg of conversation.chat_messages){
+        if(msg.sender!=='assistant')continue;
+        for(const b of list(msg.content)){
+          if(b.type==='tool_use'&&/write_to_file|replace_file_content/i.test(b.name||'')){
+            const base=string(b.input?.TargetFile||'').split(/[\\/]/).pop().toLowerCase();
+            const matchedArt=byName.get(base);
+            if(matchedArt&&b.input?.CodeContent){
+              b.agArtifactName=matchedArt.name;
+            }
+          }
+        }
+      }
+      // If none of the core brain artifacts were emitted inline by transcript tool calls, append a consolidated Brain Artifact digest turn
+      if(!attachedSummary&&conversation.antigravityMeta.transcriptSource!=='brain_only'){
+        meta.hasUnlinkedArtifacts=true;
+      }
+    }
+
+    return {conversation,project,warnings:conversation.importWarnings||[]};
+  }
+
+  function parseTranscriptText(text,opts={}){
+    const it=convertTranscriptSteps(text,opts);
+    let step;
+    do{step=it.next();}while(!step.done);
+    return step.value;
+  }
+
+  async function parseTranscriptAsync(text,opts={},checkpoint=async()=>{}){
+    const it=convertTranscriptSteps(text,opts);
+    let step;
+    do{step=it.next();if(!step.done)await checkpoint();}while(!step.done);
+    return step.value;
+  }
+
+  return {
+    isAntigravityTranscriptText,
+    parsePbtxtTitle,
+    inspectHistoryJsonl,
+    unwrapUserInputContent,
+    sanitizeToolArgs,
+    parseTranscriptText,
+    parseTranscriptAsync,
+    parseTaskChecklistStats,
+    mergeBrainBundle,
+    projectFromCwd,
+    parseDate
+  };
+}
+
+function geminiCliExportCore(){
+  const root='00000000-0000-4000-8000-000000000000';
+  const MAX_OUTPUT_CHARS=262144; // 256 KB per-tool-output guard
+  const list=value=>Array.isArray(value)?value:[];
+  const string=value=>typeof value==='string'?value:'';
+  const trim=value=>string(value).trim();
+
+  function parseDate(value){
+    if(value==null||value==='')return '';
+    if(typeof value==='number'&&Number.isFinite(value)&&value>0){
+      const ms=value>=1e11?value:value*1000;
+      if(ms<=8.64e15)try{return new Date(ms).toISOString();}catch{}
+      return '';
+    }
+    const raw=trim(value);
+    if(!raw)return '';
+    if(/^\d{10,16}$/.test(raw)){
+      const num=Number(raw),ms=num>=1e11?num:num*1000;
+      if(ms<=8.64e15)try{return new Date(ms).toISOString();}catch{}
+    }
+    const ms=Date.parse(raw);
+    if(!Number.isFinite(ms))return '';
+    try{return new Date(ms).toISOString();}catch{return '';}
+  }
+
+  function hashKey(value){
+    const s=String(value||'');
+    let h1=0x811c9dc5,h2=0x9e3779b9;
+    for(let i=0;i<s.length;i++){
+      const c=s.charCodeAt(i);
+      h1^=c;h1=Math.imul(h1,0x01000193);
+      h2^=c;h2=Math.imul(h2,0x85ebca6b);
+    }
+    return (h1>>>0).toString(16).padStart(8,'0')+(h2>>>0).toString(16).padStart(8,'0');
+  }
+
+  function normalizeCwd(value){
+    return trim(value).replace(/\\/g,'/').replace(/\/+$/,'');
+  }
+
+  function boundedText(value,warnings,label){
+    const text=String(value??'');
+    if(text.length<=MAX_OUTPUT_CHARS)return text;
+    if(warnings&&!warnings.includes('oversized_tool_output'))warnings.push('oversized_tool_output');
+    const head=text.slice(0,Math.floor(MAX_OUTPUT_CHARS*0.75));
+    const tail=text.slice(-Math.floor(MAX_OUTPUT_CHARS*0.15));
+    return head+'\n\n... ['+(label||'output')+' truncated: '+(text.length-head.length-tail.length)+' chars omitted] ...\n\n'+tail;
+  }
+
+  function projectFromCwd(cwd,slugHint=''){
+    const norm=normalizeCwd(cwd);
+    const label=norm?(norm.split('/').filter(Boolean).pop()||norm):trim(slugHint);
+    if(!label)return null;
+    const wsId=hashKey(norm||('slug:'+label));
+    return {
+      wsId,
+      cwd:norm,
+      project:{
+        uuid:'gemini:cwd:'+wsId,
+        name:label+' (Gemini CLI)',
+        description:norm?('Gemini CLI Workspace: '+norm):('Gemini CLI Project: '+label),
+        docs:[],
+        is_starter_project:false,
+        sourcePlatform:'gemini_cli'
+      }
+    };
+  }
+
+  function isGeminiCliJson(value){
+    if(!value||typeof value!=='object'||Array.isArray(value))return false;
+    return typeof value.sessionId==='string'&&Array.isArray(value.messages)&&value.messages.some(m=>m&&typeof m==='object'&&(m.type==='gemini'||m.type==='user'||'toolCalls' in m||'thoughts' in m));
+  }
+
+  function isGeminiCliJsonlText(text){
+    const raw=String(text||'').replace(/^\uFEFF/,'');
+    const lines=raw.split(/\r?\n/);
+    let checked=0,hasHeader=false,hasMsg=false;
+    for(const line of lines){
+      const s=line.trim();
+      if(!s)continue;
+      checked++;
+      if(checked>40)break;
+      try{
+        const obj=JSON.parse(s);
+        if(!obj||typeof obj!=='object'||Array.isArray(obj))continue;
+        if(typeof obj.sessionId==='string'&&('projectHash' in obj||'startTime' in obj||'directories' in obj||'kind' in obj))hasHeader=true;
+        if(typeof obj.type==='string'&&/^(?:user|gemini|info|warning|error)$/i.test(obj.type)&&('content' in obj||'toolCalls' in obj||'thoughts' in obj||'tokens' in obj))hasMsg=true;
+        if('$set' in obj||'$patch' in obj||'$rewindTo' in obj)hasMsg=true;
+      }catch{}
+    }
+    return (hasHeader&&hasMsg)||(hasMsg&&checked>=1&&raw.includes('"type":"gemini"'));
+  }
+
+  function buildSimpleDiff(filePath,origStr,newStr){
+    if(typeof origStr!=='string'&&typeof newStr!=='string')return '';
+    const oldLines=(typeof origStr==='string'?origStr:'').split('\n').slice(0,220);
+    const newLines=(typeof newStr==='string'?newStr:'').split('\n').slice(0,220);
+    const lines=[];
+    if(filePath)lines.push('--- a/'+filePath,'+++ b/'+filePath);
+    lines.push('@@ -1,'+oldLines.length+' +1,'+newLines.length+' @@');
+    for(const l of oldLines)lines.push('-'+l);
+    for(const l of newLines)lines.push('+'+l);
+    return lines.join('\n');
+  }
+
+  function extractPartsFromContent(content,rawBlocks,textParts,thinkParts,inlineCalls,warnings){
+    if(typeof content==='string'){
+      if(content)textParts.push(content);
+      return;
+    }
+    const items=Array.isArray(content)?content:(content&&typeof content==='object'?[content]:[]);
+    for(const part of items){
+      if(typeof part==='string'){
+        if(part)textParts.push(part);
+        continue;
+      }
+      if(!part||typeof part!=='object')continue;
+      if(part.thought===true&&typeof part.text==='string'){
+        if(part.text)thinkParts.push({subject:'',description:part.text});
+        continue;
+      }
+      if(typeof part.text==='string'){
+        if(part.text)textParts.push(part.text);
+        continue;
+      }
+      if(part.functionCall&&typeof part.functionCall==='object'){
+        const fc=part.functionCall;
+        inlineCalls.push({
+          id:trim(fc.id)||('gfc-'+inlineCalls.length),
+          name:trim(fc.name||'function'),
+          args:fc.args&&typeof fc.args==='object'?fc.args:{},
+          status:'success'
+        });
+        continue;
+      }
+      if(part.functionResponse&&typeof part.functionResponse==='object'){
+        const fr=part.functionResponse;
+        const txt=typeof fr.response==='string'?fr.response:JSON.stringify(fr.response??'');
+        rawBlocks.push({
+          type:'tool_result',
+          tool_use_id:trim(fr.id||''),
+          name:trim(fr.name||'function'),
+          is_error:false,
+          content:txt?[{type:'text',text:boundedText(txt,warnings,fr.name)}]:[]
+        });
+        continue;
+      }
+      if(part.inlineData&&typeof part.inlineData==='object'&&/^image\//i.test(string(part.inlineData.mimeType))){
+        rawBlocks.push({
+          type:'image',
+          media_type:string(part.inlineData.mimeType),
+          data:string(part.inlineData.data)
+        });
+      }
+    }
+  }
+
+  function mergeToolCall(prev,incoming){
+    if(!prev)return {...incoming};
+    const merged={...prev,...incoming};
+    if(incoming.args&&typeof incoming.args==='object'&&prev.args&&typeof prev.args==='object'){
+      merged.args={...prev.args,...incoming.args};
+    }
+    if(incoming.result==null&&prev.result!=null)merged.result=prev.result;
+    if(incoming.resultDisplay==null&&prev.resultDisplay!=null)merged.resultDisplay=prev.resultDisplay;
+    return merged;
+  }
+
+  function* convertGeminiSessionSteps(input,opts={}){
+    const filePath=string(opts.path||'session.jsonl').replace(/\\/g,'/');
+    let meta={};
+    const warnings=[];
+    let malformedLines=0;
+
+    // Ordered active timeline + branched rewound timelines
+    let activeRecords=[];
+    const rewoundBranches=[];
+    let rewindCount=0,patchCount=0,setCount=0;
+
+    if(typeof input==='string'){
+      const lines=input.replace(/^\uFEFF/,'').split(/\r?\n/);
+      let li=0;
+      for(const line of lines){
+        if(++li%200===0)yield;
+        const s=line.trim();
+        if(!s)continue;
+        let obj;
+        try{obj=JSON.parse(s);}catch{malformedLines++;continue;}
+        if(!obj||typeof obj!=='object'||Array.isArray(obj))continue;
+
+        if('$set' in obj&&obj.$set&&typeof obj.$set==='object'){
+          setCount++;
+          meta={...meta,...obj.$set};
+          if(Array.isArray(obj.$set.directories))meta.directories=obj.$set.directories;
+          continue;
+        }
+        if('$patch' in obj&&obj.$patch&&typeof obj.$patch==='object'){
+          patchCount++;
+          const p=obj.$patch;
+          if(Array.isArray(p.removeIds)){
+            const rm=new Set(p.removeIds.map(String));
+            activeRecords=activeRecords.filter(r=>!rm.has(String(r.id)));
+          }
+          if(Array.isArray(p.updates)){
+            for(const upd of p.updates){
+              if(!upd||!upd.id)continue;
+              const idx=activeRecords.findIndex(r=>r.id===upd.id);
+              if(idx>=0)activeRecords[idx]={...activeRecords[idx],...upd};
+            }
+          }
+          if(p.id){
+            const idx=activeRecords.findIndex(r=>r.id===p.id);
+            if(idx>=0)activeRecords[idx]={...activeRecords[idx],...p};
+          }
+          if(Array.isArray(p.orderIds)){
+            const byId=new Map(activeRecords.map(r=>[String(r.id),r]));
+            const ordered=[];
+            for(const oid of p.orderIds){const item=byId.get(String(oid));if(item){ordered.push(item);byId.delete(String(oid));}}
+            for(const rest of byId.values())ordered.push(rest);
+            activeRecords=ordered;
+          }
+          continue;
+        }
+        if('$rewindTo' in obj){
+          rewindCount++;
+          const targetId=trim(obj.$rewindTo);
+          const idx=activeRecords.findIndex(r=>r.id===targetId);
+          if(idx>=0){
+            const cut=activeRecords.slice(idx);
+            if(cut.length)rewoundBranches.push({anchorId:idx>0?activeRecords[idx-1].id:root,records:cut});
+            activeRecords=activeRecords.slice(0,idx);
+          }
+          continue;
+        }
+
+        // Line 1 metadata header
+        if(!obj.type&&typeof obj.sessionId==='string'){
+          meta={...meta,...obj};
+          continue;
+        }
+
+        if(obj.id){
+          const existingIdx=activeRecords.findIndex(r=>r.id===obj.id);
+          if(existingIdx>=0){
+            const prev=activeRecords[existingIdx];
+            const nextCalls=[...list(prev.toolCalls)];
+            for(const tc of list(obj.toolCalls)){
+              if(!tc||typeof tc!=='object')continue;
+              const ti=nextCalls.findIndex(x=>x.id&&tc.id&&x.id===tc.id);
+              if(ti>=0)nextCalls[ti]=mergeToolCall(nextCalls[ti],tc);
+              else nextCalls.push({...tc});
+            }
+            activeRecords[existingIdx]={
+              ...prev,
+              ...obj,
+              ...(nextCalls.length?{toolCalls:nextCalls}:{})
+            };
+            continue;
+          }
+        }
+        activeRecords.push(obj);
+      }
+    }else if(input&&typeof input==='object'){
+      meta={...input};
+      activeRecords=list(input.messages).map(m=>({...m}));
+    }
+
+    if(malformedLines>0)warnings.push('skipped_malformed_jsonl_lines:'+malformedLines);
+
+    let sessionId=trim(meta.sessionId);
+    if(!sessionId){
+      const fnM=/session-[^/]*-([0-9a-f-]{6,})\.jsonl?$/i.exec(filePath)||/([0-9a-f]{8}-[0-9a-f-]{12,})/i.exec(filePath);
+      sessionId=fnM?fnM[1]:hashKey(filePath);
+    }
+
+    const subPathM=/chats\/([0-9a-f-]{8,})\/([0-9a-f-]{8,})\.jsonl?$/i.exec(filePath);
+    const isSubagent=meta.kind==='subagent'||Boolean(subPathM);
+    const parentSessionId=trim(meta.parentSessionId||meta.parentId||(subPathM?subPathM[1]:''));
+
+    // Determine project cwd & slug
+    const slugMatch=/tmp\/([^/]+)\/chats\//i.exec(filePath);
+    const slug=slugMatch?slugMatch[1]:'';
+    const rawDirs=list(meta.directories).map(normalizeCwd).filter(Boolean);
+    const cwd=normalizeCwd(opts.cwd||rawDirs[0]||'');
+    const cwdInfo=projectFromCwd(cwd,slug);
+
+    const tokenSum={input:0,output:0,cached:0,thoughts:0,tool:0,total:0};
+    const toolStatusCounts={success:0,error:0,cancelled:0,awaiting_approval:0,other:0};
+    const toolNameCounts={};
+    const fileDiffPaths=new Set();
+    const modelsUsed=new Set();
+    const telemetryEvents=[];
+
+    let firstTs=parseDate(meta.startTime);
+    let lastTs=parseDate(meta.lastUpdated);
+    let defaultModel='';
+    let firstPromptTitle='';
+
+    function materializeRecordList(records,initialParentUuid,suffix=''){
+      const out=[];
+      let parentUuid=initialParentUuid;
+      for(let idx=0;idx<records.length;idx++){
+        const rec=records[idx];
+        const ts=parseDate(rec.timestamp)||lastTs||firstTs;
+        if(ts){
+          if(!firstTs)firstTs=ts;
+          if(!lastTs||ts>lastTs)lastTs=ts;
+        }
+        const mtype=trim(rec.type).toLowerCase()||'gemini';
+        const msgId=(trim(rec.id)||('gem-'+idx))+suffix;
+        const blocks=[];
+        const textParts=[],thinkParts=[],inlineCalls=[];
+        extractPartsFromContent(rec.content,blocks,textParts,thinkParts,inlineCalls,warnings);
+        for(const th of list(rec.thoughts)){
+          if(!th||typeof th!=='object')continue;
+          const desc=trim(th.description),subj=trim(th.subject);
+          if(desc||subj)thinkParts.push({subject:subj,description:desc,timestamp:parseDate(th.timestamp)});
+        }
+
+        if(mtype==='user'){
+          const promptTxt=trim(rec.displayContent)||textParts.join('\n\n')||string(rec.content);
+          if(!suffix&&!firstPromptTitle&&promptTxt){
+            firstPromptTitle=promptTxt.split(/\r?\n/).map(x=>x.trim()).find(Boolean)||'';
+            if(firstPromptTitle.length>72)firstPromptTitle=firstPromptTitle.slice(0,72)+'…';
+          }
+          const userBlocks=promptTxt?[{type:'text',text:promptTxt},...blocks]:(blocks.length?blocks:[{type:'text',text:''}]);
+          out.push({
+            uuid:msgId,
+            sender:'human',
+            created_at:ts,
+            updated_at:ts,
+            parent_message_uuid:parentUuid,
+            content:userBlocks,
+            text:promptTxt,
+            attachments:[],
+            files:[]
+          });
+          parentUuid=msgId;
+          continue;
+        }
+
+        if(mtype==='info'||mtype==='warning'||mtype==='error'){
+          const infoTxt=textParts.join('\n\n')||trim(rec.content);
+          if(mtype==='error'){
+            telemetryEvents.push({
+              kind:'error_record',
+              severity:'warn',
+              ts,
+              label:'Gemini CLI 运行警告/错误',
+              detail:infoTxt.slice(0,180)
+            });
+          }
+          out.push({
+            uuid:msgId,
+            sender:'system',
+            created_at:ts,
+            updated_at:ts,
+            parent_message_uuid:parentUuid,
+            content:[{
+              type:'injected_prompt_block',
+              prompt:infoTxt,
+              injection_source:'gemini:'+mtype
+            }],
+            text:infoTxt,
+            attachments:[],
+            files:[]
+          });
+          parentUuid=msgId;
+          continue;
+        }
+
+        // gemini / assistant turn
+        const model=trim(rec.model);
+        if(model){
+          modelsUsed.add(model);
+          if(!defaultModel)defaultModel=model;
+        }
+
+        if(rec.tokens&&typeof rec.tokens==='object'&&!suffix){
+          const t=rec.tokens;
+          tokenSum.input+=Number(t.input||0);
+          tokenSum.output+=Number(t.output||0);
+          tokenSum.cached+=Number(t.cached||0);
+          tokenSum.thoughts+=Number(t.thoughts||0);
+          tokenSum.tool+=Number(t.tool||0);
+          tokenSum.total+=Number(t.total||(Number(t.input||0)+Number(t.output||0)+Number(t.cached||0)+Number(t.thoughts||0)+Number(t.tool||0)));
+        }
+
+        for(const tp of thinkParts){
+          const combined=tp.subject?('**'+tp.subject+'**\n\n'+tp.description):tp.description;
+          blocks.push({
+            type:'thinking',
+            thinking:combined,
+            ...(tp.subject?{subject:tp.subject}:{}),
+            ...(tp.timestamp?{start_timestamp:tp.timestamp}:{})
+          });
+        }
+
+        const allCalls=[...inlineCalls,...list(rec.toolCalls)];
+        for(let ci=0;ci<allCalls.length;ci++){
+          const tc=allCalls[ci];
+          if(!tc||typeof tc!=='object')continue;
+          const cname=trim(tc.name||tc.displayName||'tool');
+          const cid=trim(tc.id)||('gtc-'+msgId+'-'+ci);
+          const tstatus=trim(tc.status||'success').toLowerCase();
+          if(!suffix){
+            toolNameCounts[cname]=(toolNameCounts[cname]||0)+1;
+            if(tstatus==='success'||tstatus==='error'||tstatus==='cancelled'||tstatus==='awaiting_approval'){
+              toolStatusCounts[tstatus]++;
+            }else toolStatusCounts.other++;
+          }
+
+          const argsObj=(tc.args&&typeof tc.args==='object'&&!Array.isArray(tc.args))?{...tc.args}:{raw:tc.args};
+          const rd=tc.resultDisplay;
+          let diffPatch='';
+          let outputText='';
+          if(rd&&typeof rd==='object'&&!Array.isArray(rd)){
+            const fpath=trim(rd.filePath||rd.fileName||argsObj.file_path||argsObj.path||'');
+            if(fpath&&!suffix)fileDiffPaths.add(fpath);
+            if(typeof rd.fileDiff==='string'&&rd.fileDiff)diffPatch=rd.fileDiff;
+            else if(typeof rd.originalContent==='string'||typeof rd.newContent==='string'){
+              diffPatch=buildSimpleDiff(fpath,rd.originalContent,rd.newContent);
+            }
+            if(diffPatch)argsObj.patch=diffPatch;
+            if(typeof rd.output==='string')outputText=rd.output;
+          }else if(typeof rd==='string'){
+            outputText=rd;
+          }
+          if(!outputText&&tc.result!=null){
+            if(typeof tc.result==='string')outputText=tc.result;
+            else if(Array.isArray(tc.result)){
+              outputText=tc.result.map(x=>typeof x==='string'?x:(x?.functionResponse?.response?.output||x?.text||JSON.stringify(x))).join('\n');
+            }else outputText=JSON.stringify(tc.result);
+          }
+
+          const isErr=tstatus==='error'||tstatus==='cancelled';
+          blocks.push({
+            type:'tool_use',
+            id:cid,
+            name:cname,
+            input:argsObj,
+            ...(tc.description?{message:string(tc.description)}:{})
+          });
+          if(outputText||isErr||tstatus==='awaiting_approval'){
+            const statusNote=tstatus==='cancelled'?'⚠️ [Cancelled by user]\n\n':tstatus==='awaiting_approval'?'⏳ [Awaiting user approval]\n\n':'';
+            blocks.push({
+              type:'tool_result',
+              tool_use_id:cid,
+              name:cname,
+              is_error:isErr,
+              content:[{type:'text',text:boundedText(statusNote+outputText,warnings,cname)}]
+            });
+          }
+          if(!suffix&&(tstatus==='error'||tstatus==='cancelled'||tstatus==='awaiting_approval')){
+            telemetryEvents.push({
+              kind:'tool_'+tstatus,
+              severity:tstatus==='error'?'warn':'info',
+              ts,
+              label:'工具状态 ['+tstatus+']: '+cname,
+              detail:trim(tc.description||outputText).slice(0,160)
+            });
+          }
+        }
+
+        const bodyText=textParts.join('\n\n');
+        if(bodyText)blocks.push({type:'text',text:bodyText});
+
+        out.push({
+          uuid:msgId,
+          sender:'assistant',
+          created_at:ts,
+          updated_at:ts,
+          parent_message_uuid:parentUuid,
+          ...(model?{model}:{}),
+          content:blocks.length?blocks:[{type:'text',text:''}],
+          text:bodyText,
+          attachments:[],
+          files:[]
+        });
+        parentUuid=msgId;
+      }
+      return out;
+    }
+
+    const activeMsgs=materializeRecordList(activeRecords,root,'');
+    const branchMsgs=[];
+    rewoundBranches.forEach((br,bi)=>{
+      branchMsgs.push(...materializeRecordList(br.records,br.anchorId,'-rewind'+bi));
+    });
+    const allMessages=[...activeMsgs,...branchMsgs];
+
+    if(rewindCount>0){
+      telemetryEvents.push({
+        kind:'rewind',
+        severity:'info',
+        ts:lastTs||firstTs,
+        label:'对话历史回溯 ($rewindTo ×'+rewindCount+')',
+        detail:'保留已回退分支供树状模式检查'
+      });
+    }
+
+    const convUuid='gemini:'+sessionId;
+    const rawSummary=trim(meta.summary||'');
+    const title=rawSummary||firstPromptTitle||(cwdInfo?'['+cwdInfo.project.name.replace(/ \(Gemini CLI\)$/,'')+'] '+sessionId.slice(0,8):'Gemini CLI '+sessionId.slice(0,8));
+    const displayTitle=(isSubagent&&!title.startsWith('[Subagent]'))?('[Subagent] '+title):title;
+
+    const conversation={
+      uuid:convUuid,
+      originalId:sessionId,
+      sourcePlatform:'gemini_cli',
+      name:displayTitle,
+      summary:rawSummary,
+      created_at:firstTs||lastTs,
+      updated_at:lastTs||firstTs,
+      ...(activeMsgs.length?{defaultPath:activeMsgs.map(m=>m.uuid)}:{}),
+      ...(cwdInfo?{workspaceId:cwdInfo.wsId}:{}),
+      ...(defaultModel?{defaultModel}:{}),
+      geminiCliMeta:{
+        sessionId,
+        projectHash:trim(meta.projectHash||''),
+        slug,
+        cwd,
+        directories:rawDirs,
+        kind:isSubagent?'subagent':'main',
+        isSubagent,
+        ...(parentSessionId?{parentThreadId:parentSessionId}:{}),
+        models:[...modelsUsed],
+        filesModified:[...fileDiffPaths],
+        rewindCount,
+        ...(tokenSum.total>0?{usage:{
+          input_tokens:tokenSum.input,
+          output_tokens:tokenSum.output,
+          cache_read_input_tokens:tokenSum.cached,
+          thoughts_tokens:tokenSum.thoughts,
+          tool_tokens:tokenSum.tool,
+          total_tokens:tokenSum.total
+        }}:{})
+      },
+      geminiCliTelemetry:{
+        isSubagent,
+        rewindCount,
+        patchCount,
+        setCount,
+        toolStatusCounts,
+        toolNameCounts,
+        filesModifiedCount:fileDiffPaths.size,
+        tokens:tokenSum,
+        models:[...modelsUsed],
+        events:telemetryEvents
+      },
+      importWarnings:warnings,
+      chat_messages:allMessages
+    };
+
+    return {conversation,project:cwdInfo?cwdInfo.project:null,warnings};
+  }
+
+  function parseSessionText(input,opts={}){
+    const it=convertGeminiSessionSteps(input,opts);
+    let step;
+    do{step=it.next();}while(!step.done);
+    return step.value;
+  }
+
+  async function parseSessionAsync(input,opts={},checkpoint=async()=>{}){
+    const it=convertGeminiSessionSteps(input,opts);
+    let step;
+    do{step=it.next();if(!step.done)await checkpoint();}while(!step.done);
+    return step.value;
+  }
+
+  return {
+    isGeminiCliJson,
+    isGeminiCliJsonlText,
+    parseSessionText,
+    parseSessionAsync,
+    projectFromCwd,
+    parseDate
+  };
+}
+
 // Pure, local rules. Offsets always refer to original UTF-16 source text.
 function redactionRules(){
   const WINDOW=32768,OVERLAP=512,LIMIT=4096;
@@ -4926,8 +6512,8 @@ const IDENTIFIER_KEY=/^(?:device[_ -]?id|user[_ -]?id|visitor[_ -]?id|session[_ 
 const CONTEXT_SECRET_RE=/((?:(?:cohere)[ \t]+(?:api[ \t]+)?key|device[_ -]?id|user[_ -]?id|visitor[_ -]?id|fingerprint|session[_ -]?id|storage[_ -]?key|access[_ -]?token|refresh[_ -]?token|auth[_ -]?token|id[_ -]?token|client[_ -]?secret|api[_ -]?key|access[_ -]?key|private[_ -]?key|aws[_ -]?secret[_ -]?access[_ -]?key|db[_ -]?password|password|passwd|pwd|passphrase|token|secret|did|密码|口令|密钥)\s*["']?\s*[:=：]\s*)(?:"([^"\r\n]+)"|'([^'\r\n]+)'|([^\s,"'，。；;<>\]}]+))/gi;
 const QUERY_SECRET_RE=/([?&#](?:token|access_token|refresh_token|id_token|auth|authorization|api[_-]?key|key|sid|session|device_id|did|t|sig|signature|x-amz-signature|x-amz-credential|x-amz-security-token|x-goog-signature|x-goog-credential)=)([^\s&#"'<>）)\]}]+)/gi;
 const STRICT_CONTEXT_RE=/((?:姓名|名字|联系人|老师|教师|教授|班主任|校长|学校|学院|大学|中学|小学|幼儿园|公司|单位|部门|微信|wechat|qq|微博|抖音|uid|用户[_ -]?id|account[_ -]?id|open[_ -]?id|social[_ -]?id|身份证(?:号)?|护照(?:号)?|passport(?:[ \t]+(?:no|number))?|ssn|住址|地址|家庭住址|工作地址|full[_ -]?name|phone|telephone|mobile|address)\s*[：:=]\s*["']?)([^\s,"'，。；;]{2,80})/gi;
-const REDACTION_METADATA=new Set(['tool_input','input','metadata','file_path','path','claudeCodeTelemetry']);
-const REDACTION_PATH_KEYS=new Set('conversation name title summary chat_messages content text thinking prompt injection_source summaries attachments files file_name filename file_type file_size media_type url uri data value metadata tool_input input path file_path account uuid parent_message_uuid sender type structured_content display_content output created_at updated_at start_timestamp stop_timestamp tool_use_id id model thinking_hidden truncated signature _design _sourcePackage'.split(' '));
+const REDACTION_METADATA=new Set(['tool_input','input','metadata','file_path','path','claudeCodeTelemetry','antigravityTelemetry','geminiCliTelemetry','TargetFile','AbsolutePath','Cwd','DirectoryPath','SearchDirectory']);
+const REDACTION_PATH_KEYS=new Set('conversation name title summary chat_messages content text thinking subject description prompt injection_source summaries attachments files file_name filename file_type file_size media_type url uri data value metadata tool_input input path file_path filePath TargetFile AbsolutePath Cwd CommandLine account uuid parent_message_uuid sender type structured_content display_content output created_at updated_at start_timestamp stop_timestamp tool_use_id id model thinking_hidden truncated signature _design _sourcePackage'.split(' '));
 function redactionOptions(options={}){
   const terms=Array.isArray(options.customTerms)?options.customTerms:String(options.customTerms||'').split(/\r?\n/);
   const customTerms=[...new Set(terms.filter(s=>typeof s==='string').map(s=>s.trim()).filter(Boolean))];
@@ -5016,10 +6602,34 @@ function redactConversation(conv,style='standard',strict=false,options={}){const
   async function behavior(records,checkpoint){
     const out={conversations:0,messages:0,tools:0,toolResults:0,paired:0,unpairedUse:0,unpairedResult:0,errors:0,approvals:0,mcp:0,structured:0,hiddenResults:0,thinking:0,thinkingHidden:0,thinkingTruncated:0,thinkingCutoff:0,thinkingSummary:0,thinkingSigned:0,thinkingDurationMs:0,quality:{refusal:0,fallback:0,latency:0,empty:0,truncated:0},examples:[]};
     const cc={sessions:0,subagentSessions:0,agentTypes:{},models:{},telemetry:{recordTypes:{},attachmentTypes:{},apiRequests:0,querySources:{},efforts:{},thinkingConfigs:{},betas:{},cacheControlBreakpoints:0},refusals:{stopRefusal:0,syntheticErrors:0,safeguardNotices:0,noFallback:0,apiErrors:0,userInterrupts:0,categories:{}},fallbacks:{modelSwaps:{},modelSwapCount:0,fallbackCreditRequests:0,noFallbackCount:0},interceptors:{serverClassifierRequests:0,serverClassifierRefusals:0,autoModeDenials:0,autoModeRules:{},hookBlocks:0,stopHooksPrevented:0,hookErrors:0,manualDenials:0,autoModeProfiles:{},modes:{},permissionModes:{}},efficiency:{totalCostUSD:0,costSessions:0,inputTokens:0,outputTokens:0,cacheReadTokens:0,cacheCreateTokens:0,linesAdded:0,linesRemoved:0,apiDurationMs:0,apiNoRetryMs:0,retryOverheadMs:0,toolDurationMs:0,totalDurationMs:0},compaction:{boundaries:0,microBoundaries:0,preTokensSum:0,preTokensMax:0,preTokensCount:0,queuedPrompts:0},events:[]};
+    const ag={sessions:0,brainOnlySessions:0,models:{},transcriptSources:{},totalSteps:0,truncatedSteps:0,runningSteps:0,errorSteps:0,maxPlannerStreak:0,runawaySessions:0,notifyGates:0,taskBoundaryCount:0,subagentSpawns:0,pbSkipped:0,artifactsCount:0,bookmarksCount:0,phases:{PLANNING:0,EXECUTION:0,VERIFICATION:0,OTHER:0},tokens:{input:0,output:0,cached:0,total:0},toolCounts:{},toolErrorCounts:{},events:[]};
+    const gem={sessions:0,subagentSessions:0,models:{},rewindCount:0,patchCount:0,setCount:0,filesModifiedCount:0,toolStatusCounts:{success:0,error:0,cancelled:0,awaiting_approval:0,other:0},toolNameCounts:{},tokens:{input:0,output:0,cached:0,thoughts:0,tool:0,total:0},events:[]};
     const mergeMap=(target,src)=>{if(!src||typeof src!=='object')return;for(const [k,v]of Object.entries(src))if(typeof v==='number'&&Number.isFinite(v))target[k]=(target[k]||0)+v;};
     const stable=value=>{if(Array.isArray(value))return value.map(stable);if(value&&typeof value==='object'){const result={};for(const key of Object.keys(value).sort())result[key]=stable(value[key]);return result;}return value;},different=(a,b)=>JSON.stringify(stable(a))!==JSON.stringify(stable(b));
     const uses=new Map(),results=new Map(),refusal=/(?:我(?:不能|无法|不可以|不会)(?:帮助|协助|提供|执行|生成|完成)|抱歉[^。！？\n]{0,40}(?:不能|无法)|\b(?:can't|cannot|won't|unable to)\s+(?:help|assist|provide|comply|create|generate|do that)\b)/iu,fallback=/(?:当前模型|这个模型|能力受限|降级模式|只能提供[^。！？\n]{0,18}(?:概括|一般性信息|高层次建议))|\b(?:as an ai|language model|model limitation|not available in this mode)\b/iu;
     for await(const record of records){out.conversations++;const conversation=JSON.parse(record.raw),messages=list(conversation.chat_messages);out.messages+=messages.length;
+      if(conversation.sourcePlatform==='antigravity'){
+        ag.sessions++;const meta=conversation.antigravityMeta||{},tel=conversation.antigravityTelemetry||{};
+        if(meta.transcriptSource){const tsKey=String(meta.transcriptSource);ag.transcriptSources[tsKey]=(ag.transcriptSources[tsKey]||0)+1;if(tsKey==='brain_only')ag.brainOnlySessions++;}
+        if(conversation.defaultModel){const dm=String(conversation.defaultModel);ag.models[dm]=(ag.models[dm]||0)+1;}
+        for(const m of list(tel.modelSwitches))ag.models[m]=(ag.models[m]||0)+1;
+        ag.totalSteps+=Number(tel.totalSteps||0);ag.truncatedSteps+=Number(tel.truncatedSteps||0);ag.runningSteps+=Number(tel.runningSteps||0);ag.errorSteps+=Number(tel.errorSteps||0);
+        const streak=Number(tel.maxPlannerStreak||0);if(streak>ag.maxPlannerStreak)ag.maxPlannerStreak=streak;if(streak>=8)ag.runawaySessions++;
+        ag.notifyGates+=Number(tel.notifyGates||0);ag.taskBoundaryCount+=Number(tel.taskBoundaryCount||0);ag.subagentSpawns+=Number(tel.subagentSpawns||0);
+        if(Number(tel.pbSkipped||0)>ag.pbSkipped)ag.pbSkipped=Number(tel.pbSkipped||0);
+        ag.artifactsCount+=list(meta.brainArtifacts).length;ag.bookmarksCount+=list(meta.urlBookmarks).length;
+        mergeMap(ag.phases,tel.phases);mergeMap(ag.tokens,tel.tokens);mergeMap(ag.toolCounts,tel.toolCounts);mergeMap(ag.toolErrorCounts,tel.toolErrorCounts);
+        for(const ev of list(tel.events))ag.events.push({uuid:conversation.uuid,title:conversation.name||'',...ev});
+      }
+      if(conversation.sourcePlatform==='gemini_cli'){
+        gem.sessions++;const tel=conversation.geminiCliTelemetry||{};
+        if(tel.isSubagent)gem.subagentSessions++;
+        if(conversation.defaultModel){const dm=String(conversation.defaultModel);gem.models[dm]=(gem.models[dm]||0)+1;}
+        for(const m of list(tel.models))if(m&&m!==conversation.defaultModel)gem.models[m]=(gem.models[m]||0)+1;
+        gem.rewindCount+=Number(tel.rewindCount||0);gem.patchCount+=Number(tel.patchCount||0);gem.setCount+=Number(tel.setCount||0);gem.filesModifiedCount+=Number(tel.filesModifiedCount||0);
+        mergeMap(gem.toolStatusCounts,tel.toolStatusCounts);mergeMap(gem.toolNameCounts,tel.toolNameCounts);mergeMap(gem.tokens,tel.tokens);
+        for(const ev of list(tel.events))gem.events.push({uuid:conversation.uuid,title:conversation.name||'',...ev});
+      }
       if(conversation.sourcePlatform==='claude_code'){
         cc.sessions++;const meta=conversation.claudeCodeMeta||{},tel=conversation.claudeCodeTelemetry||{};
         if(meta.isSubagent){cc.subagentSessions++;const at=String(meta.agentType||meta.agentNickname||'subagent');cc.agentTypes[at]=(cc.agentTypes[at]||0)+1;}
@@ -5048,6 +6658,12 @@ function redactConversation(conv,style='standard',strict=false,options={}){const
     cc.events.sort((a,b)=>(sevRank[b.severity]||0)-(sevRank[a.severity]||0)||String(b.ts||'').localeCompare(String(a.ts||'')));
     if(cc.events.length>40)cc.events.length=40;
     if(cc.sessions>0)out.claudeCode=cc;
+    ag.events.sort((a,b)=>(sevRank[b.severity]||0)-(sevRank[a.severity]||0)||String(b.ts||'').localeCompare(String(a.ts||'')));
+    if(ag.events.length>40)ag.events.length=40;
+    if(ag.sessions>0)out.antigravity=ag;
+    gem.events.sort((a,b)=>(sevRank[b.severity]||0)-(sevRank[a.severity]||0)||String(b.ts||'').localeCompare(String(a.ts||'')));
+    if(gem.events.length>40)gem.events.length=40;
+    if(gem.sessions>0)out.geminiCli=gem;
     for(const id of uses.keys())if(results.has(id))out.paired++;else out.unpairedUse++;for(const id of results.keys())if(!uses.has(id))out.unpairedResult++;return out;
   }
 
@@ -5065,7 +6681,7 @@ async function markdown(conv,mode,choices,checkpoint){  // Build linear thread (
     if(!msg||typeof msg!=='object')continue;
     if(msg._divider==='linear'){md+='## ⚠️ '+t('对话分支结构异常，已按时间顺序展示全部消息')+'\n\n';continue;}
     if(msg._divider==='orphan'){md+='## 🧩 '+t('以下消息无法归入对话分支（可能是已删除分支的残留）')+' ('+msg.count+')\n\n';continue;}
-    const role='**'+(msg.sender==='human'?t('你'):msg.sender==='assistant'?(conv.sourcePlatform==='gpt'?'ChatGPT':conv.sourcePlatform==='grok'?'Grok':conv.sourcePlatform==='perplexity'?'Perplexity':conv.sourcePlatform==='codex'?'Codex':conv.sourcePlatform==='claude_code'?'Claude Code':'Claude'):msg.sender)+'**';
+    const role='**'+(msg.sender==='human'?t('你'):msg.sender==='assistant'?(conv.sourcePlatform==='gpt'?'ChatGPT':conv.sourcePlatform==='grok'?'Grok':conv.sourcePlatform==='perplexity'?'Perplexity':conv.sourcePlatform==='codex'?'Codex':conv.sourcePlatform==='claude_code'?'Claude Code':conv.sourcePlatform==='antigravity'?'Antigravity':conv.sourcePlatform==='gemini_cli'?'Gemini CLI':'Claude'):msg.sender)+'**';
     md+=role+' · '+fmtTime(msg.created_at)+'\n\n';
     // Attachments
     for(const att of[...(msg.attachments||[]),...(msg.files||[])]){
@@ -5084,6 +6700,20 @@ async function markdown(conv,mode,choices,checkpoint){  // Build linear thread (
     }
     if(!hasContent&&msg.text)md+=msg.text+'\n\n';
     md+='---\n\n';
+  }
+  const agMeta=conv.antigravityMeta;
+  if(agMeta&&Array.isArray(agMeta.brainArtifacts)&&agMeta.brainArtifacts.length){
+    md+='## Brain Artifacts\n\n';
+    for(const art of agMeta.brainArtifacts){
+      md+='### '+art.name+'\n\n'+(art.content||'')+'\n\n';
+    }
+  }
+  if(agMeta&&Array.isArray(agMeta.urlBookmarks)&&agMeta.urlBookmarks.length){
+    md+='## URL Bookmarks\n\n';
+    for(const u of agMeta.urlBookmarks){
+      md+='- ['+(u.title||u.url)+']('+u.url+')'+(u.description?' — '+u.description:'')+'\n';
+    }
+    md+='\n';
   }
 
 
@@ -5121,8 +6751,13 @@ function configureMarked(){
     return esc(raw==null?'':raw);
   };
   renderer.link=function(token){
-    const label=this.parser.parseInline(token.tokens||[]),href=safeLinkUrl(token.href);
-    return href?'<a href="'+escAttr(href)+'" target="_blank" rel="noopener noreferrer" referrerpolicy="no-referrer"'+(token.title?' title="'+escAttr(token.title)+'"':'')+'>'+label+'</a>':label;
+    const label=this.parser.parseInline(token.tokens||[]),rawHref=String(token.href||''),href=safeLinkUrl(rawHref);
+    if(href)return '<a href="'+escAttr(href)+'" target="_blank" rel="noopener noreferrer" referrerpolicy="no-referrer"'+(token.title?' title="'+escAttr(token.title)+'"':'')+'>'+label+'</a>';
+    if(/^file:\/\//i.test(rawHref)){
+      const lm=/#(L\d+(?:-L?\d+)?)$/i.exec(rawHref);
+      return '<span class="ag-file-chip" title="'+escAttr(rawHref)+'"><span aria-hidden="true">📄</span><span>'+label+'</span>'+(lm?'<span class="ag-file-chip-line">:'+esc(lm[1])+'</span>':'')+'</span>';
+    }
+    return label;
   };
   renderer.image=function(token){
     const src=safeImageUrl(token.href),label=token.text||t('图片');
@@ -5183,7 +6818,7 @@ function configureMarked(){
 const trees=new WeakMap();
 function tree(conv,mode='longest',choices={}){
   const messages=conv.chat_messages||[];
-  if(mode!=='full'&&(conv.sourcePlatform==='gpt'||conv.sourcePlatform==='grok')&&conv.defaultPath?.length){const defaults={};const groups=new Map();for(const message of messages){const parent=message.parent_message_uuid||ROOT_ID;if(!groups.has(parent))groups.set(parent,[]);groups.get(parent).push(message);}for(const siblings of groups.values())siblings.sort((a,b)=>(Date.parse(a.created_at)||0)-(Date.parse(b.created_at)||0));const preferred=new Set(conv.defaultPath);for(const [parent,siblings]of groups){const selected=siblings.findIndex(message=>preferred.has(message.uuid));if(selected>=0)defaults[parent]=selected;}choices={...defaults,...choices};}
+  if(mode!=='full'&&(conv.sourcePlatform==='gpt'||conv.sourcePlatform==='grok'||conv.sourcePlatform==='gemini_cli')&&conv.defaultPath?.length){const defaults={};const groups=new Map();for(const message of messages){const parent=message.parent_message_uuid||ROOT_ID;if(!groups.has(parent))groups.set(parent,[]);groups.get(parent).push(message);}for(const siblings of groups.values())siblings.sort((a,b)=>(Date.parse(a.created_at)||0)-(Date.parse(b.created_at)||0));const preferred=new Set(conv.defaultPath);for(const [parent,siblings]of groups){const selected=siblings.findIndex(message=>preferred.has(message.uuid));if(selected>=0)defaults[parent]=selected;}choices={...defaults,...choices};}
   let index=trees.get(messages);
   if(!index){
     const byId=new Map(),children=new Map(),roots=[],times=messages.map(m=>Date.parse(m?.created_at||'')||0);
@@ -5586,7 +7221,7 @@ function importWorkerMain(){
         };
         const stripWrapperRoot=rawFiles=>{
           let currentFiles=normalizeEntryPaths(rawFiles);
-          const reserved=['areas','projects','artifacts','memories','memory','sessions','archived_sessions','dalle-generations','sites','prod-mc-asset-server'];
+          const reserved=['areas','projects','artifacts','memories','memory','sessions','archived_sessions','dalle-generations','sites','prod-mc-asset-server','brain','annotations','conversations','tmp','antigravity','antigravity-cli','antigravity-ide','jetski'];
           for(let depth=0;depth<6;depth++){
             const names=Object.keys(currentFiles);
             if(!names.length)break;
@@ -5631,10 +7266,44 @@ function importWorkerMain(){
         }
         const entries=Object.keys(files).filter(n=>!files[n].dir&&!n.startsWith('__MACOSX/'));for(const name of entries){if(/^\/|^[A-Za-z]:/.test(name))throw new Error('Invalid export path');format.logicalPath(String(files[name].unsafeOriginalName||name).replace(/\\/g,'/').replace(/\/+/g,'/'));}
         let convs=entries.filter(n=>/(^|\/)conversations(?:-\d+)?\.json$/i.test(n)).sort((a,b)=>{const na=Number(/(\d+)\.json$/i.exec(a)?.[1]??-1),nb=Number(/(\d+)\.json$/i.exec(b)?.[1]??-1);return na-nb||a.localeCompare(b);});
-        const projects=[],memories=[],artifacts=[],users=[],logins=[],accounts=new Set(),mime=Object.create(null),resources=[],gpt=gptExportCore(),grok=typeof grokExportCore==='function'?grokExportCore():null,pplx=typeof perplexityExportCore==='function'?perplexityExportCore():null,codex=typeof codexExportCore==='function'?codexExportCore():null,claudeCode=typeof claudeCodeExportCore==='function'?claudeCodeExportCore():null;let legacyMemory=null,gptManifest=false,sawZst=false;const designs=[],codexConvs=[],codexProjects=new Map(),ccMetaByPath=new Map();
+        const projects=[],memories=[],artifacts=[],users=[],logins=[],accounts=new Set(),mime=Object.create(null),resources=[],gpt=gptExportCore(),grok=typeof grokExportCore==='function'?grokExportCore():null,pplx=typeof perplexityExportCore==='function'?perplexityExportCore():null,codex=typeof codexExportCore==='function'?codexExportCore():null,claudeCode=typeof claudeCodeExportCore==='function'?claudeCodeExportCore():null,antigravity=typeof antigravityExportCore==='function'?antigravityExportCore():null,geminiCli=typeof geminiCliExportCore==='function'?geminiCliExportCore():null;let legacyMemory=null,gptManifest=false,sawZst=false,agPbSkipped=0;const designs=[],codexConvs=[],codexProjects=new Map(),ccMetaByPath=new Map(),agPbtxtTitles=new Map(),agHistoryMap=new Map(),agBundles=new Map(),geminiSlugCwd=new Map(),geminiDirRoot=new Map();
+        const getAgBundle=cid=>{if(!agBundles.has(cid))agBundles.set(cid,{conversationId:cid,fullTexts:[],compactTexts:[],fullPath:'',compactPath:'',artifacts:new Map(),urls:new Map(),images:[],resolved:new Map(),metadata:new Map()});return agBundles.get(cid);};
+        const brainIdFromPath=p=>{
+          const m=/(?:^|\/)brain\/(?:.*?\/)?([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}|[0-9a-f]{8}-[0-9a-f-]{12,})\/([^]*)$/i.exec(p);
+          if(m)return {cid:m[1],rel:m[2]};
+          const m2=/(?:^|\/)brain\/([^/]+)\/(\.system_generated\/[^]*|(?:task|implementation_plan|walkthrough)[^/]*|[^/]+\.(?:md|url\.json|metadata\.json|resolved(?:\.\d+)?))$/i.exec(p);
+          return m2?{cid:m2[1],rel:m2[2]}:null;
+        };
         for(const name of entries){
           if(/\.meta\.json$/i.test(name)){
             try{ccMetaByPath.set(name.replace(/\.meta\.json$/i,''),parseJsonText(await files[name].async('text')));}catch{}
+          }else if(antigravity&&/(?:^|\/)annotations\/([^/]+)\.pbtxt$/i.test(name)){
+            const cid=name.split('/').pop().replace(/\.pbtxt$/i,'');
+            try{const ttl=antigravity.parsePbtxtTitle(await files[name].async('text'));if(ttl)agPbtxtTitles.set(cid,ttl);}catch{}
+          }else if(antigravity&&/(?:^|\/)history\.jsonl$/i.test(name)){
+            try{const hm=antigravity.inspectHistoryJsonl(await files[name].async('text'));for(const [cid,info]of hm)agHistoryMap.set(cid,info);}catch{}
+          }else if(/(?:^|\/)projects\.json$/i.test(name)){
+            try{
+              const pv=parseJsonText(await files[name].async('text'));
+              const mapObj=pv&&typeof pv.projects==='object'&&!Array.isArray(pv.projects)?pv.projects:pv;
+              if(mapObj&&typeof mapObj==='object'){
+                for(const [absPath,slug]of Object.entries(mapObj)){
+                  if(typeof slug==='string'&&slug)geminiSlugCwd.set(slug,absPath);
+                }
+              }
+            }catch{}
+          }else if(/(?:^|\/)\.project_root$/i.test(name)){
+            try{
+              const rootTxt=String(await files[name].async('text')||'').trim();
+              if(rootTxt){
+                const prefix=name.slice(0,-'.project_root'.length).replace(/\/$/,'');
+                geminiDirRoot.set(prefix,rootTxt);
+                const slugPart=prefix.split('/').pop();
+                if(slugPart&&!geminiSlugCwd.has(slugPart))geminiSlugCwd.set(slugPart,rootTxt);
+              }
+            }catch{}
+          }else if(/(?:^|\/)(?:conversations|implicit)\/[^/]+\.pb$/i.test(name)){
+            agPbSkipped++;
           }
         }
         if(files['export_manifest.json']){const manifest=parseJsonText(await files['export_manifest.json'].async('text')),shards=gpt.manifest(manifest,entries);if(shards){convs=shards;gptManifest=true;}}
@@ -5664,10 +7333,46 @@ function importWorkerMain(){
           }
         }
         const filename=file?.name||'folder';
-        const auxSkip=new Set(['export_manifest.json','library_files.json','sites/export_manifest.json','ads.json','user_settings.json','sectioned_conversations.json','message_feedback.json','model_comparisons.json','shared_conversations.json','group_chats.json','prod-mc-billing.json','sessions-index.json']);
+        const auxSkip=new Set(['export_manifest.json','library_files.json','sites/export_manifest.json','ads.json','user_settings.json','sectioned_conversations.json','message_feedback.json','model_comparisons.json','shared_conversations.json','group_chats.json','prod-mc-billing.json','sessions-index.json','projects.json','history.jsonl','logs.json']);
         for(const name of entries){await check(current);
           const baseName=name.split('/').pop();
-          if(convs.includes(name)||auxSkip.has(name)||auxSkip.has(baseName)||/\.meta\.json$/i.test(name))continue;
+          if(convs.includes(name)||auxSkip.has(name)||auxSkip.has(baseName)||/\.meta\.json$/i.test(name)||/(?:^|\/)(?:annotations\/[^/]+\.pbtxt|(?:conversations|implicit)\/[^/]+\.pb|\.project_root)$/i.test(name))continue;
+          const agPart=antigravity?brainIdFromPath(name):null;
+          if(agPart){
+            const b=getAgBundle(agPart.cid),rel=agPart.rel;
+            if(/^\.system_generated\/logs\/(?:chunks\/)?transcript_full(?:\/[^/]+)?\.jsonl$/i.test(rel)){
+              b.fullTexts.push(await files[name].async('text'));if(!b.fullPath)b.fullPath=name;continue;
+            }
+            if(/^\.system_generated\/logs\/(?:chunks\/)?transcript(?:\/[^/]+)?\.jsonl$/i.test(rel)){
+              b.compactTexts.push(await files[name].async('text'));if(!b.compactPath)b.compactPath=name;continue;
+            }
+            if(!rel.includes('/')&&/\.url\.json$/i.test(rel)){
+              try{const u=parseJsonText(await files[name].async('text'));b.urls.set(rel,{name:rel,url:u.url,title:u.title,description:u.description});}catch{}
+              continue;
+            }
+            if(!rel.includes('/')&&/\.metadata\.json$/i.test(rel)){
+              try{b.metadata.set(rel.slice(0,-'.metadata.json'.length),parseJsonText(await files[name].async('text')));}catch{}
+              continue;
+            }
+            if(!rel.includes('/')&&/\.md\.resolved(?:\.\d+)?$/i.test(rel)){
+              const origName=rel.replace(/\.resolved(?:\.\d+)?$/i,'');
+              const label=rel.slice(origName.length+1);
+              if(!b.resolved.has(origName))b.resolved.set(origName,[]);
+              b.resolved.get(origName).push({label,content:await files[name].async('text')});
+              continue;
+            }
+            if(!rel.includes('/')&&/\.md$/i.test(rel)){
+              b.artifacts.set(rel,{name:rel,path:name,content:await files[name].async('text')});
+              continue;
+            }
+            if(/\.(?:png|jpe?g|gif|webp|bmp|svg|avif)$/i.test(rel)){
+              const imgExt=rel.split('.').pop().toLowerCase();
+              mime[name]=({png:'image/png',jpg:'image/jpeg',jpeg:'image/jpeg',gif:'image/gif',webp:'image/webp',svg:'image/svg+xml',bmp:'image/bmp',avif:'image/avif'})[imgExt]||'image/png';
+              b.images.push({name:rel.split('/').pop(),path:name});
+              continue;
+            }
+            if(/^\.system_generated\//.test(rel))continue;
+          }
           if(pplx&&/^(?:.*\/)?user-data-[^/]+\.xlsx$/i.test(name)){
             try{
               const wbBuf=files[name].file?await files[name].file.arrayBuffer():await files[name].async('arraybuffer');
@@ -5684,11 +7389,30 @@ function importWorkerMain(){
             continue;
           }
           if(/\.jsonl\.zst$/i.test(name)){sawZst=true;continue;}
-          if((claudeCode||codex)&&/\.jsonl$/i.test(name)){
+          if((claudeCode||codex||antigravity||geminiCli)&&/\.jsonl$/i.test(name)){
             try{
               const jsonlText=await files[name].async('text');
               let handled=false;
-              if(claudeCode&&claudeCode.isClaudeCodeText(jsonlText)){
+              if(antigravity&&antigravity.isAntigravityTranscriptText(jsonlText)){
+                const parsedAg=await antigravity.parseTranscriptAsync(jsonlText,{path:name},()=>check(current));
+                if(parsedAg&&parsedAg.conversation){
+                  codexConvs.push(parsedAg.conversation);
+                  if(parsedAg.project&&!codexProjects.has(parsedAg.project.uuid))codexProjects.set(parsedAg.project.uuid,parsedAg.project);
+                }
+                handled=true;
+              }
+              if(!handled&&geminiCli&&geminiCli.isGeminiCliJsonlText(jsonlText)){
+                const slugM=/tmp\/([^/]+)\/chats\//i.exec(name);
+                const dirPrefix=name.replace(/\/chats\/[^]*$/i,'');
+                const knownCwd=geminiDirRoot.get(dirPrefix)||(slugM?geminiSlugCwd.get(slugM[1]):'')||'';
+                const parsedGem=await geminiCli.parseSessionAsync(jsonlText,{path:name,cwd:knownCwd},()=>check(current));
+                if(parsedGem&&parsedGem.conversation){
+                  codexConvs.push(parsedGem.conversation);
+                  if(parsedGem.project&&!codexProjects.has(parsedGem.project.uuid))codexProjects.set(parsedGem.project.uuid,parsedGem.project);
+                }
+                handled=true;
+              }
+              if(!handled&&claudeCode&&claudeCode.isClaudeCodeText(jsonlText)){
                 const sidecarMeta=ccMetaByPath.get(name.replace(/\.jsonl$/i,''))||null;
                 const parsedCc=await claudeCode.parseTranscriptAsync(jsonlText,{path:name,meta:sidecarMeta},()=>check(current));
                 if(parsedCc&&parsedCc.conversation){
@@ -5709,10 +7433,23 @@ function importWorkerMain(){
           }
           if(/\.md$/i.test(name)){
             const logical=name.replace(/^.*?(?=(?:areas|projects|memories|memory)\/)/,'');
-            if(/^(?:areas\/|projects\/[^/]+\/|memories\/|memory\/)/.test(logical))memories.push(format.memory(logical,await files[name].async('text'),'',filename));continue;
+            if(/^(?:areas\/|projects\/[^/]+\/|memories\/|memory\/)/.test(logical)){memories.push(format.memory(logical,await files[name].async('text'),'',filename));continue;}
+            if(/^GEMINI\.md$/i.test(baseName)){memories.push(format.memory('gemini/'+name,await files[name].async('text'),'GEMINI.md ('+name+')',filename));continue;}
+            continue;
           }
           if(!/\.json$/i.test(name))continue;
           let value;try{value=parseJsonText(await files[name].async('text'));}catch{if(/(^|\/)(?:projects\/|users\.json|login_history\.json|artifacts\/)/i.test(name))throw new Error('Invalid JSON: '+name);continue;}
+          if(geminiCli&&geminiCli.isGeminiCliJson(value)){
+            const slugM=/tmp\/([^/]+)\/chats\//i.exec(name);
+            const dirPrefix=name.replace(/\/chats\/[^]*$/i,'');
+            const knownCwd=geminiDirRoot.get(dirPrefix)||(slugM?geminiSlugCwd.get(slugM[1]):'')||'';
+            const parsedGem=await geminiCli.parseSessionAsync(value,{path:name,cwd:knownCwd},()=>check(current));
+            if(parsedGem&&parsedGem.conversation){
+              codexConvs.push(parsedGem.conversation);
+              if(parsedGem.project&&!codexProjects.has(parsedGem.project.uuid))codexProjects.set(parsedGem.project.uuid,parsedGem.project);
+            }
+            continue;
+          }
           if(pplx&&(pplx.isExport(value)||pplx.isConversation(value)||Array.isArray(value)&&value.length&&value.every(item=>pplx.isConversation(item)))){convs.push(name);continue;}
           if(grok&&grok.isBackendExport(value)){
             if(Array.isArray(value.projects))projects.push(...grok.convertProjects(value.projects));
@@ -5736,9 +7473,38 @@ function importWorkerMain(){
           }
           designs.push(...core.parseDesignExports([JSON.stringify(value)]));
         }
+        if(antigravity&&agBundles.size){
+          for(const [cid,bundle]of agBundles){
+            await check(current);
+            const mergedText=[...bundle.fullTexts,...bundle.compactTexts].join('\n');
+            const useFull=bundle.fullTexts.length>0;
+            const hist=agHistoryMap.get(cid);
+            const pbTitle=agPbtxtTitles.get(cid)||hist?.display||'';
+            let parsedAg=mergedText.trim()?await antigravity.parseTranscriptAsync(mergedText,{path:useFull?bundle.fullPath:bundle.compactPath,sourceVariant:useFull?(bundle.fullPath.includes('chunks/')?'chunks':'full'):'compact',conversationId:cid,title:pbTitle,workspace:hist?.workspace||''},()=>check(current)):null;
+            const artList=[...bundle.artifacts.values()].map(a=>({
+              name:a.name,
+              path:a.path,
+              content:a.content,
+              metadata:bundle.metadata.get(a.name)||null,
+              versions:bundle.resolved.get(a.name)||[]
+            }));
+            const urlList=[...bundle.urls.values()].map(u=>({...u,metadata:bundle.metadata.get(u.name)||null}));
+            const finalAg=antigravity.mergeBrainBundle(parsedAg,{conversationId:cid,artifacts:artList,urlBookmarks:urlList,images:bundle.images,title:pbTitle,workspace:hist?.workspace||''});
+            if(finalAg&&finalAg.conversation){
+              if(agPbSkipped>0){
+                finalAg.conversation.importWarnings=finalAg.conversation.importWarnings||[];
+                if(!finalAg.conversation.importWarnings.includes('antigravity_encrypted_pb_skipped:'+agPbSkipped))finalAg.conversation.importWarnings.push('antigravity_encrypted_pb_skipped:'+agPbSkipped);
+                if(finalAg.conversation.antigravityTelemetry)finalAg.conversation.antigravityTelemetry.pbSkipped=agPbSkipped;
+              }
+              codexConvs.push(finalAg.conversation);
+              if(finalAg.project&&!codexProjects.has(finalAg.project.uuid))codexProjects.set(finalAg.project.uuid,finalAg.project);
+            }
+          }
+        }
         for(const p of codexProjects.values())projects.push(p);
         if(!convs.length&&!codexConvs.length&&!projects.length&&!memories.length&&!artifacts.length&&!users.length&&!logins.length&&!legacyMemory&&!designs.length){
           if(sawZst)throw new Error('Codex .jsonl.zst (Zstd) compressed files are not supported yet; decompress with zstd -d first');
+          if(agPbSkipped>0)throw new Error('Antigravity .pb protobuf files are encrypted; include brain/<conversation-id>/.system_generated/logs/ or Markdown artifacts alongside them');
           throw new Error('No supported export data in package');
         }
         await check(current);await rpc('packageStart',{id,filename,accounts:[...accounts]});
@@ -5809,7 +7575,7 @@ async function ensureFeature(kind){
   const libraries=kind==='import'?['zip']:kind==='reader'?['markdown','highlight']:['markdown','highlight'];
   const sources=libraries.map(name=>Uint8Array.from(atob(WORKER_LIBRARIES[name].base64),char=>char.charCodeAt(0)));
   const main=kind==='import'?importWorkerMain:kind==='reader'?readerWorkerMain:taskWorkerMain;
-  const url=URL.createObjectURL(new Blob([...sources,'\n',exportFormatCore.toString(),'\n',gptDilCore.toString(),'\n',gptExportCore.toString(),'\n',grokExportCore.toString(),'\n',perplexityExportCore.toString(),'\n',codexExportCore.toString(),'\n',claudeCodeExportCore.toString(),'\n',redactionRules.toString(),'\n',workerDomainCore.toString(),'\n',featureWorkerRuntime.toString(),'\n('+main.toString()+')()'],{type:'text/javascript'}));
+  const url=URL.createObjectURL(new Blob([...sources,'\n',exportFormatCore.toString(),'\n',gptDilCore.toString(),'\n',gptExportCore.toString(),'\n',grokExportCore.toString(),'\n',perplexityExportCore.toString(),'\n',codexExportCore.toString(),'\n',claudeCodeExportCore.toString(),'\n',antigravityExportCore.toString(),'\n',geminiCliExportCore.toString(),'\n',redactionRules.toString(),'\n',workerDomainCore.toString(),'\n',featureWorkerRuntime.toString(),'\n('+main.toString()+')()'],{type:'text/javascript'}));
   let worker;try{worker=new Worker(url);}catch(error){URL.revokeObjectURL(url);throw error;}
   state={worker,url,id:kind+':'+(++featureSequence),generation:dataWorkerGeneration,pending:new Map(),port:null};
   state.ready=new Promise((resolve,reject)=>{state.resolveReady=resolve;state.rejectReady=reject;});state.ready.catch(()=>{});featureWorkers.set(kind,state);
@@ -5877,7 +7643,7 @@ async function renderReaderWindow(options={}){
     }
     if(result.start>0){const button=document.createElement('button');button.className='load-earlier-btn';button.textContent='↑ '+t('加载更早消息')+' ('+result.start+')';button.onclick=()=>void renderReaderWindow({startIndex:Math.max(0,result.start-40)});nav.appendChild(button);container.prepend(nav);}
     if(result.end<result.total){const button=document.createElement('button');button.className='load-earlier-btn';button.textContent='↓ '+t('加载更新消息');button.onclick=()=>void renderReaderWindow({startIndex:result.end});container.appendChild(button);}
-    initZipMedia(container);if((currentConv.sourcePlatform==='codex'||currentConv.sourcePlatform==='claude_code')&&result.start===0)container.insertAdjacentHTML('afterbegin',currentConv.sourcePlatform==='claude_code'?claudeCodeAlphaNoticeHtml():codexAlphaNoticeHtml());for(const warning of currentConv.importWarnings||[]){const notice=document.createElement('p');notice.setAttribute('role','status');notice.textContent=warning;container.prepend(notice);}return result;
+    initZipMedia(container);if(typeof hydrateAntigravityMedia==='function')hydrateAntigravityMedia(container);if(result.start===0){if(currentConv.sourcePlatform==='claude_code')container.insertAdjacentHTML('afterbegin',claudeCodeAlphaNoticeHtml());else if(currentConv.sourcePlatform==='codex')container.insertAdjacentHTML('afterbegin',codexAlphaNoticeHtml());else if(currentConv.sourcePlatform==='antigravity')container.insertAdjacentHTML('afterbegin',antigravityAlphaNoticeHtml(currentConv)+renderAntigravityBrainStrip(currentConv));else if(currentConv.sourcePlatform==='gemini_cli')container.insertAdjacentHTML('afterbegin',geminiCliAlphaNoticeHtml(currentConv));}for(const warning of currentConv.importWarnings||[]){if(currentConv.sourcePlatform==='antigravity'&&/^antigravity_(?:encrypted_pb_skipped|transcript_truncated_steps):/.test(String(warning)))continue;const notice=document.createElement('p');notice.setAttribute('role','status');notice.textContent=warning;container.prepend(notice);}return result;
   }catch(error){if(error.name==='AbortError')return;const container=document.getElementById('messages');container.textContent=error.message;const retry=document.createElement('button');retry.textContent=t('重试');retry.onclick=()=>void openConv(uuid);container.appendChild(retry);}
 }
 async function readerSearch(query){
@@ -5918,7 +7684,7 @@ function exportMediaKey(name){
   const unique=[...new Set(candidates.map(([,entry])=>entry.packageId+'/'+entry.path))];
   return unique.length===1?unique[0]:zipEntries.has(mediaKey(name))&&typeof zipEntries.get(mediaKey(name))==='string'?mediaKey(name):'';
 }
-Object.assign(EN,{'下载与导入':'Import center','导入中心 / Claude 清单':'Import center / Claude manifest','多 AI 导出导入中心':'Multi-AI Export Import Center','支持直接导入 Claude、ChatGPT、Grok、Perplexity、Codex (Alpha) 与 Claude Code (Alpha) 的 ZIP、解压目录、独立 JSON 或 .jsonl，也支持通过 Claude 新版下载清单逐包获取并混合阅读。':'Import Claude, ChatGPT, Grok, Perplexity, Codex (Alpha), and Claude Code (Alpha) ZIPs, extracted folders, standalone JSON, or .jsonl logs directly — or use Claude’s partitioned download manifest checklist and read all platforms together.','直接导入（多平台通用）':'Direct import (all supported platforms)','无需清单，可直接多选或追加导入 Claude、ChatGPT、Grok、Perplexity、Codex 与 Claude Code 导出包，自动识别平台并混合搜索、筛选与脱敏导出。':'No manifest needed. Select or append Claude, ChatGPT, Grok, Perplexity, Codex, and Claude Code archives in any order for unified search, filtering, and safe export.','Claude 新版分包下载清单':'Claude partitioned download manifest','仅适用于 Claude 新版分包导出：先导入 manifest JSON 获取官方下载链接，下载完 ZIP 后再批量追加。':'For Claude’s partitioned exports only: open manifest JSON to get official download links, then add the downloaded ZIPs together.','01 · 导入清单':'01 · Choose manifest','02 · 官方下载':'02 · Download from Claude','03 · 批量追加':'03 · Add ZIPs locally','清单只用于展示文件与链接。':'The manifest lists files and download links.','在新标签页完成下载，返回这里继续。':'Download in a new tab, then return here.','批量选择 ZIP，可按任意顺序追加（可与其他平台混合）。':'Select ZIP files in any order (can be mixed with other AI platforms).','尚未选择下载清单':'No Claude download manifest selected','如果你拿到的是完整的 ZIP（Claude / ChatGPT / Grok / Perplexity / Codex / Claude Code）或解压目录，请直接用上方按钮导入。':'If you already have full ZIP files / session folders (Claude / ChatGPT / Grok / Perplexity / Codex / Claude Code) or .jsonl files, use the direct import buttons above.','已导入文件':'Imported files','返回对话':'Back to conversations'});
+Object.assign(EN,{'下载与导入':'Import center','导入中心 / Claude 清单':'Import center / Claude manifest','多 AI 导出导入中心':'Multi-AI Export Import Center','支持直接导入 Claude、ChatGPT、Grok、Perplexity、Codex、Claude Code、Antigravity 与 Gemini CLI 的 ZIP、解压目录、独立 JSON 或 .jsonl，也支持通过 Claude 新版下载清单逐包获取并混合阅读。':'Import Claude, ChatGPT, Grok, Perplexity, Codex, Claude Code, Antigravity, and Gemini CLI ZIPs, extracted folders, standalone JSON, or .jsonl logs directly — or use Claude’s partitioned download manifest checklist and read all platforms together.','直接导入（多平台通用）':'Direct import (all supported platforms)','无需清单，可直接多选或追加导入 Claude、ChatGPT、Grok、Perplexity、Codex、Claude Code、Antigravity 与 Gemini CLI 导出包，自动识别平台并混合搜索、筛选与脱敏导出。':'No manifest needed. Select or append Claude, ChatGPT, Grok, Perplexity, Codex, Claude Code, Antigravity, and Gemini CLI archives in any order for unified search, filtering, and safe export.','Claude 新版分包下载清单':'Claude partitioned download manifest','仅适用于 Claude 新版分包导出：先导入 manifest JSON 获取官方下载链接，下载完 ZIP 后再批量追加。':'For Claude’s partitioned exports only: open manifest JSON to get official download links, then add the downloaded ZIPs together.','01 · 导入清单':'01 · Choose manifest','02 · 官方下载':'02 · Download from Claude','03 · 批量追加':'03 · Add ZIPs locally','清单只用于展示文件与链接。':'The manifest lists files and download links.','在新标签页完成下载，返回这里继续。':'Download in a new tab, then return here.','批量选择 ZIP，可按任意顺序追加（可与其他平台混合）。':'Select ZIP files in any order (can be mixed with other AI platforms).','尚未选择下载清单':'No Claude download manifest selected','如果你拿到的是完整的 ZIP（Claude / ChatGPT / Grok / Perplexity / Codex / Claude Code / Antigravity / Gemini CLI）或解压目录，请直接用上方按钮导入。':'If you already have full ZIP files / session folders (Claude / ChatGPT / Grok / Perplexity / Codex / Claude Code / Antigravity / Gemini CLI) or .jsonl files, use the direct import buttons above.','已导入文件':'Imported files','返回对话':'Back to conversations'});
 function openDownloadPage(){
   exportViewVersion++;openConversationGeneration++;resetReaderSearch();cancelFeature('reader');
   if(currentView==='analytics')cancelAnalytics();
@@ -5935,8 +7701,8 @@ function renderExportManifest(){
   if(currentView!=='downloads')return;
   const session=exportSession,host=document.getElementById('messages'),panel=document.createElement('section');panel.id='export-session-panel';panel.className='export-page';host.replaceChildren(panel);
   const make=(tag,cls,text,parent=panel)=>{const node=document.createElement(tag);node.className=cls;node.textContent=text;parent.append(node);return node;};
-  const hero=make('header','export-hero','');make('div','export-kicker','Multi-AI Web Export Reader',hero);make('h2','',t('多 AI 导出导入中心'),hero);make('p','export-description',t('支持直接导入 Claude、ChatGPT、Grok、Perplexity、Codex (Alpha) 与 Claude Code (Alpha) 的 ZIP、解压目录、独立 JSON 或 .jsonl，也支持通过 Claude 新版下载清单逐包获取并混合阅读。'),hero);
-  const direct=make('section','export-empty','');direct.style.marginBottom='20px';make('strong','',t('直接导入（多平台通用）'),direct);make('p','export-description',t('无需清单，可直接多选或追加导入 Claude、ChatGPT、Grok、Perplexity、Codex 与 Claude Code 导出包，自动识别平台并混合搜索、筛选与脱敏导出。'),direct);
+  const hero=make('header','export-hero','');make('div','export-kicker','Multi-AI Web Export Reader',hero);make('h2','',t('多 AI 导出导入中心'),hero);make('p','export-description',t('支持直接导入 Claude、ChatGPT、Grok、Perplexity、Codex、Claude Code、Antigravity 与 Gemini CLI 的 ZIP、解压目录、独立 JSON 或 .jsonl，也支持通过 Claude 新版下载清单逐包获取并混合阅读。'),hero);
+  const direct=make('section','export-empty','');direct.style.marginBottom='20px';make('strong','',t('直接导入（多平台通用）'),direct);make('p','export-description',t('无需清单，可直接多选或追加导入 Claude、ChatGPT、Grok、Perplexity、Codex、Claude Code、Antigravity 与 Gemini CLI 导出包，自动识别平台并混合搜索、筛选与脱敏导出。'),direct);
   const directBar=make('div','export-toolbar','',direct);for(const [action,label,primary]of [['pick-zip','🗜️ 打开导出 ZIP（多平台）',true],['pick-folder','📂 打开解压目录'],['new-archive','打开新档案'],['clear-archive','清除档案']]){const button=make('button','export-button'+(primary?' primary':action==='clear-archive'?' quiet':''),t(label),directBar);button.type='button';button.dataset.uiClick=action;}
   if(session.packages.length){make('h3','',t('已导入文件'));for(const p of session.packages)make('p','export-meta','✓ '+p.filename);}
   if(session.errors.length){const errors=make('div','export-errors','');errors.setAttribute('role','status');for(const e of session.errors)make('p','',e,errors);}
@@ -7291,6 +9057,8 @@ function archiveAnalysisCore(){
       if(wsId&&stats['grok:ws:'+wsId]){map[record.meta.uuid]='grok:ws:'+wsId;evidence[record.meta.uuid]={method:'workspace',confidence:1,files:[],queries:[],keywords:[]};}
       else if(wsId&&stats['codex:cwd:'+wsId]){map[record.meta.uuid]='codex:cwd:'+wsId;evidence[record.meta.uuid]={method:'workspace',confidence:1,files:[],queries:[],keywords:[]};}
       else if(wsId&&stats['cc:cwd:'+wsId]){map[record.meta.uuid]='cc:cwd:'+wsId;evidence[record.meta.uuid]={method:'workspace',confidence:1,files:[],queries:[],keywords:[]};}
+      else if(wsId&&stats['ag:cwd:'+wsId]){map[record.meta.uuid]='ag:cwd:'+wsId;evidence[record.meta.uuid]={method:'workspace',confidence:1,files:[],queries:[],keywords:[]};}
+      else if(wsId&&stats['gemini:cwd:'+wsId]){map[record.meta.uuid]='gemini:cwd:'+wsId;evidence[record.meta.uuid]={method:'workspace',confidence:1,files:[],queries:[],keywords:[]};}
       const colId=conversation.collectionUuid||record.meta?.collectionUuid;
       if(!map[record.meta.uuid]&&colId&&stats['perplexity:col:'+colId]){map[record.meta.uuid]='perplexity:col:'+colId;evidence[record.meta.uuid]={method:'collection',confidence:1,files:[],queries:[],keywords:[]};}
       for(let messageIndex=0;messageIndex<messages.length;messageIndex++){
@@ -7387,7 +9155,7 @@ function dataWorkerMain(){
       if(key==='chat_messages'&&raw[start]==='[')meta.message_count=countArrayItems(raw,start,end);
       else if(key==='account')meta.accountUuid=JSON.parse(raw.slice(start,end))?.uuid||'';
       else if(key==='_design')meta._design=JSON.parse(raw.slice(start,end));
-      else if(['sourcePlatform','originalId','defaultModel','currentNode','importWarnings','workspaceId','collectionUuid','codexMeta','claudeCodeMeta'].includes(key))meta[key]=JSON.parse(raw.slice(start,end));
+      else if(['sourcePlatform','originalId','defaultModel','currentNode','importWarnings','workspaceId','collectionUuid','codexMeta','claudeCodeMeta','antigravityMeta','geminiCliMeta'].includes(key))meta[key]=JSON.parse(raw.slice(start,end));
       else if(key==='uuid'||key==='name'||key==='summary'||key==='created_at'||key==='updated_at'){
         const value=JSON.parse(raw.slice(start,end));meta[key]=typeof value==='string'?value:'';
       }
@@ -7472,7 +9240,7 @@ function dataWorkerMain(){
   async function cacheDeleteAll(){const db=await cacheDb();if(!db)return false;try{await new Promise((resolve,reject)=>{const request=db.transaction(CACHE_STORE,'readwrite').objectStore(CACHE_STORE).clear();request.onsuccess=()=>resolve();request.onerror=()=>reject(request.error);});return true;}finally{db.close();}}
   function ingestSummary(cacheHit=false){let totalMsgs=0,minDate='',maxDate='';for(const record of records){const meta=record.meta;if(meta._design)continue;totalMsgs+=meta.message_count;const date=meta.created_at;if(date&&(!minDate||date<minDate))minDate=date;if(date&&(!maxDate||date>maxDate))maxDate=date;}return{conversations:records.map(record=>record.meta),totalMsgs,minDate,maxDate,lazy:true,cacheHit};}
   let packageStage=null,contentRevision=0,archiveAccounts=new Set(),packageIds=new Set();
-  const accountPlatform=id=>String(id).startsWith('gpt:')?'gpt':String(id).startsWith('grok:')?'grok':String(id).startsWith('perplexity:')?'perplexity':String(id).startsWith('codex:')?'codex':'claude';
+  const accountPlatform=id=>String(id).startsWith('gpt:')?'gpt':String(id).startsWith('grok:')?'grok':String(id).startsWith('perplexity:')?'perplexity':String(id).startsWith('codex:')?'codex':String(id).startsWith('ag:')?'antigravity':String(id).startsWith('gemini:')?'gemini_cli':'claude';
   const accountMismatch=incoming=>{for(const platform of new Set(incoming.map(accountPlatform))){const local=[...archiveAccounts].filter(id=>accountPlatform(id)===platform),next=incoming.filter(id=>accountPlatform(id)===platform);if(new Set(next).size>1||local.length&&next.some(id=>!archiveAccounts.has(id)))return true;}return false;};
   async function finishIngest(request,text){
     const expected=generation,stage=packageStage;let deadline=Date.now()+8;
@@ -8011,7 +9779,7 @@ function renderAnalyticsExploration(){
   html+='<div class="analytics-filters"><label>'+t('时间范围')+'<select id="analytics-range" data-ui-change="analytics-filter" data-ui-value="range">'+analyticsFilterOptions(['all','7','30','90','custom'],[filters.range],value=>t({all:'全部历史',7:'最近 7 天',30:'最近 30 天',90:'最近 90 天',custom:'自定义日期'}[value]))+'</select></label>';
   if(filters.range==='custom')html+='<label>'+t('开始日期')+'<input id="analytics-start" type="date" value="'+escAttr(filters.start)+'" data-ui-change="analytics-filter" data-ui-value="start"></label><label>'+t('结束日期')+'<input id="analytics-end" type="date" value="'+escAttr(filters.end)+'" data-ui-change="analytics-filter" data-ui-value="end"></label>';
   html+=select('projects','项目',options.projects.map(project=>project.uuid),value=>projectNames.get(value))+select('models','模型',options.models,value=>value||t('未提供'))+select('roles','角色',options.roles,value=>value==='human'?t('你'):value==='assistant'?t('AI 助手'):value);
-  html+=select('platforms','来源',['claude','gpt','grok','perplexity'],value=>value==='gpt'?'ChatGPT':value==='grok'?'Grok':value==='perplexity'?'Perplexity':'Claude');
+  html+=select('platforms','来源',PLATFORM_ORDER,value=>platformMeta(value).name);
   html+='<button type="button" data-ui-click="analytics-clear">'+t('清除筛选')+'</button></div><div class="analytics-note">'+t('多选条件可组合；未选择表示全部。快捷范围以档案最新消息为终点。')+'</div>';
   if(!result){
     const incomplete=filters.range==='custom'&&(!filters.start||!filters.end||filters.end<filters.start);
@@ -8215,10 +9983,89 @@ function renderClaudeCodeBehaviorSection(cc){
   out+='</div></section>';
   return out;
 }
+function renderAntigravityBehaviorSection(ag){
+  if(!ag||!ag.sessions)return '';
+  const nf=n=>Number(n||0).toLocaleString(currentLang==='en'?'en-US':'zh-CN');
+  const topMap=(map,limit=8)=>Object.entries(map||{}).sort((a,b)=>b[1]-a[1]).slice(0,limit);
+  const pillsHtml=(entries,cls='')=>entries.map(([k,v])=>'<span class="behavior-pill'+cls+'"><span>'+esc(k)+'</span><b>'+nf(v)+'</b></span>').join('');
+  const tok=ag.tokens||{},ph=ag.phases||{};
+  const cacheDenom=(tok.input||0)+(tok.cached||0);
+  const cacheRate=cacheDenom>0?Math.round((tok.cached||0)/cacheDenom*100):0;
+  const totalPhases=(ph.PLANNING||0)+(ph.EXECUTION||0)+(ph.VERIFICATION||0)+(ph.OTHER||0);
+  const eventsHtml=(ag.events||[]).length
+    ?'<div class="behavior-event-list">'+ag.events.slice(0,20).map(ev=>'<button type="button" class="behavior-event-btn" data-ui-click="behavior-open" data-ui-value="'+escAttr(ev.uuid)+'"><span class="behavior-event-left"><span class="behavior-sev-dot '+escAttr(ev.severity||'info')+'"></span><span class="behavior-event-meta"><span class="behavior-event-title">'+esc(ev.label||ev.kind)+' · '+esc(ev.title||ev.uuid)+'</span><span class="behavior-event-detail">'+esc(ev.detail||'')+(ev.ts?' · '+esc(fmtDate(ev.ts)):'')+'</span></span></span><span class="behavior-event-right">'+esc(t('打开会话'))+' ›</span></button>').join('')+'</div>'
+    :'<div class="behavior-list"><div class="behavior-row"><span>'+esc(t('暂无异常事件'))+'</span><span>—</span></div></div>';
+
+  let out='<section class="behavior-cc-section" data-behavior-ag="true">';
+  out+='<div class="behavior-cc-head"><div><div class="analytics-kicker">ANTIGRAVITY α AGENT TELEMETRY</div><div class="behavior-cc-title"><span>'+esc(t('Antigravity α 专项观测台'))+'</span><span class="behavior-cc-alpha">Alpha · '+nf(ag.sessions)+' '+esc(t('条对话'))+(ag.subagentSpawns?' · '+nf(ag.subagentSpawns)+' Subagents':'')+'</span></div><div class="behavior-sub">'+esc(t('还原 transcript_full / Brain 工件、Task Boundary 阶段、/btw 自激循环与加密 .pb 跳过情况。'))+'</div></div><div class="behavior-pills" style="margin-top:0">'+pillsHtml(topMap(ag.models,4))+'</div></div>';
+
+  out+='<div class="behavior-grid">'
+    +behaviorMetric('✧',nf(ag.totalSteps||0),t('Agent 总步骤数'))
+    +behaviorMetric('📦',nf(ag.artifactsCount||0),t('Brain 工件数'))
+    +behaviorMetric('⚡',cacheRate+'%',t('Cache 命中率'))
+    +behaviorMetric('🔁',nf(ag.runawaySessions||0),t('疑似连续循环会话'))
+    +'</div>';
+
+  out+='<div class="behavior-grid-2">';
+  out+='<section class="behavior-card behavior-cc-card"><h3><span>📐 '+esc(t('Task 生命周期与人工闸门'))+'</span><span class="behavior-badge">'+nf(totalPhases)+' Boundaries</span></h3><div class="behavior-list">'
+    +'<div class="behavior-row"><span>PLANNING / EXECUTION / VERIFICATION</span><span>'+nf(ph.PLANNING||0)+' / '+nf(ph.EXECUTION||0)+' / '+nf(ph.VERIFICATION||0)+'</span></div>'
+    +'<div class="behavior-row"><span>'+esc(t('BlockedOnUser 审阅门'))+'</span><span>'+nf(ag.notifyGates||0)+'</span></div>'
+    +'<div class="behavior-row"><span>'+esc(t('最大连环规划步 (maxPlannerStreak)'))+'</span><span>'+nf(ag.maxPlannerStreak||0)+'</span></div>'
+    +'<div class="behavior-row"><span>'+esc(t('Subagent 派发 / .url.json 书签'))+'</span><span>'+nf(ag.subagentSpawns||0)+' / '+nf(ag.bookmarksCount||0)+'</span></div>'
+    +'</div><div class="behavior-pills">'+pillsHtml(topMap(ag.toolCounts,6))+'</div></section>';
+
+  out+='<section class="behavior-card behavior-cc-card"><h3><span>🩺 '+esc(t('日志完整性与异常追踪'))+'</span>'+(ag.runawaySessions||ag.truncatedSteps||ag.pbSkipped?'<span class="behavior-badge is-warn">'+esc(t('需关注'))+'</span>':'<span class="behavior-badge is-ok">'+esc(t('正常'))+'</span>')+'</h3>'
+    +'<div class="behavior-meter-wrap"><div class="behavior-meter-label"><span>'+esc(t('Prompt Cache 复用'))+'</span><span>'+cacheRate+'% ('+nf(tok.cached||0)+' / '+nf(cacheDenom)+')</span></div><div class="behavior-meter-track"><div class="behavior-meter-fill" style="width:'+Math.max(2,Math.min(100,cacheRate))+'%"></div></div></div>'
+    +'<div class="behavior-list">'
+    +'<div class="behavior-row"><span>'+esc(t('日志来源 (full / compact / brain_only)'))+'</span><span>'+nf(ag.transcriptSources?.full||0)+' / '+nf(ag.transcriptSources?.compact||0)+' / '+nf(ag.brainOnlySessions||0)+'</span></div>'
+    +'<div class="behavior-row"><span>'+esc(t('截断步骤 (truncated_fields)'))+'</span><span>'+nf(ag.truncatedSteps||0)+'</span></div>'
+    +'<div class="behavior-row"><span>'+esc(t('跳过加密 .pb 文件'))+'</span><span>'+nf(ag.pbSkipped||0)+'</span></div>'
+    +'<div class="behavior-row"><span>'+esc(t('总 Token (In / Out / Cached)'))+'</span><span>'+nf(tok.input||0)+' / '+nf(tok.output||0)+' / '+nf(tok.cached||0)+'</span></div>'
+    +'</div>'+eventsHtml+'</section>';
+  out+='</div></section>';
+  return out;
+}
+function renderGeminiCliBehaviorSection(gem){
+  if(!gem||!gem.sessions)return '';
+  const nf=n=>Number(n||0).toLocaleString(currentLang==='en'?'en-US':'zh-CN');
+  const topMap=(map,limit=8)=>Object.entries(map||{}).sort((a,b)=>b[1]-a[1]).slice(0,limit);
+  const pillsHtml=(entries,cls='')=>entries.map(([k,v])=>'<span class="behavior-pill'+cls+'"><span>'+esc(k)+'</span><b>'+nf(v)+'</b></span>').join('');
+  const tok=gem.tokens||{},st=gem.toolStatusCounts||{};
+  const cacheDenom=(tok.input||0)+(tok.cached||0);
+  const cacheRate=cacheDenom>0?Math.round((tok.cached||0)/cacheDenom*100):0;
+  const eventsHtml=(gem.events||[]).length
+    ?'<div class="behavior-event-list">'+gem.events.slice(0,20).map(ev=>'<button type="button" class="behavior-event-btn" data-ui-click="behavior-open" data-ui-value="'+escAttr(ev.uuid)+'"><span class="behavior-event-left"><span class="behavior-sev-dot '+escAttr(ev.severity||'info')+'"></span><span class="behavior-event-meta"><span class="behavior-event-title">'+esc(ev.label||ev.kind)+' · '+esc(ev.title||ev.uuid)+'</span><span class="behavior-event-detail">'+esc(ev.detail||'')+(ev.ts?' · '+esc(fmtDate(ev.ts)):'')+'</span></span></span><span class="behavior-event-right">'+esc(t('打开会话'))+' ›</span></button>').join('')+'</div>'
+    :'<div class="behavior-list"><div class="behavior-row"><span>'+esc(t('暂无异常或回溯事件'))+'</span><span>—</span></div></div>';
+
+  let out='<section class="behavior-cc-section" data-behavior-gem="true">';
+  out+='<div class="behavior-cc-head"><div><div class="analytics-kicker">GOOGLE GEMINI CLI α TELEMETRY</div><div class="behavior-cc-title"><span>'+esc(t('Gemini CLI α 专项观测台'))+'</span><span class="behavior-cc-alpha">Alpha · '+nf(gem.sessions)+' '+esc(t('条对话'))+(gem.subagentSessions?' · '+nf(gem.subagentSessions)+' Subagents':'')+'</span></div><div class="behavior-sub">'+esc(t('基于 session-*.jsonl 事件溯源回放 ($set/$patch/$rewindTo)、五维 Token 与 FileDiff 工具审批统计。'))+'</div></div><div class="behavior-pills" style="margin-top:0">'+pillsHtml(topMap(gem.models,4))+'</div></div>';
+
+  out+='<div class="behavior-grid">'
+    +behaviorMetric('🪙',nf(tok.total||0),t('5 维总 Token'))
+    +behaviorMetric('🧠',nf(tok.thoughts||0),t('Thoughts 推理 Token'))
+    +behaviorMetric('↩️',nf(gem.rewindCount||0),t('$rewindTo 回退次数'))
+    +behaviorMetric('📝',nf(gem.filesModifiedCount||0),t('FileDiff 修改文件'))
+    +'</div>';
+
+  out+='<div class="behavior-grid-2">';
+  out+='<section class="behavior-card behavior-cc-card"><h3><span>⚙️ '+esc(t('工具审批漏斗与事件溯源'))+'</span><span class="behavior-badge">'+nf(st.success||0)+' ok / '+nf((st.error||0)+(st.cancelled||0))+' fail</span></h3>'
+    +'<div class="behavior-meter-wrap"><div class="behavior-meter-label"><span>'+esc(t('Prompt Cache 命中率'))+'</span><span>'+cacheRate+'% ('+nf(tok.cached||0)+' / '+nf(cacheDenom)+')</span></div><div class="behavior-meter-track"><div class="behavior-meter-fill" style="width:'+Math.max(2,Math.min(100,cacheRate))+'%"></div></div></div>'
+    +'<div class="behavior-list">'
+    +'<div class="behavior-row"><span>success / error / cancelled / awaiting</span><span>'+nf(st.success||0)+' / '+nf(st.error||0)+' / '+nf(st.cancelled||0)+' / '+nf(st.awaiting_approval||0)+'</span></div>'
+    +'<div class="behavior-row"><span>$rewindTo / $patch / $set</span><span>'+nf(gem.rewindCount||0)+' / '+nf(gem.patchCount||0)+' / '+nf(gem.setCount||0)+'</span></div>'
+    +'<div class="behavior-row"><span>Input / Output / Tool Tokens</span><span>'+nf(tok.input||0)+' / '+nf(tok.output||0)+' / '+nf(tok.tool||0)+'</span></div>'
+    +'</div><div class="behavior-pills">'+pillsHtml(topMap(gem.toolNameCounts,6))+'</div></section>';
+
+  out+='<section class="behavior-card behavior-cc-card"><h3><span>📜 '+esc(t('回溯、取消与工具异常事件'))+'</span><span class="behavior-badge">'+nf((gem.events||[]).length)+'</span></h3>'+eventsHtml+'</section>';
+  out+='</div></section>';
+  return out;
+}
 function renderBehaviorPage(){currentView='behavior';document.getElementById('chat-title').textContent='🧪 '+t('行为实验室');document.getElementById('chat-title').style.color='';document.getElementById('chat-header-meta').textContent='本地按需分析';document.getElementById('toggle-summary').style.display='none';document.getElementById('export-wrap').style.display='none';['csearch','csearch-count','cprev','cnext','quality-btn','tree-mode-btn','remote-resources-btn'].forEach(id=>{const e=document.getElementById(id);if(e)e.style.display='none';});if(!allConvs.length){document.getElementById('messages').innerHTML='<div class="analytics-progress">请先加载导出档案</div>';return;}if(!behaviorResult){document.getElementById('messages').innerHTML='<div class="analytics-progress"><div style="font-size:22px">🧪</div><b>正在分析工具、Thinking 与回答证据链…</b><div class="analytics-note">分析在本机执行，不会上传内容。</div></div>';void startBehaviorLab().then(()=>{if(currentView==='behavior')renderBehaviorPage();}).catch(e=>{if(e.name==='AbortError'||currentView!=='behavior')return;document.getElementById('messages').innerHTML='<div class="analytics-progress">分析失败：'+esc(e.message)+'</div>';const retry=document.createElement('button');retry.textContent=t('重试');retry.onclick=()=>renderBehaviorPage();document.getElementById('messages').appendChild(retry);});return;}const r=behaviorResult,q=r.quality||{},pair=r.tools?Math.round(r.paired/r.tools*100):100;let h='<div class="behavior-page"><div class="behavior-hero"><div><div class="analytics-kicker">AI OBSERVABILITY</div><h2 class="behavior-heading">'+t('行为实验室')+'</h2><div class="behavior-sub">不只显示 AI 说了什么，还原它调用了什么、哪些结果被隐藏，以及回答的证据链是否完整。</div></div></div><div class="behavior-grid">'+behaviorMetric('⚙️',r.tools,'工具调用')+behaviorMetric('🔗',pair+'%','Tool 配对率')+behaviorMetric('🧠',r.thinking,'Thinking 块')+behaviorMetric('⚠️',(q.refusal||0)+(q.fallback||0),'疑似拒答/降级')+'</div>';
   h+='<div class="behavior-grid"><section class="behavior-card"><h3>⚙️ 工具调用时间线</h3><p>按原始导出记录审计工具调用、审批与 MCP 来源。</p><div class="behavior-list"><div class="behavior-row"><span>调用 / 结果</span><span>'+r.tools+' / '+r.toolResults+'</span></div><div class="behavior-row"><span>需要审批</span><span>'+r.approvals+'</span></div><div class="behavior-row"><span>MCP / 外部集成</span><span>'+r.mcp+'</span></div><div class="behavior-row"><span>错误结果</span><span>'+r.errors+'</span></div><div class="behavior-row"><span>未配对调用</span><span>'+r.unpairedUse+'</span></div></div></section><section class="behavior-card"><h3>🔎 隐藏结果探针</h3><p>发现结构化结果、元数据与前端展示内容之间的差异。</p><div class="behavior-list"><div class="behavior-row"><span>结构化结果</span><span>'+r.structured+'</span></div><div class="behavior-row"><span>疑似未展示结果</span><span>'+r.hiddenResults+'</span></div><div class="behavior-row"><span>孤立 tool_result</span><span>'+r.unpairedResult+'</span></div></div></section><section class="behavior-card"><h3>🧠 Thinking 完整性</h3><p>只报告导出中明确存在的状态标记，不推断后台风控。</p><div class="behavior-list"><div class="behavior-row"><span>隐藏 / 替代展示</span><span>'+r.thinkingHidden+' / '+r.thinkingSummary+'</span></div><div class="behavior-row"><span>截断 / cut_off</span><span>'+r.thinkingTruncated+' / '+r.thinkingCutoff+'</span></div><div class="behavior-row"><span>签名标记</span><span>'+r.thinkingSigned+'</span></div><div class="behavior-row"><span>累计 Thinking 时长</span><span>'+analyticsDuration(r.thinkingDurationMs)+'</span></div></div></section><section class="behavior-card"><h3>🩺 对话健康与证据链</h3><p>结合健康扫描结果，区分文本现象与工具层异常。</p><div class="behavior-list"><div class="behavior-row"><span>疑似文本拒答</span><span>'+ (q.refusal||0)+'</span></div><div class="behavior-row"><span>疑似能力降级</span><span>'+ (q.fallback||0)+'</span></div><div class="behavior-row"><span>工具错误</span><span>'+r.errors+'</span></div><div class="behavior-row"><span>回复延迟异常</span><span>'+ (q.latency||0)+'</span></div><div class="behavior-row"><span>空 / 截断回答</span><span>'+((q.empty||0)+(q.truncated||0))+'</span></div></div></section></div>';
   if(r.examples.length)h+='<div class="behavior-card"><h3>最近发现的工具调用</h3><div class="behavior-list">'+r.examples.map(x=>'<div class="behavior-row"><span>'+esc(x.name)+'</span><span>'+x.status+'</span></div>').join('')+'</div></div>';
   if(r.claudeCode)h+=renderClaudeCodeBehaviorSection(r.claudeCode);
+  if(r.antigravity)h+=renderAntigravityBehaviorSection(r.antigravity);
+  if(r.geminiCli)h+=renderGeminiCliBehaviorSection(r.geminiCli);
   h+='<div class="behavior-note">⚠️ “疑似拒答”“疑似降级”和 Thinking 状态只代表导出文件中可观察到的文本或字段，不能证明后台进行了风控、模型切换或账号降级。</div></div>';document.getElementById('messages').innerHTML=h;}
 function renderConvList(convs){
   if(analyticsListFilter)convs=convs.filter(conversation=>analyticsListFilter.has(conversation.uuid));
@@ -8228,8 +10075,8 @@ function renderConvList(convs){
   el.innerHTML=marker+convs.map(c=>{
     const ac=currentConv&&currentConv.uuid===c.uuid?' active':'';
     const last=c.uuid===lastConversationUuid;
-    const cm=c.claudeCodeMeta||c.codexMeta;
-    const subTag=cm&&(cm.isSubagent||cm.agentPath)&&(cm.agentNickname||cm.agentType||(cm.agentPath?cm.agentPath.split('/').filter(Boolean).pop():''));
+    const cm=c.claudeCodeMeta||c.codexMeta||c.geminiCliMeta||c.antigravityMeta;
+    const subTag=cm&&(cm.isSubagent||cm.agentPath)&&(cm.agentNickname||cm.agentType||(cm.isSubagent?'Subagent':'')||(cm.agentPath?cm.agentPath.split('/').filter(Boolean).pop():''));
     let displayTitle=String(c.name||'('+t('无标题')+')');
     if(subTag&&displayTitle.startsWith('['+subTag+'] '))displayTitle=displayTitle.slice(subTag.length+3);
     const dateStr=fmtDate(c.updated_at||c.created_at);
@@ -8527,12 +10374,13 @@ async function openConv(uuid,sourceView){
   const st=document.getElementById('summary-text');
   st.innerHTML=currentConv.summary?(currentConv._summaryHtml||(typeof marked!=='undefined'?marked.parse(currentConv.summary):esc(currentConv.summary))):'<span style="color:var(--text3)">'+t('无摘要')+'</span>';
   const pInfo=platformMeta(currentConv.sourcePlatform);
-  const cm=currentConv.claudeCodeMeta||currentConv.codexMeta,usageTotal=cm?.usage?.total_tokens;
-  const subInfo=cm?.agentPath?(cm.agentPath+(cm.agentNickname?' ('+cm.agentNickname+')':'')):cm?.isSubagent?(cm.agentType||cm.agentId||cm.agentNickname||''):'';
-  const clientInfo=cm?.originator||cm?.entrypoint||'';
+  const cm=currentConv.claudeCodeMeta||currentConv.codexMeta||currentConv.antigravityMeta||currentConv.geminiCliMeta,usageTotal=cm?.usage?.total_tokens;
+  const subInfo=cm?.agentPath?(cm.agentPath+(cm.agentNickname?' ('+cm.agentNickname+')':'')):cm?.isSubagent?(cm.agentType||cm.agentId||cm.agentNickname||'Subagent'):'';
+  const clientInfo=cm?.originator||cm?.entrypoint||(cm?.transcriptSource?'Antigravity ('+cm.transcriptSource+')':'')||(cm?.slug?'Gemini CLI ('+cm.slug+')':'');
   const costStr=(typeof cm?.totalCostUSD==='number'&&Number.isFinite(cm.totalCostUSD))?'$'+cm.totalCostUSD.toFixed(4):'';
   const diffStr=(typeof cm?.totalLinesAdded==='number'||typeof cm?.totalLinesRemoved==='number')?'+'+(cm.totalLinesAdded||0)+' / -'+(cm.totalLinesRemoved||0):'';
-  document.getElementById('meta-box').innerHTML=metaRow(t('来源'),pInfo.name+(pInfo.alpha?' (Alpha)':pInfo.beta?' (Beta)':''))+(currentConv.defaultModel?metaRow(t('模型'),currentConv.defaultModel):'')+(cm?.cwd?metaRow(t('工作目录 cwd'),cm.cwd):'')+(subInfo?metaRow(t('子代理'),subInfo):'')+(clientInfo?metaRow(t('客户端'),clientInfo):'')+(cm?.cliVersion?metaRow(t('CLI 版本'),cm.cliVersion):'')+(cm?.gitBranch?metaRow(t('Git 分支'),cm.gitBranch):'')+(Number.isFinite(usageTotal)?metaRow(t('Token 消耗'),usageTotal.toLocaleString()):'')+(costStr?metaRow(t('累计花费'),costStr):'')+(diffStr?metaRow(t('代码改动'),diffStr):'')+metaRow(t('创建时间'),fmtDate(currentConv.created_at))+metaRow(t('更新时间'),fmtDate(currentConv.updated_at))+metaRow(t('消息数'),messageCount)+metaRow('UUID',currentConv.uuid.slice(0,18)+'…');
+  const agArtCount=cm?.brainArtifacts?.length||0;
+  document.getElementById('meta-box').innerHTML=metaRow(t('来源'),pInfo.name+(pInfo.alpha?' (Alpha)':pInfo.beta?' (Beta)':''))+(currentConv.defaultModel?metaRow(t('模型'),currentConv.defaultModel):'')+(cm?.cwd?metaRow(t('工作目录 cwd'),cm.cwd):'')+(subInfo?metaRow(t('子代理'),subInfo):'')+(clientInfo?metaRow(t('客户端'),clientInfo):'')+(cm?.cliVersion?metaRow(t('CLI 版本'),cm.cliVersion):'')+(cm?.gitBranch?metaRow(t('Git 分支'),cm.gitBranch):'')+(agArtCount?metaRow('Brain Artifacts',agArtCount):'')+(cm?.rewindCount?metaRow('$rewindTo',cm.rewindCount):'')+(Number.isFinite(usageTotal)?metaRow(t('Token 消耗'),usageTotal.toLocaleString()):'')+(costStr?metaRow(t('累计花费'),costStr):'')+(diffStr?metaRow(t('代码改动'),diffStr):'')+metaRow(t('创建时间'),fmtDate(currentConv.created_at))+metaRow(t('更新时间'),fmtDate(currentConv.updated_at))+metaRow(t('消息数'),messageCount)+metaRow('UUID',currentConv.uuid.slice(0,18)+'…');
 }
 function metaRow(k,v){return '<div class="meta-row"><span class="meta-key">'+esc(String(k))+'</span><span class="meta-val">'+esc(String(v))+'</span></div>';}
 
@@ -9108,6 +10956,107 @@ function codexAlphaNoticeHtml(){
 function claudeCodeAlphaNoticeHtml(){
   return '<div class="import-notice claude-code-alpha-notice" role="status"><b>Alpha Test · Claude Code CLI / IDE</b> — '+esc(t('Claude Code 会话支持处于 Alpha 测试阶段（最缺少真实会话实测）。如遇工具输出、子代理树或格式异常，欢迎反馈样本以便完善。'))+'</div>';
 }
+function antigravityAlphaNoticeHtml(conv){
+  const war=conv?.importWarnings||[];
+  const pbWarn=war.find(w=>String(w).startsWith('antigravity_encrypted_pb_skipped:'));
+  const truncWarn=war.find(w=>String(w).startsWith('antigravity_transcript_truncated_steps:'));
+  const extras=[];
+  if(pbWarn)extras.push('🔒 '+esc(t('已安全跳过加密 .pb'))+' ('+esc(pbWarn.split(':')[1]||'')+')');
+  if(truncWarn)extras.push('⚠️ '+esc(t('部分步骤来自截断 transcript.jsonl'))+' ('+esc(truncWarn.split(':')[1]||'')+')');
+  return '<div class="import-notice ag-alpha-notice" role="status"><b>Alpha Test · Google Antigravity</b> — '+esc(t('Antigravity 会话支持处于 Alpha 测试阶段（最缺少真实会话实测）。如遇步骤配对、Brain 工件或格式异常，欢迎反馈样本以便完善。'))+(extras.length?' <span style="font-weight:600;color:var(--orange)">'+extras.join(' · ')+'</span>':'')+'</div>';
+}
+function geminiCliAlphaNoticeHtml(conv){
+  const rw=conv?.geminiCliMeta?.rewindCount||0;
+  return '<div class="import-notice gemini-alpha-notice" role="status"><b>Alpha Test · Google Gemini CLI</b> — '+esc(t('Gemini CLI 会话支持处于 Alpha 测试阶段（最缺少真实会话实测）。如遇 $patch / $rewindTo 或 FileDiff 异常，欢迎反馈样本以便完善。'))+(rw?' <span>↩️ '+esc(t('$rewindTo 回溯分支已保留'))+' (×'+rw+')</span>':'')+'</div>';
+}
+function findBrainFileId(pathOrName){
+  const target=String(pathOrName||'').split(/[\\/]/).pop().toLowerCase();
+  if(!target)return '';
+  for(const [fid,entry] of Object.entries(FILESTORE)){
+    const fn=String(entry?.name||'').split(/[\\/]/).pop().toLowerCase();
+    if(fn===target||entry?.agBrainName===target)return fid;
+  }
+  return '';
+}
+function syncActiveBrainPill(){
+  const activeFid=canvasState?.fid||'';
+  document.querySelectorAll('.ag-art-pill[data-ag-fid]').forEach(el=>el.classList.toggle('active',!!activeFid&&el.dataset.agFid===activeFid));
+}
+function renderAntigravityBrainStrip(conv){
+  const ag=conv?.antigravityMeta;
+  if(!ag)return '';
+  const arts=Array.isArray(ag.brainArtifacts)?ag.brainArtifacts:[];
+  const urls=Array.isArray(ag.urlBookmarks)?ag.urlBookmarks:[];
+  const modes=conv?.antigravityTelemetry?.phases||ag.phases||ag.modeCounts||{};
+  const hasModes=(modes.PLANNING||0)+(modes.EXECUTION||0)+(modes.VERIFICATION||0)>0;
+  let out='';
+  if(arts.length||hasModes){
+    out+='<div class="ag-artifact-strip" role="region" aria-label="'+escAttr(t('Antigravity Brain 工作区'))+'"><span class="ag-strip-kicker"><span class="ui-icon" aria-hidden="true">'+UI_ICONS.spark+'</span>'+esc(t('Antigravity Brain 工作区'))+'</span>';
+    for(const art of arts){
+      const fid=registerFile(art.name||'artifact.md',art.content||'');
+      FILESTORE[fid].title=art.title||art.name;
+      FILESTORE[fid].agBrainName=String(art.name||'').toLowerCase();
+      if(Array.isArray(art.versions)&&art.versions.length)FILESTORE[fid].versions=art.versions;
+      let icon=UI_ICONS.fileText,badge='';
+      if(art.kind==='task'){
+        icon=UI_ICONS.plan;
+        if(art.checklist?.total)badge='<span class="ag-art-pill-meta">'+art.checklist.done+'/'+art.checklist.total+'</span>';
+      }else if(art.kind==='plan'){
+        icon=UI_ICONS.plan;
+        if(art.requestFeedback)badge='<span class="ag-art-pill-meta">'+esc(t('人工审阅'))+'</span>';
+      }else if(art.kind==='walkthrough'){
+        icon=UI_ICONS.spark;
+      }
+      if(Array.isArray(art.versions)&&art.versions.length){
+        badge+='<span class="ag-art-pill-meta">v'+(art.versions.length+1)+'</span>';
+      }
+      out+='<button type="button" class="ag-art-pill" data-ag-fid="'+escAttr(fid)+'" data-ui-click="open-canvas-file" data-ui-value="'+escAttr(fid)+'" title="'+escAttr(art.summary||art.path||art.name)+'"><span class="ui-icon" aria-hidden="true">'+icon+'</span><span>'+esc(art.name)+'</span>'+badge+'</button>';
+    }
+    if(hasModes){
+      const lastMode=modes.VERIFICATION?'VERIFICATION':modes.EXECUTION?'EXECUTION':'PLANNING';
+      out+='<div class="ag-phase-trail" aria-label="Task phases">';
+      for(const ph of ['PLANNING','EXECUTION','VERIFICATION']){
+        const cnt=modes[ph]||0;
+        const cls=ph.toLowerCase()+(lastMode===ph?' active':cnt?' seen':'');
+        out+='<span class="ag-phase-step '+cls+'">'+ph+(cnt>1?' ×'+cnt:'')+'</span>';
+      }
+      out+='</div>';
+    }
+    out+='</div>';
+  }
+  if(urls.length){
+    out+='<div class="ag-url-strip">';
+    for(const u of urls){
+      const href=safeLinkUrl(u.url);
+      if(!href)continue;
+      let host='';try{host=new URL(href).hostname;}catch{}
+      out+='<a class="ag-url-card" href="'+escAttr(href)+'" target="_blank" rel="noopener noreferrer" referrerpolicy="no-referrer"><span class="ag-url-host">🔗 '+esc(host||href)+'</span><span class="ag-url-title">'+esc(u.title||u.name||href)+'</span>'+(u.description?'<span class="ag-url-desc">'+esc(u.description)+'</span>':'')+'</a>';
+    }
+    out+='</div>';
+  }
+  return out;
+}
+function hydrateAntigravityMedia(root){
+  if(!root)return;
+  const imgs=[...root.querySelectorAll('img[data-ag-img]')];
+  for(const img of imgs){
+    const raw=img.dataset.agImg||'';
+    const key=exportMediaKey(raw)||mediaKey(raw);
+    const local=LOCAL_MEDIA.get(key);
+    if(local&&safeImageUrl(local.url)){img.src=safeImageUrl(local.url);continue;}
+    const entry=zipEntries.get(key);
+    if(entry&&typeof entry==='object'){
+      img.dataset.zipMedia=key;
+      const host=img.parentElement;
+      if(host&&!host.dataset.zipMedia)host.dataset.zipMedia=key;
+      featureRequest('import','resource',entry).then(({blob})=>{
+        if(!img.isConnected)return;
+        const cached=addLocalMedia(blob,entry.path||raw,'auto');
+        if(cached&&safeImageUrl(cached.url))img.src=safeImageUrl(cached.url);
+      }).catch(()=>{});
+    }
+  }
+}
 function renderMessages(msgs,opts){
   if(currentConv?._readerBacked&&!opts?._mountOnly)return renderReaderWindow(opts||{});
   const container=document.getElementById('messages');
@@ -9128,6 +11077,8 @@ function renderMessages(msgs,opts){
   let h='',lastDate='';
   if(!opts?._mountOnly&&currentConv?.sourcePlatform==='codex')h+=codexAlphaNoticeHtml();
   else if(!opts?._mountOnly&&currentConv?.sourcePlatform==='claude_code')h+=claudeCodeAlphaNoticeHtml();
+  else if(!opts?._mountOnly&&currentConv?.sourcePlatform==='antigravity')h+=antigravityAlphaNoticeHtml(currentConv)+renderAntigravityBrainStrip(currentConv);
+  else if(!opts?._mountOnly&&currentConv?.sourcePlatform==='gemini_cli')h+=geminiCliAlphaNoticeHtml(currentConv);
   if(start>0)h+='<div class="load-earlier-wrap"><button class="load-earlier-btn" type="button" data-ui-click="load-earlier">↑ '+t('加载更早消息')+' ('+t('剩余')+' '+start+t('条')+')</button></div>';
   for(const msg of linear.slice(start)){
     if(!msg||typeof msg!=='object')continue;
@@ -9139,6 +11090,7 @@ function renderMessages(msgs,opts){
     catch(e){h+='<div style="padding:8px 16px;color:var(--text3);font-size:12px;">⚠️ '+t('此消息渲染出错')+'</div>';console.warn('renderMsg error',e);}
   }
   container.innerHTML=h;
+  hydrateAntigravityMedia(container);
   applyMathFormatting(container);
   initLazyHighlight(container);
   container.querySelectorAll('.collapsible-header').forEach(el=>el.addEventListener('click',function(ev){
@@ -9584,6 +11536,15 @@ function toolCallSnippet(b){
   const inp=b.input||{};
   const shortPath=p=>{const s=String(p||'');const parts=s.split(/[\\/]/).filter(Boolean);return parts.length>2?'…/'+parts.slice(-2).join('/'):s;};
   if(typeof inp.patch==='string'&&inp.patch){const m=/\*\*\* (?:Update|Add|Delete) File:\s*([^\r\n\\"']+)/.exec(inp.patch);if(m)return shortPath(m[1].trim());}
+  if(inp.TargetFile||inp.AbsolutePath){
+    const p=shortPath(inp.TargetFile||inp.AbsolutePath);
+    if(inp.StartLine||inp.EndLine)return p+'#L'+(inp.StartLine||1)+(inp.EndLine?'-L'+inp.EndLine:'');
+    return p;
+  }
+  if(inp.CommandLine)return String(inp.CommandLine);
+  if(inp.DirectoryPath||inp.SearchDirectory)return (inp.Query?String(inp.Query)+' · ':'')+shortPath(inp.DirectoryPath||inp.SearchDirectory);
+  if(inp.TaskName)return (inp.Mode?'['+inp.Mode+'] ':'')+String(inp.TaskName);
+  if(Array.isArray(inp.Subagents)&&inp.Subagents[0])return (inp.Subagents[0].Role||inp.Subagents[0].TypeName||'Subagent')+(inp.Subagents.length>1?' +'+(inp.Subagents.length-1):'');
   if(typeof inp.code==='string'&&inp.code){
     if(inp.code.includes('*** Begin Patch')){const m=/\*\*\* (?:Update|Add|Delete) File:\s*([^\r\n\\"']+)/.exec(inp.code);if(m)return 'apply_patch · '+shortPath(m[1].trim());}
     const cmdM=/\bcmd\s*:\s*(['"])((?:\\.|(?!\1).)+)\1/.exec(inp.code);
@@ -9598,12 +11559,20 @@ function toolCallSnippet(b){
   if(inp.pattern)return String(inp.pattern)+(inp.path?' · '+shortPath(inp.path):'');
   if(inp.description&&inp.command)return String(inp.description);
   if(inp.file_path||inp.path)return shortPath(inp.file_path||inp.path);
-  return String(inp.query||inp.command||inp.cmd||inp.target||inp.task_name||inp.workdir||inp.url||inp.subject||'');
+  return String(inp.query||inp.Query||inp.command||inp.cmd||inp.target||inp.task_name||inp.workdir||inp.url||inp.Url||inp.subject||'');
 }
 function injectedMeta(block){
   const src=String(block?.injection_source||'');
   const raw=String(block?.prompt||'');
   const preview=s=>{const clean=String(s||'').replace(/<[^>]+>/g,' ').replace(/\s+/g,' ').trim();return clean.length>48?clean.slice(0,48)+'…':clean;};
+  if(src==='ag:settings')return {icon:UI_ICONS.spark,label:t('Antigravity 设置变更')+(raw?' · '+preview(raw):''),cls:'mode-default',kind:'mode'};
+  if(src==='ag:metadata')return {icon:UI_ICONS.terminal,label:t('Antigravity 环境元数据'),cls:'',kind:'context'};
+  if(src==='ag:plan_context')return {icon:UI_ICONS.plan,label:t('当前执行计划上下文'),cls:'mode-plan',kind:'mode'};
+  if(src==='ag:skills')return {icon:UI_ICONS.tool,label:t('已加载 Antigravity Skills'),cls:'',kind:'context'};
+  if(src.startsWith('ag:'))return {icon:UI_ICONS.spark,label:'Antigravity · '+src.slice(3)+(raw?' · '+preview(raw):''),cls:'',kind:'context'};
+  if(src==='gemini:error')return {icon:UI_ICONS.alert,label:'Gemini CLI Error'+(raw?' · '+preview(raw):''),cls:'mode-abort',kind:'context'};
+  if(src==='gemini:warning')return {icon:UI_ICONS.alert,label:'Gemini CLI Warning'+(raw?' · '+preview(raw):''),cls:'mode-abort',kind:'context'};
+  if(src==='gemini:info')return {icon:UI_ICONS.spark,label:'Gemini CLI Info'+(raw?' · '+preview(raw):''),cls:'',kind:'context'};
   if(src==='cc:mode:plan'||/<collaboration_mode>\s*#\s*Plan Mode/i.test(raw))return {icon:UI_ICONS.plan,label:t('进入 Plan Mode（只读规划）'),cls:'mode-plan',kind:'mode'};
   if(src==='cc:mode:acceptEdits')return {icon:UI_ICONS.fileEdit,label:t('切换至自动编辑模式'),cls:'mode-default',kind:'mode'};
   if(src==='cc:mode:bypassPermissions')return {icon:UI_ICONS.lock,label:t('切换至旁路权限模式'),cls:'mode-abort',kind:'mode'};
@@ -9644,7 +11613,7 @@ function injectedMeta(block){
 function renderAgentHandoffCard(block,insideRail){
   const am=block?.agentMeta||{};
   const msgType=String(am.msgType||'MESSAGE').toUpperCase();
-  const badgeCls=msgType==='NEW_TASK'?'new-task':msgType==='FINAL_ANSWER'?'final-answer':'msg';
+  const badgeCls=msgType==='NEW_TASK'||msgType==='INVOKE_SUBAGENT'?'new-task':msgType==='FINAL_ANSWER'?'final-answer':'msg';
   const typeLabel=msgType.replace(/_/g,' ');
   const from=am.author||'?';
   const to=am.recipient||'?';
@@ -9665,15 +11634,177 @@ function renderAgentHandoffCard(block,insideRail){
     +'<svg class="step-chev" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 2l4 4-4 4"/></svg>'
     +headInner
     +'</button>'
-    +'<div class="step-agent-body" style="display:none"><div class="step-agent-prose">'+renderMd(body)+'</div></div>'
+    +'<div class="step-agent-body" style="display:none"><div class="step-agent-prose">'+enhanceAntigravityHtml(renderMd(body))+'</div></div>'
     +'</div>';
 }
-function extractCodexPlan(text){
-  const m=/^>\s*\[!NOTE\]\s*\r?\n>\s*\*\*(Proposed Plan|Codex Plan|Claude Code Plan)\*\*\s*\r?\n+([\s\S]+)$/i.exec(String(text||'').trim());
-  if(!m)return null;
-  const body=m[2].trim();
-  const h1=/^#\s+([^\r\n]+)/m.exec(body);
-  return {kind:m[1],title:(h1?h1[1].trim():t('实施计划')),body};
+function enhanceAntigravityHtml(html){
+  if(!html||typeof html!=='string'||typeof DOMParser==='undefined')return html||'';
+  try{
+    const doc=new DOMParser().parseFromString(html,'text/html');
+    // 1. Convert ```carousel fences into interactive .ag-carousel sliders
+    for(const codeEl of doc.querySelectorAll('pre > code.language-carousel')){
+      const raw=codeEl.textContent||'';
+      const slides=raw.split(/<!--\s*slide\s*-->/i).map(s=>s.trim()).filter(Boolean);
+      if(!slides.length)continue;
+      const cid='ag-car-'+Math.random().toString(36).slice(2,8);
+      const wrap=doc.createElement('div');
+      wrap.className='ag-carousel';wrap.id=cid;wrap.dataset.index='0';wrap.dataset.total=String(slides.length);
+      const bar=doc.createElement('div');bar.className='ag-carousel-bar';
+      bar.innerHTML='<span>🎬 Carousel · <strong class="ag-car-pos">1</strong> / '+slides.length+'</span>'
+        +'<div class="ag-carousel-dots">'+slides.map((_,i)=>'<button type="button" class="ag-carousel-dot'+(i===0?' active':'')+'" data-ui-click="ag-carousel-dot" data-ui-value="'+cid+':'+i+'" aria-label="Slide '+(i+1)+'"></button>').join('')+'</div>'
+        +'<div class="ag-carousel-nav">'
+        +'<button type="button" class="fbtn" data-ui-click="ag-carousel-step" data-ui-value="'+cid+':-1">‹ '+esc(t('上一张'))+'</button>'
+        +'<button type="button" class="fbtn" data-ui-click="ag-carousel-step" data-ui-value="'+cid+':1">'+esc(t('下一张'))+' ›</button>'
+        +'</div>';
+      wrap.appendChild(bar);
+      slides.forEach((sMd,idx)=>{
+        const slide=doc.createElement('div');
+        slide.className='ag-carousel-slide'+(idx===0?' active':'');
+        slide.dataset.slideIdx=String(idx);
+        slide.innerHTML=renderMd(sMd);
+        wrap.appendChild(slide);
+      });
+      (codeEl.closest('.code-block')||codeEl.closest('pre')).replaceWith(wrap);
+    }
+    // 2. Transform [ ] / [/] / [x] task checkboxes into Antigravity tri-state status badges
+    for(const li of doc.querySelectorAll('li')){
+      const firstInp=li.firstElementChild;
+      if(firstInp&&firstInp.tagName==='INPUT'&&firstInp.type==='checkbox'){
+        const badge=doc.createElement('span');
+        const checked=firstInp.hasAttribute('checked');
+        badge.className='ag-check '+(checked?'done':'todo');
+        badge.textContent=checked?'✓':'';
+        firstInp.replaceWith(badge);
+        continue;
+      }
+      const walk=li.firstChild;
+      if(walk&&walk.nodeType===3){
+        const m=/^\s*\[([ xX\/])\]\s*/.exec(walk.nodeValue||'');
+        if(m){
+          const mark=m[1];
+          const badge=doc.createElement('span');
+          badge.className='ag-check '+(mark==='x'||mark==='X'?'done':mark==='/'?'doing':'todo');
+          badge.textContent=(mark==='x'||mark==='X')?'✓':mark==='/'?'●':'';
+          walk.nodeValue=walk.nodeValue.slice(m[0].length);
+          li.insertBefore(badge,walk);
+        }
+      }
+    }
+    // 3. Transform [NEW] / [MODIFY] / [DELETE] semantic markers in headings & list items
+    for(const el of doc.querySelectorAll('h1,h2,h3,h4,li,p,strong')){
+      if(el.querySelector('.ag-op-badge'))continue;
+      for(const node of [...el.childNodes]){
+        if(node.nodeType!==3)continue;
+        const txt=node.nodeValue||'';
+        const opRe=/\[(NEW|MODIFY|DELETE)\]/;
+        const om=opRe.exec(txt);
+        if(!om)continue;
+        const frag=doc.createDocumentFragment();
+        const before=txt.slice(0,om.index),after=txt.slice(om.index+om[0].length);
+        if(before)frag.appendChild(doc.createTextNode(before));
+        const sp=doc.createElement('span');
+        sp.className='ag-op-badge is-'+om[1].toLowerCase();
+        sp.textContent=om[1];
+        frag.appendChild(sp);
+        if(after)frag.appendChild(doc.createTextNode(after));
+        node.replaceWith(frag);
+      }
+    }
+    // 4. Route local brain / relative screenshot <img> tags to local bundle media hydration
+    for(const img of doc.querySelectorAll('img')){
+      const src=img.getAttribute('src')||'';
+      if(/^data:image\/|^blob:/i.test(src))continue;
+      if(/^file:\/\//i.test(src)||(!/^https?:/i.test(src)&&/\.(?:png|jpe?g|gif|webp|svg|avif)$/i.test(src))){
+        img.dataset.agImg=src;
+        img.removeAttribute('src');
+        img.style.minHeight='24px';
+        img.style.background='var(--bg3)';
+      }else if(!remoteResourcesEnabled&&/^https?:/i.test(src)){
+        img.removeAttribute('src');
+      }
+    }
+    return doc.body.innerHTML;
+  }catch{return html;}
+}
+function buildCanvasSnapshotDiff(oldText,newText,labelOld,labelNew){
+  const a=String(oldText||'').split(/\r?\n/),b=String(newText||'').split(/\r?\n/);
+  const m=a.length,n=b.length;
+  if(m*n>90000){
+    return ['--- '+(labelOld||'snapshot'),'+++ '+(labelNew||'current'),'@@ -1,'+m+' +1,'+n+' @@',...a.map(l=>'-'+l),...b.map(l=>'+'+l)].join('\n');
+  }
+  const dp=Array.from({length:m+1},()=>new Int32Array(n+1));
+  for(let i=m-1;i>=0;i--)for(let j=n-1;j>=0;j--)dp[i][j]=a[i]===b[j]?1+dp[i+1][j+1]:Math.max(dp[i+1][j],dp[i][j+1]);
+  const out=['--- '+(labelOld||'snapshot'),'+++ '+(labelNew||'current'),'@@ -1,'+m+' +1,'+n+' @@'];
+  let i=0,j=0;
+  while(i<m&&j<n){
+    if(a[i]===b[j]){out.push(' '+a[i]);i++;j++;}
+    else if(dp[i+1][j]>=dp[i][j+1]){out.push('-'+a[i]);i++;}
+    else{out.push('+'+b[j]);j++;}
+  }
+  while(i<m)out.push('-'+a[i++]);
+  while(j<n)out.push('+'+b[j++]);
+  return out.join('\n');
+}
+function renderDiffHtml(diffText){
+  const lines=String(diffText||'').split(/\r?\n/);
+  let adds=0,dels=0,fileLabel='';
+  const rows=lines.map(l=>{
+    const isAdd=l.startsWith('+')&&!l.startsWith('+++');
+    const isDel=l.startsWith('-')&&!l.startsWith('---');
+    if(isAdd)adds++;else if(isDel)dels++;
+    if(!fileLabel&&l.startsWith('+++ '))fileLabel=l.slice(4).replace(/^b\/+/,'').trim();
+    const cls=l.startsWith('@@')?'hunk':isAdd?'add':isDel?'del':'';
+    return '<div class="ag-diff-line'+(cls?' '+cls:'')+'">'+esc(l||' ')+'</div>';
+  }).join('');
+  const head=fileLabel||adds||dels
+    ?'<div class="ag-diff-head"><span class="ag-diff-file">'+esc(fileLabel||'Unified Diff')+'</span>'+(adds?'<span class="ag-diff-stat-add">+'+adds+'</span>':'')+(dels?'<span class="ag-diff-stat-del">-'+dels+'</span>':'')+'</div>'
+    :'';
+  return '<div class="ag-diff-wrap">'+head+'<div class="ag-diff-view"><code class="language-diff hljs ag-diff-code">'+rows+'</code></div></div>';
+}
+function extractCodexPlan(text,block){
+  const raw=String(text||'').trim();
+  const m=/^>\s*\[!NOTE\]\s*\r?\n>\s*\*\*(Proposed Plan|Codex Plan|Claude Code Plan)\*\*\s*\r?\n+([\s\S]+)$/i.exec(raw);
+  if(m){
+    const body=m[2].trim();
+    const h1=/^#\s+([^\r\n]+)/m.exec(body);
+    return {kind:m[1],title:(h1?h1[1].trim():t('实施计划')),body};
+  }
+  if(block?.agArtifact?.kind==='plan'){
+    const h1=/^#\s+([^\r\n]+)/m.exec(raw);
+    return {kind:'Implementation Plan',title:(h1?h1[1].trim():t('实施计划')),body:raw};
+  }
+  return null;
+}
+function renderTaskCard(text,preHtml){
+  let done=0,doing=0,todo=0;
+  for(const l of String(text||'').split(/\r?\n/)){
+    const m=/^\s*(?:[-*]|\d+\.)\s+\[([ xX\/])\]\s+/.exec(l);
+    if(!m)continue;
+    if(m[1]==='x'||m[1]==='X')done++;
+    else if(m[1]==='/')doing++;
+    else todo++;
+  }
+  const total=done+doing+todo;
+  const pct=total?Math.round(done/total*100):0;
+  const h1=/^#\s+([^\r\n]+)/m.exec(String(text||''));
+  const title=h1?h1[1].trim():'Task Checklist';
+  const mode=doing?'execution':(total>0&&done===total)?'verification':'planning';
+  const modeLabel=mode==='execution'?'EXECUTION':mode==='verification'?'VERIFICATION':'PLANNING';
+  const bodyHtml=enhanceAntigravityHtml(preHtml||renderMd(text));
+  const fid=registerFile('task.md',text);
+  FILESTORE[fid].title=title;FILESTORE[fid].html=bodyHtml;
+  return '<section class="ag-task-card">'
+    +'<div class="collapsible-header ag-task-head open">'
+    +'<span class="ag-mode-badge '+mode+'">'+modeLabel+'</span>'
+    +'<span class="plan-card-title">'+esc(title)+'</span>'
+    +'<span class="ag-art-pill-meta">'+done+'/'+total+' ('+pct+'%)</span>'
+    +'<span class="ag-task-progress" aria-hidden="true"><i style="width:'+pct+'%"></i></span>'
+    +'<span class="plan-card-actions">'
+    +'<button type="button" class="fbtn" data-ui-click="open-canvas-file" data-ui-value="'+fid+'"><span class="ui-icon" aria-hidden="true">'+UI_ICONS.canvas+'</span> '+esc(t('画布'))+'</button>'
+    +'<span class="plan-card-chev" aria-hidden="true">'+ICON+'</span>'
+    +'</span></div>'
+    +'<div class="ag-task-body msg-content">'+bodyHtml+'</div>'
+    +'</section>';
 }
 function renderPlanCard(plan,preHtml){
   let bodyHtml='';
@@ -9688,7 +11819,8 @@ function renderPlanCard(plan,preHtml){
     }catch{bodyHtml=preHtml;}
   }
   if(!bodyHtml)bodyHtml=renderMd(plan.body);
-  const fid=registerFile('implementation-plan.md',plan.body);
+  bodyHtml=enhanceAntigravityHtml(bodyHtml);
+  const fid=registerFile('implementation_plan.md',plan.body);
   FILESTORE[fid].title=plan.title;
   FILESTORE[fid].html=bodyHtml;
   return '<section class="plan-card">'
@@ -9750,15 +11882,16 @@ function renderStepGroup(entries){
       const b=node.block;
       const durStr=fmtDur(b.duration_ms);
       const durBadge=durStr?'<span class="step-think-dur">'+esc(durStr)+'</span>':'';
-      const statuses=[b.hidden||b.thinking_hidden?t('导出包含隐藏状态标记'):'',b.truncated?t('截断'):'',b.cut_off?'cut_off':''].filter(Boolean).join(' · ');
+      const statuses=[b.hidden||b.thinking_hidden?t('导出包含隐藏状态标记'):'',b.truncated?t('已从截断日志读取'):'',b.cut_off?'cut_off':''].filter(Boolean).join(' · ');
       const label=t(b.summaries===true?'思考摘要':'思考过程')+(statuses?' · '+statuses:'');
       if(!b.thinking&&!b._thinkingHtml&&!(b.summaries&&b.summaries!==true)&&(b.hidden||b.thinking_hidden)){
         rail+='<div class="step-node kind-think"><div class="step-think-card step-think-hidden"><span class="ui-icon" aria-hidden="true">'+UI_ICONS.lock+'</span><span class="step-node-status-tag">'+esc(label)+'</span>'+durBadge+'</div></div>';
       }else{
+        const subj=b.subject?'<div class="step-think-subject">'+esc(b.subject)+'</div>':'';
         const prose=b._thinkingHtml||(b.thinking?renderMd(b.thinking):'<span style="color:var(--text3)">'+esc(t('无导出的思考正文'))+'</span>');
         const extra=b.summaries&&b.summaries!==true?'<pre>'+esc(JSON.stringify(b.summaries,null,2))+'</pre>':'';
         const tag=(b.summaries===true||statuses||durBadge)?'<div class="step-node-status-tag">'+esc(label)+durBadge+'</div>':'';
-        rail+='<div class="step-node kind-think"><div class="step-think-card">'+tag+'<div class="step-think-prose"'+(b._field?' data-reader-field="'+escAttr(b._field)+'"':'')+'>'+prose+extra+'</div></div></div>';
+        rail+='<div class="step-node kind-think"><div class="step-think-card">'+tag+subj+'<div class="step-think-prose"'+(b._field?' data-reader-field="'+escAttr(b._field)+'"':'')+'>'+prose+extra+'</div></div></div>';
       }
     }else if(node.kind==='agent'){
       rail+='<div class="step-node kind-agent">'+renderAgentHandoffCard(node.block,true)+'</div>';
@@ -9774,9 +11907,43 @@ function renderStepGroup(entries){
       let body='';
       if(u){
         const uInp=u.input||{};
-        if(typeof uInp.patch==='string'&&uInp.patch){
-          body+='<div><div class="step-sub-label">Patch</div><pre><code class="language-diff">'+esc(uInp.patch)+'</code></pre></div>';
-          const rest=Object.fromEntries(Object.entries(uInp).filter(([k])=>k!=='patch'&&k!=='old_string'&&k!=='new_string'));
+        if(nm==='task_boundary'&&(uInp.TaskName||uInp.Mode||uInp.TaskSummary)){
+          const mode=String(uInp.Mode||'PLANNING').toUpperCase();
+          const modeCls=mode==='EXECUTION'?'execution':mode==='VERIFICATION'?'verification':'planning';
+          body+='<div class="ag-step-card">'
+            +'<div class="ag-step-card-top"><span class="ag-mode-badge '+modeCls+'">'+esc(mode)+'</span>'
+            +(uInp.TaskName?'<span class="ag-step-title">'+esc(uInp.TaskName)+'</span>':'')+'</div>'
+            +(uInp.TaskStatus?'<div class="ag-step-meta"><strong>'+esc(t('任务状态'))+':</strong> '+esc(uInp.TaskStatus)+'</div>':'')
+            +(uInp.TaskSummary?'<div class="ag-step-meta"><strong>'+esc(t('任务摘要'))+':</strong> '+esc(uInp.TaskSummary)+'</div>':'')
+            +'</div>';
+        }else if(nm==='notify_user'&&(uInp.Message||Array.isArray(uInp.PathsToReview)||uInp.BlockedOnUser!==undefined)){
+          const blocked=uInp.BlockedOnUser===true;
+          const reviewPaths=Array.isArray(uInp.PathsToReview)?uInp.PathsToReview:[];
+          let chips='';
+          if(reviewPaths.length){
+            chips='<div class="ag-review-files">'+reviewPaths.map(p=>{
+              const name=String(p||'').split(/[\\/]/).pop()||'artifact';
+              const bfId=findBrainFileId(p);
+              if(bfId)return '<button type="button" class="ag-art-pill" data-ui-click="open-canvas-file" data-ui-value="'+escAttr(bfId)+'"><span class="ui-icon" aria-hidden="true">'+UI_ICONS.plan+'</span><span>'+esc(name)+'</span><span class="ag-art-pill-meta">'+esc(t('画布'))+'</span></button>';
+              return '<span class="ag-file-chip"><span aria-hidden="true">📄</span><span>'+esc(name)+'</span></span>';
+            }).join('')+'</div>';
+          }
+          body+='<div class="ag-step-card">'
+            +'<div class="ag-step-card-top"><span class="ag-mode-badge '+(blocked?'execution':'verification')+'">'+esc(t(blocked?'人工审阅门':'通知'))+'</span>'
+            +(blocked?'<span class="ag-art-pill-meta">'+esc(t('等待确认'))+'</span>':'')
+            +(reviewPaths.length?'<span class="ag-step-meta">'+esc(t('审阅对象'))+'</span>':'')+'</div>'
+            +chips
+            +(uInp.Message?'<div class="ag-step-meta msg-content">'+enhanceAntigravityHtml(renderMd(String(uInp.Message)))+'</div>':'')
+            +'</div>';
+        }else if(typeof uInp.patch==='string'&&uInp.patch){
+          const dfId=registerFile((uInp.TargetFile||uInp.file_path||'changes').split(/[\\/]/).pop()+'.diff',uInp.patch);
+          FILESTORE[dfId].title='Diff · '+(uInp.TargetFile||uInp.file_path||'patch');
+          body+='<div><div class="step-sub-label" style="display:flex;align-items:center;justify-content:space-between;"><span>Diff</span><button type="button" class="fbtn" data-ui-click="open-canvas-file" data-ui-value="'+dfId+'">'+esc(t('画布对比 Diff'))+'</button></div>'+renderDiffHtml(uInp.patch)+'</div>';
+          const rest=Object.fromEntries(Object.entries(uInp).filter(([k])=>k!=='patch'&&k!=='old_string'&&k!=='new_string'&&k!=='TargetContent'&&k!=='ReplacementContent'));
+          if(Object.keys(rest).length)body+='<div><div class="step-sub-label">'+esc(t('参数'))+'</div><pre><code class="language-json">'+esc(JSON.stringify(rest,null,2))+'</code></pre></div>';
+        }else if(uInp.CommandLine){
+          body+='<div class="ag-term-bar"><span class="ag-term-prompt">$</span><code class="ag-term-cmd">'+esc(String(uInp.CommandLine))+'</code></div>';
+          const rest=Object.fromEntries(Object.entries(uInp).filter(([k])=>k!=='CommandLine'&&k!=='WaitMsBeforeAsync'));
           if(Object.keys(rest).length)body+='<div><div class="step-sub-label">'+esc(t('参数'))+'</div><pre><code class="language-json">'+esc(JSON.stringify(rest,null,2))+'</code></pre></div>';
         }else if(typeof uInp.code==='string'&&uInp.code){
           body+='<div><div class="step-sub-label">'+esc(t('参数'))+'</div><pre><code class="language-javascript">'+esc(uInp.code)+'</code></pre></div>';
@@ -9825,10 +11992,12 @@ function renderBlock(block,location=''){
     if(!block.gptProgram&&typeof block.text==='string'){
       const aborted=/^_\[Turn aborted(?::\s*([^\]]+))?\]_$/i.exec(block.text.trim());
       if(aborted)return '<div class="turn-aborted-pill"><span class="ui-icon" aria-hidden="true">'+UI_ICONS.alert+'</span><span>'+esc(t('本轮对话已中断'))+(aborted[1]?' · '+esc(aborted[1].trim()):'')+'</span></div>';
-      const plan=extractCodexPlan(block.text);
+      if(block.agArtifact?.kind==='task')return renderTaskCard(block.text,block._html);
+      const plan=extractCodexPlan(block.text,block);
       if(plan)return renderPlanCard(plan,block._html);
     }
-    return (block.gptProgram?renderGptProgram(block,location):'<div'+(block._field?' data-reader-field="'+escAttr(block._field)+'"':'')+'>'+(block._html||renderMd(block.text||''))+'</div>')+renderGptViews(block,location);
+    const rawHtml=block._html||renderMd(block.text||'');
+    return (block.gptProgram?renderGptProgram(block,location):'<div'+(block._field?' data-reader-field="'+escAttr(block._field)+'"':'')+'>'+enhanceAntigravityHtml(rawHtml)+'</div>')+renderGptViews(block,location);
   }
   if(blockType==='thinking'){
     const statuses=[block.hidden||block.thinking_hidden?t('导出包含隐藏状态标记'):'',block.truncated?t('截断'):'',block.cut_off?'cut_off':''].filter(Boolean).join(' · ');
@@ -9855,9 +12024,13 @@ function renderBlock(block,location=''){
     const body=buildToolResultBody(block);
     const label=(isErr?'✕ ':'✓ ')+esc(nm);
     return '<div class="tool-result-block"><div class="collapsible-header tool-result-header">'+ICON+'<span class="tool-result-label">'+label+'</span></div>'
-      +'<div class="tool-result-body" style="display:none">'+(body||'<span style="color:var(--text3)">'+t('无内容')+'</span>')+'</div></div>';
+      +'<div class="tool-result-body" style="display:none">'+(body||'<span style="color:var(--text3)">'+esc(t('无内容'))+'</span>')+'</div></div>';
   }
   if(blockType==='image'){
+    if(block.data&&block.media_type){
+      const durl=safeImageUrl('data:'+block.media_type+';base64,'+block.data);
+      if(durl)return '<div class="attachment-block attachment-preview"><img src="'+escAttr(durl)+'" alt="'+escAttr(t('内联图片'))+'"></div>';
+    }
     return '<div class="img-placeholder">🖼 '+t('图片')+' ('+esc(block.file_uuid||'')+')</div>';
   }
   if(blockType==='rich_content'||blockType==='rich_link'||blockType==='webpage_metadata'){
@@ -10169,15 +12342,29 @@ function openCanvas(spec){
   const isMd=kind==='markdown'||lang==='markdown'||lang==='md';
   const hasPreview=spec.hasPreview!=null?!!spec.hasPreview:(kind==='html'||kind==='svg'||kind==='mermaid'||isMd||lang==='html'||lang==='htm'||lang==='svg');
   const normKind=kind==='mermaid'?'mermaid':(kind==='svg'||lang==='svg')?'svg':(kind==='html'||lang==='html'||lang==='htm')?'html':isMd?'markdown':'code';
-  canvasState={kind:normKind,title:spec.title||lang||'Canvas',code:String(spec.code||''),html:String(spec.html||''),lang:isMd?'markdown':lang,ext:spec.ext||(isMd?'md':''),hasPreview,tab:hasPreview?(spec.tab||'preview'):'code'};
+  const versions=Array.isArray(spec.versions)?spec.versions:[];
+  canvasState={fid:spec.fid||'',kind:normKind,title:spec.title||lang||'Canvas',code:String(spec.code||''),baseCode:String(spec.code||''),html:String(spec.html||''),baseHtml:String(spec.html||''),versions,versionIdx:-1,diffMode:false,lang:isMd?'markdown':lang,ext:spec.ext||(isMd?'md':''),hasPreview,tab:hasPreview?(spec.tab||'preview'):'code'};
   const wb=document.getElementById('workspace-body'),pane=document.getElementById('canvas-pane');
   if(wb)wb.classList.add('canvas-open');
   if(pane)pane.setAttribute('aria-hidden','false');
   const kEl=document.getElementById('canvas-kind'),tEl=document.getElementById('canvas-title');
   if(kEl)kEl.textContent=normKind==='mermaid'?'Mermaid':normKind==='svg'?'SVG':normKind==='html'?'HTML':normKind==='markdown'?'Plan / MD':(lang||'Code').toUpperCase();
   if(tEl)tEl.textContent=canvasState.title;
+  const vBar=document.getElementById('canvas-version-bar'),vSel=document.getElementById('canvas-version-select'),vDiff=document.getElementById('canvas-diff-toggle');
+  if(vBar&&vSel){
+    if(versions.length){
+      vBar.style.display='flex';
+      vSel.innerHTML='<option value="-1">'+esc(t('当前版本'))+'</option>'+versions.map((v,i)=>'<option value="'+i+'">'+esc(v.label||('Snapshot #'+(i+1)))+'</option>').join('');
+      vSel.value='-1';
+      if(vDiff){vDiff.style.display='none';vDiff.classList.remove('active');vDiff.textContent=t('对比当前');}
+    }else{
+      vBar.style.display='none';vSel.textContent='';
+      if(vDiff)vDiff.style.display='none';
+    }
+  }
   const pBtn=pane&&pane.querySelector('.canvas-tab-btn[data-ui-value="preview"]');
   if(pBtn){pBtn.style.display=hasPreview?'':'none';}
+  syncActiveBrainPill();
   renderCanvasBody();
 }
 function setCanvasTab(tab){
@@ -10189,6 +12376,10 @@ function setCanvasTab(tab){
 function closeCanvas(){
   if(canvasBlobUrl){try{URL.revokeObjectURL(canvasBlobUrl);}catch(e){}canvasBlobUrl='';}
   canvasState=null;
+  syncActiveBrainPill();
+  const vBar=document.getElementById('canvas-version-bar'),vDiff=document.getElementById('canvas-diff-toggle');
+  if(vBar)vBar.style.display='none';
+  if(vDiff)vDiff.style.display='none';
   const wb=document.getElementById('workspace-body'),pane=document.getElementById('canvas-pane'),body=document.getElementById('canvas-body');
   if(wb)wb.classList.remove('canvas-open');
   if(pane)pane.setAttribute('aria-hidden','true');
@@ -10199,14 +12390,20 @@ function renderCanvasBody(){
   if(canvasBlobUrl){try{URL.revokeObjectURL(canvasBlobUrl);}catch(e){}canvasBlobUrl='';}
   document.querySelectorAll('.canvas-tab-btn').forEach(b=>b.classList.toggle('active',b.dataset.uiValue===canvasState.tab));
   body.textContent='';
+  if(canvasState.diffMode&&canvasState.versionIdx>=0&&canvasState.versions?.[canvasState.versionIdx]){
+    const ver=canvasState.versions[canvasState.versionIdx];
+    const patch=buildCanvasSnapshotDiff(ver.content||'',canvasState.baseCode||'',ver.label||'snapshot','current');
+    body.innerHTML='<div style="padding:14px;">'+renderDiffHtml(patch)+'</div>';
+    return;
+  }
   if(canvasState.tab==='preview'&&canvasState.hasPreview){
     if(canvasState.kind==='mermaid'){
       body.innerHTML='<div class="canvas-mermaid-stage"><div class="mermaid">'+esc(canvasState.code)+'</div></div>';
       const mEl=body.querySelector('.mermaid');if(mEl)renderMermaidNode(mEl);
     }else if(canvasState.kind==='markdown'){
       const html=canvasState.html||(typeof marked!=='undefined'?renderMd(canvasState.code):'');
-      body.innerHTML='<div class="canvas-md-stage msg-content">'+(html||renderMd(canvasState.code))+'</div>';
-      applyMathFormatting(body);initLazyVisuals(body);void initLazyHighlight(body);
+      body.innerHTML='<div class="canvas-md-stage msg-content">'+enhanceAntigravityHtml(html||renderMd(canvasState.code))+'</div>';
+      hydrateAntigravityMedia(body);applyMathFormatting(body);initLazyVisuals(body);void initLazyHighlight(body);
       if(!html&&typeof ensureMarked==='function')void ensureMarked().then(ok=>{if(ok&&canvasState?.kind==='markdown'&&canvasState.tab==='preview')renderCanvasBody();});
     }else{
       const docHtml=visualDocument({kind:canvasState.kind==='svg'?'svg':'html',code:canvasState.code,title:canvasState.title});
@@ -10217,6 +12414,10 @@ function renderCanvasBody(){
       frame.src=canvasBlobUrl;
       body.appendChild(frame);
     }
+    return;
+  }
+  if(canvasState.lang==='diff'){
+    body.innerHTML='<div style="padding:14px;">'+renderDiffHtml(canvasState.code)+'</div>';
     return;
   }
   const pre=document.createElement('pre');pre.className='canvas-code-view';
@@ -10353,6 +12554,14 @@ document.addEventListener('click',event=>{
     case 'canvas-tab':setCanvasTab(value);break;
     case 'canvas-download':downloadCanvas();break;
     case 'canvas-close':closeCanvas();break;
+    case 'canvas-diff-toggle':{
+      if(!canvasState||canvasState.versionIdx<0)break;
+      canvasState.diffMode=!canvasState.diffMode;
+      el.classList.toggle('active',canvasState.diffMode);
+      el.textContent=t(canvasState.diffMode?'退出对比':'对比当前');
+      renderCanvasBody();
+      break;
+    }
     case 'open-canvas-inline':{
       const vis=value?document.getElementById(value):el.closest('.visual');if(!vis)break;
       let code='';try{code=decodeURIComponent(vis.dataset.vcode||'');}catch(e){code=vis.querySelector('.vsrc pre code')?.textContent||'';}
@@ -10364,7 +12573,21 @@ document.addEventListener('click',event=>{
       const ext=(entry.name.split('.').pop()||'').toLowerCase();
       const isMd=ext==='md'||ext==='markdown';
       const isVis=/^(?:html?|svg)$/i.test(ext);
-      openCanvas({kind:ext==='svg'?'svg':isVis?'html':isMd?'markdown':'code',title:entry.title||entry.name,code:entry.content,html:entry.html||'',lang:isMd?'markdown':ext,ext,hasPreview:isVis||isMd,tab:(isVis||isMd)?'preview':'code'});
+      openCanvas({fid:value,kind:ext==='svg'?'svg':isVis?'html':isMd?'markdown':'code',title:entry.title||entry.name,code:entry.content,html:entry.html||'',versions:entry.versions||[],lang:isMd?'markdown':ext,ext,hasPreview:isVis||isMd,tab:(isVis||isMd)?'preview':'code'});
+      break;
+    }
+    case 'ag-carousel-step':
+    case 'ag-carousel-dot':{
+      const [cid,arg]=String(value||'').split(':');
+      const car=document.getElementById(cid);if(!car)break;
+      const slides=[...car.querySelectorAll('.ag-carousel-slide')];if(!slides.length)break;
+      const cur=Number(car.dataset.index||0);
+      const next=el.dataset.uiClick==='ag-carousel-step'?((cur+Number(arg||0)+slides.length)%slides.length):Math.max(0,Math.min(slides.length-1,Number(arg||0)));
+      car.dataset.index=String(next);
+      slides.forEach((s,i)=>s.classList.toggle('active',i===next));
+      car.querySelectorAll('.ag-carousel-dot').forEach((d,i)=>d.classList.toggle('active',i===next));
+      const pos=car.querySelector('.ag-car-pos');if(pos)pos.textContent=String(next+1);
+      hydrateAntigravityMedia(car);
       break;
     }
     case 'code-canvas':{
@@ -10469,6 +12692,22 @@ document.addEventListener('change',event=>{
     case 'analytics-filter':changeAnalyticsFilter(value,el.value);break;
     case 'analytics-metric':analyticsMetricName=el.value;renderAnalyticsExploration();break;
     case 'project-override':setProjectOverride(value,el.value);break;
+    case 'canvas-version':{
+      if(!canvasState)break;
+      const idx=Number(el.value);
+      canvasState.versionIdx=idx;
+      const vDiff=document.getElementById('canvas-diff-toggle');
+      if(idx<0){
+        canvasState.code=canvasState.baseCode||'';canvasState.html=canvasState.baseHtml||'';
+        canvasState.diffMode=false;
+        if(vDiff){vDiff.style.display='none';vDiff.classList.remove('active');vDiff.textContent=t('对比当前');}
+      }else if(canvasState.versions?.[idx]){
+        canvasState.code=String(canvasState.versions[idx].content||'');canvasState.html='';
+        if(vDiff){vDiff.style.display='';vDiff.classList.toggle('active',!!canvasState.diffMode);vDiff.textContent=t(canvasState.diffMode?'退出对比':'对比当前');}
+      }
+      renderCanvasBody();
+      break;
+    }
   }
 });
 document.addEventListener('keydown',event=>{
