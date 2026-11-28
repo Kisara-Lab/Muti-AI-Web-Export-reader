@@ -302,8 +302,13 @@ function configureMarked(){
     return esc(raw==null?'':raw);
   };
   renderer.link=function(token){
-    const label=this.parser.parseInline(token.tokens||[]),href=safeLinkUrl(token.href);
-    return href?'<a href="'+escAttr(href)+'" target="_blank" rel="noopener noreferrer" referrerpolicy="no-referrer"'+(token.title?' title="'+escAttr(token.title)+'"':'')+'>'+label+'</a>':label;
+    const label=this.parser.parseInline(token.tokens||[]),rawHref=String(token.href||''),href=safeLinkUrl(rawHref);
+    if(href)return '<a href="'+escAttr(href)+'" target="_blank" rel="noopener noreferrer" referrerpolicy="no-referrer"'+(token.title?' title="'+escAttr(token.title)+'"':'')+'>'+label+'</a>';
+    if(/^file:\/\//i.test(rawHref)){
+      const lm=/#(L\d+(?:-L?\d+)?)$/i.exec(rawHref);
+      return '<span class="ag-file-chip" title="'+escAttr(rawHref)+'"><span aria-hidden="true">📄</span><span>'+label+'</span>'+(lm?'<span class="ag-file-chip-line">:'+esc(lm[1])+'</span>':'')+'</span>';
+    }
+    return label;
   };
   renderer.image=function(token){
     const src=safeImageUrl(token.href),label=token.text||t('图片');

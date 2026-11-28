@@ -11,8 +11,8 @@ function syntheticAntigravityTranscript(){
   return [
     {step_index:0,type:'USER_SETTINGS_CHANGE',source:'SYSTEM',status:'DONE',created_at:'2026-07-04T09:00:00Z',content:'Model Selection: gemini-3.8-pro-high'},
     {step_index:1,type:'USER_INPUT',source:'USER_EXPLICIT',status:'DONE',created_at:'2026-07-04T09:00:02Z',content:'<USER_REQUEST>\nBuild Antigravity & Gemini CLI native support\n</USER_REQUEST>\n<ADDITIONAL_METADATA>\nWorkspace: /workspace/ag-demo\n</ADDITIONAL_METADATA>'},
-    {step_index:2,type:'PLANNER_RESPONSE',source:'MODEL',status:'DONE',created_at:'2026-07-04T09:00:05Z',input_tokens:1800,output_tokens:260,cache_read_tokens:900,thinking:'Inspecting codebase and drafting Brain task & plan.',content:'I have updated `viewer.html` and created the walkthrough.',tool_calls:[
-      {name:'task_boundary',args:{Mode:'"EXECUTION"',TaskName:'"Antigravity UI Replication"'}},
+    {step_index:2,type:'PLANNER_RESPONSE',source:'MODEL',status:'DONE',created_at:'2026-07-04T09:00:05Z',input_tokens:1800,output_tokens:260,cache_read_tokens:900,thinking:'Inspecting codebase and drafting Brain task & plan.',content:'Updated [viewer.html](file:///workspace/ag-demo/viewer.html#L100-L104) and created the walkthrough.',tool_calls:[
+      {name:'task_boundary',args:{Mode:'"EXECUTION"',TaskName:'"Antigravity UI Replication"',TaskStatus:'"Building Brain UI"'}},
       {name:'replace_file_content',args:{TargetFile:'"/workspace/ag-demo/viewer.html"',StartLine:'100',EndLine:'104',TargetContent:'"const mode = 1;"',ReplacementContent:'"const mode = 2;"'}}
     ]},
     {step_index:3,type:'TASK_BOUNDARY',source:'SYSTEM',status:'DONE',created_at:'2026-07-04T09:00:06Z',content:'Task boundary set'},
@@ -95,10 +95,13 @@ test('Antigravity & Gemini CLI full E2E: Brain Strip, Side Canvas snapshots, Car
   await expect(page.locator('.import-notice.ag-alpha-notice')).toContainText('pb');
   await expect(page.locator('.ag-artifact-strip')).toContainText('task.md');
   await expect(page.locator('.ag-artifact-strip')).toContainText('1/3');
+  await expect(page.locator('.ag-phase-trail')).toContainText('EXECUTION');
+  await expect(page.locator('#messages .ag-file-chip')).toContainText('L100-L104');
   await expect(page.locator('.ag-url-card')).toContainText('PR #22: Antigravity Support');
 
-  // Open walkthrough.md in Side Canvas -> test Carousel & Snapshot bar hidden -> open task.md -> test Snapshot switcher
+  // Open walkthrough.md in Side Canvas -> test Carousel & active pill highlight
   await page.locator('.ag-art-pill',{hasText:'walkthrough.md'}).click();
+  await expect(page.locator('.ag-art-pill.active')).toContainText('walkthrough.md');
   await expect(page.locator('#workspace-body')).toHaveClass(/canvas-open/);
   await expect(page.locator('#canvas-body .ag-carousel')).toBeVisible();
   await expect(page.locator('#canvas-body .ag-car-pos')).toHaveText('1');
@@ -110,17 +113,24 @@ test('Antigravity & Gemini CLI full E2E: Brain Strip, Side Canvas snapshots, Car
     await page.screenshot({path:path.join(shotDir,'ag_conv_light_canvas.png')});
   }
 
-  // Open task.md and verify Snapshot version switcher + tri-state checkboxes
+  // Open task.md -> verify Snapshot version switcher + Snapshot Diff toggle -> revert before dark screenshot
   await page.locator('.ag-art-pill',{hasText:'task.md'}).click();
   await expect(page.locator('#canvas-version-bar')).toBeVisible();
   await expect(page.locator('#canvas-body .ag-check.doing')).toHaveCount(1);
   await expect(page.locator('#canvas-body .ag-check.done')).toHaveCount(1);
   await page.selectOption('#canvas-version-select','0');
   await expect(page.locator('#canvas-body .ag-check.doing')).toHaveCount(0);
+  await expect(page.locator('#canvas-diff-toggle')).toBeVisible();
+  await page.click('#canvas-diff-toggle');
+  await expect(page.locator('#canvas-body .ag-diff-line.add').filter({hasText:'[/] Build Antigravity Strip'})).toHaveCount(1);
+  await page.click('#canvas-diff-toggle');
 
-  // Expand Steps 2.0 & check Antigravity Unified Diff view
+  // Expand Steps 2.0 & check structured task_boundary card + Antigravity Unified Diff header & lines
   await page.locator('#messages .step-pill').first().click();
+  await page.locator('#messages .step-tool-head').nth(0).click();
+  await expect(page.locator('#messages .ag-step-card')).toContainText('Antigravity UI Replication');
   await page.locator('#messages .step-tool-head').nth(1).click();
+  await expect(page.locator('#messages .ag-diff-head')).toContainText('workspace/ag-demo/viewer.html');
   await expect(page.locator('#messages .ag-diff-line.add')).toContainText('+const mode = 2;');
 
   // Switch to Dark Mode and inspect Antigravity conversation

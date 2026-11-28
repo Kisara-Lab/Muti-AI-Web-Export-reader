@@ -88,7 +88,8 @@ function antigravityExportCore(){
     const oldLines=(typeof oldStr==='string'?oldStr:'').split('\n').slice(0,220);
     const newLines=(typeof newStr==='string'?newStr:'').split('\n').slice(0,220);
     const lines=[];
-    if(filePath)lines.push('--- a/'+filePath,'+++ b/'+filePath);
+    const cleanPath=String(filePath||'').replace(/^\/+/,'');
+    if(cleanPath)lines.push('--- a/'+cleanPath,'+++ b/'+cleanPath);
     lines.push('@@ -1,'+oldLines.length+' +1,'+newLines.length+' @@');
     for(const l of oldLines)lines.push('-'+l);
     for(const l of newLines)lines.push('+'+l);
@@ -602,6 +603,7 @@ function antigravityExportCore(){
         brainArtifacts:[],
         urlBookmarks:[],
         brainImages:[],
+        phases,
         ...(totalTokens>0?{usage:{input_tokens:inputTokens,output_tokens:outputTokens,cache_read_input_tokens:cacheReadTokens,total_tokens:totalTokens}}:{})
       },
       antigravityTelemetry:{

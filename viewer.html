@@ -2,7 +2,7 @@
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-Lxz1BJBSYUn2aPn5175gwB96pFOEvhvmhuyhTEvpFkc=' 'sha256-tMIvewdj4Er6it91vRKx68b9zhu5Sxm35MV7o9YOuqs=' https://cdn.jsdelivr.net https://unpkg.com https://cdnjs.cloudflare.com blob:; script-src-attr 'none'; style-src 'unsafe-inline' https://cdn.jsdelivr.net https://unpkg.com https://cdnjs.cloudflare.com; img-src blob: data: https: http:; font-src data:; connect-src blob:; worker-src blob:; frame-src blob:; object-src 'none'; base-uri 'none'; form-action 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-SrTiyR5Je3+ArrWFCjf20Uq+CNGtoNUPPGAfejdYYeM=' 'sha256-tMIvewdj4Er6it91vRKx68b9zhu5Sxm35MV7o9YOuqs=' https://cdn.jsdelivr.net https://unpkg.com https://cdnjs.cloudflare.com blob:; script-src-attr 'none'; style-src 'unsafe-inline' https://cdn.jsdelivr.net https://unpkg.com https://cdnjs.cloudflare.com; img-src blob: data: https: http:; font-src data:; connect-src blob:; worker-src blob:; frame-src blob:; object-src 'none'; base-uri 'none'; form-action 'none'">
 <meta name="referrer" content="no-referrer">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Multi-AI Web Export Reader — Local Claude, ChatGPT, Grok &amp; Perplexity Viewer</title>
@@ -846,6 +846,34 @@ mark.cs.active { background:var(--accent); color:#fff; }
 .ag-diff-line.hunk { background:color-mix(in srgb,#3b82f6 10%,transparent); color:var(--blue); font-weight:600; }
 [data-theme=dark] .ag-diff-line.add { color:#86efac; }
 [data-theme=dark] .ag-diff-line.del { color:#fca5a5; }
+.ag-art-pill.active { border-color:#7c3aed; background:color-mix(in srgb,#7c3aed 12%,var(--bg2)); box-shadow:0 0 0 2px color-mix(in srgb,#7c3aed 18%,transparent); }
+.ag-phase-trail { display:inline-flex; align-items:center; gap:3px; margin-left:auto; padding:2px 6px; border-radius:999px; background:color-mix(in srgb,var(--bg3) 85%,transparent); border:1px solid var(--border); }
+.ag-phase-step { font-size:9.5px; font-weight:700; letter-spacing:.04em; color:var(--text3); padding:1px 5px; border-radius:999px; }
+.ag-phase-step.seen { color:var(--text2); }
+.ag-phase-step.active.planning { background:color-mix(in srgb,#7c3aed 16%,var(--bg2)); color:#6d28d9; }
+.ag-phase-step.active.execution { background:color-mix(in srgb,#f59e0b 16%,var(--bg2)); color:#b45309; }
+.ag-phase-step.active.verification { background:color-mix(in srgb,#10b981 16%,var(--bg2)); color:#047857; }
+[data-theme=dark] .ag-phase-step.active.planning { color:#c4b5fd; }
+[data-theme=dark] .ag-phase-step.active.execution { color:#fcd34d; }
+[data-theme=dark] .ag-phase-step.active.verification { color:#6ee7b7; }
+.ag-file-chip { display:inline-flex; align-items:center; gap:4px; padding:1px 7px; margin:0 1px; border-radius:6px; border:1px solid var(--border); background:var(--bg3); font-family:ui-monospace,SFMono-Regular,Consolas,monospace; font-size:11.5px; color:var(--text); vertical-align:baseline; }
+.ag-file-chip-line { color:var(--accent); font-weight:650; font-size:10.5px; }
+.ag-step-card { display:flex; flex-direction:column; gap:6px; padding:8px 10px; border-radius:9px; border:1px solid var(--border); background:var(--bg2); }
+.ag-step-card-top { display:flex; align-items:center; flex-wrap:wrap; gap:7px; }
+.ag-step-title { font-size:12.5px; font-weight:650; color:var(--text); }
+.ag-step-meta { font-size:11.5px; color:var(--text2); line-height:1.5; }
+.ag-review-files { display:flex; flex-wrap:wrap; gap:6px; margin-top:2px; }
+.ag-term-bar { display:flex; align-items:center; gap:8px; padding:6px 10px; border-radius:8px; background:var(--code-bg); border:1px solid var(--border); font-family:ui-monospace,SFMono-Regular,Consolas,monospace; font-size:11.5px; color:var(--text); overflow-x:auto; }
+.ag-term-prompt { color:#10b981; font-weight:700; flex-shrink:0; }
+.ag-term-cmd { white-space:pre-wrap; word-break:break-all; }
+.ag-diff-wrap { border:1px solid var(--border); border-radius:9px; overflow:hidden; background:var(--code-bg); }
+.ag-diff-head { display:flex; align-items:center; gap:8px; padding:5px 10px; background:var(--bg3); border-bottom:1px solid var(--border); font-size:11px; color:var(--text2); }
+.ag-diff-file { font-family:ui-monospace,SFMono-Regular,Consolas,monospace; font-weight:600; color:var(--text); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.ag-diff-stat-add { margin-left:auto; color:#15803d; font-weight:700; font-family:ui-monospace,monospace; }
+.ag-diff-stat-del { color:#b91c1c; font-weight:700; font-family:ui-monospace,monospace; }
+[data-theme=dark] .ag-diff-stat-add { color:#86efac; }
+[data-theme=dark] .ag-diff-stat-del { color:#fca5a5; }
+.ag-diff-wrap .ag-diff-view { border:0; border-radius:0; }
 .step-think-subject { font-size:12px; font-weight:650; color:var(--text); margin-bottom:4px; }
 .platform-beta-badge { margin-left:auto; font-size:9.5px; font-weight:700; letter-spacing:.04em; text-transform:uppercase; padding:1px 6px; border-radius:999px; background:color-mix(in srgb,#d97706 14%,var(--bg3)); color:#b45309; border:1px solid color-mix(in srgb,#d97706 36%,var(--border)); }
 [data-theme=dark] .platform-beta-badge { color:#fbbf24; }
@@ -1282,6 +1310,7 @@ button.step-agent-head:hover { background: color-mix(in srgb, #6366f1 8%, var(--
       <div class="ag-canvas-versions" id="canvas-version-bar">
         <span data-i18n="快照版本">快照版本</span>
         <select id="canvas-version-select" data-ui-change="canvas-version" aria-label="Snapshot version"></select>
+        <button type="button" class="fbtn" id="canvas-diff-toggle" data-ui-click="canvas-diff-toggle" style="display:none;margin-left:auto;" data-i18n="对比当前">对比当前</button>
       </div>
       <div class="canvas-body" id="canvas-body"></div>
     </aside>
@@ -1677,7 +1706,14 @@ Object.assign(EN,{
   'Antigravity α 专项观测台':'Antigravity α Agent Telemetry',
   'Gemini CLI α 专项观测台':'Gemini CLI α Telemetry',
   '上一张':'Prev',
-  '下一张':'Next'
+  '下一张':'Next',
+  '对比当前':'Diff vs Current',
+  '退出对比':'Exit Diff',
+  '人工审阅门':'Review Gate',
+  '审阅对象':'Paths to Review',
+  '等待确认':'BlockedOnUser',
+  '任务摘要':'Task Summary',
+  '任务状态':'Task Status'
 });
 const UI_ICONS={
   spark:'<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2l1.3 3.7L13 7l-3.7 1.3L8 12l-1.3-3.7L3 7l3.7-1.3z"/></svg>',
@@ -4987,7 +5023,8 @@ function antigravityExportCore(){
     const oldLines=(typeof oldStr==='string'?oldStr:'').split('\n').slice(0,220);
     const newLines=(typeof newStr==='string'?newStr:'').split('\n').slice(0,220);
     const lines=[];
-    if(filePath)lines.push('--- a/'+filePath,'+++ b/'+filePath);
+    const cleanPath=String(filePath||'').replace(/^\/+/,'');
+    if(cleanPath)lines.push('--- a/'+cleanPath,'+++ b/'+cleanPath);
     lines.push('@@ -1,'+oldLines.length+' +1,'+newLines.length+' @@');
     for(const l of oldLines)lines.push('-'+l);
     for(const l of newLines)lines.push('+'+l);
@@ -5501,6 +5538,7 @@ function antigravityExportCore(){
         brainArtifacts:[],
         urlBookmarks:[],
         brainImages:[],
+        phases,
         ...(totalTokens>0?{usage:{input_tokens:inputTokens,output_tokens:outputTokens,cache_read_input_tokens:cacheReadTokens,total_tokens:totalTokens}}:{})
       },
       antigravityTelemetry:{
@@ -6713,8 +6751,13 @@ function configureMarked(){
     return esc(raw==null?'':raw);
   };
   renderer.link=function(token){
-    const label=this.parser.parseInline(token.tokens||[]),href=safeLinkUrl(token.href);
-    return href?'<a href="'+escAttr(href)+'" target="_blank" rel="noopener noreferrer" referrerpolicy="no-referrer"'+(token.title?' title="'+escAttr(token.title)+'"':'')+'>'+label+'</a>':label;
+    const label=this.parser.parseInline(token.tokens||[]),rawHref=String(token.href||''),href=safeLinkUrl(rawHref);
+    if(href)return '<a href="'+escAttr(href)+'" target="_blank" rel="noopener noreferrer" referrerpolicy="no-referrer"'+(token.title?' title="'+escAttr(token.title)+'"':'')+'>'+label+'</a>';
+    if(/^file:\/\//i.test(rawHref)){
+      const lm=/#(L\d+(?:-L?\d+)?)$/i.exec(rawHref);
+      return '<span class="ag-file-chip" title="'+escAttr(rawHref)+'"><span aria-hidden="true">📄</span><span>'+label+'</span>'+(lm?'<span class="ag-file-chip-line">:'+esc(lm[1])+'</span>':'')+'</span>';
+    }
+    return label;
   };
   renderer.image=function(token){
     const src=safeImageUrl(token.href),label=token.text||t('图片');
@@ -7600,7 +7643,7 @@ async function renderReaderWindow(options={}){
     }
     if(result.start>0){const button=document.createElement('button');button.className='load-earlier-btn';button.textContent='↑ '+t('加载更早消息')+' ('+result.start+')';button.onclick=()=>void renderReaderWindow({startIndex:Math.max(0,result.start-40)});nav.appendChild(button);container.prepend(nav);}
     if(result.end<result.total){const button=document.createElement('button');button.className='load-earlier-btn';button.textContent='↓ '+t('加载更新消息');button.onclick=()=>void renderReaderWindow({startIndex:result.end});container.appendChild(button);}
-    initZipMedia(container);if((currentConv.sourcePlatform==='codex'||currentConv.sourcePlatform==='claude_code')&&result.start===0)container.insertAdjacentHTML('afterbegin',currentConv.sourcePlatform==='claude_code'?claudeCodeAlphaNoticeHtml():codexAlphaNoticeHtml());for(const warning of currentConv.importWarnings||[]){if(currentConv.sourcePlatform==='antigravity'&&/^antigravity_(?:encrypted_pb_skipped|transcript_truncated_steps):/.test(String(warning)))continue;const notice=document.createElement('p');notice.setAttribute('role','status');notice.textContent=warning;container.prepend(notice);}return result;
+    initZipMedia(container);if(typeof hydrateAntigravityMedia==='function')hydrateAntigravityMedia(container);if(result.start===0){if(currentConv.sourcePlatform==='claude_code')container.insertAdjacentHTML('afterbegin',claudeCodeAlphaNoticeHtml());else if(currentConv.sourcePlatform==='codex')container.insertAdjacentHTML('afterbegin',codexAlphaNoticeHtml());else if(currentConv.sourcePlatform==='antigravity')container.insertAdjacentHTML('afterbegin',antigravityAlphaNoticeHtml(currentConv)+renderAntigravityBrainStrip(currentConv));else if(currentConv.sourcePlatform==='gemini_cli')container.insertAdjacentHTML('afterbegin',geminiCliAlphaNoticeHtml(currentConv));}for(const warning of currentConv.importWarnings||[]){if(currentConv.sourcePlatform==='antigravity'&&/^antigravity_(?:encrypted_pb_skipped|transcript_truncated_steps):/.test(String(warning)))continue;const notice=document.createElement('p');notice.setAttribute('role','status');notice.textContent=warning;container.prepend(notice);}return result;
   }catch(error){if(error.name==='AbortError')return;const container=document.getElementById('messages');container.textContent=error.message;const retry=document.createElement('button');retry.textContent=t('重试');retry.onclick=()=>void openConv(uuid);container.appendChild(retry);}
 }
 async function readerSearch(query){
@@ -10926,17 +10969,33 @@ function geminiCliAlphaNoticeHtml(conv){
   const rw=conv?.geminiCliMeta?.rewindCount||0;
   return '<div class="import-notice gemini-alpha-notice" role="status"><b>Alpha Test · Google Gemini CLI</b> — '+esc(t('Gemini CLI 会话支持处于 Alpha 测试阶段（最缺少真实会话实测）。如遇 $patch / $rewindTo 或 FileDiff 异常，欢迎反馈样本以便完善。'))+(rw?' <span>↩️ '+esc(t('$rewindTo 回溯分支已保留'))+' (×'+rw+')</span>':'')+'</div>';
 }
+function findBrainFileId(pathOrName){
+  const target=String(pathOrName||'').split(/[\\/]/).pop().toLowerCase();
+  if(!target)return '';
+  for(const [fid,entry] of Object.entries(FILESTORE)){
+    const fn=String(entry?.name||'').split(/[\\/]/).pop().toLowerCase();
+    if(fn===target||entry?.agBrainName===target)return fid;
+  }
+  return '';
+}
+function syncActiveBrainPill(){
+  const activeFid=canvasState?.fid||'';
+  document.querySelectorAll('.ag-art-pill[data-ag-fid]').forEach(el=>el.classList.toggle('active',!!activeFid&&el.dataset.agFid===activeFid));
+}
 function renderAntigravityBrainStrip(conv){
   const ag=conv?.antigravityMeta;
   if(!ag)return '';
   const arts=Array.isArray(ag.brainArtifacts)?ag.brainArtifacts:[];
   const urls=Array.isArray(ag.urlBookmarks)?ag.urlBookmarks:[];
+  const modes=conv?.antigravityTelemetry?.phases||ag.phases||ag.modeCounts||{};
+  const hasModes=(modes.PLANNING||0)+(modes.EXECUTION||0)+(modes.VERIFICATION||0)>0;
   let out='';
-  if(arts.length){
+  if(arts.length||hasModes){
     out+='<div class="ag-artifact-strip" role="region" aria-label="'+escAttr(t('Antigravity Brain 工作区'))+'"><span class="ag-strip-kicker"><span class="ui-icon" aria-hidden="true">'+UI_ICONS.spark+'</span>'+esc(t('Antigravity Brain 工作区'))+'</span>';
     for(const art of arts){
       const fid=registerFile(art.name||'artifact.md',art.content||'');
       FILESTORE[fid].title=art.title||art.name;
+      FILESTORE[fid].agBrainName=String(art.name||'').toLowerCase();
       if(Array.isArray(art.versions)&&art.versions.length)FILESTORE[fid].versions=art.versions;
       let icon=UI_ICONS.fileText,badge='';
       if(art.kind==='task'){
@@ -10951,7 +11010,17 @@ function renderAntigravityBrainStrip(conv){
       if(Array.isArray(art.versions)&&art.versions.length){
         badge+='<span class="ag-art-pill-meta">v'+(art.versions.length+1)+'</span>';
       }
-      out+='<button type="button" class="ag-art-pill" data-ui-click="open-canvas-file" data-ui-value="'+escAttr(fid)+'" title="'+escAttr(art.summary||art.path||art.name)+'"><span class="ui-icon" aria-hidden="true">'+icon+'</span><span>'+esc(art.name)+'</span>'+badge+'</button>';
+      out+='<button type="button" class="ag-art-pill" data-ag-fid="'+escAttr(fid)+'" data-ui-click="open-canvas-file" data-ui-value="'+escAttr(fid)+'" title="'+escAttr(art.summary||art.path||art.name)+'"><span class="ui-icon" aria-hidden="true">'+icon+'</span><span>'+esc(art.name)+'</span>'+badge+'</button>';
+    }
+    if(hasModes){
+      const lastMode=modes.VERIFICATION?'VERIFICATION':modes.EXECUTION?'EXECUTION':'PLANNING';
+      out+='<div class="ag-phase-trail" aria-label="Task phases">';
+      for(const ph of ['PLANNING','EXECUTION','VERIFICATION']){
+        const cnt=modes[ph]||0;
+        const cls=ph.toLowerCase()+(lastMode===ph?' active':cnt?' seen':'');
+        out+='<span class="ag-phase-step '+cls+'">'+ph+(cnt>1?' ×'+cnt:'')+'</span>';
+      }
+      out+='</div>';
     }
     out+='</div>';
   }
@@ -11008,8 +11077,8 @@ function renderMessages(msgs,opts){
   let h='',lastDate='';
   if(!opts?._mountOnly&&currentConv?.sourcePlatform==='codex')h+=codexAlphaNoticeHtml();
   else if(!opts?._mountOnly&&currentConv?.sourcePlatform==='claude_code')h+=claudeCodeAlphaNoticeHtml();
-  else if(currentConv?.sourcePlatform==='antigravity')h+=antigravityAlphaNoticeHtml(currentConv)+renderAntigravityBrainStrip(currentConv);
-  else if(currentConv?.sourcePlatform==='gemini_cli')h+=geminiCliAlphaNoticeHtml(currentConv);
+  else if(!opts?._mountOnly&&currentConv?.sourcePlatform==='antigravity')h+=antigravityAlphaNoticeHtml(currentConv)+renderAntigravityBrainStrip(currentConv);
+  else if(!opts?._mountOnly&&currentConv?.sourcePlatform==='gemini_cli')h+=geminiCliAlphaNoticeHtml(currentConv);
   if(start>0)h+='<div class="load-earlier-wrap"><button class="load-earlier-btn" type="button" data-ui-click="load-earlier">↑ '+t('加载更早消息')+' ('+t('剩余')+' '+start+t('条')+')</button></div>';
   for(const msg of linear.slice(start)){
     if(!msg||typeof msg!=='object')continue;
@@ -11657,13 +11726,40 @@ function enhanceAntigravityHtml(html){
     return doc.body.innerHTML;
   }catch{return html;}
 }
+function buildCanvasSnapshotDiff(oldText,newText,labelOld,labelNew){
+  const a=String(oldText||'').split(/\r?\n/),b=String(newText||'').split(/\r?\n/);
+  const m=a.length,n=b.length;
+  if(m*n>90000){
+    return ['--- '+(labelOld||'snapshot'),'+++ '+(labelNew||'current'),'@@ -1,'+m+' +1,'+n+' @@',...a.map(l=>'-'+l),...b.map(l=>'+'+l)].join('\n');
+  }
+  const dp=Array.from({length:m+1},()=>new Int32Array(n+1));
+  for(let i=m-1;i>=0;i--)for(let j=n-1;j>=0;j--)dp[i][j]=a[i]===b[j]?1+dp[i+1][j+1]:Math.max(dp[i+1][j],dp[i][j+1]);
+  const out=['--- '+(labelOld||'snapshot'),'+++ '+(labelNew||'current'),'@@ -1,'+m+' +1,'+n+' @@'];
+  let i=0,j=0;
+  while(i<m&&j<n){
+    if(a[i]===b[j]){out.push(' '+a[i]);i++;j++;}
+    else if(dp[i+1][j]>=dp[i][j+1]){out.push('-'+a[i]);i++;}
+    else{out.push('+'+b[j]);j++;}
+  }
+  while(i<m)out.push('-'+a[i++]);
+  while(j<n)out.push('+'+b[j++]);
+  return out.join('\n');
+}
 function renderDiffHtml(diffText){
   const lines=String(diffText||'').split(/\r?\n/);
+  let adds=0,dels=0,fileLabel='';
   const rows=lines.map(l=>{
-    const cls=l.startsWith('@@')?'hunk':(l.startsWith('+')&&!l.startsWith('+++'))?'add':(l.startsWith('-')&&!l.startsWith('---'))?'del':'';
+    const isAdd=l.startsWith('+')&&!l.startsWith('+++');
+    const isDel=l.startsWith('-')&&!l.startsWith('---');
+    if(isAdd)adds++;else if(isDel)dels++;
+    if(!fileLabel&&l.startsWith('+++ '))fileLabel=l.slice(4).replace(/^b\/+/,'').trim();
+    const cls=l.startsWith('@@')?'hunk':isAdd?'add':isDel?'del':'';
     return '<div class="ag-diff-line'+(cls?' '+cls:'')+'">'+esc(l||' ')+'</div>';
   }).join('');
-  return '<div class="ag-diff-view"><code class="language-diff hljs ag-diff-code">'+rows+'</code></div>';
+  const head=fileLabel||adds||dels
+    ?'<div class="ag-diff-head"><span class="ag-diff-file">'+esc(fileLabel||'Unified Diff')+'</span>'+(adds?'<span class="ag-diff-stat-add">+'+adds+'</span>':'')+(dels?'<span class="ag-diff-stat-del">-'+dels+'</span>':'')+'</div>'
+    :'';
+  return '<div class="ag-diff-wrap">'+head+'<div class="ag-diff-view"><code class="language-diff hljs ag-diff-code">'+rows+'</code></div></div>';
 }
 function extractCodexPlan(text,block){
   const raw=String(text||'').trim();
@@ -11811,11 +11907,43 @@ function renderStepGroup(entries){
       let body='';
       if(u){
         const uInp=u.input||{};
-        if(typeof uInp.patch==='string'&&uInp.patch){
+        if(nm==='task_boundary'&&(uInp.TaskName||uInp.Mode||uInp.TaskSummary)){
+          const mode=String(uInp.Mode||'PLANNING').toUpperCase();
+          const modeCls=mode==='EXECUTION'?'execution':mode==='VERIFICATION'?'verification':'planning';
+          body+='<div class="ag-step-card">'
+            +'<div class="ag-step-card-top"><span class="ag-mode-badge '+modeCls+'">'+esc(mode)+'</span>'
+            +(uInp.TaskName?'<span class="ag-step-title">'+esc(uInp.TaskName)+'</span>':'')+'</div>'
+            +(uInp.TaskStatus?'<div class="ag-step-meta"><strong>'+esc(t('任务状态'))+':</strong> '+esc(uInp.TaskStatus)+'</div>':'')
+            +(uInp.TaskSummary?'<div class="ag-step-meta"><strong>'+esc(t('任务摘要'))+':</strong> '+esc(uInp.TaskSummary)+'</div>':'')
+            +'</div>';
+        }else if(nm==='notify_user'&&(uInp.Message||Array.isArray(uInp.PathsToReview)||uInp.BlockedOnUser!==undefined)){
+          const blocked=uInp.BlockedOnUser===true;
+          const reviewPaths=Array.isArray(uInp.PathsToReview)?uInp.PathsToReview:[];
+          let chips='';
+          if(reviewPaths.length){
+            chips='<div class="ag-review-files">'+reviewPaths.map(p=>{
+              const name=String(p||'').split(/[\\/]/).pop()||'artifact';
+              const bfId=findBrainFileId(p);
+              if(bfId)return '<button type="button" class="ag-art-pill" data-ui-click="open-canvas-file" data-ui-value="'+escAttr(bfId)+'"><span class="ui-icon" aria-hidden="true">'+UI_ICONS.plan+'</span><span>'+esc(name)+'</span><span class="ag-art-pill-meta">'+esc(t('画布'))+'</span></button>';
+              return '<span class="ag-file-chip"><span aria-hidden="true">📄</span><span>'+esc(name)+'</span></span>';
+            }).join('')+'</div>';
+          }
+          body+='<div class="ag-step-card">'
+            +'<div class="ag-step-card-top"><span class="ag-mode-badge '+(blocked?'execution':'verification')+'">'+esc(t(blocked?'人工审阅门':'通知'))+'</span>'
+            +(blocked?'<span class="ag-art-pill-meta">'+esc(t('等待确认'))+'</span>':'')
+            +(reviewPaths.length?'<span class="ag-step-meta">'+esc(t('审阅对象'))+'</span>':'')+'</div>'
+            +chips
+            +(uInp.Message?'<div class="ag-step-meta msg-content">'+enhanceAntigravityHtml(renderMd(String(uInp.Message)))+'</div>':'')
+            +'</div>';
+        }else if(typeof uInp.patch==='string'&&uInp.patch){
           const dfId=registerFile((uInp.TargetFile||uInp.file_path||'changes').split(/[\\/]/).pop()+'.diff',uInp.patch);
           FILESTORE[dfId].title='Diff · '+(uInp.TargetFile||uInp.file_path||'patch');
           body+='<div><div class="step-sub-label" style="display:flex;align-items:center;justify-content:space-between;"><span>Diff</span><button type="button" class="fbtn" data-ui-click="open-canvas-file" data-ui-value="'+dfId+'">'+esc(t('画布对比 Diff'))+'</button></div>'+renderDiffHtml(uInp.patch)+'</div>';
           const rest=Object.fromEntries(Object.entries(uInp).filter(([k])=>k!=='patch'&&k!=='old_string'&&k!=='new_string'&&k!=='TargetContent'&&k!=='ReplacementContent'));
+          if(Object.keys(rest).length)body+='<div><div class="step-sub-label">'+esc(t('参数'))+'</div><pre><code class="language-json">'+esc(JSON.stringify(rest,null,2))+'</code></pre></div>';
+        }else if(uInp.CommandLine){
+          body+='<div class="ag-term-bar"><span class="ag-term-prompt">$</span><code class="ag-term-cmd">'+esc(String(uInp.CommandLine))+'</code></div>';
+          const rest=Object.fromEntries(Object.entries(uInp).filter(([k])=>k!=='CommandLine'&&k!=='WaitMsBeforeAsync'));
           if(Object.keys(rest).length)body+='<div><div class="step-sub-label">'+esc(t('参数'))+'</div><pre><code class="language-json">'+esc(JSON.stringify(rest,null,2))+'</code></pre></div>';
         }else if(typeof uInp.code==='string'&&uInp.code){
           body+='<div><div class="step-sub-label">'+esc(t('参数'))+'</div><pre><code class="language-javascript">'+esc(uInp.code)+'</code></pre></div>';
@@ -12215,25 +12343,28 @@ function openCanvas(spec){
   const hasPreview=spec.hasPreview!=null?!!spec.hasPreview:(kind==='html'||kind==='svg'||kind==='mermaid'||isMd||lang==='html'||lang==='htm'||lang==='svg');
   const normKind=kind==='mermaid'?'mermaid':(kind==='svg'||lang==='svg')?'svg':(kind==='html'||lang==='html'||lang==='htm')?'html':isMd?'markdown':'code';
   const versions=Array.isArray(spec.versions)?spec.versions:[];
-  canvasState={kind:normKind,title:spec.title||lang||'Canvas',code:String(spec.code||''),baseCode:String(spec.code||''),html:String(spec.html||''),baseHtml:String(spec.html||''),versions,lang:isMd?'markdown':lang,ext:spec.ext||(isMd?'md':''),hasPreview,tab:hasPreview?(spec.tab||'preview'):'code'};
+  canvasState={fid:spec.fid||'',kind:normKind,title:spec.title||lang||'Canvas',code:String(spec.code||''),baseCode:String(spec.code||''),html:String(spec.html||''),baseHtml:String(spec.html||''),versions,versionIdx:-1,diffMode:false,lang:isMd?'markdown':lang,ext:spec.ext||(isMd?'md':''),hasPreview,tab:hasPreview?(spec.tab||'preview'):'code'};
   const wb=document.getElementById('workspace-body'),pane=document.getElementById('canvas-pane');
   if(wb)wb.classList.add('canvas-open');
   if(pane)pane.setAttribute('aria-hidden','false');
   const kEl=document.getElementById('canvas-kind'),tEl=document.getElementById('canvas-title');
   if(kEl)kEl.textContent=normKind==='mermaid'?'Mermaid':normKind==='svg'?'SVG':normKind==='html'?'HTML':normKind==='markdown'?'Plan / MD':(lang||'Code').toUpperCase();
   if(tEl)tEl.textContent=canvasState.title;
-  const vBar=document.getElementById('canvas-version-bar'),vSel=document.getElementById('canvas-version-select');
+  const vBar=document.getElementById('canvas-version-bar'),vSel=document.getElementById('canvas-version-select'),vDiff=document.getElementById('canvas-diff-toggle');
   if(vBar&&vSel){
     if(versions.length){
       vBar.style.display='flex';
       vSel.innerHTML='<option value="-1">'+esc(t('当前版本'))+'</option>'+versions.map((v,i)=>'<option value="'+i+'">'+esc(v.label||('Snapshot #'+(i+1)))+'</option>').join('');
       vSel.value='-1';
+      if(vDiff){vDiff.style.display='none';vDiff.classList.remove('active');vDiff.textContent=t('对比当前');}
     }else{
       vBar.style.display='none';vSel.textContent='';
+      if(vDiff)vDiff.style.display='none';
     }
   }
   const pBtn=pane&&pane.querySelector('.canvas-tab-btn[data-ui-value="preview"]');
   if(pBtn){pBtn.style.display=hasPreview?'':'none';}
+  syncActiveBrainPill();
   renderCanvasBody();
 }
 function setCanvasTab(tab){
@@ -12245,7 +12376,10 @@ function setCanvasTab(tab){
 function closeCanvas(){
   if(canvasBlobUrl){try{URL.revokeObjectURL(canvasBlobUrl);}catch(e){}canvasBlobUrl='';}
   canvasState=null;
-  const vBar=document.getElementById('canvas-version-bar');if(vBar)vBar.style.display='none';
+  syncActiveBrainPill();
+  const vBar=document.getElementById('canvas-version-bar'),vDiff=document.getElementById('canvas-diff-toggle');
+  if(vBar)vBar.style.display='none';
+  if(vDiff)vDiff.style.display='none';
   const wb=document.getElementById('workspace-body'),pane=document.getElementById('canvas-pane'),body=document.getElementById('canvas-body');
   if(wb)wb.classList.remove('canvas-open');
   if(pane)pane.setAttribute('aria-hidden','true');
@@ -12256,6 +12390,12 @@ function renderCanvasBody(){
   if(canvasBlobUrl){try{URL.revokeObjectURL(canvasBlobUrl);}catch(e){}canvasBlobUrl='';}
   document.querySelectorAll('.canvas-tab-btn').forEach(b=>b.classList.toggle('active',b.dataset.uiValue===canvasState.tab));
   body.textContent='';
+  if(canvasState.diffMode&&canvasState.versionIdx>=0&&canvasState.versions?.[canvasState.versionIdx]){
+    const ver=canvasState.versions[canvasState.versionIdx];
+    const patch=buildCanvasSnapshotDiff(ver.content||'',canvasState.baseCode||'',ver.label||'snapshot','current');
+    body.innerHTML='<div style="padding:14px;">'+renderDiffHtml(patch)+'</div>';
+    return;
+  }
   if(canvasState.tab==='preview'&&canvasState.hasPreview){
     if(canvasState.kind==='mermaid'){
       body.innerHTML='<div class="canvas-mermaid-stage"><div class="mermaid">'+esc(canvasState.code)+'</div></div>';
@@ -12274,6 +12414,10 @@ function renderCanvasBody(){
       frame.src=canvasBlobUrl;
       body.appendChild(frame);
     }
+    return;
+  }
+  if(canvasState.lang==='diff'){
+    body.innerHTML='<div style="padding:14px;">'+renderDiffHtml(canvasState.code)+'</div>';
     return;
   }
   const pre=document.createElement('pre');pre.className='canvas-code-view';
@@ -12410,6 +12554,14 @@ document.addEventListener('click',event=>{
     case 'canvas-tab':setCanvasTab(value);break;
     case 'canvas-download':downloadCanvas();break;
     case 'canvas-close':closeCanvas();break;
+    case 'canvas-diff-toggle':{
+      if(!canvasState||canvasState.versionIdx<0)break;
+      canvasState.diffMode=!canvasState.diffMode;
+      el.classList.toggle('active',canvasState.diffMode);
+      el.textContent=t(canvasState.diffMode?'退出对比':'对比当前');
+      renderCanvasBody();
+      break;
+    }
     case 'open-canvas-inline':{
       const vis=value?document.getElementById(value):el.closest('.visual');if(!vis)break;
       let code='';try{code=decodeURIComponent(vis.dataset.vcode||'');}catch(e){code=vis.querySelector('.vsrc pre code')?.textContent||'';}
@@ -12421,7 +12573,7 @@ document.addEventListener('click',event=>{
       const ext=(entry.name.split('.').pop()||'').toLowerCase();
       const isMd=ext==='md'||ext==='markdown';
       const isVis=/^(?:html?|svg)$/i.test(ext);
-      openCanvas({kind:ext==='svg'?'svg':isVis?'html':isMd?'markdown':'code',title:entry.title||entry.name,code:entry.content,html:entry.html||'',versions:entry.versions||[],lang:isMd?'markdown':ext,ext,hasPreview:isVis||isMd,tab:(isVis||isMd)?'preview':'code'});
+      openCanvas({fid:value,kind:ext==='svg'?'svg':isVis?'html':isMd?'markdown':'code',title:entry.title||entry.name,code:entry.content,html:entry.html||'',versions:entry.versions||[],lang:isMd?'markdown':ext,ext,hasPreview:isVis||isMd,tab:(isVis||isMd)?'preview':'code'});
       break;
     }
     case 'ag-carousel-step':
@@ -12543,8 +12695,16 @@ document.addEventListener('change',event=>{
     case 'canvas-version':{
       if(!canvasState)break;
       const idx=Number(el.value);
-      if(idx<0){canvasState.code=canvasState.baseCode||'';canvasState.html=canvasState.baseHtml||'';}
-      else if(canvasState.versions?.[idx]){canvasState.code=String(canvasState.versions[idx].content||'');canvasState.html='';}
+      canvasState.versionIdx=idx;
+      const vDiff=document.getElementById('canvas-diff-toggle');
+      if(idx<0){
+        canvasState.code=canvasState.baseCode||'';canvasState.html=canvasState.baseHtml||'';
+        canvasState.diffMode=false;
+        if(vDiff){vDiff.style.display='none';vDiff.classList.remove('active');vDiff.textContent=t('对比当前');}
+      }else if(canvasState.versions?.[idx]){
+        canvasState.code=String(canvasState.versions[idx].content||'');canvasState.html='';
+        if(vDiff){vDiff.style.display='';vDiff.classList.toggle('active',!!canvasState.diffMode);vDiff.textContent=t(canvasState.diffMode?'退出对比':'对比当前');}
+      }
       renderCanvasBody();
       break;
     }
