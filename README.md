@@ -2,9 +2,9 @@
 
 # Multi-AI Web Export Reader
 
-**纯本地多 AI 对话导出查看器 — 支持 Claude · ChatGPT · Grok (Beta) · Perplexity (Beta)**
+**纯本地 9 平台多 AI 对话与 Agent 日志工作台 — Web 导出（Claude · ChatGPT · Grok β · Perplexity β）× Coding Agents（Codex α · Claude Code α · Antigravity α · Gemini CLI α · Kimi Code CLI α）**
 
-把各大 AI 平台导出的 ZIP、解压目录或独立 JSON，在浏览器本机变成可混合阅读、全文搜索、统计分析与隐私脱敏导出的统一工作区。
+将 Web AI 官方导出包与本地 Coding Agent 会话日志（ZIP / 文件夹 / `.json` / `.jsonl`）在浏览器本机化为可混合阅读、同目录多 CLI 自动合并、父子代理双向跳转、Behavior Arena 评测与隐私脱敏导出的统一工作区。
 
 > 🔒 **纯本地运行 · 零上传 · 零后端**：所有解析、搜索、统计与脱敏都在当前浏览器完成。普通版默认关闭远程图片与地图请求（可在首页第一步或顶部栏一键开启）；完整离线版无需任何网络。
 
