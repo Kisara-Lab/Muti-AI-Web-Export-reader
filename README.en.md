@@ -2,9 +2,9 @@
 
 # Multi-AI Web Export Reader
 
-**A local-only Multi-AI Export History Viewer — Claude · ChatGPT · Grok (Beta) · Perplexity (Beta)**
+**Local-Only 9-Platform AI Conversation & Coding Agent Workspace — Web Exports (Claude · ChatGPT · Grok β · Perplexity β) × Coding Agents (Codex α · Claude Code α · Antigravity α · Gemini CLI α · Kimi Code CLI α)**
 
-Turn official export ZIPs, extracted folders, or standalone JSON from major AI platforms into a unified local workspace for reading, cross-platform search, analytics, and privacy-safe redaction.
+Turn Web AI export archives and local Coding Agent session logs (ZIP / folders / `.json` / `.jsonl`) into a unified browser-local workspace with shared-cwd CLI merging, bidirectional subagent navigation, Behavior Arena telemetry, full-text search, and privacy-safe redaction.
 
 > 🔒 **Local-only · Zero uploads · No backend**: All parsing, search, analytics, and redaction run inside your browser. Remote images and map tiles are **off by default** (toggleable in Step 1 or the header); the offline bundle works completely without network access.
 
