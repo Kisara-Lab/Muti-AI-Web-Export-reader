@@ -63,8 +63,8 @@ const IDENTIFIER_KEY=/^(?:device[_ -]?id|user[_ -]?id|visitor[_ -]?id|session[_ 
 const CONTEXT_SECRET_RE=/((?:(?:cohere)[ \t]+(?:api[ \t]+)?key|device[_ -]?id|user[_ -]?id|visitor[_ -]?id|fingerprint|session[_ -]?id|storage[_ -]?key|access[_ -]?token|refresh[_ -]?token|auth[_ -]?token|id[_ -]?token|client[_ -]?secret|api[_ -]?key|access[_ -]?key|private[_ -]?key|aws[_ -]?secret[_ -]?access[_ -]?key|db[_ -]?password|password|passwd|pwd|passphrase|token|secret|did|密码|口令|密钥)\s*["']?\s*[:=：]\s*)(?:"([^"\r\n]+)"|'([^'\r\n]+)'|([^\s,"'，。；;<>\]}]+))/gi;
 const QUERY_SECRET_RE=/([?&#](?:token|access_token|refresh_token|id_token|auth|authorization|api[_-]?key|key|sid|session|device_id|did|t|sig|signature|x-amz-signature|x-amz-credential|x-amz-security-token|x-goog-signature|x-goog-credential)=)([^\s&#"'<>）)\]}]+)/gi;
 const STRICT_CONTEXT_RE=/((?:姓名|名字|联系人|老师|教师|教授|班主任|校长|学校|学院|大学|中学|小学|幼儿园|公司|单位|部门|微信|wechat|qq|微博|抖音|uid|用户[_ -]?id|account[_ -]?id|open[_ -]?id|social[_ -]?id|身份证(?:号)?|护照(?:号)?|passport(?:[ \t]+(?:no|number))?|ssn|住址|地址|家庭住址|工作地址|full[_ -]?name|phone|telephone|mobile|address)\s*[：:=]\s*["']?)([^\s,"'，。；;]{2,80})/gi;
-const REDACTION_METADATA=new Set(['tool_input','input','metadata','file_path','path','claudeCodeTelemetry','antigravityTelemetry','geminiCliTelemetry','TargetFile','AbsolutePath','Cwd','DirectoryPath','SearchDirectory']);
-const REDACTION_PATH_KEYS=new Set('conversation name title summary chat_messages content text thinking subject description prompt injection_source summaries attachments files file_name filename file_type file_size media_type url uri data value metadata tool_input input path file_path filePath TargetFile AbsolutePath Cwd CommandLine account uuid parent_message_uuid sender type structured_content display_content output created_at updated_at start_timestamp stop_timestamp tool_use_id id model thinking_hidden truncated signature _design _sourcePackage'.split(' '));
+const REDACTION_METADATA=new Set(['tool_input','input','metadata','file_path','path','claudeCodeTelemetry','antigravityTelemetry','geminiCliTelemetry','kimiCliTelemetry','TargetFile','AbsolutePath','Cwd','DirectoryPath','SearchDirectory']);
+const REDACTION_PATH_KEYS=new Set('conversation name title summary chat_messages content text thinking subject description prompt injection_source summaries attachments files file_name filename file_type file_size media_type url uri data value metadata tool_input input path file_path filePath TargetFile AbsolutePath Cwd workDir planArtifact kimiPlan CommandLine account uuid parent_message_uuid sender type structured_content display_content output created_at updated_at start_timestamp stop_timestamp tool_use_id id model thinking_hidden truncated signature _design _sourcePackage'.split(' '));
 function redactionOptions(options={}){
   const terms=Array.isArray(options.customTerms)?options.customTerms:String(options.customTerms||'').split(/\r?\n/);
   const customTerms=[...new Set(terms.filter(s=>typeof s==='string').map(s=>s.trim()).filter(Boolean))];
@@ -155,10 +155,31 @@ function redactConversation(conv,style='standard',strict=false,options={}){const
     const cc={sessions:0,subagentSessions:0,agentTypes:{},models:{},telemetry:{recordTypes:{},attachmentTypes:{},apiRequests:0,querySources:{},efforts:{},thinkingConfigs:{},betas:{},cacheControlBreakpoints:0},refusals:{stopRefusal:0,syntheticErrors:0,safeguardNotices:0,noFallback:0,apiErrors:0,userInterrupts:0,categories:{}},fallbacks:{modelSwaps:{},modelSwapCount:0,fallbackCreditRequests:0,noFallbackCount:0},interceptors:{serverClassifierRequests:0,serverClassifierRefusals:0,autoModeDenials:0,autoModeRules:{},hookBlocks:0,stopHooksPrevented:0,hookErrors:0,manualDenials:0,autoModeProfiles:{},modes:{},permissionModes:{}},efficiency:{totalCostUSD:0,costSessions:0,inputTokens:0,outputTokens:0,cacheReadTokens:0,cacheCreateTokens:0,linesAdded:0,linesRemoved:0,apiDurationMs:0,apiNoRetryMs:0,retryOverheadMs:0,toolDurationMs:0,totalDurationMs:0},compaction:{boundaries:0,microBoundaries:0,preTokensSum:0,preTokensMax:0,preTokensCount:0,queuedPrompts:0},events:[]};
     const ag={sessions:0,brainOnlySessions:0,models:{},transcriptSources:{},totalSteps:0,truncatedSteps:0,runningSteps:0,errorSteps:0,maxPlannerStreak:0,runawaySessions:0,notifyGates:0,taskBoundaryCount:0,subagentSpawns:0,pbSkipped:0,artifactsCount:0,bookmarksCount:0,phases:{PLANNING:0,EXECUTION:0,VERIFICATION:0,OTHER:0},tokens:{input:0,output:0,cached:0,total:0},toolCounts:{},toolErrorCounts:{},events:[]};
     const gem={sessions:0,subagentSessions:0,models:{},rewindCount:0,patchCount:0,setCount:0,filesModifiedCount:0,toolStatusCounts:{success:0,error:0,cancelled:0,awaiting_approval:0,other:0},toolNameCounts:{},tokens:{input:0,output:0,cached:0,thoughts:0,tool:0,total:0},events:[]};
+    const kimi={sessions:0,stubSessions:0,subagentSessions:0,planSessions:0,yoloSessions:0,afkSessions:0,models:{},wireVersions:{},rotatedBackups:0,compactionCount:0,stepRetryCount:0,btwCount:0,steerCount:0,peakContextUsage:0,peakContextTokens:0,approvalCounts:{approve:0,approve_for_session:0,reject:0,requests:0},hookCounts:{triggered:0,allow:0,block:0},tokens:{inputOther:0,output:0,cacheRead:0,cacheCreate:0,total:0},events:[]};
     const mergeMap=(target,src)=>{if(!src||typeof src!=='object')return;for(const [k,v]of Object.entries(src))if(typeof v==='number'&&Number.isFinite(v))target[k]=(target[k]||0)+v;};
     const stable=value=>{if(Array.isArray(value))return value.map(stable);if(value&&typeof value==='object'){const result={};for(const key of Object.keys(value).sort())result[key]=stable(value[key]);return result;}return value;},different=(a,b)=>JSON.stringify(stable(a))!==JSON.stringify(stable(b));
     const uses=new Map(),results=new Map(),refusal=/(?:我(?:不能|无法|不可以|不会)(?:帮助|协助|提供|执行|生成|完成)|抱歉[^。！？\n]{0,40}(?:不能|无法)|\b(?:can't|cannot|won't|unable to)\s+(?:help|assist|provide|comply|create|generate|do that)\b)/iu,fallback=/(?:当前模型|这个模型|能力受限|降级模式|只能提供[^。！？\n]{0,18}(?:概括|一般性信息|高层次建议))|\b(?:as an ai|language model|model limitation|not available in this mode)\b/iu;
     for await(const record of records){out.conversations++;const conversation=JSON.parse(record.raw),messages=list(conversation.chat_messages);out.messages+=messages.length;
+      if(conversation.sourcePlatform==='kimi_cli'){
+        kimi.sessions++;const tel=conversation.kimiCliTelemetry||{};
+        if(tel.isStub)kimi.stubSessions++;
+        if(tel.isSubagent)kimi.subagentSessions++;
+        if(tel.planMode)kimi.planSessions++;
+        if(tel.yolo)kimi.yoloSessions++;
+        if(tel.afk)kimi.afkSessions++;
+        if(tel.wireVersion){const wk=String(tel.wireVersion);kimi.wireVersions[wk]=(kimi.wireVersions[wk]||0)+1;}
+        if(conversation.defaultModel){const dm=String(conversation.defaultModel);kimi.models[dm]=(kimi.models[dm]||0)+1;}
+        for(const m of list(tel.models))if(m&&m!==conversation.defaultModel)kimi.models[m]=(kimi.models[m]||0)+1;
+        kimi.rotatedBackups+=Number(tel.rotatedBackupCount||0);
+        kimi.compactionCount+=Number(tel.compactionCount||0);
+        kimi.stepRetryCount+=Number(tel.stepRetryCount||0);
+        kimi.btwCount+=Number(tel.btwCount||0);
+        kimi.steerCount+=Number(tel.steerCount||0);
+        if(Number(tel.peakContextUsage||0)>kimi.peakContextUsage)kimi.peakContextUsage=Number(tel.peakContextUsage||0);
+        if(Number(tel.peakContextTokens||0)>kimi.peakContextTokens)kimi.peakContextTokens=Number(tel.peakContextTokens||0);
+        mergeMap(kimi.approvalCounts,tel.approvalCounts);mergeMap(kimi.hookCounts,tel.hookCounts);mergeMap(kimi.tokens,tel.tokens);
+        for(const ev of list(tel.events))kimi.events.push({uuid:conversation.uuid,title:conversation.name||'',...ev});
+      }
       if(conversation.sourcePlatform==='antigravity'){
         ag.sessions++;const meta=conversation.antigravityMeta||{},tel=conversation.antigravityTelemetry||{};
         if(meta.transcriptSource){const tsKey=String(meta.transcriptSource);ag.transcriptSources[tsKey]=(ag.transcriptSources[tsKey]||0)+1;if(tsKey==='brain_only')ag.brainOnlySessions++;}
@@ -203,7 +224,7 @@ function redactConversation(conv,style='standard',strict=false,options={}){const
         for(const ev of list(tel.events))cc.events.push({uuid:conversation.uuid,title:conversation.name||'',...ev});
       }
       let previous=null,processed=0;for(const message of messages){if(processed++%128===0)await checkpoint();const text=messageText(message).trim(),time=Date.parse(message.created_at||message.updated_at||'')||0;if(!text&&message.sender!=='system'&&!list(message.content).some(block=>/tool|thinking|result|image|injected/i.test(String(block?.type||''))))out.quality.empty++;if(message.sender==='assistant'){if(refusal.test(text))out.quality.refusal++;if(fallback.test(text))out.quality.fallback++;if(/(?:\.\.\.|…|回答未完|to be continued)$/i.test(text))out.quality.truncated++;if(previous?.sender==='human'&&previous.time&&time&&time-previous.time>30*60*1000)out.quality.latency++;}previous={sender:message.sender,time};
-        for(const block of list(message.content)){if(!block||typeof block!=='object')continue;const type=String(block.type||'');if(type==='tool_use'||type==='server_tool_use'){out.tools++;const id=block.id||block.tool_use_id;if(id)uses.set(id,true);if(block.approval_key||block.approval_key_legacy||block.approval_options)out.approvals++;if(block.is_mcp_app||block.mcp_server_url||block.integration_name)out.mcp++;if(out.examples.length<8)out.examples.push({name:block.name||block.tool_identifier||'unknown',status:'调用'});}else if(type==='tool_result'||type==='web_search_tool_result'||type==='web_search_result'){out.toolResults++;const id=block.tool_use_id||block.id;if(id)results.set(id,true);if(block.is_error)out.errors++;if(block.structured_content||block.meta)out.structured++;const hasDisplay=block.display_content!==undefined&&block.display_content!==null,hasContent=block.content!==undefined&&block.content!==null;if((hasDisplay&&hasContent&&different(block.display_content,block.content))||(!hasDisplay&&(block.structured_content||block.meta)))out.hiddenResults++;}else if(type==='thinking'){out.thinking++;if(block.hidden||block.thinking_hidden)out.thinkingHidden++;if(block.truncated||block.cut_off)out.thinkingTruncated++;if(block.cut_off)out.thinkingCutoff++;if(block.summaries||block.alternative_display_type)out.thinkingSummary++;if(block.signature)out.thinkingSigned++;if(typeof block.duration_ms==='number'&&Number.isFinite(block.duration_ms)&&block.duration_ms>0)out.thinkingDurationMs+=block.duration_ms;else{const start=Date.parse(block.start_timestamp),stop=Date.parse(block.stop_timestamp);if(start&&stop&&stop>=start)out.thinkingDurationMs+=stop-start;}}}
+        for(const block of list(message.content)){if(!block||typeof block!=='object')continue;const type=String(block.type||'');if(type==='tool_use'||type==='server_tool_use'){out.tools++;const id=block.id||block.tool_use_id;if(id)uses.set(id,true);if(block.approval_key||block.approval_key_legacy||block.approval_options||block.kimiApproval)out.approvals++;if(block.is_mcp_app||block.mcp_server_url||block.integration_name)out.mcp++;if(out.examples.length<8)out.examples.push({name:block.name||block.tool_identifier||'unknown',status:'调用'});}else if(type==='tool_result'||type==='web_search_tool_result'||type==='web_search_result'){out.toolResults++;const id=block.tool_use_id||block.id;if(id)results.set(id,true);if(block.is_error)out.errors++;if(block.structured_content||block.meta)out.structured++;const hasDisplay=block.display_content!==undefined&&block.display_content!==null,hasContent=block.content!==undefined&&block.content!==null;if((hasDisplay&&hasContent&&different(block.display_content,block.content))||(!hasDisplay&&(block.structured_content||block.meta)))out.hiddenResults++;}else if(type==='thinking'){out.thinking++;if(block.hidden||block.thinking_hidden)out.thinkingHidden++;if(block.truncated||block.cut_off)out.thinkingTruncated++;if(block.cut_off)out.thinkingCutoff++;if(block.summaries||block.alternative_display_type)out.thinkingSummary++;if(block.signature)out.thinkingSigned++;if(typeof block.duration_ms==='number'&&Number.isFinite(block.duration_ms)&&block.duration_ms>0)out.thinkingDurationMs+=block.duration_ms;else{const start=Date.parse(block.start_timestamp),stop=Date.parse(block.stop_timestamp);if(start&&stop&&stop>=start)out.thinkingDurationMs+=stop-start;}}}
       }}
     const sevRank={high:3,warn:2,info:1};
     cc.events.sort((a,b)=>(sevRank[b.severity]||0)-(sevRank[a.severity]||0)||String(b.ts||'').localeCompare(String(a.ts||'')));
@@ -215,6 +236,9 @@ function redactConversation(conv,style='standard',strict=false,options={}){const
     gem.events.sort((a,b)=>(sevRank[b.severity]||0)-(sevRank[a.severity]||0)||String(b.ts||'').localeCompare(String(a.ts||'')));
     if(gem.events.length>40)gem.events.length=40;
     if(gem.sessions>0)out.geminiCli=gem;
+    kimi.events.sort((a,b)=>(sevRank[b.severity]||0)-(sevRank[a.severity]||0)||String(b.ts||'').localeCompare(String(a.ts||'')));
+    if(kimi.events.length>40)kimi.events.length=40;
+    if(kimi.sessions>0)out.kimiCli=kimi;
     for(const id of uses.keys())if(results.has(id))out.paired++;else out.unpairedUse++;for(const id of results.keys())if(!uses.has(id))out.unpairedResult++;return out;
   }
 
@@ -232,7 +256,7 @@ async function markdown(conv,mode,choices,checkpoint){  // Build linear thread (
     if(!msg||typeof msg!=='object')continue;
     if(msg._divider==='linear'){md+='## ⚠️ '+t('对话分支结构异常，已按时间顺序展示全部消息')+'\n\n';continue;}
     if(msg._divider==='orphan'){md+='## 🧩 '+t('以下消息无法归入对话分支（可能是已删除分支的残留）')+' ('+msg.count+')\n\n';continue;}
-    const role='**'+(msg.sender==='human'?t('你'):msg.sender==='assistant'?(conv.sourcePlatform==='gpt'?'ChatGPT':conv.sourcePlatform==='grok'?'Grok':conv.sourcePlatform==='perplexity'?'Perplexity':conv.sourcePlatform==='codex'?'Codex':conv.sourcePlatform==='claude_code'?'Claude Code':conv.sourcePlatform==='antigravity'?'Antigravity':conv.sourcePlatform==='gemini_cli'?'Gemini CLI':'Claude'):msg.sender)+'**';
+    const role='**'+(msg.sender==='human'?t('你'):msg.sender==='assistant'?(conv.sourcePlatform==='gpt'?'ChatGPT':conv.sourcePlatform==='grok'?'Grok':conv.sourcePlatform==='perplexity'?'Perplexity':conv.sourcePlatform==='codex'?'Codex':conv.sourcePlatform==='claude_code'?'Claude Code':conv.sourcePlatform==='antigravity'?'Antigravity':conv.sourcePlatform==='gemini_cli'?'Gemini CLI':conv.sourcePlatform==='kimi_cli'?'Kimi CLI':'Claude'):msg.sender)+'**';
     md+=role+' · '+fmtTime(msg.created_at)+'\n\n';
     // Attachments
     for(const att of[...(msg.attachments||[]),...(msg.files||[])]){
@@ -265,6 +289,10 @@ async function markdown(conv,mode,choices,checkpoint){  // Build linear thread (
       md+='- ['+(u.title||u.url)+']('+u.url+')'+(u.description?' — '+u.description:'')+'\n';
     }
     md+='\n';
+  }
+  const kimiMeta=conv.kimiCliMeta;
+  if(kimiMeta?.planArtifact?.content){
+    md+='## Kimi Plan ('+(kimiMeta.planArtifact.name||'plan.md')+')\n\n'+kimiMeta.planArtifact.content+'\n\n';
   }
 
 
