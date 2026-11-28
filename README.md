@@ -19,22 +19,27 @@
 
 ![Multi-AI Web Export Reader 界面总览](docs/images/viewer-overview.png)
 
-<sub>截图使用“北辰咖啡订阅服务”虚构历史生成；人物、品牌、文件与数值均为合成演示数据。</sub>
+<sub>截图与[演示包](docs/demo/claude-rescue-reader-synthetic-demo.zip)覆盖 9 大平台虚构演示历史（以“北辰咖啡订阅服务”与 `beichen-web` 为例）；人物、品牌、文件与数值均为合成演示数据。</sub>
 
 ---
 
 ## 支持的 AI 平台
 
-支持在同一个工作区**按任意顺序追加导入**多个平台的历史导出，自动隔离账户并按平台筛选、混合搜索与对比统计：
+支持在同一个工作区**按任意顺序追加导入** Web 导出与本地 Coding Agent 日志，自动隔离账户并按平台筛选、混合搜索、合并同目录 CLI 工作区与对比观测：
 
-| 平台 | 状态 | 导出入口 | 支持的格式与解析能力 | 说明 |
+| 平台 | 状态 | 导出 / 日志来源 | 支持的格式与解析能力 | 说明 |
 |---|---|---|---|---|
 | **Claude** | 稳定 | `Settings → Account → Export Data` | 新版 `manifest-*.json` + 分包 ZIP、旧版单包 ZIP / 目录；对话分支、Thinking 状态、工具调用、Artifact 历史版本、项目与三层关联、全局/项目记忆、Design、账户与登录记录 | [新版导入说明](docs/new-export-import.md) |
 | **ChatGPT** | 稳定 | `Settings → Data controls → Export data` | 完整 ZIP（分片 `conversations-*.json`、`export_manifest.json`）及独立 JSON；分支路径、引文、DIL 交互组件、图表、地图、`.dat` 本地图片/Markdown 附件、账户信息 | [GPT 支持范围](docs/gpt-export.md) · [组件说明](docs/gpt-components.md) |
 | **Grok (xAI)** | **Beta Test** | `accounts.x.ai → Data → Download Account Data` | 官方导出 ZIP（`prod-grok-backend.json`、`prod-mc-auth-mgmt-api.json`、`prod-mc-asset-server` 附件）及独立 JSON；`leaf_response_id` 分支、思考/工具步骤、内联引文、工作区精确关联 | 早期测试中，部分新字段或媒体格式仍在适配 |
 | **Perplexity.ai** | **Beta Test** | `Settings → Account → Export Data` | 官方导出 ZIP（`conversations-*.json`、`user-data-*.xlsx`）及独立 JSON；多轮问答链、`user-data` 账户/偏好/Space 工作簿 | 早期测试中，官方正文 `[n]` 引文暂不含 URL，部分字段仍在适配 |
+| **OpenAI Codex** | **Alpha** | `~/.codex/sessions/**/rollout-*.jsonl` | rollout JSONL（`session_meta` / `turn_context` / `apply_patch` / `spawn_agent` / `Plan` / `compacted`）；**Codex α Telemetry** 观测、沙盒/审批策略、Reasoning 与子代理双向跳转 | 本地 CLI 日志直接拖拽或打包 ZIP 导入 |
+| **Claude Code** | **Alpha** | `~/.claude/projects/**/*.jsonl` | CLI transcript JSONL 与 Subagent 日志；工具链配对、Git/费用/行变更统计、Hook/Classifier/Compaction 遥测与父子代理跳转 | 支持跨 CLI 同路径工作区自动合并 |
+| **Antigravity** | **Alpha** | `~/.gemini/antigravity/brain/<id>/` | `.system_generated/logs/transcript*.jsonl`、Brain 工件版本（`.md` / `.resolved.*` + Diff 画布）、Carousels、URL 书签、`task_boundary` / `notify_user` 卡片与 `Agent Handoff` | 完整复刻 Artifact Canvas 与 Brain 工作区条带 |
+| **Gemini CLI** | **Alpha** | `~/.gemini/tmp/<project>/` | `session-*.json` / JSONL、`thoughts`、工具调用状态、`/rewind` / File Patch、`GEMINI.md` 记忆与 Token 细粒度统计 | 支持 `.project_root` 与 `projects.json` 映射 |
+| **Kimi Code CLI** | **Alpha** | `~/.kimi/` 与 `~/.kimi-code/` | Python Wire 1.x 与 Node `kimi-code` 双代协议、`context.jsonl` / 轮转上下文 / `subagents/`、`PlanDisplay` 虚线卡、Approval / Question / Todo / Shell / Diff、`kimi.log` 存根排障 | 自动剔除 `config.toml` 与凭据文件中的密钥 |
 
-> ⚠️ **Beta Test 说明**：**Grok** 与 **Perplexity.ai** 解析目前处于早期测试阶段，受限于官方导出格式变动及样本覆盖范围，部分特殊字段、引文来源、多媒体附件或交互卡片可能尚不完善，欢迎提交脱敏样本反馈。
+> ⚠️ **Alpha / Beta 说明**：**Grok / Perplexity (Beta)** 与 **5 款 Coding Agent (Alpha)** 解析会随官方或 CLI 日志格式演进而持续迭代；查看器仅基于归档中可观察字段做本地还原与脱敏，不代表后台策略结论。
 
 ---
 
@@ -43,9 +48,9 @@
 1. **打开查看器**：下载单文件版 [`viewer.html`](https://github.com/Kisara-Lab/Muti-AI-Web-Export-reader/releases/latest/download/viewer.html)（或使用[离线包](#离线模式)），双击用 Chrome / Edge / Firefox 打开。
 2. **第一步 · 确认远程资源策略**：首页默认**仅本地模式**（不主动请求任何外部图片或 OpenStreetMap 地图）；如需查看 ChatGPT 导出中的远程图片/底图，可在首页或顶部栏一键开启。
 3. **第二步 · 导入或拖入导出包**：
-   - **直接导入 ZIP / 文件夹**：点击「选择 ZIP 压缩包」或直接把一个或多个 ZIP / 解压目录拖入页面（**免解压**，可连续追加不同平台）。
+   - **直接导入 ZIP / 文件夹**：点击「选择 ZIP 压缩包」或直接把一个或多个 ZIP / 解压目录 / `.jsonl` 拖入页面（**免解压**，可连续追加 9 大平台任意档案）。
    - **Claude 新版分包清单**：进入「导入中心 / Claude 清单」导入 `manifest-*.json`，在官方页面下载各分包 ZIP 后批量追加。
-4. **阅读、搜索与安全分享**：按平台胶囊筛选、全文检索、切换分支，或使用「安全导出 Markdown / PDF」完成本地隐私脱敏后分享。
+4. **阅读、搜索与安全分享**：按平台胶囊筛选、全文检索、跳转父子代理对话、对比 Coding Agent 行为竞技场，或使用「安全导出 Markdown / PDF」完成本地隐私脱敏后分享。
 
 ![拖入 ZIP、打开对话、检查项目关系图、浏览统计并进行安全导出的完整闭环](docs/images/workflow-demo.gif)
 
@@ -53,24 +58,24 @@
 
 ## 核心功能
 
-### 💬 多平台忠实阅读与分支还原
-- **统一时间线与平台徽章**：侧栏列表、对话标题栏、项目卡片与统计总览均带独立平台色标与实时计数，支持在「全部 / Claude / ChatGPT / Grok β / Perplexity β」间一键切换。
-- **富文本与技术块**：完整 Markdown（表格、代码语法高亮 + 一键复制）、可折叠 **Thinking 思考过程**（含耗时、截断/隐藏状态）、**工具调用与结果**、内联引文、网页搜索面板。
-- **交互与多媒体**：对话分支树默认走最长路径（或平台记录的 `leaf_response_id` / `current_node`），支持就地切换分支；支持 Artifact 隔离沙箱预览（SVG / Mermaid / HTML）、ChatGPT DIL 交互组件与本地 `.dat` / `/content` 附件查看。
+### 💬 多平台忠实阅读、分支与子代理跳转
+- **统一时间线与 9 平台徽章**：侧栏列表、对话标题栏、项目卡片与统计总览均带独立平台色标与实时计数，支持一键切换全部 9 大平台。
+- **富文本与技术块**：完整 Markdown（表格、代码语法高亮 + 一键复制）、可折叠 **Thinking 思考过程**、**工具调用与 Diff 对比**、Artifact 隔离沙箱画布、ChatGPT DIL 组件、Antigravity Brain 工件版本与 Carousel。
+- **双向 Subagent 子代理跳转**：主代理生成 `spawn_agent` / `Agent` / `Task` / `invoke_subagent` 的工具卡与顶部导航条可直接跳转至子代理线程（`↗ 查看子代理对话`），子代理顶部提供 `← 返回父会话` 返回面包屑。
 
-### 🧭 项目、工作区与记忆重建
-- **多平台项目/工作区统一视图**：集中浏览 Claude Projects、Grok Workspaces 与 Perplexity Spaces。
-  - **Claude**：官方导出不含归属字段，查看器通过**唯一项目文件 → 知识搜索词 → 项目记忆独有关键词**三层高置信度证据自动关联，并支持本地手动修正与关系图展示。
-  - **Grok / Perplexity**：支持读取官方 `workspace_id` / Space 关联字段与自定义指令。
-- **记忆管理**：支持 Claude 全局记忆（4 分区）与项目记忆（6 分区），以及新版独立 Markdown 记忆 ZIP 的多版本切换。
+### 🧭 项目、多 Agent 统一工作区与记忆重建
+- **Multi-CLI 统一工作区合并**：同一本地工程目录（相同标准化 `cwd`）若同时存在 2 个及以上 Coding CLI（Codex / Claude Code / Antigravity / Gemini CLI / Kimi CLI）记录，查看器自动合并为统一工作区卡片（`Multi-CLI Workspace`），汇总所有关联会话与平台胶囊；单 CLI 项目仍保持独立显示。
+- **Claude 三层高置信度推断 & Web 工作区**：Claude Projects 支持**唯一项目文件 → 知识搜索词 → 项目记忆独有关键词**三层证据与关系图；Grok Workspaces 与 Perplexity Spaces 支持官方字段精确关联。
+- **记忆管理**：支持 Claude 全局/项目记忆、独立 Markdown 记忆 ZIP、以及 `GEMINI.md` / `AGENTS.md` / `kimi.md` 跨会话工程记忆。
 
-### 📊 统计分析与 🧪 行为实验室
-- **探索分析与全档案总览**：按时间范围、平台来源、项目、模型、角色组合筛选；查看趋势图、7/30 日移动平均、**平台对话/消息分布对比**、使用画像、词频云、最长对话与点击下钻；[统计口径与协议](docs/analytics.md)。
-- **行为实验室**：本地按需审计工具调用配对率、审批与 MCP 来源、隐藏结构化结果、Thinking 完整性与回答健康度（注：导出状态标记仅反映归档内容，不用于推断后台策略）。
+### 📊 统计分析、🧪 Codex α 观测台与 ⚔️ Coding Agent 竞技场
+- **Coding Agent Behavior Arena**：在「行为实验室」中自动同屏对比 **Codex / Claude Code / Antigravity / Gemini CLI / Kimi CLI** 的会话与子代理密度、工具/Diff 吞吐、Token 总量条与异常/中止信号。
+- **专项遥测观测台**：内置 **Codex α**、**Claude Code α**、**Antigravity α**、**Gemini CLI α** 与 **Kimi Code CLI α** 五大专项观测台及可跳转异常事件流。
+
+![Coding Agent 横向对比竞技场与 Codex α 专项观测台](docs/images/behavior-arena.png)
 
 ### 🛡️ 隐私安全导出（Markdown / PDF / SCP 模式）
-- 导出前在本地自动扫描密钥/凭据、邮箱、手机号、证件号、IP/URL 令牌及上下文隐私词（姓名、地址、单位、社媒账号等），提供**标准 / 强力**两档过滤、一致化名替换与自定义敏感词。
-- 支持 **SCP 机密档案模式**（`[数据删除]` 黑条 + `CONFIDENTIAL` 水印），所有命中均展示脱敏预览、位置与原因；[脱敏规则与说明](docs/redaction.md)。
+- 导出前在本地自动扫描密钥/凭据、邮箱、手机号、证件号、IP/URL 令牌、CLI 配置文件密钥（如 `config.toml`）及上下文隐私词，提供**标准 / 强力**两档过滤、一致化名替换与 **SCP 机密档案模式**；[脱敏规则与说明](docs/redaction.md)。
 
 ---
 
@@ -134,6 +139,7 @@ npm run build:offline
 
 ## 更新日志
 
+- **v2.1 — 9 大平台大一统：Coding Agent Arena、多 CLI 工作区合并与父子代理跳转**：正式集齐 **OpenAI Codex**、**Claude Code**、**Antigravity**、**Gemini CLI** 与 **Kimi Code CLI** 五大本地 Agent（共 **9 大平台**）；新增同 `cwd` **多 CLI 统一工作区**自动合并、主/子代理对话双向跳转条与工具卡直达按钮、**Codex α Telemetry**、**Coding Agent Behavior Arena** 横向对比面板，并将演示归档升级为 9 平台合一演示包。
 - **v2.0 — Multi-AI 与全套阅读体验升级**：更名为 **Multi-AI Web Export Reader**；新增 **ChatGPT** 完整支持（分片、DIL 组件、图表、地图、`.dat` 附件）及 **xAI Grok (Beta)**、**Perplexity.ai (Beta)** 解析支持；推出全新 **Atelier 暖纸 / Obsidian 深色** 双主题与内置离线语法高亮、**Steps 执行时间线**聚合、域名来源胶囊、可折叠侧边栏与悬浮问题大纲。
 
 <details>

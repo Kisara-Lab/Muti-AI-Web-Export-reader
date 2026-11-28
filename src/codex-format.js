@@ -264,6 +264,9 @@ function codexExportCore(){
     let originator='',agentPath='',agentNickname='',parentThreadId='',forkedFromId='',compactedWindows=0;
     let firstTs='',lastTs='',titleCandidate='',malformedLines=0;
     let totalUsage=null;
+    const telModels=[],sandboxModes={},approvalPolicies={},toolCounts={},telEvents=[];
+    const addModel=m=>{const nm=trim(m);if(nm&&!telModels.includes(nm))telModels.push(nm);};
+    let reasoningCount=0,planCount=0,applyPatchCount=0,execCount=0,toolErrorCount=0,subagentSpawns=0,abortedTurns=0;
 
     const messages=[];
     let prevUuid=root;
@@ -353,6 +356,7 @@ function codexExportCore(){
         if(!modelProvider&&typeof payload.model_provider==='string'&&payload.model_provider)modelProvider=payload.model_provider;
         if(!gitBranch&&typeof payload.git?.branch==='string'&&payload.git.branch)gitBranch=payload.git.branch;
         if(!defaultModel&&typeof payload.model==='string'&&payload.model)defaultModel=payload.model;
+        if(payload.model)addModel(payload.model);
         if(!originator&&typeof payload.originator==='string'&&payload.originator)originator=payload.originator;
         if(!agentPath&&typeof payload.agent_path==='string'&&payload.agent_path)agentPath=payload.agent_path;
         if(!agentNickname&&typeof payload.agent_nickname==='string'&&payload.agent_nickname)agentNickname=payload.agent_nickname;
@@ -366,8 +370,13 @@ function codexExportCore(){
         const m=trim(payload.model);
         if(m){
           if(!defaultModel)defaultModel=m;
+          addModel(m);
           if(currentTurn)currentTurn.model=m;
         }
+        const sb=trim(payload.sandbox_policy?.mode||payload.sandbox_mode);
+        if(sb)sandboxModes[sb]=(sandboxModes[sb]||0)+1;
+        const ap=trim(payload.approval_policy);
+        if(ap)approvalPolicies[ap]=(approvalPolicies[ap]||0)+1;
         continue;
       }
 
@@ -379,6 +388,7 @@ function codexExportCore(){
 
       if(envType==='compacted'){
         compactedWindows++;
+        if(telEvents.length<20)telEvents.push({kind:'compacted',severity:'info',label:'上下文压缩窗口 (Compacted)',ts});
         const summaryText=trim(payload.message||payload.summary);
         if(summaryText)queueInjected('codex:compacted',summaryText);
         continue;
@@ -449,6 +459,7 @@ function codexExportCore(){
           let thinkText=extractReasoningText(payload);
           if(!thinkText&&payload.encrypted_content){
             t.blocks.push({type:'thinking',thinking:'',thinking_hidden:true});
+            reasoningCount++;
             continue;
           }
           if(!thinkText)continue;
@@ -465,6 +476,7 @@ function codexExportCore(){
             t.seenReasoningPrefixes.push(thinkText);
           }
           t.blocks.push({type:'thinking',thinking:thinkText});
+          reasoningCount++;
           continue;
         }
 
@@ -491,6 +503,10 @@ function codexExportCore(){
           const block={type:'tool_use',id:callId,name,input:inputObj};
           t.toolMap.set(callId,block);
           t.blocks.push(block);
+          toolCounts[name]=(toolCounts[name]||0)+1;
+          if(/apply_patch/i.test(name)||inputObj?.patch)applyPatchCount++;
+          if(/^(?:exec|exec_command|shell|local_shell|bash|run_command|write_stdin)$/i.test(name))execCount++;
+          if(/^(?:spawn_agent|subagent|task|agent)$/i.test(name))subagentSpawns++;
           continue;
         }
 
@@ -499,6 +515,10 @@ function codexExportCore(){
           const callId=string(payload.call_id||payload.id)||('codex-out-'+lineIdx);
           const paired=t.toolMap.get(callId);
           const {text,isError}=formatToolOutput(payload.output??payload.result??'',warnings);
+          if(isError){
+            toolErrorCount++;
+            if(telEvents.length<20)telEvents.push({kind:'tool_error',severity:'warn',label:'工具调用失败: '+(paired?.name||string(payload.name)||'tool_output'),ts});
+          }
           t.blocks.push({
             type:'tool_result',
             tool_use_id:callId,
@@ -514,6 +534,7 @@ function codexExportCore(){
           const query=string(payload.action?.query||payload.query);
           const callId=string(payload.call_id||payload.id)||('codex-ws-'+lineIdx);
           t.blocks.push({type:'tool_use',id:callId,name:'web_search',input:query?{query}:{}});
+          toolCounts.web_search=(toolCounts.web_search||0)+1;
           const rawRes=list(payload.results||payload.action?.sources);
           if(rawRes.length){
             t.blocks.push({
@@ -542,6 +563,8 @@ function codexExportCore(){
           continue;
         }
         if(etype==='turn_aborted'){
+          abortedTurns++;
+          if(telEvents.length<20)telEvents.push({kind:'aborted',severity:'warn',label:'回合中止'+(payload.reason?': '+string(payload.reason):''),ts});
           const t=ensureTurn(ts);
           t.blocks.push({type:'text',text:'_[Turn aborted'+(payload.reason?': '+string(payload.reason):'')+']_'});
           continue;
@@ -620,6 +643,7 @@ function codexExportCore(){
             if(norm&&t.seenAssistantTexts.has(norm))continue;
             if(norm)t.seenAssistantTexts.add(norm);
             t.blocks.push({type:'text',text:'> [!NOTE]\n> **Codex Plan**\n\n'+planText});
+            planCount++;
             continue;
           }
           if(itemType==='imageview'){
@@ -652,6 +676,31 @@ function codexExportCore(){
       if(tag&&!title.includes(tag))title='['+tag+'] '+title;
     }
 
+    const tokensNorm=totalUsage?{
+      input:Number(totalUsage.input_tokens||0),
+      cachedInput:Number(totalUsage.cached_input_tokens||0),
+      output:Number(totalUsage.output_tokens||0),
+      reasoning:Number(totalUsage.reasoning_output_tokens||0),
+      total:Number(totalUsage.total_tokens||((Number(totalUsage.input_tokens)||0)+(Number(totalUsage.output_tokens)||0)))
+    }:null;
+
+    const codexTelemetry={
+      models:telModels,
+      sandboxModes,
+      approvalPolicies,
+      toolCounts,
+      reasoningCount,
+      planCount,
+      applyPatchCount,
+      execCount,
+      toolErrorCount,
+      subagentSpawns,
+      abortedTurns,
+      compactedWindows,
+      ...(tokensNorm?{tokens:tokensNorm}:{}),
+      events:telEvents
+    };
+
     const conversation={
       uuid,
       originalId:sessionId,
@@ -675,6 +724,7 @@ function codexExportCore(){
         ...(compactedWindows?{compactedWindows}:{}),
         ...(totalUsage?{usage:totalUsage}:{})
       },
+      codexTelemetry,
       importWarnings:warnings,
       chat_messages:messages
     };

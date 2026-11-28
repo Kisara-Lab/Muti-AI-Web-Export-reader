@@ -2,7 +2,6 @@ import {chromium} from 'playwright';
 import {pathToFileURL,fileURLToPath} from 'node:url';
 import path from 'node:path';
 import fs from 'node:fs/promises';
-import {demoConversations,demoMemories,demoProjects,demoDesign} from '../tests/fixtures/synthetic-readme-demo-export.mjs';
 
 const root=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..');
 const imageDir=path.join(root,'docs','images');
@@ -13,17 +12,9 @@ const browser=await chromium.launch({headless:true,...(executablePath?{executabl
 try{
   const page=await browser.newPage({viewport:{width:1440,height:900},deviceScaleFactor:1});
   await page.goto(pathToFileURL(path.join(root,'viewer.html')).href);
-  await page.evaluate(payload=>{
-    const files=[
-      new File([JSON.stringify(payload.conversations)],'conversations.json',{type:'application/json'}),
-      new File([JSON.stringify(payload.memories)],'memories.json',{type:'application/json'}),
-      new File([JSON.stringify(payload.design)],'design.json',{type:'application/json'})
-    ];
-    for(const project of payload.projects){const file=new File([JSON.stringify(project)],project.uuid+'.json',{type:'application/json'});Object.defineProperty(file,'webkitRelativePath',{value:'claude-export/projects/'+project.uuid+'.json'});files.push(file);}
-    routeDroppedFiles(files);
-  },{conversations:demoConversations,memories:demoMemories,projects:demoProjects,design:demoDesign});
-  await page.waitForFunction(expected=>allConvs.length===expected,demoConversations.length);
-  await page.locator('.conv-item').first().click();
+  await page.setInputFiles('#zip-input',path.join(root,'docs','demo','claude-rescue-reader-synthetic-demo.zip'));
+  await page.waitForFunction(()=>allConvs.length===50&&allProjects.length===5);
+  await page.locator('.conv-item').filter({hasText:'北辰咖啡'}).first().click();
   await page.waitForFunction(()=>currentConv&&currentConv.name.includes('北辰咖啡')&&document.querySelectorAll('.msg-wrap').length>=5);
   await page.waitForTimeout(500);
   await page.evaluate(()=>{document.getElementById('messages').scrollTo(0,0);});
@@ -50,5 +41,12 @@ try{
   await page.locator('.tab-btn[data-ui-value="memory"]').click();
   await page.waitForFunction(()=>document.getElementById('conv-list').textContent.includes('工作背景')&&document.getElementById('conv-list').textContent.includes('北辰咖啡'));
   await page.screenshot({path:path.join(imageDir,'memory-view.png')});
+
+  await page.locator('.tab-btn[data-ui-value="behavior"]').click();
+  await page.waitForSelector('[data-behavior-arena="true"]');
+  await page.waitForSelector('[data-behavior-codex="true"]');
+  await page.locator('[data-behavior-arena="true"]').scrollIntoViewIfNeeded();
+  await page.waitForTimeout(300);
+  await page.screenshot({path:path.join(imageDir,'behavior-arena.png')});
   console.log(`README screenshots written to ${path.relative(root,imageDir)}`);
 }finally{await browser.close();}

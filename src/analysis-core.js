@@ -58,7 +58,7 @@ function archiveAnalysisCore(){
   async function calculateProjectIndex(records,materialize,projects,memoryData,checkpoint=async()=>{}){
     projects=list(projects);const map={},evidence={},stats={};
     const normalize=value=>String(value||'').trim().replace(/^\/mnt\/project\//,'').toLowerCase().replace(/[?#].*/,''),projectList=value=>Array.isArray(value)?value:(value&&typeof value==='object'?Object.values(value):[]);
-    const docOwners=new Map();for(const project of projects){stats[project.uuid]={conversations:0,messages:0,chars:0,minDate:'',maxDate:''};for(const doc of projectList(project.docs)){if(!doc?.filename)continue;const filename=normalize(doc.filename);if(!docOwners.has(filename))docOwners.set(filename,new Set());docOwners.get(filename).add(project.uuid);}}
+    const docOwners=new Map(),wsOwners=Object.create(null);for(const project of projects){stats[project.uuid]={conversations:0,messages:0,chars:0,minDate:'',maxDate:''};if(Array.isArray(project._sourceWsIds))for(const sid of project._sourceWsIds)if(sid){wsOwners[sid]=project.uuid;wsOwners[String(sid).replace(/^cwd_/,'')]=project.uuid;}if(project.workspaceId&&!wsOwners[project.workspaceId])wsOwners[project.workspaceId]=project.uuid;for(const doc of projectList(project.docs)){if(!doc?.filename)continue;const filename=normalize(doc.filename);if(!docOwners.has(filename))docOwners.set(filename,new Set());docOwners.get(filename).add(project.uuid);}}
     const uniqueOwner=value=>{const owners=docOwners.get(normalize(value));return owners?.size===1?[...owners][0]:'';};
     const projectDocText={};for(const project of projects)projectDocText[project.uuid]=projectList(project.docs).flatMap(doc=>[doc?.filename||'',String(doc?.content||'').slice(0,2000)]).join(' ').toLowerCase();
     const stopWords=new Set('the and for with from this that project system analysis research review story world character characters setting design create help'.split(' '));
@@ -72,8 +72,9 @@ function archiveAnalysisCore(){
     for await(const record of records){
       await checkpoint();
       const conversation=materialize(record),messages=list(conversation.chat_messages),exactCandidates=new Set(),exactFiles=new Set(),queries=[];
-      const wsId=conversation.workspaceId||record.meta?.workspaceId;
-      if(wsId&&stats['grok:ws:'+wsId]){map[record.meta.uuid]='grok:ws:'+wsId;evidence[record.meta.uuid]={method:'workspace',confidence:1,files:[],queries:[],keywords:[]};}
+      const wsId=conversation.workspaceId||record.meta?.workspaceId,wsNorm=wsId?String(wsId).replace(/^cwd_/,''):'';
+      if(wsId&&(wsOwners[wsId]||wsOwners[wsNorm]||stats['ws:cwd:'+wsId]||stats['ws:cwd:'+wsNorm])){map[record.meta.uuid]=wsOwners[wsId]||wsOwners[wsNorm]||(stats['ws:cwd:'+wsId]?'ws:cwd:'+wsId:'ws:cwd:'+wsNorm);evidence[record.meta.uuid]={method:'workspace',confidence:1,files:[],queries:[],keywords:[]};}
+      else if(wsId&&stats['grok:ws:'+wsId]){map[record.meta.uuid]='grok:ws:'+wsId;evidence[record.meta.uuid]={method:'workspace',confidence:1,files:[],queries:[],keywords:[]};}
       else if(wsId&&stats['codex:cwd:'+wsId]){map[record.meta.uuid]='codex:cwd:'+wsId;evidence[record.meta.uuid]={method:'workspace',confidence:1,files:[],queries:[],keywords:[]};}
       else if(wsId&&stats['cc:cwd:'+wsId]){map[record.meta.uuid]='cc:cwd:'+wsId;evidence[record.meta.uuid]={method:'workspace',confidence:1,files:[],queries:[],keywords:[]};}
       else if(wsId&&stats['ag:cwd:'+wsId]){map[record.meta.uuid]='ag:cwd:'+wsId;evidence[record.meta.uuid]={method:'workspace',confidence:1,files:[],queries:[],keywords:[]};}

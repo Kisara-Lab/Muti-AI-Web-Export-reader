@@ -47,10 +47,10 @@ try{
     routeDroppedFiles([new File([bytes],'claude-rescue-reader-synthetic-demo.zip',{type:'application/zip'})]);
     document.getElementById('demo-file').style.opacity='0';
   },zipBase64);
-  await page.waitForFunction(()=>allConvs.length===40&&allProjects.length===4,{timeout:15_000});await pause(700);
+  await page.waitForFunction(()=>allConvs.length===50&&allProjects.length===5,{timeout:15_000});await pause(700);
 
   await caption(demoLang==='en'?'2 / 5  Open a complete conversation':'2 / 5  打开完整对话 · Open a conversation');
-  await click(page.locator('.conv-item').first());
+  await click(page.locator('.conv-item').filter({hasText:'北辰咖啡'}).first());
   await page.waitForFunction(()=>currentConv&&document.querySelectorAll('.msg-wrap').length>=5);await pause(2100);
 
   await caption(demoLang==='en'?'3 / 5  Inspect the project evidence graph':'3 / 5  检查项目证据链 · Inspect the project graph');
@@ -69,7 +69,7 @@ try{
 
   await caption(demoLang==='en'?'5 / 5  Preview a privacy-safe export':'5 / 5  预览安全脱敏 · Preview a safe export');
   await click(page.locator('.tab-btn[data-ui-value="convs"]'));
-  await click(page.locator('.conv-item').first());await page.waitForFunction(()=>currentConv);
+  await click(page.locator('.conv-item').filter({hasText:'北辰咖啡'}).first());await page.waitForFunction(()=>currentConv);
   await click(page.locator('#export-btn'));await click(page.locator('#export-menu button').nth(1));
   await page.waitForSelector('#redaction-modal .redaction-dialog');await pause(2800);
   await caption(demoLang==='en'?'Local-first · Private · Offline':'全程本地处理 · Private, offline, complete');await pause(1800);

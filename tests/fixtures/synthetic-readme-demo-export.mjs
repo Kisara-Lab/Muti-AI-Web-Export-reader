@@ -101,3 +101,159 @@ Object.assign(demoMemories.project_memories,{
 });
 demoConversations.push(...extendedScenarios.map(buildExtendedConversation));
 export const demoDesign={uuid:root+'000000000401',title:'订阅落地页视觉探索',project:{name:'北辰咖啡订阅服务'},messages:[{role:'user',content:'设计一个温暖、克制的咖啡订阅首屏。'},{role:'assistant',content:[{type:'thinking',thinking:'采用纸张暖色、有限选项和明确行动按钮。'},{type:'text',text:'首屏聚焦口味选择，不堆叠品牌宣言。'}]}]};
+
+import crypto from 'node:crypto';
+const demoMd5=s=>crypto.createHash('md5').update(s,'utf8').digest('hex');
+const demoCwd='/workspace/beichen-web';
+const demoKimiHash=demoMd5(demoCwd);
+
+export const demoMultiPlatformFiles=[
+  {
+    path:'chatgpt/conversations.json',
+    content:JSON.stringify([{
+      id:'gpt-beichen-1',
+      title:'咖啡豆烘焙温度曲线分析（ChatGPT）',
+      create_time:1751356800,
+      update_time:1751356920,
+      current_node:'gpt-a1',
+      mapping:{
+        root:{id:'root',message:null,parent:null,children:['gpt-u1']},
+        'gpt-u1':{id:'gpt-u1',parent:'root',children:['gpt-t1'],message:{id:'gpt-u1',author:{role:'user'},create_time:1751356800,content:{content_type:'text',parts:['为北辰浅烘手冲拼配生成 9 分钟烘焙升温率（RoR）参考表。']}}},
+        'gpt-t1':{id:'gpt-t1',parent:'gpt-u1',children:['gpt-a1'],message:{id:'gpt-t1',author:{role:'assistant'},create_time:1751356830,content:{content_type:'thoughts',thoughts:[{summary:'规划浅烘发展期 RoR 衰减节奏',content:'一爆前后控制在 6.5°C/min → 3.2°C/min，避免焙烤味。'}]}}},
+        'gpt-a1':{id:'gpt-a1',parent:'gpt-t1',children:[],message:{id:'gpt-a1',author:{role:'assistant'},create_time:1751356920,metadata:{model_slug:'gpt-4o'},content:{content_type:'text',parts:['| 阶段 | 豆温 | 建议 RoR |\n|---|---|---|\n| 转黄点 4:30 | 152°C | 11.5°C/min |\n| 一爆点 7:45 | 196°C | 6.2°C/min |\n| 下豆 9:05 | 204°C | 3.0°C/min |']}}}
+      }
+    }],null,2)
+  },
+  {
+    path:'grok/grok-demo.json',
+    content:JSON.stringify([{
+      conversation:{id:'grok-beichen-1',title:'浅烘产区趋势与厌氧日晒风味速览（Grok）',create_time:'2026-07-02T09:00:00Z'},
+      responses:[
+        {_id:'gr-u1',sender:'human',message:'概括今年精品订阅中最受欢迎的两类浅烘风味。',create_time:'2026-07-02T09:00:00Z'},
+        {_id:'gr-a1',sender:'assistant',model:'grok-3',message:'第一类为埃塞古吉水洗的高扬柑橘茉莉调性；第二类为哥伦比亚低强度厌氧日晒的白桃乌龙甜感，复购率最高。',create_time:'2026-07-02T09:00:08Z'}
+      ]
+    }],null,2)
+  },
+  {
+    path:'perplexity/pplx-demo.json',
+    content:JSON.stringify({
+      context_uuid:'pplx-beichen-1',
+      title:'冷萃低温萃取研磨度与浸泡时长检索（Perplexity）',
+      created_at:'2026-07-03T10:00:00Z',
+      mode:'pro',
+      display_model:'sonar-pro',
+      entries:[{
+        entry_uuid:'pe-1',
+        query_str:'冷萃咖啡在 4°C 下 12–16 小时萃取的最佳粉水比与研磨粒度？',
+        created_at:'2026-07-03T10:00:00Z',
+        blocks:[{
+          intended_usage:'ask_text',
+          markdown_block:{
+            answer:'推荐 1:10 粉水比与 900–1100 微米粗研磨；4°C 浸泡 14 小时可兼顾清晰果酸与干净尾韵。',
+            web_results:[{name:'SCA Cold Brew Extraction Notes',url:'https://example.invalid/sca-cold-brew',snippet:'Optimal grind size 950um at 4C for 14h.'}]
+          }
+        }]
+      }]
+    },null,2)
+  },
+  {
+    path:'.codex/sessions/2026/08/01/rollout-2026-08-01T10-00-00-dddd4444-4444-4444-8444-444444444444.jsonl',
+    content:[
+      {timestamp:'2026-08-01T10:00:00Z',type:'session_meta',payload:{id:'dddd4444-4444-4444-8444-444444444444',cwd:demoCwd,cli_version:'0.29.0',model:'gpt-5.3-codex',originator:'codex_cli_rs'}},
+      {timestamp:'2026-08-01T10:00:01Z',type:'turn_context',payload:{model:'gpt-5.3-codex',sandbox_mode:'workspace-write',approval_policy:'on-request'}},
+      {timestamp:'2026-08-01T10:00:02Z',type:'event_msg',payload:{type:'user_message',message:'为北辰订阅站添加冷萃萃取计算器并委派子代理审计配置'}},
+      {timestamp:'2026-08-01T10:00:03Z',type:'response_item',payload:{type:'reasoning',summary:[{type:'summary_text',text:'检查现有订阅组件并规划计算器模块'}]}},
+      {timestamp:'2026-08-01T10:00:04Z',type:'response_item',payload:{type:'function_call',call_id:'cd-sp1',name:'spawn_agent',arguments:JSON.stringify({nickname:'qa-auditor',message:'审计风味配置文件字段完整性'})}},
+      {timestamp:'2026-08-01T10:00:05Z',type:'response_item',payload:{type:'function_call_output',call_id:'cd-sp1',output:'{"agent_id":"eeee4444-4444-4444-8444-444444444444","nickname":"qa-auditor"}'}},
+      {timestamp:'2026-08-01T10:00:06Z',type:'event_msg',payload:{type:'item_completed',item:{type:'Plan',text:'Step 1: 新增 brewRatio 计算函数\nStep 2: 跑通全量测试'}}},
+      {timestamp:'2026-08-01T10:00:07Z',type:'response_item',payload:{type:'custom_tool_call',call_id:'cd-ap1',name:'apply_patch',input:'*** Begin Patch\n*** Update File: /workspace/beichen-web/src/brew.js\n@@\n+export const coldBrewRatio = 10;\n*** End Patch'}},
+      {timestamp:'2026-08-01T10:00:08Z',type:'response_item',payload:{type:'custom_tool_call_output',call_id:'cd-ap1',output:'Patched 1 file cleanly'}},
+      {timestamp:'2026-08-01T10:00:09Z',type:'response_item',payload:{type:'function_call',call_id:'cd-ex1',name:'exec_command',arguments:JSON.stringify({cmd:'npm test'})}},
+      {timestamp:'2026-08-01T10:00:10Z',type:'response_item',payload:{type:'function_call_output',call_id:'cd-ex1',output:'Process exited with code 0\nAll 24 tests passed'}},
+      {timestamp:'2026-08-01T10:00:11Z',type:'event_msg',payload:{type:'agent_message',message:'已完成冷萃萃取计算器实现，并由 qa-auditor 子代理确认配置 Schema 无误。'}},
+      {timestamp:'2026-08-01T10:00:12Z',type:'event_msg',payload:{type:'token_count',info:{total_token_usage:{input_tokens:3400,cached_input_tokens:2100,output_tokens:680,reasoning_output_tokens:240,total_tokens:4080}}}}
+    ].map(o=>JSON.stringify(o)).join('\n')
+  },
+  {
+    path:'.codex/sessions/2026/08/01/rollout-2026-08-01T10-00-04-eeee4444-4444-4444-8444-444444444444.jsonl',
+    content:[
+      {timestamp:'2026-08-01T10:00:04Z',type:'session_meta',payload:{id:'eeee4444-4444-4444-8444-444444444444',cwd:demoCwd,cli_version:'0.29.0',model:'gpt-5.3-codex',parent_thread_id:'dddd4444-4444-4444-8444-444444444444',agent_nickname:'qa-auditor'}},
+      {timestamp:'2026-08-01T10:00:05Z',type:'event_msg',payload:{type:'user_message',message:'审计风味配置文件字段完整性'}},
+      {timestamp:'2026-08-01T10:00:06Z',type:'event_msg',payload:{type:'agent_message',message:'Schema 校验全部通过：风味标签与烘焙曲线字段齐全。'}},
+      {timestamp:'2026-08-01T10:00:07Z',type:'event_msg',payload:{type:'token_count',info:{total_token_usage:{input_tokens:620,cached_input_tokens:300,output_tokens:140,total_tokens:760}}}}
+    ].map(o=>JSON.stringify(o)).join('\n')
+  },
+  {
+    path:'.claude/projects/-workspace-beichen-web/cc-beichen-1.jsonl',
+    content:[
+      {type:'user',uuid:'cc-b-u1',parentUuid:null,sessionId:'cc-beichen-1',cwd:demoCwd,timestamp:'2026-08-01T12:00:00Z',message:{role:'user',content:'检查订阅页结账表单无障碍对比度与键盘焦点'}},
+      {type:'assistant',uuid:'cc-b-a1',parentUuid:'cc-b-u1',sessionId:'cc-beichen-1',cwd:demoCwd,timestamp:'2026-08-01T12:00:02Z',message:{role:'assistant',model:'claude-sonnet-4-6',stop_reason:'tool_use',content:[{type:'thinking',thinking:'检查 checkout.css 中的 focus-visible 样式。'},{type:'tool_use',id:'cc-tu1',name:'Read',input:{file_path:'/workspace/beichen-web/src/checkout.css'}}],usage:{input_tokens:2100,output_tokens:420,cache_read_input_tokens:1500,cache_creation_input_tokens:180}}},
+      {type:'user',uuid:'cc-b-u2',parentUuid:'cc-b-a1',sessionId:'cc-beichen-1',cwd:demoCwd,timestamp:'2026-08-01T12:00:03Z',message:{role:'user',content:[{type:'tool_result',tool_use_id:'cc-tu1',content:'.btn:focus-visible { outline: 2px solid #2563eb; }'}]}},
+      {type:'assistant',uuid:'cc-b-a2',parentUuid:'cc-b-u2',sessionId:'cc-beichen-1',cwd:demoCwd,timestamp:'2026-08-01T12:00:05Z',message:{role:'assistant',model:'claude-sonnet-4-6',stop_reason:'end_turn',content:[{type:'text',text:'已验证所有按钮与表单控件均包含 WCAG 2.1 AAA 焦点轮廓，无需额外改动。'}],usage:{input_tokens:2200,output_tokens:180,cache_read_input_tokens:1800,cache_creation_input_tokens:0}}}
+    ].map(o=>JSON.stringify(o)).join('\n')
+  },
+  {
+    path:'.gemini/antigravity/brain/ffff5555-5555-4555-8555-555555555555/.system_generated/logs/transcript.jsonl',
+    content:[
+      {step_index:0,timestamp:'2026-08-01T13:00:00Z',type:'user_input',content:'<ADDITIONAL_METADATA>\nWorkspace: /workspace/beichen-web\nModel: gemini-2.5-pro\n</ADDITIONAL_METADATA>\n为 /workspace/beichen-web 生成订阅调度方案文档'},
+      {step_index:1,timestamp:'2026-08-01T13:00:02Z',type:'planner_response',model:'gemini-2.5-pro',input_tokens:1850,output_tokens:390,cache_read_tokens:900,tool_calls:[{id:'ag-tb1',name:'task_boundary',arguments:JSON.stringify({TaskName:'Subscription Scheduler Plan',Mode:'PLANNING',TaskStatus:'Drafting design doc',TaskSummary:'Reviewing cadence state machine'})},{id:'ag-wf1',name:'write_to_file',arguments:JSON.stringify({TargetFile:'/workspace/beichen-web/scheduler.md',Description:'Write scheduler spec'})}]},
+      {step_index:2,timestamp:'2026-08-01T13:00:04Z',type:'planner_response',model:'gemini-2.5-pro',input_tokens:950,output_tokens:210,cache_read_tokens:600,tool_calls:[{id:'ag-nu1',name:'notify_user',arguments:JSON.stringify({Message:'请审阅订阅周期调度实现方案 `implementation_plan.md`。',PathsToReview:['implementation_plan.md'],BlockedOnUser:true})}],content:'已在 Brain 工作区生成 `implementation_plan.md` 与 `scheduler.md` 草案。'}
+    ].map(o=>JSON.stringify(o)).join('\n')
+  },
+  {
+    path:'.gemini/antigravity/brain/ffff5555-5555-4555-8555-555555555555/implementation_plan.md',
+    content:'# 北辰咖啡订阅调度方案\n\n- 支持双周 / 四周灵活跳过与提前发货\n- 烘焙排期与库存锁定幂等重试\n'
+  },
+  {
+    path:'.gemini/tmp/beichen-web/.project_root',
+    content:demoCwd
+  },
+  {
+    path:'.gemini/tmp/beichen-web/chats/session-demo-1.json',
+    content:JSON.stringify({
+      sessionId:'gem-beichen-1',
+      projectHash:'beichen-web',
+      startTime:'2026-08-01T14:00:00Z',
+      lastUpdated:'2026-08-01T14:01:00Z',
+      messages:[
+        {id:'gm-1',timestamp:'2026-08-01T14:00:00Z',type:'user',content:'检查打包脚本是否包含离线资源校验'},
+        {id:'gm-2',timestamp:'2026-08-01T14:00:05Z',type:'gemini',model:'gemini-2.5-pro',thoughts:[{subject:'检查构建脚本',description:'核对 SHA-256 校验输出'}],toolCalls:[{id:'gt-1',name:'run_shell_command',args:{command:'npm run privacy'},status:'success',result:'Privacy guard passed'}],content:'已确认离线包内置 SHA-256 校验与隐私守卫检查通过。',tokens:{input:980,output:240,cached:400,thoughts:160,tool:80,total:1860}}
+      ]
+    },null,2)
+  },
+  {
+    path:'.kimi/config.toml',
+    content:'default_model = "kimi-k2.5"\ndefault_thinking = true\n'
+  },
+  {
+    path:'.kimi/kimi.json',
+    content:JSON.stringify({work_dirs:[{path:demoCwd,kaos:'local',last_session_id:'kimi-beichen-1'}]},null,2)
+  },
+  {
+    path:`.kimi/sessions/${demoKimiHash}/kimi-beichen-1/context.jsonl`,
+    content:[
+      {role:'user',content:'进入 Plan Mode 检查发版前 README 与演示脚本'},
+      {role:'assistant',content:[{type:'text',text:'已完成 README 双语校验与 9 平台合成归档验证。'}]}
+    ].map(o=>JSON.stringify(o)).join('\n')
+  },
+  {
+    path:`.kimi/sessions/${demoKimiHash}/kimi-beichen-1/wire.jsonl`,
+    content:[
+      {type:'metadata',protocol_version:'1.10'},
+      {timestamp:1760300001,message:{type:'TurnBegin',payload:{user_input:'进入 Plan Mode 检查发版前 README 与演示脚本'}}},
+      {timestamp:1760300002,message:{type:'PlanDisplay',payload:{file_path:'/workspace/beichen-web/.kimi/plans/release-check.md',content:'# Release Check Plan\n\n- Run docs parity\n- Capture media'}}},
+      {timestamp:1760300003,message:{type:'ToolCall',payload:{id:'km-t1',function:{name:'Shell',arguments:JSON.stringify({command:'npm run docs'})}}}},
+      {timestamp:1760300004,message:{type:'ToolResult',payload:{tool_call_id:'km-t1',return_value:{is_error:false,output:'Docs parity passed',display:[{type:'shell',command:'npm run docs',language:'bash'}]}}}},
+      {timestamp:1760300005,message:{type:'StatusUpdate',payload:{context_usage:0.28,context_tokens:35840,max_context_tokens:128000,plan_mode:true,token_usage:{input_other:1100,output:290,input_cache_read:2400,input_cache_creation:200}}}},
+      {timestamp:1760300006,message:{type:'TurnEnd',payload:{}}}
+    ].map(o=>JSON.stringify(o)).join('\n')
+  },
+  {
+    path:`.kimi/sessions/${demoKimiHash}/kimi-beichen-1/subagents/docs-auditor/context.jsonl`,
+    content:[
+      {role:'user',content:'核对双语徽章与基准测试数据行'},
+      {role:'assistant',content:[{type:'text',text:'6 枚徽章与 50/150/300 MiB 基准数据核对一致。'}]}
+    ].map(o=>JSON.stringify(o)).join('\n')
+  }
+];
+

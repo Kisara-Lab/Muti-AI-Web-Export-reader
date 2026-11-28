@@ -793,6 +793,7 @@ function kimiCliExportCore(){
         isStub,
         isSubagent,
         ...(agentSubId?{agentId:agentSubId}:{}),
+        ...(isSubagent&&sidHint?{parentThreadId:sidHint}:{}),
         ...(cfg.planDoc?{planArtifact:{slug:string(stateObj.plan_slug||'plan'),name:(stateObj.plan_slug||'plan')+'.md',content:cfg.planDoc}}:latestPlanDisplay?{planArtifact:latestPlanDisplay}:{}),
         rotatedBackupCount,
         checkpointCount,

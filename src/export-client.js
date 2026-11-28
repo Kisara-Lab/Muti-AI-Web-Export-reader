@@ -81,7 +81,7 @@ async function appendExportPackage(file,button,files){
   if(result.duplicate||result.parsed?.duplicate){button.textContent=t('重复包，已跳过');return;}
   const parsed=result.parsed;session.packages.push({id:result.id,filename:result.filename});
   (session.resources??=[]).push(...(result.resources||[]));
-  for(const p of result.projects){const old=allProjects.find(x=>x.uuid===p.uuid);if(!old)allProjects.push(p);else if(JSON.stringify(old)!==JSON.stringify(p))session.errors.push(t('同一标识存在不同内容，已保留来源版本')+': '+p.name),old._sourceVariants=[...(old._sourceVariants||[]),{source:result.filename,value:p}];}
+  mergeImportedProjects(result.projects,result.filename,session);
   if(result.legacyMemory){(session.legacyMemories??=[]).push({source:result.filename,value:result.legacyMemory});memoryData=memoryData?{...memoryData,conversations_memory:[memoryData.conversations_memory,result.legacyMemory.conversations_memory].filter(Boolean).join('\n\n'),project_memories:{...memoryData.project_memories,...result.legacyMemory.project_memories}}:result.legacyMemory;}
   session.topics.push(...result.memories);session.artifacts.push(...result.artifacts.map(a=>({...a,packageId:result.id,source:result.filename})));session.users.push(...result.users);session.logins.push(...result.logins);
   allConvs=parsed.conversations.filter(c=>!c._design);allDesigns=parsed.conversations.filter(c=>c._design);loadedSummary={totalMsgs:parsed.totalMsgs,minDate:parsed.minDate,maxDate:parsed.maxDate};lastConversationUuid=findLastConversationUuid(allConvs);
