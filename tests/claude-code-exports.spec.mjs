@@ -129,3 +129,59 @@ test('Claude Code Alpha banner renders on Welcome, imports session/subagent/memo
   expect(errors).toEqual([]);
   expect(network).toEqual([]);
 });
+
+test('Claude Code Behavior Lab renders telemetry, refusals, fallback swaps, interceptors, and interactive session jumps',async({page})=>{
+  const errors=[],network=[];
+  page.on('pageerror',error=>errors.push(error.message));
+  page.on('request',request=>{const u=request.url();if(/^https?:/.test(u)&&!/^https:\/\/(?:cdnjs\.cloudflare\.com|cdn\.jsdelivr\.net)\//.test(u))network.push(u);});
+  await setup(page);
+  const lines=[
+    {type:'permission-mode',permissionMode:'auto',sessionId:'cc-beh-1'},
+    {type:'attachment',sessionId:'cc-beh-1',timestamp:'2026-06-03T08:00:00Z',attachment:{type:'auto_mode',autoModeConsentFlow:false,bashFirst:true,bashFirstSteer:'relaxed',steerOnly:true,bypass:false}},
+    {type:'api-request-shape',sessionId:'cc-beh-1',shapeHash:'s1',shape:{system:[],tools:[]}},
+    {type:'api-request-blob',sessionId:'cc-beh-1',hash:'b1',message:{}},
+    {type:'api-request',sessionId:'cc-beh-1',id:'r1',timestamp:'2026-06-03T08:00:01Z',querySource:'sdk',cacheControl:[{path:['system',0]}],params:{model:'claude-opus-5-5',output_config:{effort:'medium'},thinking:{type:'adaptive',display:'updates'},betas:['claude-code-20250219','fallback-credit-2026-06-01']}},
+    {type:'user',sessionId:'cc-beh-1',uuid:'u1',parentUuid:null,cwd:'/workspace/beh-repo',timestamp:'2026-06-03T08:00:02Z',message:{role:'user',content:'Audit classifier & fallback behavior'}},
+    {type:'assistant',sessionId:'cc-beh-1',uuid:'a1',parentUuid:'u1',serverClassifierRequest:'cls-req-1',requestedModel:'claude-opus-5-5',timestamp:'2026-06-03T08:00:03Z',message:{id:'m1',model:'claude-opus-5-5',stop_reason:'tool_use',usage:{input_tokens:200,output_tokens:20},content:[{type:'tool_use',id:'t1',name:'Bash',input:{command:'ls -la'}}]}},
+    {type:'user',sessionId:'cc-beh-1',uuid:'u2',parentUuid:'a1',timestamp:'2026-06-03T08:00:04Z',message:{role:'user',content:[{type:'tool_result',tool_use_id:'t1',is_error:true,content:'Blocked'}]},toolUseResult:'Error: Permission for this action was denied by the Claude Code auto mode classifier [Production Deploy].'},
+    {type:'assistant',sessionId:'cc-beh-1',uuid:'a2',parentUuid:'u2',serverClassifierRequest:'cls-req-2',requestedModel:'claude-opus-5-5',timestamp:'2026-06-03T08:00:05Z',message:{id:'m2',model:'claude-opus-5-5',stop_reason:'refusal',usage:{input_tokens:300,output_tokens:15},content:[{type:'text',text:'Blocked by safeguards'}]}},
+    {type:'system',subtype:'informational',level:'notice',sessionId:'cc-beh-1',timestamp:'2026-06-03T08:00:06Z',content:"Opus 5.5's safeguards stopped the response above — continuing once with that noted"},
+    {type:'assistant',sessionId:'cc-beh-1',uuid:'a3',parentUuid:'a2',requestedModel:'claude-opus-5-5',timestamp:'2026-06-03T08:00:07Z',message:{id:'m3',model:'claude-opus-4-8',stop_reason:'end_turn',usage:{input_tokens:300,cache_read_input_tokens:900,output_tokens:60},content:[{type:'text',text:'Completed on fallback model.'}]}},
+    {type:'system',subtype:'compact_boundary',sessionId:'cc-beh-1',compactMetadata:{trigger:'auto',preTokens:35000},timestamp:'2026-06-03T08:00:08Z'},
+    {type:'cost-state',sessionId:'cc-beh-1',totalCostUSD:0.321,totalAPIDuration:4800,totalAPIDurationWithoutRetries:3600,totalToolDuration:600,totalDuration:6000,totalLinesAdded:14,totalLinesRemoved:4,modelUsage:{'claude-opus-5-5':{inputTokens:800,outputTokens:95,cacheReadInputTokens:900,cacheCreationInputTokens:0}}}
+  ].map(o=>JSON.stringify(o)).join('\n');
+
+  const zip=new JSZip();
+  zip.file('-workspace-beh-repo/cc-beh-1.jsonl',lines);
+  await page.setInputFiles('#zip-input',{name:'cc-behavior-sample.zip',mimeType:'application/zip',buffer:await zip.generateAsync({type:'nodebuffer'})});
+  await page.waitForFunction(()=>exportSession.packages.length===1&&allConvs.length===1);
+
+  await page.click('.tab-btn[data-ui-value="behavior"]');
+  await page.waitForFunction(()=>behaviorResult?.claudeCode?.sessions===1,{timeout:15_000});
+
+  const ccSec=page.locator('[data-behavior-cc="true"]');
+  await expect(ccSec).toBeVisible();
+  await expect(ccSec).toContainText('Claude Code α 专项观测台');
+  await expect(ccSec).toContainText('claude-opus-5-5 → claude-opus-4-8');
+  await expect(ccSec).toContainText('Production Deploy');
+  await expect(ccSec).toContainText('fallback-credit');
+  await expect(ccSec).toContainText('Cache 53%');
+
+  // Verify English translation switch keeps Behavior Lab Claude Code section clean
+  await page.click('#lang-btn');
+  await expect(page.locator('[data-behavior-cc="true"]')).toContainText('Claude Code α Observability');
+  await expect(page.locator('[data-behavior-cc="true"]')).toContainText('Model Fallback & Retry Overhead');
+
+  // Interactive event jump opens conversation in Reader
+  await page.locator('[data-ui-click="behavior-open"]').first().click();
+  await expect(page.locator('#messages .msg-wrap')).toHaveCount(2);
+
+  // Safe Export must omit claudeCodeTelemetry
+  const safeMd=await page.evaluate(async()=>(await (await featureRequest('task','export',{uuid:'cc:cc-beh-1',safe:true})).blob.text()));
+  expect(safeMd).not.toContain('claudeCodeTelemetry');
+  expect(safeMd).not.toContain('fallback-credit');
+
+  expect(errors).toEqual([]);
+  expect(network).toEqual([]);
+});
+
