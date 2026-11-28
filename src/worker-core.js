@@ -156,10 +156,38 @@ function redactConversation(conv,style='standard',strict=false,options={}){const
     const ag={sessions:0,brainOnlySessions:0,models:{},transcriptSources:{},totalSteps:0,truncatedSteps:0,runningSteps:0,errorSteps:0,maxPlannerStreak:0,runawaySessions:0,notifyGates:0,taskBoundaryCount:0,subagentSpawns:0,pbSkipped:0,artifactsCount:0,bookmarksCount:0,phases:{PLANNING:0,EXECUTION:0,VERIFICATION:0,OTHER:0},tokens:{input:0,output:0,cached:0,total:0},toolCounts:{},toolErrorCounts:{},events:[]};
     const gem={sessions:0,subagentSessions:0,models:{},rewindCount:0,patchCount:0,setCount:0,filesModifiedCount:0,toolStatusCounts:{success:0,error:0,cancelled:0,awaiting_approval:0,other:0},toolNameCounts:{},tokens:{input:0,output:0,cached:0,thoughts:0,tool:0,total:0},events:[]};
     const kimi={sessions:0,stubSessions:0,subagentSessions:0,planSessions:0,yoloSessions:0,afkSessions:0,models:{},wireVersions:{},rotatedBackups:0,compactionCount:0,stepRetryCount:0,btwCount:0,steerCount:0,peakContextUsage:0,peakContextTokens:0,approvalCounts:{approve:0,approve_for_session:0,reject:0,requests:0},hookCounts:{triggered:0,allow:0,block:0},tokens:{inputOther:0,output:0,cacheRead:0,cacheCreate:0,total:0},events:[]};
+    const codex={sessions:0,subagentSessions:0,cliVersions:{},originators:{},models:{},sandboxModes:{},approvalPolicies:{},reasoningCount:0,planCount:0,applyPatchCount:0,execCount:0,toolErrorCount:0,subagentSpawns:0,abortedTurns:0,compactedWindows:0,tokens:{input:0,cachedInput:0,output:0,reasoning:0,total:0},toolCounts:{},events:[]};
     const mergeMap=(target,src)=>{if(!src||typeof src!=='object')return;for(const [k,v]of Object.entries(src))if(typeof v==='number'&&Number.isFinite(v))target[k]=(target[k]||0)+v;};
     const stable=value=>{if(Array.isArray(value))return value.map(stable);if(value&&typeof value==='object'){const result={};for(const key of Object.keys(value).sort())result[key]=stable(value[key]);return result;}return value;},different=(a,b)=>JSON.stringify(stable(a))!==JSON.stringify(stable(b));
     const uses=new Map(),results=new Map(),refusal=/(?:我(?:不能|无法|不可以|不会)(?:帮助|协助|提供|执行|生成|完成)|抱歉[^。！？\n]{0,40}(?:不能|无法)|\b(?:can't|cannot|won't|unable to)\s+(?:help|assist|provide|comply|create|generate|do that)\b)/iu,fallback=/(?:当前模型|这个模型|能力受限|降级模式|只能提供[^。！？\n]{0,18}(?:概括|一般性信息|高层次建议))|\b(?:as an ai|language model|model limitation|not available in this mode)\b/iu;
     for await(const record of records){out.conversations++;const conversation=JSON.parse(record.raw),messages=list(conversation.chat_messages);out.messages+=messages.length;
+      if(conversation.sourcePlatform==='codex'){
+        codex.sessions++;const meta=conversation.codexMeta||{},tel=conversation.codexTelemetry||{};
+        if(meta.parentThreadId||meta.agentPath||meta.agentNickname)codex.subagentSessions++;
+        if(meta.cliVersion){const cv=String(meta.cliVersion);codex.cliVersions[cv]=(codex.cliVersions[cv]||0)+1;}
+        if(meta.originator){const og=String(meta.originator);codex.originators[og]=(codex.originators[og]||0)+1;}
+        if(conversation.defaultModel){const dm=String(conversation.defaultModel);codex.models[dm]=(codex.models[dm]||0)+1;}
+        for(const m of list(tel.models))if(m&&m!==conversation.defaultModel)codex.models[m]=(codex.models[m]||0)+1;
+        mergeMap(codex.sandboxModes,tel.sandboxModes);mergeMap(codex.approvalPolicies,tel.approvalPolicies);mergeMap(codex.toolCounts,tel.toolCounts);
+        codex.reasoningCount+=Number(tel.reasoningCount||0);
+        codex.planCount+=Number(tel.planCount||0);
+        codex.applyPatchCount+=Number(tel.applyPatchCount||0);
+        codex.execCount+=Number(tel.execCount||0);
+        codex.toolErrorCount+=Number(tel.toolErrorCount||0);
+        codex.subagentSpawns+=Number(tel.subagentSpawns||0);
+        codex.abortedTurns+=Number(tel.abortedTurns||0);
+        codex.compactedWindows+=Number(tel.compactedWindows||meta.compactedWindows||0);
+        if(tel.tokens)mergeMap(codex.tokens,tel.tokens);
+        else if(meta.usage){
+          const u=meta.usage;
+          codex.tokens.input+=Number(u.input_tokens||0);
+          codex.tokens.cachedInput+=Number(u.cached_input_tokens||0);
+          codex.tokens.output+=Number(u.output_tokens||0);
+          codex.tokens.reasoning+=Number(u.reasoning_output_tokens||0);
+          codex.tokens.total+=Number(u.total_tokens||((Number(u.input_tokens)||0)+(Number(u.output_tokens)||0)));
+        }
+        for(const ev of list(tel.events))codex.events.push({uuid:conversation.uuid,title:conversation.name||'',...ev});
+      }
       if(conversation.sourcePlatform==='kimi_cli'){
         kimi.sessions++;const tel=conversation.kimiCliTelemetry||{};
         if(tel.isStub)kimi.stubSessions++;
@@ -239,6 +267,9 @@ function redactConversation(conv,style='standard',strict=false,options={}){const
     kimi.events.sort((a,b)=>(sevRank[b.severity]||0)-(sevRank[a.severity]||0)||String(b.ts||'').localeCompare(String(a.ts||'')));
     if(kimi.events.length>40)kimi.events.length=40;
     if(kimi.sessions>0)out.kimiCli=kimi;
+    codex.events.sort((a,b)=>(sevRank[b.severity]||0)-(sevRank[a.severity]||0)||String(b.ts||'').localeCompare(String(a.ts||'')));
+    if(codex.events.length>40)codex.events.length=40;
+    if(codex.sessions>0)out.codex=codex;
     for(const id of uses.keys())if(results.has(id))out.paired++;else out.unpairedUse++;for(const id of results.keys())if(!uses.has(id))out.unpairedResult++;return out;
   }
 

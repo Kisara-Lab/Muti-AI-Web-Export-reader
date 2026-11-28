@@ -128,7 +128,7 @@ test('embedded ZIP import works offline and retries a damaged selection without 
   await expect(page.locator('#load-zip-btn')).toContainText('ZIP');
   await page.waitForFunction(()=>!document.querySelector('#load-zip-btn .spinner'));
   await page.setInputFiles('#zip-input',path.join(root,'docs/demo/claude-rescue-reader-synthetic-demo.zip'));
-  await page.waitForFunction(()=>allConvs.length===40);expect(attempts).toBe(0);
+  await page.waitForFunction(()=>allConvs.length===50);expect(attempts).toBe(0);
 });
 
 test('tampered optional scripts fail integrity and can recover without refresh',async({page})=>{

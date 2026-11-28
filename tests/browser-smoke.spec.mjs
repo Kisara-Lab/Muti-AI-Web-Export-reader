@@ -57,8 +57,8 @@ test('ZIP import',async({page})=>{const errors=await openViewer(page);await page
 
 test('committed synthetic demo ZIP exercises a mature archive shape',async({page})=>{
   const errors=await openViewer(page);await page.setInputFiles('#zip-input',path.join(root,'docs','demo','claude-rescue-reader-synthetic-demo.zip'));
-  await page.waitForFunction(()=>allConvs.length===40&&allProjects.length===4);
-  expect(await page.evaluate(()=>({summaries:allConvs.filter(c=>c.summary).length,projects:Object.keys(memoryData?.project_memories||{}).length}))).toEqual({summaries:40,projects:4});
+  await page.waitForFunction(()=>allConvs.length===50&&allProjects.length===5);
+  expect(await page.evaluate(()=>({summaries:allConvs.filter(c=>c.summary).length,projects:Object.keys(memoryData?.project_memories||{}).length,platforms:new Set(allConvs.map(c=>c.sourcePlatform)).size}))).toEqual({summaries:40,projects:4,platforms:9});
   await page.locator('.tab-btn[data-ui-value="projects"]').click();await page.waitForFunction(()=>convProjectMapReady);await page.locator('.proj-card').first().click();await page.waitForFunction(()=>document.querySelectorAll('.match-panel').length>=3);
   expect(await page.evaluate(()=>[...new Set(Object.values(convProjectEvidence).map(item=>item.method))].sort())).toEqual(expect.arrayContaining(['file','knowledge','keyword']));expect(errors).toEqual([]);
 });
