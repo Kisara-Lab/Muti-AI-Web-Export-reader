@@ -63,8 +63,8 @@ const IDENTIFIER_KEY=/^(?:device[_ -]?id|user[_ -]?id|visitor[_ -]?id|session[_ 
 const CONTEXT_SECRET_RE=/((?:(?:cohere)[ \t]+(?:api[ \t]+)?key|device[_ -]?id|user[_ -]?id|visitor[_ -]?id|fingerprint|session[_ -]?id|storage[_ -]?key|access[_ -]?token|refresh[_ -]?token|auth[_ -]?token|id[_ -]?token|client[_ -]?secret|api[_ -]?key|access[_ -]?key|private[_ -]?key|aws[_ -]?secret[_ -]?access[_ -]?key|db[_ -]?password|password|passwd|pwd|passphrase|token|secret|did|密码|口令|密钥)\s*["']?\s*[:=：]\s*)(?:"([^"\r\n]+)"|'([^'\r\n]+)'|([^\s,"'，。；;<>\]}]+))/gi;
 const QUERY_SECRET_RE=/([?&#](?:token|access_token|refresh_token|id_token|auth|authorization|api[_-]?key|key|sid|session|device_id|did|t|sig|signature|x-amz-signature|x-amz-credential|x-amz-security-token|x-goog-signature|x-goog-credential)=)([^\s&#"'<>）)\]}]+)/gi;
 const STRICT_CONTEXT_RE=/((?:姓名|名字|联系人|老师|教师|教授|班主任|校长|学校|学院|大学|中学|小学|幼儿园|公司|单位|部门|微信|wechat|qq|微博|抖音|uid|用户[_ -]?id|account[_ -]?id|open[_ -]?id|social[_ -]?id|身份证(?:号)?|护照(?:号)?|passport(?:[ \t]+(?:no|number))?|ssn|住址|地址|家庭住址|工作地址|full[_ -]?name|phone|telephone|mobile|address)\s*[：:=]\s*["']?)([^\s,"'，。；;]{2,80})/gi;
-const REDACTION_METADATA=new Set(['tool_input','input','metadata','file_path','path','claudeCodeTelemetry']);
-const REDACTION_PATH_KEYS=new Set('conversation name title summary chat_messages content text thinking prompt injection_source summaries attachments files file_name filename file_type file_size media_type url uri data value metadata tool_input input path file_path account uuid parent_message_uuid sender type structured_content display_content output created_at updated_at start_timestamp stop_timestamp tool_use_id id model thinking_hidden truncated signature _design _sourcePackage'.split(' '));
+const REDACTION_METADATA=new Set(['tool_input','input','metadata','file_path','path','claudeCodeTelemetry','antigravityTelemetry','geminiCliTelemetry','TargetFile','AbsolutePath','Cwd','DirectoryPath','SearchDirectory']);
+const REDACTION_PATH_KEYS=new Set('conversation name title summary chat_messages content text thinking subject description prompt injection_source summaries attachments files file_name filename file_type file_size media_type url uri data value metadata tool_input input path file_path filePath TargetFile AbsolutePath Cwd CommandLine account uuid parent_message_uuid sender type structured_content display_content output created_at updated_at start_timestamp stop_timestamp tool_use_id id model thinking_hidden truncated signature _design _sourcePackage'.split(' '));
 function redactionOptions(options={}){
   const terms=Array.isArray(options.customTerms)?options.customTerms:String(options.customTerms||'').split(/\r?\n/);
   const customTerms=[...new Set(terms.filter(s=>typeof s==='string').map(s=>s.trim()).filter(Boolean))];
@@ -153,10 +153,34 @@ function redactConversation(conv,style='standard',strict=false,options={}){const
   async function behavior(records,checkpoint){
     const out={conversations:0,messages:0,tools:0,toolResults:0,paired:0,unpairedUse:0,unpairedResult:0,errors:0,approvals:0,mcp:0,structured:0,hiddenResults:0,thinking:0,thinkingHidden:0,thinkingTruncated:0,thinkingCutoff:0,thinkingSummary:0,thinkingSigned:0,thinkingDurationMs:0,quality:{refusal:0,fallback:0,latency:0,empty:0,truncated:0},examples:[]};
     const cc={sessions:0,subagentSessions:0,agentTypes:{},models:{},telemetry:{recordTypes:{},attachmentTypes:{},apiRequests:0,querySources:{},efforts:{},thinkingConfigs:{},betas:{},cacheControlBreakpoints:0},refusals:{stopRefusal:0,syntheticErrors:0,safeguardNotices:0,noFallback:0,apiErrors:0,userInterrupts:0,categories:{}},fallbacks:{modelSwaps:{},modelSwapCount:0,fallbackCreditRequests:0,noFallbackCount:0},interceptors:{serverClassifierRequests:0,serverClassifierRefusals:0,autoModeDenials:0,autoModeRules:{},hookBlocks:0,stopHooksPrevented:0,hookErrors:0,manualDenials:0,autoModeProfiles:{},modes:{},permissionModes:{}},efficiency:{totalCostUSD:0,costSessions:0,inputTokens:0,outputTokens:0,cacheReadTokens:0,cacheCreateTokens:0,linesAdded:0,linesRemoved:0,apiDurationMs:0,apiNoRetryMs:0,retryOverheadMs:0,toolDurationMs:0,totalDurationMs:0},compaction:{boundaries:0,microBoundaries:0,preTokensSum:0,preTokensMax:0,preTokensCount:0,queuedPrompts:0},events:[]};
+    const ag={sessions:0,brainOnlySessions:0,models:{},transcriptSources:{},totalSteps:0,truncatedSteps:0,runningSteps:0,errorSteps:0,maxPlannerStreak:0,runawaySessions:0,notifyGates:0,taskBoundaryCount:0,subagentSpawns:0,pbSkipped:0,artifactsCount:0,bookmarksCount:0,phases:{PLANNING:0,EXECUTION:0,VERIFICATION:0,OTHER:0},tokens:{input:0,output:0,cached:0,total:0},toolCounts:{},toolErrorCounts:{},events:[]};
+    const gem={sessions:0,subagentSessions:0,models:{},rewindCount:0,patchCount:0,setCount:0,filesModifiedCount:0,toolStatusCounts:{success:0,error:0,cancelled:0,awaiting_approval:0,other:0},toolNameCounts:{},tokens:{input:0,output:0,cached:0,thoughts:0,tool:0,total:0},events:[]};
     const mergeMap=(target,src)=>{if(!src||typeof src!=='object')return;for(const [k,v]of Object.entries(src))if(typeof v==='number'&&Number.isFinite(v))target[k]=(target[k]||0)+v;};
     const stable=value=>{if(Array.isArray(value))return value.map(stable);if(value&&typeof value==='object'){const result={};for(const key of Object.keys(value).sort())result[key]=stable(value[key]);return result;}return value;},different=(a,b)=>JSON.stringify(stable(a))!==JSON.stringify(stable(b));
     const uses=new Map(),results=new Map(),refusal=/(?:我(?:不能|无法|不可以|不会)(?:帮助|协助|提供|执行|生成|完成)|抱歉[^。！？\n]{0,40}(?:不能|无法)|\b(?:can't|cannot|won't|unable to)\s+(?:help|assist|provide|comply|create|generate|do that)\b)/iu,fallback=/(?:当前模型|这个模型|能力受限|降级模式|只能提供[^。！？\n]{0,18}(?:概括|一般性信息|高层次建议))|\b(?:as an ai|language model|model limitation|not available in this mode)\b/iu;
     for await(const record of records){out.conversations++;const conversation=JSON.parse(record.raw),messages=list(conversation.chat_messages);out.messages+=messages.length;
+      if(conversation.sourcePlatform==='antigravity'){
+        ag.sessions++;const meta=conversation.antigravityMeta||{},tel=conversation.antigravityTelemetry||{};
+        if(meta.transcriptSource){const tsKey=String(meta.transcriptSource);ag.transcriptSources[tsKey]=(ag.transcriptSources[tsKey]||0)+1;if(tsKey==='brain_only')ag.brainOnlySessions++;}
+        if(conversation.defaultModel){const dm=String(conversation.defaultModel);ag.models[dm]=(ag.models[dm]||0)+1;}
+        for(const m of list(tel.modelSwitches))ag.models[m]=(ag.models[m]||0)+1;
+        ag.totalSteps+=Number(tel.totalSteps||0);ag.truncatedSteps+=Number(tel.truncatedSteps||0);ag.runningSteps+=Number(tel.runningSteps||0);ag.errorSteps+=Number(tel.errorSteps||0);
+        const streak=Number(tel.maxPlannerStreak||0);if(streak>ag.maxPlannerStreak)ag.maxPlannerStreak=streak;if(streak>=8)ag.runawaySessions++;
+        ag.notifyGates+=Number(tel.notifyGates||0);ag.taskBoundaryCount+=Number(tel.taskBoundaryCount||0);ag.subagentSpawns+=Number(tel.subagentSpawns||0);
+        if(Number(tel.pbSkipped||0)>ag.pbSkipped)ag.pbSkipped=Number(tel.pbSkipped||0);
+        ag.artifactsCount+=list(meta.brainArtifacts).length;ag.bookmarksCount+=list(meta.urlBookmarks).length;
+        mergeMap(ag.phases,tel.phases);mergeMap(ag.tokens,tel.tokens);mergeMap(ag.toolCounts,tel.toolCounts);mergeMap(ag.toolErrorCounts,tel.toolErrorCounts);
+        for(const ev of list(tel.events))ag.events.push({uuid:conversation.uuid,title:conversation.name||'',...ev});
+      }
+      if(conversation.sourcePlatform==='gemini_cli'){
+        gem.sessions++;const tel=conversation.geminiCliTelemetry||{};
+        if(tel.isSubagent)gem.subagentSessions++;
+        if(conversation.defaultModel){const dm=String(conversation.defaultModel);gem.models[dm]=(gem.models[dm]||0)+1;}
+        for(const m of list(tel.models))if(m&&m!==conversation.defaultModel)gem.models[m]=(gem.models[m]||0)+1;
+        gem.rewindCount+=Number(tel.rewindCount||0);gem.patchCount+=Number(tel.patchCount||0);gem.setCount+=Number(tel.setCount||0);gem.filesModifiedCount+=Number(tel.filesModifiedCount||0);
+        mergeMap(gem.toolStatusCounts,tel.toolStatusCounts);mergeMap(gem.toolNameCounts,tel.toolNameCounts);mergeMap(gem.tokens,tel.tokens);
+        for(const ev of list(tel.events))gem.events.push({uuid:conversation.uuid,title:conversation.name||'',...ev});
+      }
       if(conversation.sourcePlatform==='claude_code'){
         cc.sessions++;const meta=conversation.claudeCodeMeta||{},tel=conversation.claudeCodeTelemetry||{};
         if(meta.isSubagent){cc.subagentSessions++;const at=String(meta.agentType||meta.agentNickname||'subagent');cc.agentTypes[at]=(cc.agentTypes[at]||0)+1;}
@@ -185,6 +209,12 @@ function redactConversation(conv,style='standard',strict=false,options={}){const
     cc.events.sort((a,b)=>(sevRank[b.severity]||0)-(sevRank[a.severity]||0)||String(b.ts||'').localeCompare(String(a.ts||'')));
     if(cc.events.length>40)cc.events.length=40;
     if(cc.sessions>0)out.claudeCode=cc;
+    ag.events.sort((a,b)=>(sevRank[b.severity]||0)-(sevRank[a.severity]||0)||String(b.ts||'').localeCompare(String(a.ts||'')));
+    if(ag.events.length>40)ag.events.length=40;
+    if(ag.sessions>0)out.antigravity=ag;
+    gem.events.sort((a,b)=>(sevRank[b.severity]||0)-(sevRank[a.severity]||0)||String(b.ts||'').localeCompare(String(a.ts||'')));
+    if(gem.events.length>40)gem.events.length=40;
+    if(gem.sessions>0)out.geminiCli=gem;
     for(const id of uses.keys())if(results.has(id))out.paired++;else out.unpairedUse++;for(const id of results.keys())if(!uses.has(id))out.unpairedResult++;return out;
   }
 
@@ -202,7 +232,7 @@ async function markdown(conv,mode,choices,checkpoint){  // Build linear thread (
     if(!msg||typeof msg!=='object')continue;
     if(msg._divider==='linear'){md+='## ⚠️ '+t('对话分支结构异常，已按时间顺序展示全部消息')+'\n\n';continue;}
     if(msg._divider==='orphan'){md+='## 🧩 '+t('以下消息无法归入对话分支（可能是已删除分支的残留）')+' ('+msg.count+')\n\n';continue;}
-    const role='**'+(msg.sender==='human'?t('你'):msg.sender==='assistant'?(conv.sourcePlatform==='gpt'?'ChatGPT':conv.sourcePlatform==='grok'?'Grok':conv.sourcePlatform==='perplexity'?'Perplexity':conv.sourcePlatform==='codex'?'Codex':conv.sourcePlatform==='claude_code'?'Claude Code':'Claude'):msg.sender)+'**';
+    const role='**'+(msg.sender==='human'?t('你'):msg.sender==='assistant'?(conv.sourcePlatform==='gpt'?'ChatGPT':conv.sourcePlatform==='grok'?'Grok':conv.sourcePlatform==='perplexity'?'Perplexity':conv.sourcePlatform==='codex'?'Codex':conv.sourcePlatform==='claude_code'?'Claude Code':conv.sourcePlatform==='antigravity'?'Antigravity':conv.sourcePlatform==='gemini_cli'?'Gemini CLI':'Claude'):msg.sender)+'**';
     md+=role+' · '+fmtTime(msg.created_at)+'\n\n';
     // Attachments
     for(const att of[...(msg.attachments||[]),...(msg.files||[])]){
@@ -221,6 +251,20 @@ async function markdown(conv,mode,choices,checkpoint){  // Build linear thread (
     }
     if(!hasContent&&msg.text)md+=msg.text+'\n\n';
     md+='---\n\n';
+  }
+  const agMeta=conv.antigravityMeta;
+  if(agMeta&&Array.isArray(agMeta.brainArtifacts)&&agMeta.brainArtifacts.length){
+    md+='## Brain Artifacts\n\n';
+    for(const art of agMeta.brainArtifacts){
+      md+='### '+art.name+'\n\n'+(art.content||'')+'\n\n';
+    }
+  }
+  if(agMeta&&Array.isArray(agMeta.urlBookmarks)&&agMeta.urlBookmarks.length){
+    md+='## URL Bookmarks\n\n';
+    for(const u of agMeta.urlBookmarks){
+      md+='- ['+(u.title||u.url)+']('+u.url+')'+(u.description?' — '+u.description:'')+'\n';
+    }
+    md+='\n';
   }
 
 
@@ -320,7 +364,7 @@ function configureMarked(){
 const trees=new WeakMap();
 function tree(conv,mode='longest',choices={}){
   const messages=conv.chat_messages||[];
-  if(mode!=='full'&&(conv.sourcePlatform==='gpt'||conv.sourcePlatform==='grok')&&conv.defaultPath?.length){const defaults={};const groups=new Map();for(const message of messages){const parent=message.parent_message_uuid||ROOT_ID;if(!groups.has(parent))groups.set(parent,[]);groups.get(parent).push(message);}for(const siblings of groups.values())siblings.sort((a,b)=>(Date.parse(a.created_at)||0)-(Date.parse(b.created_at)||0));const preferred=new Set(conv.defaultPath);for(const [parent,siblings]of groups){const selected=siblings.findIndex(message=>preferred.has(message.uuid));if(selected>=0)defaults[parent]=selected;}choices={...defaults,...choices};}
+  if(mode!=='full'&&(conv.sourcePlatform==='gpt'||conv.sourcePlatform==='grok'||conv.sourcePlatform==='gemini_cli')&&conv.defaultPath?.length){const defaults={};const groups=new Map();for(const message of messages){const parent=message.parent_message_uuid||ROOT_ID;if(!groups.has(parent))groups.set(parent,[]);groups.get(parent).push(message);}for(const siblings of groups.values())siblings.sort((a,b)=>(Date.parse(a.created_at)||0)-(Date.parse(b.created_at)||0));const preferred=new Set(conv.defaultPath);for(const [parent,siblings]of groups){const selected=siblings.findIndex(message=>preferred.has(message.uuid));if(selected>=0)defaults[parent]=selected;}choices={...defaults,...choices};}
   let index=trees.get(messages);
   if(!index){
     const byId=new Map(),children=new Map(),roots=[],times=messages.map(m=>Date.parse(m?.created_at||'')||0);

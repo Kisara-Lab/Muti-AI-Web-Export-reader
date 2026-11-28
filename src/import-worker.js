@@ -83,7 +83,7 @@ function importWorkerMain(){
         };
         const stripWrapperRoot=rawFiles=>{
           let currentFiles=normalizeEntryPaths(rawFiles);
-          const reserved=['areas','projects','artifacts','memories','memory','sessions','archived_sessions','dalle-generations','sites','prod-mc-asset-server'];
+          const reserved=['areas','projects','artifacts','memories','memory','sessions','archived_sessions','dalle-generations','sites','prod-mc-asset-server','brain','annotations','conversations','tmp','antigravity','antigravity-cli','antigravity-ide','jetski'];
           for(let depth=0;depth<6;depth++){
             const names=Object.keys(currentFiles);
             if(!names.length)break;
@@ -128,10 +128,44 @@ function importWorkerMain(){
         }
         const entries=Object.keys(files).filter(n=>!files[n].dir&&!n.startsWith('__MACOSX/'));for(const name of entries){if(/^\/|^[A-Za-z]:/.test(name))throw new Error('Invalid export path');format.logicalPath(String(files[name].unsafeOriginalName||name).replace(/\\/g,'/').replace(/\/+/g,'/'));}
         let convs=entries.filter(n=>/(^|\/)conversations(?:-\d+)?\.json$/i.test(n)).sort((a,b)=>{const na=Number(/(\d+)\.json$/i.exec(a)?.[1]??-1),nb=Number(/(\d+)\.json$/i.exec(b)?.[1]??-1);return na-nb||a.localeCompare(b);});
-        const projects=[],memories=[],artifacts=[],users=[],logins=[],accounts=new Set(),mime=Object.create(null),resources=[],gpt=gptExportCore(),grok=typeof grokExportCore==='function'?grokExportCore():null,pplx=typeof perplexityExportCore==='function'?perplexityExportCore():null,codex=typeof codexExportCore==='function'?codexExportCore():null,claudeCode=typeof claudeCodeExportCore==='function'?claudeCodeExportCore():null;let legacyMemory=null,gptManifest=false,sawZst=false;const designs=[],codexConvs=[],codexProjects=new Map(),ccMetaByPath=new Map();
+        const projects=[],memories=[],artifacts=[],users=[],logins=[],accounts=new Set(),mime=Object.create(null),resources=[],gpt=gptExportCore(),grok=typeof grokExportCore==='function'?grokExportCore():null,pplx=typeof perplexityExportCore==='function'?perplexityExportCore():null,codex=typeof codexExportCore==='function'?codexExportCore():null,claudeCode=typeof claudeCodeExportCore==='function'?claudeCodeExportCore():null,antigravity=typeof antigravityExportCore==='function'?antigravityExportCore():null,geminiCli=typeof geminiCliExportCore==='function'?geminiCliExportCore():null;let legacyMemory=null,gptManifest=false,sawZst=false,agPbSkipped=0;const designs=[],codexConvs=[],codexProjects=new Map(),ccMetaByPath=new Map(),agPbtxtTitles=new Map(),agHistoryMap=new Map(),agBundles=new Map(),geminiSlugCwd=new Map(),geminiDirRoot=new Map();
+        const getAgBundle=cid=>{if(!agBundles.has(cid))agBundles.set(cid,{conversationId:cid,fullTexts:[],compactTexts:[],fullPath:'',compactPath:'',artifacts:new Map(),urls:new Map(),images:[],resolved:new Map(),metadata:new Map()});return agBundles.get(cid);};
+        const brainIdFromPath=p=>{
+          const m=/(?:^|\/)brain\/(?:.*?\/)?([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}|[0-9a-f]{8}-[0-9a-f-]{12,})\/([^]*)$/i.exec(p);
+          if(m)return {cid:m[1],rel:m[2]};
+          const m2=/(?:^|\/)brain\/([^/]+)\/(\.system_generated\/[^]*|(?:task|implementation_plan|walkthrough)[^/]*|[^/]+\.(?:md|url\.json|metadata\.json|resolved(?:\.\d+)?))$/i.exec(p);
+          return m2?{cid:m2[1],rel:m2[2]}:null;
+        };
         for(const name of entries){
           if(/\.meta\.json$/i.test(name)){
             try{ccMetaByPath.set(name.replace(/\.meta\.json$/i,''),parseJsonText(await files[name].async('text')));}catch{}
+          }else if(antigravity&&/(?:^|\/)annotations\/([^/]+)\.pbtxt$/i.test(name)){
+            const cid=name.split('/').pop().replace(/\.pbtxt$/i,'');
+            try{const ttl=antigravity.parsePbtxtTitle(await files[name].async('text'));if(ttl)agPbtxtTitles.set(cid,ttl);}catch{}
+          }else if(antigravity&&/(?:^|\/)history\.jsonl$/i.test(name)){
+            try{const hm=antigravity.inspectHistoryJsonl(await files[name].async('text'));for(const [cid,info]of hm)agHistoryMap.set(cid,info);}catch{}
+          }else if(/(?:^|\/)projects\.json$/i.test(name)){
+            try{
+              const pv=parseJsonText(await files[name].async('text'));
+              const mapObj=pv&&typeof pv.projects==='object'&&!Array.isArray(pv.projects)?pv.projects:pv;
+              if(mapObj&&typeof mapObj==='object'){
+                for(const [absPath,slug]of Object.entries(mapObj)){
+                  if(typeof slug==='string'&&slug)geminiSlugCwd.set(slug,absPath);
+                }
+              }
+            }catch{}
+          }else if(/(?:^|\/)\.project_root$/i.test(name)){
+            try{
+              const rootTxt=String(await files[name].async('text')||'').trim();
+              if(rootTxt){
+                const prefix=name.slice(0,-'.project_root'.length).replace(/\/$/,'');
+                geminiDirRoot.set(prefix,rootTxt);
+                const slugPart=prefix.split('/').pop();
+                if(slugPart&&!geminiSlugCwd.has(slugPart))geminiSlugCwd.set(slugPart,rootTxt);
+              }
+            }catch{}
+          }else if(/(?:^|\/)(?:conversations|implicit)\/[^/]+\.pb$/i.test(name)){
+            agPbSkipped++;
           }
         }
         if(files['export_manifest.json']){const manifest=parseJsonText(await files['export_manifest.json'].async('text')),shards=gpt.manifest(manifest,entries);if(shards){convs=shards;gptManifest=true;}}
@@ -161,10 +195,46 @@ function importWorkerMain(){
           }
         }
         const filename=file?.name||'folder';
-        const auxSkip=new Set(['export_manifest.json','library_files.json','sites/export_manifest.json','ads.json','user_settings.json','sectioned_conversations.json','message_feedback.json','model_comparisons.json','shared_conversations.json','group_chats.json','prod-mc-billing.json','sessions-index.json']);
+        const auxSkip=new Set(['export_manifest.json','library_files.json','sites/export_manifest.json','ads.json','user_settings.json','sectioned_conversations.json','message_feedback.json','model_comparisons.json','shared_conversations.json','group_chats.json','prod-mc-billing.json','sessions-index.json','projects.json','history.jsonl','logs.json']);
         for(const name of entries){await check(current);
           const baseName=name.split('/').pop();
-          if(convs.includes(name)||auxSkip.has(name)||auxSkip.has(baseName)||/\.meta\.json$/i.test(name))continue;
+          if(convs.includes(name)||auxSkip.has(name)||auxSkip.has(baseName)||/\.meta\.json$/i.test(name)||/(?:^|\/)(?:annotations\/[^/]+\.pbtxt|(?:conversations|implicit)\/[^/]+\.pb|\.project_root)$/i.test(name))continue;
+          const agPart=antigravity?brainIdFromPath(name):null;
+          if(agPart){
+            const b=getAgBundle(agPart.cid),rel=agPart.rel;
+            if(/^\.system_generated\/logs\/(?:chunks\/)?transcript_full(?:\/[^/]+)?\.jsonl$/i.test(rel)){
+              b.fullTexts.push(await files[name].async('text'));if(!b.fullPath)b.fullPath=name;continue;
+            }
+            if(/^\.system_generated\/logs\/(?:chunks\/)?transcript(?:\/[^/]+)?\.jsonl$/i.test(rel)){
+              b.compactTexts.push(await files[name].async('text'));if(!b.compactPath)b.compactPath=name;continue;
+            }
+            if(!rel.includes('/')&&/\.url\.json$/i.test(rel)){
+              try{const u=parseJsonText(await files[name].async('text'));b.urls.set(rel,{name:rel,url:u.url,title:u.title,description:u.description});}catch{}
+              continue;
+            }
+            if(!rel.includes('/')&&/\.metadata\.json$/i.test(rel)){
+              try{b.metadata.set(rel.slice(0,-'.metadata.json'.length),parseJsonText(await files[name].async('text')));}catch{}
+              continue;
+            }
+            if(!rel.includes('/')&&/\.md\.resolved(?:\.\d+)?$/i.test(rel)){
+              const origName=rel.replace(/\.resolved(?:\.\d+)?$/i,'');
+              const label=rel.slice(origName.length+1);
+              if(!b.resolved.has(origName))b.resolved.set(origName,[]);
+              b.resolved.get(origName).push({label,content:await files[name].async('text')});
+              continue;
+            }
+            if(!rel.includes('/')&&/\.md$/i.test(rel)){
+              b.artifacts.set(rel,{name:rel,path:name,content:await files[name].async('text')});
+              continue;
+            }
+            if(/\.(?:png|jpe?g|gif|webp|bmp|svg|avif)$/i.test(rel)){
+              const imgExt=rel.split('.').pop().toLowerCase();
+              mime[name]=({png:'image/png',jpg:'image/jpeg',jpeg:'image/jpeg',gif:'image/gif',webp:'image/webp',svg:'image/svg+xml',bmp:'image/bmp',avif:'image/avif'})[imgExt]||'image/png';
+              b.images.push({name:rel.split('/').pop(),path:name});
+              continue;
+            }
+            if(/^\.system_generated\//.test(rel))continue;
+          }
           if(pplx&&/^(?:.*\/)?user-data-[^/]+\.xlsx$/i.test(name)){
             try{
               const wbBuf=files[name].file?await files[name].file.arrayBuffer():await files[name].async('arraybuffer');
@@ -181,11 +251,30 @@ function importWorkerMain(){
             continue;
           }
           if(/\.jsonl\.zst$/i.test(name)){sawZst=true;continue;}
-          if((claudeCode||codex)&&/\.jsonl$/i.test(name)){
+          if((claudeCode||codex||antigravity||geminiCli)&&/\.jsonl$/i.test(name)){
             try{
               const jsonlText=await files[name].async('text');
               let handled=false;
-              if(claudeCode&&claudeCode.isClaudeCodeText(jsonlText)){
+              if(antigravity&&antigravity.isAntigravityTranscriptText(jsonlText)){
+                const parsedAg=await antigravity.parseTranscriptAsync(jsonlText,{path:name},()=>check(current));
+                if(parsedAg&&parsedAg.conversation){
+                  codexConvs.push(parsedAg.conversation);
+                  if(parsedAg.project&&!codexProjects.has(parsedAg.project.uuid))codexProjects.set(parsedAg.project.uuid,parsedAg.project);
+                }
+                handled=true;
+              }
+              if(!handled&&geminiCli&&geminiCli.isGeminiCliJsonlText(jsonlText)){
+                const slugM=/tmp\/([^/]+)\/chats\//i.exec(name);
+                const dirPrefix=name.replace(/\/chats\/[^]*$/i,'');
+                const knownCwd=geminiDirRoot.get(dirPrefix)||(slugM?geminiSlugCwd.get(slugM[1]):'')||'';
+                const parsedGem=await geminiCli.parseSessionAsync(jsonlText,{path:name,cwd:knownCwd},()=>check(current));
+                if(parsedGem&&parsedGem.conversation){
+                  codexConvs.push(parsedGem.conversation);
+                  if(parsedGem.project&&!codexProjects.has(parsedGem.project.uuid))codexProjects.set(parsedGem.project.uuid,parsedGem.project);
+                }
+                handled=true;
+              }
+              if(!handled&&claudeCode&&claudeCode.isClaudeCodeText(jsonlText)){
                 const sidecarMeta=ccMetaByPath.get(name.replace(/\.jsonl$/i,''))||null;
                 const parsedCc=await claudeCode.parseTranscriptAsync(jsonlText,{path:name,meta:sidecarMeta},()=>check(current));
                 if(parsedCc&&parsedCc.conversation){
@@ -206,10 +295,23 @@ function importWorkerMain(){
           }
           if(/\.md$/i.test(name)){
             const logical=name.replace(/^.*?(?=(?:areas|projects|memories|memory)\/)/,'');
-            if(/^(?:areas\/|projects\/[^/]+\/|memories\/|memory\/)/.test(logical))memories.push(format.memory(logical,await files[name].async('text'),'',filename));continue;
+            if(/^(?:areas\/|projects\/[^/]+\/|memories\/|memory\/)/.test(logical)){memories.push(format.memory(logical,await files[name].async('text'),'',filename));continue;}
+            if(/^GEMINI\.md$/i.test(baseName)){memories.push(format.memory('gemini/'+name,await files[name].async('text'),'GEMINI.md ('+name+')',filename));continue;}
+            continue;
           }
           if(!/\.json$/i.test(name))continue;
           let value;try{value=parseJsonText(await files[name].async('text'));}catch{if(/(^|\/)(?:projects\/|users\.json|login_history\.json|artifacts\/)/i.test(name))throw new Error('Invalid JSON: '+name);continue;}
+          if(geminiCli&&geminiCli.isGeminiCliJson(value)){
+            const slugM=/tmp\/([^/]+)\/chats\//i.exec(name);
+            const dirPrefix=name.replace(/\/chats\/[^]*$/i,'');
+            const knownCwd=geminiDirRoot.get(dirPrefix)||(slugM?geminiSlugCwd.get(slugM[1]):'')||'';
+            const parsedGem=await geminiCli.parseSessionAsync(value,{path:name,cwd:knownCwd},()=>check(current));
+            if(parsedGem&&parsedGem.conversation){
+              codexConvs.push(parsedGem.conversation);
+              if(parsedGem.project&&!codexProjects.has(parsedGem.project.uuid))codexProjects.set(parsedGem.project.uuid,parsedGem.project);
+            }
+            continue;
+          }
           if(pplx&&(pplx.isExport(value)||pplx.isConversation(value)||Array.isArray(value)&&value.length&&value.every(item=>pplx.isConversation(item)))){convs.push(name);continue;}
           if(grok&&grok.isBackendExport(value)){
             if(Array.isArray(value.projects))projects.push(...grok.convertProjects(value.projects));
@@ -233,9 +335,38 @@ function importWorkerMain(){
           }
           designs.push(...core.parseDesignExports([JSON.stringify(value)]));
         }
+        if(antigravity&&agBundles.size){
+          for(const [cid,bundle]of agBundles){
+            await check(current);
+            const mergedText=[...bundle.fullTexts,...bundle.compactTexts].join('\n');
+            const useFull=bundle.fullTexts.length>0;
+            const hist=agHistoryMap.get(cid);
+            const pbTitle=agPbtxtTitles.get(cid)||hist?.display||'';
+            let parsedAg=mergedText.trim()?await antigravity.parseTranscriptAsync(mergedText,{path:useFull?bundle.fullPath:bundle.compactPath,sourceVariant:useFull?(bundle.fullPath.includes('chunks/')?'chunks':'full'):'compact',conversationId:cid,title:pbTitle,workspace:hist?.workspace||''},()=>check(current)):null;
+            const artList=[...bundle.artifacts.values()].map(a=>({
+              name:a.name,
+              path:a.path,
+              content:a.content,
+              metadata:bundle.metadata.get(a.name)||null,
+              versions:bundle.resolved.get(a.name)||[]
+            }));
+            const urlList=[...bundle.urls.values()].map(u=>({...u,metadata:bundle.metadata.get(u.name)||null}));
+            const finalAg=antigravity.mergeBrainBundle(parsedAg,{conversationId:cid,artifacts:artList,urlBookmarks:urlList,images:bundle.images,title:pbTitle,workspace:hist?.workspace||''});
+            if(finalAg&&finalAg.conversation){
+              if(agPbSkipped>0){
+                finalAg.conversation.importWarnings=finalAg.conversation.importWarnings||[];
+                if(!finalAg.conversation.importWarnings.includes('antigravity_encrypted_pb_skipped:'+agPbSkipped))finalAg.conversation.importWarnings.push('antigravity_encrypted_pb_skipped:'+agPbSkipped);
+                if(finalAg.conversation.antigravityTelemetry)finalAg.conversation.antigravityTelemetry.pbSkipped=agPbSkipped;
+              }
+              codexConvs.push(finalAg.conversation);
+              if(finalAg.project&&!codexProjects.has(finalAg.project.uuid))codexProjects.set(finalAg.project.uuid,finalAg.project);
+            }
+          }
+        }
         for(const p of codexProjects.values())projects.push(p);
         if(!convs.length&&!codexConvs.length&&!projects.length&&!memories.length&&!artifacts.length&&!users.length&&!logins.length&&!legacyMemory&&!designs.length){
           if(sawZst)throw new Error('Codex .jsonl.zst (Zstd) compressed files are not supported yet; decompress with zstd -d first');
+          if(agPbSkipped>0)throw new Error('Antigravity .pb protobuf files are encrypted; include brain/<conversation-id>/.system_generated/logs/ or Markdown artifacts alongside them');
           throw new Error('No supported export data in package');
         }
         await check(current);await rpc('packageStart',{id,filename,accounts:[...accounts]});

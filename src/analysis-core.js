@@ -76,6 +76,8 @@ function archiveAnalysisCore(){
       if(wsId&&stats['grok:ws:'+wsId]){map[record.meta.uuid]='grok:ws:'+wsId;evidence[record.meta.uuid]={method:'workspace',confidence:1,files:[],queries:[],keywords:[]};}
       else if(wsId&&stats['codex:cwd:'+wsId]){map[record.meta.uuid]='codex:cwd:'+wsId;evidence[record.meta.uuid]={method:'workspace',confidence:1,files:[],queries:[],keywords:[]};}
       else if(wsId&&stats['cc:cwd:'+wsId]){map[record.meta.uuid]='cc:cwd:'+wsId;evidence[record.meta.uuid]={method:'workspace',confidence:1,files:[],queries:[],keywords:[]};}
+      else if(wsId&&stats['ag:cwd:'+wsId]){map[record.meta.uuid]='ag:cwd:'+wsId;evidence[record.meta.uuid]={method:'workspace',confidence:1,files:[],queries:[],keywords:[]};}
+      else if(wsId&&stats['gemini:cwd:'+wsId]){map[record.meta.uuid]='gemini:cwd:'+wsId;evidence[record.meta.uuid]={method:'workspace',confidence:1,files:[],queries:[],keywords:[]};}
       const colId=conversation.collectionUuid||record.meta?.collectionUuid;
       if(!map[record.meta.uuid]&&colId&&stats['perplexity:col:'+colId]){map[record.meta.uuid]='perplexity:col:'+colId;evidence[record.meta.uuid]={method:'collection',confidence:1,files:[],queries:[],keywords:[]};}
       for(let messageIndex=0;messageIndex<messages.length;messageIndex++){
